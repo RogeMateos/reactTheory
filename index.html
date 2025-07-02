@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>React Theory</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-jsx.min.js"></script>
+  </head>
+  <body>
+    <header>
+      <h1 id="title">React Theory</h1>
+      <button id="languageToggle">Español</button>
+    </header>
+
+    <main class="container">
+      <nav>
+        <ul class="accordion">
+          <li>
+            <h3 class="accordion-header">Fundamentos</h3>
+            <ul class="accordion-content">
+              <li><a href="#" data-section="lifeCicle">LifeCycle</a></li>
+            </ul>
+          </li>
+          <li>
+            <h3 class="accordion-header">Hooks</h3>
+            <ul class="accordion-content">
+              <li><a href="#" data-section="useState">useState</a></li>
+              <li><a href="#" data-section="useEffect">useEffect</a></li>
+              <li><a href="#" data-section="useContext">useContext</a></li>
+              <li><a href="#" data-section="useRef">useRef</a></li>
+              <li><a href="#" data-section="useReducer">useReducer</a></li>
+            </ul>
+          </li>
+          <li>
+            <h3 class="accordion-header">Routing</h3>
+            <ul class="accordion-content">
+              <li>
+                <a href="#" data-section="routerBrowser"
+                  >Router Browser Navigation</a
+                >
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+
+      <div id="content">
+        <!-- Content will be loaded here dynamically -->
+      </div>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>

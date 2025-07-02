@@ -1,0 +1,183 @@
+<section class="box">
+  <h1>Ejemplo de uso de Context</h1>
+
+  <div class="description">
+    <h2>Ejemplo usando props</h2>
+    <a
+      href="https://codesandbox.io/p/sandbox/clr7cl?file=%2Fsrc%2FApp.js%3A1%2C1-11%2C1"
+      >Ejemplo de código en vivo</a
+    >
+    <p>
+      <strong>Usando props</strong> Este es un ejemplo usando props en todos los
+      niveles
+    </p>
+
+    <!-- Componente App -->
+    <pre><code class="language-jsx">
+        import ComponentA from "./ComponentA";
+        
+        export default function App() {
+          return (
+            &lt;div className="App"&gt;
+              &lt;ComponentA /&gt;
+            &lt;/div&gt;
+          );
+        }
+      </code></pre>
+
+    <!-- ComponenteA -->
+    <pre><code class="language-javascript">
+        import React, { useState } from "react";
+        import ComponentB from "./ComponentB";
+        
+        function ComponentA() {
+          const [user, setUser] = useState("Roge");
+          return (
+            &lt;div className="box"&gt;
+              &lt;h1&gt;ComponenteA&lt;/h1&gt;
+              &lt;h2&gt;{`Hola ${user}`}&lt;/h2&gt;
+              &lt;ComponentB user={user} /&gt;
+            &lt;/div&gt;
+          );
+        }
+        
+        export default ComponentA;
+      </code></pre>
+
+    <!-- ComponenteB -->
+    <pre><code class="language-jsx">
+        import ComponentC from "./ComponentC";
+        
+        function ComponentB({ user }) {
+          return (
+            &lt;div className="box"&gt;
+              &lt;h1&gt;ComponenteB&lt;/h1&gt;
+              &lt;ComponentC user={user} /&gt;
+            &lt;/div&gt;
+          );
+        }
+        
+        export default ComponentB;
+      </code></pre>
+
+    <!-- ComponenteC -->
+    <pre><code class="language-jsx">
+        import ComponentD from "./ComponentD";
+        
+        function ComponentC({ user }) {
+          return (
+            &lt;div className="box"&gt;
+              &lt;h1&gt;ComponenteC&lt;/h1&gt;
+              &lt;ComponentD user={user} /&gt;
+            &lt;/div&gt;
+          );
+        }
+        
+        export default ComponentC;
+      </code></pre>
+
+    <!-- ComponenteD -->
+    <pre><code class="language-jsx">
+        function ComponentD({ user }) {
+          return (
+            &lt;div className="box"&gt;
+              &lt;h1&gt;ComponenteD&lt;/h1&gt;
+              &lt;h2&gt;{`Por ${user}`}&lt;/h2&gt;
+            &lt;/div&gt;
+          );
+        }
+        
+        export default ComponentD;
+      </code></pre>
+
+    <h2>Usar contexto</h2>
+    <p>
+      <strong>useContext</strong> permite que los componentes compartan datos
+      sin pasar manualmente props a cada nivel. Piensa en ello como un sistema
+      central (como un intercomunicador), donde todos los componentes pueden
+      acceder directamente a los datos que necesitan.
+    </p>
+
+    <pre><code class="language-jsx">
+        function ComponentD({ user }) {
+          return (
+            &lt;div className="box"&gt;
+              &lt;h1&gt;ComponenteD&lt;/h1&gt;
+              &lt;h2&gt;{`Por ${user}`}&lt;/h2&gt;
+            &lt;/div&gt;
+          );
+        }
+        
+        export default ComponentD;
+      </code></pre>
+    <h2>Entendiendo useContext</h2>
+    <a
+      href="https://codesandbox.io/p/sandbox/funny-leaf-2gkdfg?file=%2Fsrc%2FComponentA.jsx%3A10%2C3-20%2C2&workspaceId=0824292f-f093-4536-8e02-e700e73cd76a"
+      target="_blank"
+      >Uso de código en vivo</a
+    >
+    <p>
+      <strong>useContext</strong> es un Hook de React que permite compartir
+      valores entre múltiples niveles de componentes sin pasar props a través de
+      cada nivel.
+    </p>
+    <h2>App.js</h2>
+    <pre><code class="language-jsx">
+        import React, { useState, createContext } from "react";
+        import ComponentA from "./ComponentA";
+        import "./styles.css";
+        export const UserContext = createContext();
+        
+        export default function App() {
+          return (
+            &lt;div className="App"&gt;
+              &lt;ComponentA /&gt;
+            &lt;/div&gt;
+          );
+        }
+        
+      </code></pre>
+    <h2>ComponenteD</h2>
+    <pre><code class="language-jsx">
+        import React, { useContext } from "react";
+        import { UserContext } from "./ComponentA";
+        function ComponentD() {
+          const user = useContext(UserContext);
+          return (
+            &lt;div className="box"&gt;
+              &lt;h1&gt;ComponenteD&lt;/h1&gt;
+              &lt;h2&gt;{`Hola ${user}`}&lt;/h2&gt;
+            &lt;/div&gt;
+          );
+        }
+        
+        export default ComponentD;
+        
+      </code></pre>
+
+    <!-- Enlaces Relacionados -->
+    <div class="links">
+      <h3>Enlaces Relacionados:</h3>
+      <a
+        href="https://summarize.ing/video-188188-React-useContext-hook-introduction-%F0%9F%A7%97%E2%80%8D%E2%99%82%EF%B8%8F#Transcripts"
+        target="_blank"
+        >Resumir React useContext</a
+      >
+      <a
+        href="https://claude.ai/chat/e60e98ce-9c07-4e7b-a0ee-65fe762be973"
+        target="_blank"
+        >Claude</a
+      >
+      <a
+        href="https://claude.ai/chat/a6e1faf1-35f6-40ae-95fe-f26b4d34a543"
+        target="_blank"
+        >Claude2</a
+      >
+      <a
+        href="https://www.youtube.com/watch?v=FpNfvbNYPsg&t=195s"
+        target="_blank"
+        >Tutorial de YouTube</a
+      >
+    </div>
+  </div>
+</section>

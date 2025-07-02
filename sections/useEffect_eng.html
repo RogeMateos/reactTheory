@@ -1,0 +1,139 @@
+<section class="box">
+  <h1>Understanding the useEffect Hook in React</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="what-is-useeffect">What is useEffect?</button>
+    <button class="tab-button" data-tab="when-does-useeffect-run">When Does useEffect Run?</button>
+    <button class="tab-button" data-tab="cleanup-with-useeffect">Cleanup with useEffect</button>
+    <button class="tab-button" data-tab="multiple-useeffect-hooks">Multiple useEffect Hooks</button>
+  </div>
+
+  <article id="what-is-useeffect" class="tab-content active">
+    <h2>What is useEffect?</h2>
+    <p>
+      The useEffect hook is a fundamental part of React's functional components, allowing you to perform side effects such as data fetching, subscriptions, or manual DOM manipulations.
+    </p>
+    <p>
+      useEffect lets you run side-effect code in your components. Think of side effects as operations that affect something outside the scope of the function being executed, such as:
+      <ul>
+        <li>Fetching data from an API</li>
+        <li>Subscribing to real-time updates</li>
+        <li>Manipulating the DOM</li>
+        <li>Setting up event listeners</li>
+      </ul>
+    </p>
+    <h3>Basic Syntax</h3>
+    <pre><code class="language-javascript">
+import React, { useState, useEffect } from 'react';
+
+function ExampleComponent() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    // Side effect: Update the document title
+    document.title = `Count: ${count}`;
+  }, [count]); // Dependency array
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Count: {count}&lt;/p&gt;
+      &lt;button onClick={() => setCount(prev =&gt; prev + 1)}&gt;Add&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+    </code></pre>
+  </article>
+
+  <article id="when-does-useeffect-run" class="tab-content">
+    <h2>When Does useEffect Run?</h2>
+    <p>On Every Render: If you omit the dependency array, the effect runs after every render.</p>
+    <pre><code class="language-javascript">
+useEffect(() => {
+  console.log('Component rendered');
+});
+    </code></pre>
+    <p>On Mount Only: By providing an empty dependency array, the effect runs only once when the component mounts.</p>
+    <pre><code class="language-javascript">
+useEffect(() => {
+  console.log('Component mounted');
+}, []);
+    </code></pre>
+    <p>On Specific Updates: Include variables in the dependency array to run the effect only when those variables change.</p>
+    <pre><code class="language-javascript">
+useEffect(() => {
+  console.log(`Count changed to ${count}`);
+}, [count]);
+    </code></pre>
+  </article>
+
+  <article id="cleanup-with-useeffect" class="tab-content">
+    <h2>Cleanup with useEffect</h2>
+    <p>
+      When your component unmounts or before the effect runs again, you can perform cleanup to avoid memory leaks, especially with subscriptions or event listeners.
+    </p>
+    <pre><code class="language-javascript">
+useEffect(() => {
+  const handleResize = () => {
+    console.log('Window resized');
+  };
+
+  window.addEventListener('resize', handleResize);
+
+  // Cleanup function
+  return () => {
+    window.removeEventListener('resize', handleResize);
+  };
+}, []); // Empty array ensures this runs once on mount and cleanup on unmount
+    </code></pre>
+  </article>
+
+  <article id="multiple-useeffect-hooks" class="tab-content">
+    <h2>Multiple useEffect Hooks</h2>
+    <p>
+      You can use multiple useEffect hooks within a single component to separate concerns.
+    </p>
+    <pre><code class="language-javascript">
+useEffect(() => {
+  // Effect for updating the title based on count
+  document.title = `Count: ${count}`;
+}, [count]);
+
+useEffect(() => {
+  // Effect for logging when the component mounts
+  console.log('Component mounted');
+}, []);
+    </code></pre>
+    <h3>Best Practices</h3>
+    <ul>
+      <li>Specify Dependencies: Always specify dependencies to prevent unnecessary re-renders and potential bugs.</li>
+      <li>Cleanup Side Effects: Always clean up subscriptions or event listeners to avoid memory leaks.</li>
+      <li>Separate Concerns: Use multiple useEffect hooks to handle different side effects separately for better readability and maintenance.</li>
+    </ul>
+    <h3>Common Pitfalls</h3>
+    <ul>
+      <li>Missing Dependencies: Forgetting to include dependencies can lead to stale data or unexpected behavior.</li>
+      <li>Overusing Effects: Not all logic needs to be inside useEffect. Use it only for side effects, not for synchronous state updates.</li>
+    </ul>
+    <h3>Conclusion</h3>
+    <p>
+      The useEffect hook is a powerful tool for managing side effects in React functional components. By understanding its behavior and following best practices, you can write efficient and bug-free React applications.
+    </p>
+    <div class="links">
+      <h3>Related Links:</h3>
+      <ul>
+        <li>
+          <a href="https://www.youtube.com/watch?v=0ZJgIjIuY7U" target="_blank">You tube Use Effect WebDev</a>
+        </li>
+        <li>
+          <a href="https://www.youtube.com/watch?v=0ZJgIjIuY7U" target="_blank">You tube Use Effect</a>
+        </li>
+        <li>
+          <a href="https://chatgpt.com/c/670da687-920c-8008-8ca9-ddf76124c242" target="_blank">Chat Gpt use effect</a>
+        </li>
+        <li>
+          <a href="https://codesandbox.io/p/sandbox/jpqkj6?file=%2Fsrc%2FApp.js%3A19%2C1" target="_blank">Exercise</a>
+        </li>
+      </ul>
+    </div>
+  </article>
+</section>

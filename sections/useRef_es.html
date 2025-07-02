@@ -1,0 +1,369 @@
+<section class="box">
+  <h1>Entendiendo el Hook useRef en React</h1>
+  <div class="description">
+    <h2>¿Qué es useRef?</h2>
+    <p>
+      Las refs nos permiten crear una referencia a un elemento del DOM o a un
+      valor que se mantendrá entre renderizados. Se pueden declarar por medio
+      del comando createRef o con el hook useRef.
+    </p>
+    <p>
+      <code>useRef</code> es un hook de React que te permite persistir valores
+      entre renders sin causar un re-render cuando el valor cambia. A diferencia
+      de las variables de estado, actualizar una referencia no desencadena una
+      actualización del componente. Esto hace que <code>useRef</code> sea ideal
+      para almacenar valores mutables que necesitan sobrevivir entre renders,
+      como referencias del DOM o valores de estado anteriores.
+    </p>
+
+    <ul>
+      <li>
+        Devuelve un objeto ref mutable con una propiedad <code>.current</code>.
+      </li>
+      <li>Persiste valores entre renders sin desencadenar re-renders.</li>
+      <li>
+        Comúnmente usado para referenciar elementos del DOM y almacenar valores
+        mutables.
+      </li>
+    </ul>
+
+    <h3>Estado vs. Refs</h3>
+    <h4>Estado (<code>useState</code>):</h4>
+    <ul>
+      <li>
+        Usado para almacenar datos que influyen en lo que se renderiza en la
+        pantalla.
+      </li>
+      <li>Actualizar el estado desencadena un re-render del componente.</li>
+      <li>Ideal para datos que deben ser mostrados o utilizados en la UI.</li>
+    </ul>
+
+    <h4>Refs (<code>useRef</code>):</h4>
+    <ul>
+      <li>
+        Usado para almacenar valores mutables que no necesitan desencadenar
+        re-renders.
+      </li>
+      <li>Actualizar una ref no causa que un componente se re-renderice.</li>
+      <li>
+        Adecuado para almacenar referencias del DOM, temporizadores, valores
+        anteriores, etc.
+      </li>
+    </ul>
+
+    <h4>¿Cuándo usarlo?</h4>
+    <ul>
+      <li>
+        Usa estado cuando quieras que los cambios desencadenen actualizaciones
+        en la UI.
+      </li>
+      <li>
+        Usa refs cuando necesites persistir valores sin afectar el renderizado.
+      </li>
+    </ul>
+
+    <h3>Casos de Uso Comunes para useRef</h3>
+    <ul>
+      <li>
+        Referenciando Elementos del DOM: Accediendo y manipulando elementos del
+        DOM directamente (por ejemplo, enfocando un input).
+      </li>
+      <li>
+        Almacenando Valores Anteriores: Haciendo seguimiento de valores de
+        estado o props anteriores entre renders.
+      </li>
+      <li>
+        Persistiendo Valores Mutables: Almacenando valores que necesitan
+        persistir entre renders pero no requieren actualizaciones en la UI (por
+        ejemplo, temporizadores, intervalos).
+      </li>
+      <li>
+        Evitando Re-renders Innecesarios: Sosteniendo valores que cambian
+        frecuentemente pero no necesitan causar un re-render.
+      </li>
+    </ul>
+
+    <h3>Ejemplos de Código</h3>
+    <h4>
+      Ejemplo 1: Contando Renderizados de Componente Usando
+      <code>useState</code> vs.
+      <code>useRef</code>
+    </h4>
+    <h4>Ejemplo 2: Referenciando Elementos del DOM con <code>useRef</code></h4>
+    <h4>
+      Ejemplo 3: Almacenando Valores de Estado Anteriores con
+      <code>useRef</code>
+    </h4>
+    <h4>Ejemplo 4: Evitando Re-renders Innecesarios con <code>useRef</code></h4>
+    <h3>Ejemplos de Código</h3>
+
+    <h4>
+      Ejemplo 1: Contando Renderizados de Componente Usando
+      <code>useState</code> vs. <code>useRef</code>
+    </h4>
+    <p>
+      Problema con <code>useState</code>: Usar <code>useState</code> para contar
+      renders puede llevar a un bucle infinito porque actualizar el estado causa
+      que el componente se re-renderice, lo que a su vez actualiza el estado de
+      nuevo.
+    </p>
+
+    <h5>Enfoque Incorrecto con <code>useState</code>:</h5>
+    <pre><code class="language-javascript">
+    import React, { useState, useEffect } from 'react';
+  
+    function RenderCounter() {
+      const [renderCount, setRenderCount] = useState(0);
+  
+      useEffect(() => {
+        setRenderCount(prevCount => prevCount + 1);
+      });
+  
+      return &lt;div&gt;Contador de Render: {renderCount}&lt;/div&gt;;
+    }
+  
+    export default RenderCounter;
+      </code></pre>
+
+    <p><strong>Problema:</strong></p>
+    <ul>
+      <li>El <code>useEffect</code> se ejecuta después de cada render.</li>
+      <li>
+        <code>setRenderCount</code> actualiza el estado, desencadenando otro
+        render, creando un bucle infinito.
+      </li>
+    </ul>
+
+    <h5>Enfoque Correcto con <code>useRef</code>:</h5>
+    <pre><code class="language-javascript">
+    import React, { useRef, useEffect } from 'react';
+  
+    function RenderCounter() {
+      const renderCount = useRef(0);
+  
+      useEffect(() => {
+        renderCount.current += 1;
+      });
+  
+      return &lt;div&gt;Contador de Render: {renderCount.current}&lt;/div&gt;;
+    }
+  
+    export default RenderCounter;
+      </code></pre>
+
+    <p><strong>Explicación:</strong></p>
+    <ul>
+      <li>
+        <code>useRef</code> mantiene un <code>renderCount</code> mutable que
+        persiste entre renders.
+      </li>
+      <li>
+        Actualizar <code>renderCount.current</code> no desencadena un re-render,
+        evitando un bucle infinito.
+      </li>
+    </ul>
+
+    <h4>Ejemplo 2: Referenciando Elementos del DOM con <code>useRef</code></h4>
+    <p>
+      Objetivo: Enfocar un campo de entrada cuando se hace clic en un botón.
+    </p>
+    <pre><code class="language-javascript">
+    import React, { useRef } from 'react';
+  
+    function InputFocus() {
+      const inputRef = useRef(null);
+  
+      const handleFocus = () => {
+        // Acceder al nodo del DOM y enfocarlo
+        if (inputRef.current) {
+          inputRef.current.focus();
+        }
+      };
+  
+      return (
+        &lt;div&gt;
+          &lt;input ref={inputRef} type="text" placeholder="Haz clic en el botón para enfocarme" /&gt;
+          &lt;button onClick={handleFocus}&gt;Enfocar Input&lt;/button&gt;
+        &lt;/div&gt;
+      );
+    }
+  
+    export default InputFocus;
+      </code></pre>
+
+    <p><strong>Explicación:</strong></p>
+    <ul>
+      <li>
+        <code>inputRef</code> se crea usando <code>useRef</code> y se adjunta al
+        elemento <code>&lt;input&gt;</code> a través del atributo
+        <code>ref</code>.
+      </li>
+      <li>
+        Al hacer clic en el botón, <code>handleFocus</code> accede a
+        <code>inputRef.current</code> (el nodo del DOM) y llama al método
+        <code>.focus()</code> para enfocar el campo de entrada.
+      </li>
+    </ul>
+
+    <h4>
+      Ejemplo 3: Almacenando Valores de Estado Anteriores con
+      <code>useRef</code>
+    </h4>
+    <p>
+      Objetivo: Mostrar el valor actual y anterior de una variable de estado.
+    </p>
+    <pre><code class="language-javascript">
+    import React, { useState, useRef, useEffect } from 'react';
+  
+    function PreviousStateDemo() {
+      const [name, setName] = useState('');
+      const prevNameRef = useRef('');
+  
+      useEffect(() => {
+        // Actualizar ref para almacenar el nombre anterior
+        prevNameRef.current = name;
+      }, [name]);
+  
+      const handleChange = (e) => {
+        setName(e.target.value);
+      };
+  
+      return (
+        &lt;div&gt;
+          &lt;input type="text" value={name} onChange={handleChange} placeholder="Ingresa tu nombre" /&gt;
+          &lt;p&gt;Nombre Actual: {name}&lt;/p&gt;
+          &lt;p&gt;Nombre Anterior: {prevNameRef.current}&lt;/p&gt;
+        &lt;/div&gt;
+      );
+    }
+  
+    export default PreviousStateDemo;
+      </code></pre>
+
+    <p><strong>Explicación:</strong></p>
+    <ul>
+      <li>
+        <code>name</code> es una variable de estado actualizada a través de la
+        entrada del usuario.
+      </li>
+      <li>
+        <code>prevNameRef</code> es una ref que mantiene el valor anterior de
+        <code>name</code>.
+      </li>
+      <li>
+        El hook <code>useEffect</code> se ejecuta cada vez que cambia
+        <code>name</code>, actualizando <code>prevNameRef.current</code> con el
+        valor anterior antes de que cambie.
+      </li>
+    </ul>
+
+    <h4>Ejemplo 4: Evitando Re-renders Innecesarios con <code>useRef</code></h4>
+    <p>
+      Objetivo: Mantener el valor del temporizador sin provocar re-renders cada
+      segundo.
+    </p>
+    <pre><code class="language-javascript">
+    import React, { useEffect, useRef } from 'react';
+  
+    function Timer() {
+      const timerRef = useRef(null);
+  
+      useEffect(() => {
+        timerRef.current = setInterval(() => {
+          console.log('Temporizador en marcha');
+        }, 1000);
+  
+        return () => {
+          clearInterval(timerRef.current); // Limpiar el temporizador al desmontar
+        };
+      }, []);
+  
+      return &lt;div&gt;Temporizador en marcha. Revisa la consola.&lt;/div&gt;;
+    }
+  
+    export default Timer;
+      </code></pre>
+
+    <p><strong>Explicación:</strong></p>
+    <ul>
+      <li>
+        <code>timerRef</code> se usa para almacenar el ID del temporizador.
+      </li>
+      <li>
+        El <code>setInterval</code> se establece en <code>useEffect</code>, y al
+        desmontar, se limpia el temporizador usando <code>clearInterval</code>.
+      </li>
+      <li>No se producen re-renders mientras el temporizador se ejecuta.</li>
+    </ul>
+
+    <h3>Errores Comunes al Usar useRef</h3>
+    <ul>
+      <li>
+        No usar <code>useRef</code> para almacenar valores que necesitan
+        persistir entre renders.
+      </li>
+      <li>
+        Confundir <code>useRef</code> con <code>useState</code>: recordar que
+        <code>useRef</code> no causa re-renders.
+      </li>
+      <li>
+        Acceder a <code>ref.current</code> antes de que se asigne: puede llevar
+        a <code>undefined</code> si se intenta acceder antes de que el elemento
+        DOM esté montado.
+      </li>
+    </ul>
+
+    <h3>Mejores Prácticas para Usar useRef</h3>
+    <ul>
+      <li>
+        Utiliza <code>useRef</code> para almacenar valores que cambian
+        frecuentemente pero que no necesitan desencadenar un re-render.
+      </li>
+      <li>
+        Evita usar <code>useRef</code> para almacenar información crítica para
+        la UI que necesita ser reactiva.
+      </li>
+      <li>
+        Recuerda limpiar referencias para evitar fugas de memoria, especialmente
+        al usar objetos como intervalos o temporizadores.
+      </li>
+    </ul>
+
+    <h3>Conclusión</h3>
+    <p>
+      <code>useRef</code> es un hook versátil que permite mantener valores entre
+      renders sin causar re-renders. Con una comprensión clara de cuándo y cómo
+      usarlo, puedes optimizar el rendimiento de tus componentes de React y
+      evitar renderizados innecesarios.
+    </p>
+  </div>
+  <div class="links">
+    <h3>Related Links:</h3>
+    <ul>
+      <li>
+        <a href="https://www.youtube.com/watch?v=t2ypzz6gJm0" target="_blank"
+          >Dev Web Simplified</a
+        >
+      </li>
+      <li>
+        <a href="https://www.youtube.com/watch?v=31Ppo7yv12I" target="_blank"
+          >YouTube Pedro Tech</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://chatgpt.com/c/670f97f6-6e88-8008-8e10-f2162f933013"
+          target="_blank"
+          >Chat GPT</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://codesandbox.io/p/sandbox/use-ref-g8d8g8"
+          target="_blank"
+          >Exercise
+        </a>
+      </li>
+    </ul>
+  </div>
+</section>

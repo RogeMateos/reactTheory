@@ -1,0 +1,229 @@
+<section class="box">
+  <h1>Use State</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="definition">Definition</button>
+    <button class="tab-button" data-tab="pen-analogy">Pen Analogy</button>
+    <button class="tab-button" data-tab="state-summary">State Summary</button>
+    <button class="tab-button" data-tab="code-examples">Code Examples</button>
+  </div>
+
+  <article id="definition" class="tab-content active">
+    <h2>Definition</h2>
+    <p>
+      State is an object that contains data that can change over time. In React,
+      state is used to control changes in the interface.
+    </p>
+  </article>
+
+  <article id="pen-analogy" class="tab-content">
+    <h2>State in React: Pen Analogy</h2>
+
+    <p>The state in React can be understood using the analogy of a pen:</p>
+
+    <h3>Static properties (props):</h3>
+    <ul>
+      <li>Pen color (e.g., blue)</li>
+      <li>Material (e.g., plastic)</li>
+      <li>Ink type (e.g., liquid)</li>
+    </ul>
+    <p>
+      These properties do not change during the pen's lifetime, similar to how
+      props in React do not change within a component.
+    </p>
+
+    <h3>State:</h3>
+    <ul>
+      <li>Clip position (open or closed)</li>
+      <li>Ink level (full, half, empty)</li>
+    </ul>
+    <p>
+      These properties can change over time or in response to actions, similar
+      to how state in React can change and trigger re-renders.
+    </p>
+
+    <h3>Actions that modify the state:</h3>
+    <ul>
+      <li>Clicking to open or close the pen</li>
+      <li>Writing, which gradually decreases the ink level</li>
+    </ul>
+
+    <p>
+      These actions are analogous to events in React that can trigger state
+      changes.
+    </p>
+
+    <h3>Rendering:</h3>
+    <p>
+      Every time the pen's state changes (it opens/closes or the ink level
+      changes), it's like React "re-draws" the pen to reflect its new state.
+    </p>
+
+    <p>
+      This analogy helps visualize how components in React maintain static
+      properties (props) and dynamic properties (state), and how state changes
+      cause the component to update visually.
+    </p>
+  </article>
+
+  <article id="state-summary" class="tab-content">
+    <h2>State Summary</h2>
+    <p>
+      State is a fundamental concept in React that allows components to be
+      dynamic and responsive to changes.
+    </p>
+    <p>
+      The <code>useState</code> hook is used to manage state in functional
+      components.
+    </p>
+    <p>
+      <code>useState</code> returns an array with two elements: the current
+      state value and a function to update it.
+    </p>
+    <p>When the state is updated, React re-renders the component.</p>
+    <p>
+      It is important to create a new reference when updating a state that is an
+      object or array.
+    </p>
+    <p>
+      You can pass a function as the initial value to <code>useState</code> for
+      complex calculations.
+    </p>
+
+    <h3>Important points about handling objects in state</h3>
+    <ul>
+      <li>
+        When the state is an object, it is necessary to use the spread operator
+        (<code>{...}</code>) to maintain existing properties:
+        <pre><code>setState(prevState => ({ ...prevState, newProperty: value }));</code></pre>
+      </li>
+      <li>
+        When updating properties of an object in the state, ensure that you do
+        not overwrite the entire object, but only update the necessary
+        properties.
+      </li>
+      <li>
+        Consider using <code>useReducer</code> for more complex state
+        management, especially when working with large objects or nested state
+        structures.
+      </li>
+    </ul>
+  </article>
+
+  <article id="code-examples" class="tab-content">
+    <h2>Code Examples</h2>
+    <p>This code shows:</p>
+    <ul>
+      <li>How to import and use <code>useState</code>.</li>
+      <li>How to initialize the state with a value or a function.</li>
+      <li>How to update the state correctly.</li>
+      <li>How to use the state in the rendering of the component.</li>
+    </ul>
+    <pre><code class="language-javascript">
+import React, { useState } from 'react';
+
+function Likes({ initialLikes }) {
+  const [likes, setLikes] = useState(() => {
+    // This function only runs on initial mount
+    return initialLikes || 0;
+  });
+
+  const handleClick = () => {
+    setLikes(prevLikes => prevLikes + 1);
+  };
+
+  return (
+    &lt;button onClick={handleClick}&gt;
+      {likes} likes
+    &lt;/button&gt;
+  );
+}
+
+function App() {
+  return (
+    &lt;div&gt;
+      &lt;Likes initialLikes={12} /&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default App;
+    </code></pre>
+
+    <h3>Handling objects in state</h3>
+    <pre><code class="language-javascript">
+// Incorrect: Direct state mutation
+const handleClickIncorrect = () => {
+  likes.value += 1;
+  setLikes(likes); // This won't cause a re-render
+};
+
+// Correct: Create a new reference
+const handleClickCorrect = () => {
+  setLikes(prevLikes => ({
+    ...prevLikes,
+    value: prevLikes.value + 1
+  }));
+};
+
+import React, { useState } from 'react';
+
+function Likes({ initialLikes }) {
+  const [likes, setLikes] = useState(() => {
+    // This function only runs on initial mount
+    return { value: initialLikes || 0 }; // Changed to an object to include the value
+  });
+
+  const handleClick = () => {
+    setLikes(prevLikes => ({
+      ...prevLikes,
+      value: prevLikes.value + 1
+    }));
+  };
+
+  return (
+    &lt;button onClick={handleClick}&gt;
+      {likes.value} likes
+    &lt;/button&gt;
+  );
+}
+
+function App() {
+  return (
+    &lt;div&gt;
+      &lt;Likes initialLikes={12} /&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default App;
+    </code></pre>
+
+    <div class="links">
+      <h3>Related Links:</h3>
+      <ul>
+        <li>
+          <a
+            href="https://chatgpt.com/c/670c3f94-2fec-8008-a135-4a337b9a90db"
+            target="_blank"
+            >Chat GPT</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://claude.ai/chat/440dcf62-41c7-4835-a880-ac91ebd3bf62"
+            target="_blank"
+            >Claude Use State</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://github.com/midudev/preguntas-entrevista-react"
+            target="_blank"
+            >Midu React Questions</a
+          >
+        </li>
+      </ul>
+    </div>
+  </article>
+</section>

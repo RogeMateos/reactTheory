@@ -1,0 +1,146 @@
+<section class="box">
+    <h1>Entendiendo el Hook useEffect en React</h1>
+  
+    <div class="description">
+      <p>
+        El hook useEffect es una parte fundamental de los componentes funcionales de React, permitiéndote realizar efectos secundarios como la obtención de datos, suscripciones o manipulaciones manuales del DOM. Aquí tienes un desglose detallado de cómo usar useEffect de manera efectiva.
+      </p>
+  
+      <h2>¿Qué es useEffect?</h2>
+      <p>
+        useEffect te permite ejecutar código de efecto secundario en tus componentes. Piensa en los efectos secundarios como operaciones que afectan algo fuera del alcance de la función que se está ejecutando, como:
+        <ul>
+          <li>Obtener datos de una API</li>
+          <li>Suscribirse a actualizaciones en tiempo real</li>
+          <li>Manipular el DOM</li>
+          <li>Configurar oyentes de eventos</li>
+        </ul>
+      </p>
+  
+      <h2>Sintaxis Básica</h2>
+      <pre><code class="language-javascript">
+  import React, { useState, useEffect } from 'react';
+  
+  function ExampleComponent() {
+    const [count, setCount] = useState(0);
+  
+    useEffect(() => {
+      // Efecto secundario: Actualizar el título del documento
+      document.title = `Contador: ${count}`;
+    }, [count]); // Arreglo de dependencias
+  
+    return (
+      &lt;div&gt;
+        &lt;p&gt;Contador: {count}&lt;/p&gt;
+        &lt;button onClick={() => setCount(prev =&gt; prev + 1)}&gt;Agregar&lt;/button&gt;
+      &lt;/div&gt;
+    );
+  }
+      </code></pre>
+  
+      <h2>¿Cuándo se Ejecuta useEffect?</h2>
+      <p>En Cada Render: Si omites el arreglo de dependencias, el efecto se ejecuta después de cada render.</p>
+  
+      <pre><code class="language-javascript">
+  useEffect(() => {
+    console.log('Componente renderizado');
+  });
+      </code></pre>
+  
+      <p>Solo al Montar: Al proporcionar un arreglo de dependencias vacío, el efecto se ejecuta solo una vez cuando se monta el componente.</p>
+  
+      <pre><code class="language-javascript">
+  useEffect(() => {
+    console.log('Componente montado');
+  }, []);
+      </code></pre>
+  
+      <p>En Actualizaciones Específicas: Incluye variables en el arreglo de dependencias para ejecutar el efecto solo cuando esas variables cambian.</p>
+  
+      <pre><code class="language-javascript">
+  useEffect(() => {
+    console.log(`El contador cambió a ${count}`);
+  }, [count]);
+      </code></pre>
+  
+      <h2>Limpieza con useEffect</h2>
+      <p>
+        Cuando tu componente se desmonta o antes de que el efecto se ejecute nuevamente, puedes realizar limpieza para evitar fugas de memoria, especialmente con suscripciones o oyentes de eventos.
+      </p>
+  
+      <pre><code class="language-javascript">
+  useEffect(() => {
+    const handleResize = () => {
+      console.log('Ventana redimensionada');
+    };
+  
+    window.addEventListener('resize', handleResize);
+  
+    // Función de limpieza
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []); // Arreglo vacío asegura que esto se ejecute una vez al montar y se limpie al desmontar
+      </code></pre>
+  
+      <h2>Múltiples Hooks useEffect</h2>
+      <p>
+        Puedes usar múltiples hooks useEffect dentro de un solo componente para separar preocupaciones.
+      </p>
+  
+      <pre><code class="language-javascript">
+  useEffect(() => {
+    // Efecto para actualizar el título basado en el contador
+    document.title = `Contador: ${count}`;
+  }, [count]);
+  
+  useEffect(() => {
+    // Efecto para registrar cuando se monta el componente
+    console.log('Componente montado');
+  }, []);
+      </code></pre>
+  
+      <h2>Mejores Prácticas</h2>
+      <ul>
+        <li>Especifica Dependencias: Siempre especifica dependencias para evitar renderizados innecesarios y posibles errores.</li>
+        <li>Limpia Efectos Secundarios: Siempre limpia suscripciones u oyentes de eventos para evitar fugas de memoria.</li>
+        <li>Separa Preocupaciones: Usa múltiples hooks useEffect para manejar diferentes efectos secundarios por separado para mejor legibilidad y mantenimiento.</li>
+      </ul>
+  
+      <h2>Errores Comunes</h2>
+      <ul>
+        <li>Dependencias Faltantes: Olvidar incluir dependencias puede llevar a datos obsoletos o comportamientos inesperados.</li>
+        <li>Uso Excesivo de Efectos: No toda la lógica necesita estar dentro de useEffect. Úsalo solo para efectos secundarios, no para actualizaciones de estado sincrónicas.</li>
+      </ul>
+  
+      <h2>Conclusión</h2>
+      <p>
+        El hook useEffect es una herramienta poderosa para gestionar efectos secundarios en componentes funcionales de React. Al entender su comportamiento y seguir las mejores prácticas, puedes escribir aplicaciones de React eficientes y libres de errores.
+      </p>
+    </div>
+  
+    <div class="links">
+        <h3>Enlaces Relacionados:</h3>
+        <a
+          href="https://www.youtube.com/watch?v=0ZJgIjIuY7U"
+          target="_blank"
+          >YouTube Use Effect WebDev</a
+        >
+        <a
+          href="https://www.youtube.com/watch?v=0ZJgIjIuY7U"
+          target="_blank"
+          >YouTube Use Effect</a
+        >
+  
+        <a
+        href="https://chatgpt.com/c/670da687-920c-8008-8ca9-ddf76124c242"
+        target="_blank"
+        >Chat GPT use effect</a
+      >
+      <a
+      href="https://codesandbox.io/p/sandbox/jpqkj6?file=%2Fsrc%2FApp.js%3A19%2C1"
+      target="_blank"
+      >Exercise</a
+    >
+      </div>
+</section>

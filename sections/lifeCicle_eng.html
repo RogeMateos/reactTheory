@@ -1,0 +1,308 @@
+<section class="box">
+  <h1>Virtual DOM and Rendering in React</h1>
+
+  <div class="description">
+    <p>
+      To master React, it is essential to understand how the Virtual DOM works
+      and the rendering process. When a web page first loads, the browser
+      creates a data structure in memory known as the DOM (Document Object
+      Model). The DOM is essentially a tree of nodes where each node represents
+      an HTML tag with its properties.
+    </p>
+    <p>
+      React optimizes the manipulation of the actual DOM by using a Virtual DOM,
+      a simplified parallel representation of the real DOM. This strategy allows
+      React to perform updates more efficiently through the following steps:
+    </p>
+    <ul>
+      <li>
+        <strong>Creating the Virtual DOM:</strong> React builds a simplified
+        data structure that only includes the parts of the DOM it will work on.
+      </li>
+      <li>
+        <strong>Initial Rendering:</strong> Using ReactDOM.render, React
+        generates the Virtual DOM and translates it to the real DOM, displaying
+        the elements on screen.
+      </li>
+      <li>
+        <strong>Efficient Updates:</strong> When the application's state
+        changes, React creates a new version of the Virtual DOM and compares it
+        to the previous one. Only the detected differences are applied to the
+        real DOM, significantly improving performance.
+      </li>
+    </ul>
+    <p>
+      This process of comparison and updating is known as "diffing" and is one
+      of the reasons why React is so fast and efficient at handling dynamic
+      interfaces.
+    </p>
+  </div>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="code-examples">
+      Code Examples
+    </button>
+    <button class="tab-button" data-tab="lifecycle-examples">
+      Lifecycle Examples
+    </button>
+  </div>
+
+  <article id="code-examples" class="tab-content active">
+    <h2>Code Examples</h2>
+
+    <h3>1. Initial Rendering with ReactDOM.createRoot</h3>
+    <pre><code class="language-jsx">
+// index.js
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(&lt;App /&gt;);
+    </code></pre>
+
+    <h3>2. Defining Basic Components</h3>
+    <pre><code class="language-jsx">
+// App.js
+import React from 'react';
+import VideoList from './VideoList';
+
+const App = () => {
+  return (
+    &lt;div className="app" alt="Main app container"&gt;
+      &lt;h1&gt;Welcome to Useful Development&lt;/h1&gt;
+      &lt;VideoList /&gt;
+    &lt;/div&gt;
+  );
+};
+
+export default App;
+    </code></pre>
+    <pre><code class="language-jsx">
+// VideoList.js
+import React from 'react';
+import VideoItem from './VideoItem';
+
+const VideoList = () => {
+  return (
+    &lt;div className="video-list" alt="Video list"&gt;
+      &lt;VideoItem title="React Course" duration="2 hours" /&gt;
+      &lt;VideoItem title="Node.js Course" duration="3 hours" /&gt;
+      &lt;VideoItem title="JavaScript Course" duration="1.5 hours" /&gt;
+    &lt;/div&gt;
+  );
+};
+
+export default VideoList;
+    </code></pre>
+    <pre><code class="language-jsx">
+// VideoItem.js
+import React from 'react';
+
+const VideoItem = ({ title, duration }) => {
+  return (
+    &lt;div className="video-item" alt="Individual video item"&gt;
+      &lt;h2&gt;{title}&lt;/h2&gt;
+      &lt;p&gt;Duration: {duration}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+};
+
+export default VideoItem;
+    </code></pre>
+
+    <h3>3. Using setTimeout to Delay Rendering</h3>
+    <p>This example shows how to delay component rendering using setTimeout.</p>
+    <pre><code class="language-jsx">
+// index.js
+import React, { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+
+const Root = () => {
+  const [showApp, setShowApp] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowApp(true);
+    }, 5000); // 5 seconds delay
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  return showApp ? &lt;App /&gt; : &lt;div alt="Loading message"&gt;Loading...&lt;/div&gt;;
+};
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(&lt;Root /&gt;);
+    </code></pre>
+
+    <h3>4. Virtual DOM Explanation in Code</h3>
+    <p>
+      When performing the initial rendering, React creates a simplified
+      representation of the real DOM. For example, when defining components like
+      App, VideoList, and VideoItem, React builds a Virtual DOM structure that
+      is then compared to the real DOM to apply only the necessary changes.
+    </p>
+    <pre><code class="language-jsx">
+// Simplified Virtual DOM structure
+const virtualDOM = {
+  type: 'div',
+  props: { className: 'app', alt: 'Main app container' },
+  children: [
+    {
+      type: 'h1',
+      props: {},
+      children: ['Welcome to Useful Development'],
+    },
+    {
+      type: VideoList,
+      props: {},
+      children: [
+        {
+          type: VideoItem,
+          props: { title: 'React Course', duration: '2 hours' },
+          children: [],
+        },
+        // Other VideoItem...
+      ],
+    },
+  ],
+};
+    </code></pre>
+    <p>
+      When the state of a component changes, React creates a new version of the
+      Virtual DOM and compares it to the previous one. Only the detected
+      differences are applied to the real DOM, minimizing expensive operations
+      in the browser and improving performance.
+    </p>
+
+    <h3>5. Basic Component Pattern</h3>
+    <pre><code class="language-jsx">
+import ComponentA from "./ComponentA";
+
+export default function App() {
+  return (
+    &lt;div className="App" alt="Main app container"&gt;
+      &lt;ComponentA /&gt;
+    &lt;/div&gt;
+  );
+}
+    </code></pre>
+
+    <h2>Conclusion</h2>
+    <p>
+      Understanding how the Virtual DOM and the rendering process work in React
+      is essential to developing efficient and optimized applications. The
+      provided code examples demonstrate how components are structured and how
+      React efficiently handles updates.
+    </p>
+    <p>
+      To continue diving deeper into React, future content will cover topics
+      such as states and hooks, which allow managing application logic more
+      dynamically and reactively.
+    </p>
+  </article>
+
+  <article id="lifecycle-examples" class="tab-content">
+    <h2>Life Cycle in Relation to Virtual DOM and Rendering</h2>
+    <p>
+      The Virtual DOM plays a crucial role in each phase of the component's life
+      cycle:
+    </p>
+
+    <h3>Mounting:</h3>
+    <ul>
+      <li>
+        When a component is mounted, React creates its representation in the
+        Virtual DOM.
+      </li>
+      <li>
+        The render() method (or the return in functional components) defines
+        what is rendered.
+      </li>
+      <li>
+        React compares the Virtual DOM with the real DOM and updates only what
+        is necessary.
+      </li>
+    </ul>
+
+    <h3>Updating:</h3>
+    <ul>
+      <li>
+        When state or props change, React generates a new version of the Virtual
+        DOM.
+      </li>
+      <li>
+        It uses the diffing algorithm to identify the differences between the
+        previous and new versions.
+      </li>
+      <li>
+        Only the changed parts of the real DOM are updated, optimizing
+        performance.
+      </li>
+    </ul>
+
+    <h3>Unmounting:</h3>
+    <ul>
+      <li>
+        React removes the component's representation from the Virtual DOM.
+      </li>
+      <li>
+        Cleanup methods (componentWillUnmount or the cleanup function in
+        useEffect) are executed.
+      </li>
+    </ul>
+
+    <p>
+      This approach allows React to efficiently manage interface updates,
+      minimizing direct and costly manipulations of the real DOM, resulting in
+      faster and more responsive applications.
+    </p>
+
+    <h2>Practical Life Cycle Examples</h2>
+    <p>
+      Below are examples demonstrating how the different life cycle phases
+      interact with the Virtual DOM and the rendering process.
+    </p>
+
+    <h3>Example 1: Mounting and Updating with Functional Components</h3>
+    <pre><code class="language-javascript">
+import React, { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom/client';
+
+const VideoItem = ({ title, duration }) => {
+  useEffect(() => {
+    console.log(`VideoItem Mounted: ${title}`);
+
+    return () => {
+      console.log(`VideoItem Unmounted: ${title}`);
+    };
+  }, [title]);
+
+  return (
+    &lt;div className="video-item"&gt;
+      &lt;h2&gt;{title}&lt;/h2&gt;
+      &lt;p&gt;Duration: {duration}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+};
+
+const VideoList = () => {
+  const [showReactCourse, setShowReactCourse] = useState(true);
+
+  return (
+    &lt;div&gt;
+      {showReactCourse && &lt;VideoItem title="React Course" duration="2 hours" /&gt;}
+      &lt;button onClick={() => setShowReactCourse(!showReactCourse)}&gt;
+        Toggle React Course
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+};
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(&lt;VideoList /&gt;);
+    </code></pre>
+  </article>
+</section>

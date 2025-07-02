@@ -1,0 +1,219 @@
+<section class="box">
+  <h1>Use State</h1>
+
+  <div class="description">
+    <h2>Definición</h2>
+    <p>
+      El estado es un objeto que contiene datos que pueden cambiar con el
+      tiempo. En React, el estado se utiliza para controlar los cambios en la
+      interfaz.
+    </p>
+    <h2>Estado en React: Analogía del bolígrafo</h2>
+
+    <p>
+      El estado en React se puede entender utilizando la analogía de un
+      bolígrafo:
+    </p>
+
+    <h2>Propiedades estáticas (props):</h2>
+    <ul>
+      <li>Color del bolígrafo (por ejemplo, azul)</li>
+      <li>Material (por ejemplo, plástico)</li>
+      <li>Tipo de tinta (por ejemplo, líquida)</li>
+    </ul>
+    <p>
+      Estas propiedades no cambian durante la vida del bolígrafo, de manera
+      similar a como los props en React no cambian dentro de un componente.
+    </p>
+
+    <h2>Estado:</h2>
+    <ul>
+      <li>Posición del clip (abierto o cerrado)</li>
+      <li>Nivel de tinta (lleno, medio, vacío)</li>
+    </ul>
+    <p>
+      Estas propiedades pueden cambiar con el tiempo o en respuesta a acciones,
+      de manera similar a como el estado en React puede cambiar y desencadenar
+      re-renderizados.
+    </p>
+
+    <h2>Acciones que modifican el estado:</h2>
+    <ul>
+      <li>Hacer clic para abrir o cerrar el bolígrafo</li>
+      <li>Escribir, lo que disminuye gradualmente el nivel de tinta</li>
+    </ul>
+
+    <p>
+      Estas acciones son análogas a los eventos en React que pueden desencadenar
+      cambios en el estado.
+    </p>
+
+    <h2>Renderizado:</h2>
+    <p>
+      Cada vez que el estado del bolígrafo cambia (se abre/cierra o el nivel de
+      tinta cambia), es como si React "redibujara" el bolígrafo para reflejar su
+      nuevo estado.
+    </p>
+
+    <p>
+      Esta analogía ayuda a visualizar cómo los componentes en React mantienen
+      propiedades estáticas (props) y propiedades dinámicas (estado), y cómo los
+      cambios en el estado provocan que el componente se actualice visualmente.
+    </p>
+
+    <h2>Resumen del Estado</h2>
+    <p>
+      El estado es un concepto fundamental en React que permite a los
+      componentes ser dinámicos y responder a cambios.
+    </p>
+    <p>
+      El <code>useState</code> hook se utiliza para gestionar el estado en
+      componentes funcionales.
+    </p>
+    <p>
+      <code>useState</code> devuelve un arreglo con dos elementos: el valor
+      actual del estado y una función para actualizarlo.
+    </p>
+    <p>
+      Cuando el estado se actualiza, React vuelve a renderizar el componente.
+    </p>
+    <p>
+      Es importante crear una nueva referencia al actualizar un estado que es un
+      objeto o un arreglo.
+    </p>
+    <p>
+      Puedes pasar una función como valor inicial a <code>useState</code> para
+      cálculos complejos.
+    </p>
+
+    <h2>Este código muestra</h2>
+    <ul>
+      <li>Cómo importar y usar <code>useState</code>.</li>
+      <li>Cómo inicializar el estado con un valor o una función.</li>
+      <li>Cómo actualizar el estado correctamente.</li>
+      <li>Cómo usar el estado en el renderizado del componente.</li>
+    </ul>
+    <pre><code class="language-javascript">
+      import React, { useState } from 'react';
+      
+      function Likes({ initialLikes }) {
+        const [likes, setLikes] = useState(() => {
+          // Esta función solo se ejecuta en el montaje inicial
+          return initialLikes || 0;
+        });
+      
+        const handleClick = () => {
+          setLikes(prevLikes => prevLikes + 1);
+        };
+      
+        return (
+          &lt;button onClick={handleClick}&gt;
+            {likes} likes
+          &lt;/button&gt;
+        );
+      }
+      
+      function App() {
+        return (
+          &lt;div&gt;
+            &lt;Likes initialLikes={12} /&gt;
+          &lt;/div&gt;
+        );
+      }
+      
+      export default App;
+    </code></pre>
+
+    <h2>Puntos importantes sobre el manejo de objetos en el estado</h2>
+    <ul>
+      <li>
+        Cuando el estado es un objeto, es necesario usar el operador de
+        propagación (<code>{...}</code>) para mantener las propiedades
+        existentes:
+        <pre><code>setState(prevState => ({ ...prevState, newProperty: value }));</code></pre>
+      </li>
+      <li>
+        Al actualizar propiedades de un objeto en el estado, asegúrate de no
+        sobrescribir todo el objeto, sino solo actualizar las propiedades
+        necesarias.
+      </li>
+      <li>
+        Considera usar <code>useReducer</code> para una gestión de estado más
+        compleja, especialmente al trabajar con objetos grandes o estructuras de
+        estado anidadas.
+      </li>
+    </ul>
+    <h2>
+      El texto también menciona algunos puntos importantes sobre el manejo de
+      objetos en el estado:
+    </h2>
+    <pre><code class="language-javascript">
+      // Incorrecto: Mutación directa del estado
+      const handleClickIncorrect = () => {
+        likes.value += 1;
+        setLikes(likes); // Esto no causará un re-render
+      };
+    
+      // Correcto: Crear una nueva referencia
+      const handleClickCorrect = () => {
+        setLikes(prevLikes => ({
+          ...prevLikes,
+          value: prevLikes.value + 1
+        }));
+      };
+    
+      import React, { useState } from 'react';
+      
+      function Likes({ initialLikes }) {
+        const [likes, setLikes] = useState(() => {
+          // Esta función solo se ejecuta en el montaje inicial
+          return { value: initialLikes || 0 }; // Cambié a un objeto para incluir el valor
+        });
+    
+        const handleClick = () => {
+          setLikes(prevLikes => ({
+            ...prevLikes,
+            value: prevLikes.value + 1
+          }));
+        };
+      
+        return (
+          <button onClick={handleClick}>
+            {likes.value} likes
+          </button>
+        );
+      }
+      
+      function App() {
+        return (
+          <div>
+            <Likes initialLikes={12} />
+          </div>
+        );
+      }
+      
+      export default App;
+    </code></pre>
+
+    <div class="links">
+      <h3>Enlaces Relacionados:</h3>
+      <a
+        href="https://chatgpt.com/c/670c3f94-2fec-8008-a135-4a337b9a90db"
+        target="_blank"
+        >Chat GPT</a
+      >
+
+      <a
+        href="https://claude.ai/chat/440dcf62-41c7-4835-a880-ac91ebd3bf62"
+        target="_blank"
+        >Claude Use State</a
+      >
+
+      <a
+        href="https://github.com/midudev/preguntas-entrevista-react"
+        target="_blank"
+        >Midu Preguntas de React</a
+      >
+    </div>
+  </div>
+</section>

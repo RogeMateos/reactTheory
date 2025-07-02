@@ -1,0 +1,417 @@
+<section class="box">
+  <h1>Virtual DOM y Renderizado en React</h1>
+
+  <div class="description">
+    <p>
+      Para dominar React, es fundamental entender cómo funciona el Virtual DOM y
+      el proceso de renderizado. Cuando una página web se carga por primera vez,
+      el navegador crea una estructura de datos en memoria conocida como el DOM
+      (Document Object Model). El DOM es esencialmente un árbol de nodos donde
+      cada nodo representa una etiqueta HTML con sus propiedades.
+    </p>
+    <p>
+      React optimiza la manipulación del DOM real utilizando un Virtual DOM, una
+      representación simplificada y en paralelo del DOM real. Esta estrategia
+      permite que React realice actualizaciones de manera más eficiente mediante
+      los siguientes pasos:
+    </p>
+    <ul>
+      <li>
+        <strong>Creación del Virtual DOM:</strong> React construye una
+        estructura de datos simplificada que solo incluye las partes del DOM con
+        las que va a trabajar.
+      </li>
+      <li>
+        <strong>Renderizado Inicial:</strong> Utilizando ReactDOM.render, React
+        genera el Virtual DOM y lo traslada al DOM real, mostrando los elementos
+        en pantalla.
+      </li>
+      <li>
+        <strong>Actualizaciones Eficientes:</strong> Cuando el estado de la
+        aplicación cambia, React crea una nueva versión del Virtual DOM y lo
+        compara con la anterior. Solo las diferencias detectadas se aplican al
+        DOM real, lo que mejora significativamente el rendimiento.
+      </li>
+    </ul>
+    <p>
+      Este proceso de comparación y actualización se conoce como "diffing" y es
+      una de las razones por las que React es tan rápido y eficiente para
+      manejar interfaces dinámicas.
+    </p>
+  </div>
+
+  <h2>Ejemplos de Código</h2>
+
+  <h3>1. Renderizado Inicial con ReactDOM.createRoot</h3>
+  <pre><code class="language-jsx">
+// index.js
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(&lt;App /&gt;);
+  </code></pre>
+
+  <h3>2. Definición de Componentes Básicos</h3>
+  <pre><code class="language-jsx">
+// App.js
+import React from 'react';
+import VideoList from './VideoList';
+
+const App = () => {
+return (
+  &lt;div className="app" alt="Contenedor principal de la aplicación"&gt;
+      &lt;h1&gt;Bienvenido a Desarrollo Útil&lt;/h1&gt;
+      &lt;VideoList /&gt;
+  &lt;/div&gt;
+);
+};
+
+export default App;
+  </code></pre>
+  <pre><code class="language-jsx">
+// VideoList.js
+import React from 'react';
+import VideoItem from './VideoItem';
+
+const VideoList = () => {
+return (
+  &lt;div className="video-list" alt="Lista de videos"&gt;
+      &lt;VideoItem title="Curso de React" duration="2 horas" /&gt;
+      &lt;VideoItem title="Curso de Node.js" duration="3 horas" /&gt;
+      &lt;VideoItem title="Curso de JavaScript" duration="1.5 horas" /&gt;
+  &lt;/div&gt;
+);
+};
+
+export default VideoList;
+  </code></pre>
+  <pre><code class="language-jsx">
+// VideoItem.js
+import React from 'react';
+
+const VideoItem = ({ title, duration }) => {
+return (
+  &lt;div className="video-item" alt="Elemento individual de video"&gt;
+      &lt;h2&gt;{title}&lt;/h2&gt;
+      &lt;p&gt;Duración: {duration}&lt;/p&gt;
+  &lt;/div&gt;
+);
+};
+
+export default VideoItem;
+  </code></pre>
+
+  <h3>3. Uso de setTimeout para Demorar el Renderizado</h3>
+  <p>
+    Este ejemplo muestra cómo se puede retrasar el renderizado de un componente
+    utilizando setTimeout.
+  </p>
+  <pre><code class="language-jsx">
+// index.js
+import React, { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+
+const Root = () => {
+const [showApp, setShowApp] = useState(false);
+
+useEffect(() => {
+  const timer = setTimeout(() => {
+      setShowApp(true);
+  }, 5000); // 5 segundos de espera
+
+  return () => clearTimeout(timer);
+}, []);
+
+return showApp ? &lt;App /&gt; : &lt;div alt="Mensaje de carga"&gt;Cargando...&lt;/div&gt;;
+};
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(&lt;Root /&gt;);
+  </code></pre>
+
+  <h3>4. Explicación del Virtual DOM en el Código</h3>
+  <p>
+    Cuando ejecutas el renderizado inicial, React crea una representación
+    simplificada del DOM real. Por ejemplo, al definir componentes como App,
+    VideoList y VideoItem, React construye una estructura de Virtual DOM que
+    luego se compara con el DOM real para aplicar solo los cambios necesarios.
+  </p>
+  <pre><code class="language-jsx">
+// Estructura simplificada del Virtual DOM
+const virtualDOM = {
+type: 'div',
+props: { className: 'app', alt: 'Contenedor principal de la aplicación' },
+children: [
+  {
+      type: 'h1',
+      props: {},
+      children: ['Bienvenido a Desarrollo Útil'],
+  },
+  {
+      type: VideoList,
+      props: {},
+      children: [
+          {
+              type: VideoItem,
+              props: { title: 'Curso de React', duration: '2 horas' },
+              children: [],
+          },
+          // Otros VideoItem...
+      ],
+  },
+],
+};
+  </code></pre>
+  <p>
+    Cuando el estado de algún componente cambia, React crea una nueva versión
+    del Virtual DOM y lo compara con la anterior. Solo las diferencias
+    detectadas se aplican al DOM real, lo que minimiza las operaciones costosas
+    en el navegador y mejora el rendimiento.
+  </p>
+
+  <h3>5. Patrón de Componente Básico</h3>
+  <pre><code class="language-jsx">
+import ComponentA from "./ComponentA";
+
+export default function App() {
+return (
+&lt;div className="App" alt="Contenedor principal de la aplicación"&gt;
+&lt;ComponentA /&gt;
+&lt;/div&gt;
+);
+}
+  </code></pre>
+
+  <h2>Conclusión</h2>
+  <p>
+    Entender el funcionamiento del Virtual DOM y el proceso de renderizado en
+    React es esencial para desarrollar aplicaciones eficientes y optimizadas.
+    Los ejemplos de código proporcionados muestran cómo se estructuran los
+    componentes y cómo React maneja las actualizaciones de manera eficiente.
+  </p>
+  <p>
+    Para seguir profundizando en React, en próximos contenidos se abordarán
+    temas como los estados (states) y hooks, que permiten manejar la lógica de
+    la aplicación de manera más dinámica y reactiva.
+  </p>
+
+  <section class="box">
+    <h2>Life Cycle Relación con el Virtual DOM y el Renderizado</h2>
+    <p>
+      El Virtual DOM juega un papel crucial en cada fase del ciclo de vida del
+      componente:
+    </p>
+
+    <h3>Montaje:</h3>
+    <ul>
+      <li>
+        Cuando un componente se monta, React crea su representación en el
+        Virtual DOM.
+      </li>
+      <li>
+        El método render() (o el retorno en componentes funcionales) define qué
+        se renderiza.
+      </li>
+      <li>
+        React compara el Virtual DOM con el DOM real y actualiza solo lo
+        necesario.
+      </li>
+    </ul>
+
+    <h3>Actualización:</h3>
+    <ul>
+      <li>
+        Al cambiar el estado o las props, React genera una nueva versión del
+        Virtual DOM.
+      </li>
+      <li>
+        Utiliza el algoritmo de diffing para identificar las diferencias entre
+        la versión anterior y la nueva.
+      </li>
+      <li>
+        Solo las partes del DOM real que han cambiado se actualizan, optimizando
+        el rendimiento.
+      </li>
+    </ul>
+
+    <h3>Desmontaje:</h3>
+    <ul>
+      <li>React elimina la representación del componente en el Virtual DOM.</li>
+      <li>
+        Se ejecutan los métodos de limpieza (componentWillUnmount o la función
+        de limpieza en useEffect).
+      </li>
+    </ul>
+
+    <p>
+      Este enfoque permite que React maneje eficientemente las actualizaciones
+      de la interfaz, minimizando las manipulaciones directas y costosas del DOM
+      real, lo que resulta en aplicaciones más rápidas y responsivas.
+    </p>
+
+    <h2>Ejemplos Prácticos del Ciclo de Vida</h2>
+    <p>
+      A continuación, se presentan ejemplos que demuestran cómo las diferentes
+      fases del ciclo de vida interactúan con el Virtual DOM y el proceso de
+      renderizado.
+    </p>
+
+    <h3>Ejemplo 1: Montaje y Actualización con Componentes Funcionales</h3>
+    <pre><code class="language-javascript">
+  import React, { useState, useEffect } from 'react';
+  import ReactDOM from 'react-dom/client';
+  
+  const VideoItem = ({ title, duration }) => {
+    useEffect(() => {
+      console.log(`VideoItem Montado: ${title}`);
+  
+      return () => {
+        console.log(`VideoItem Desmontado: ${title}`);
+      };
+    }, [title]);
+  
+    return (
+      &lt;div className="video-item"&gt;
+        &lt;h2&gt;{title}&lt;/h2&gt;
+        &lt;p&gt;Duración: {duration}&lt;/p&gt;
+      &lt;/div&gt;
+    );
+  };
+  
+  const VideoList = () => {
+    const [videos, setVideos] = useState([
+      { id: 1, title: 'Curso de React', duration: '2 horas' },
+      { id: 2, title: 'Curso de Node.js', duration: '3 horas' },
+    ]);
+  
+    const addVideo = () => {
+      const newVideo = {
+        id: videos.length + 1,
+        title: `Curso de JavaScript ${videos.length + 1}`,
+        duration: '1.5 horas',
+      };
+      setVideos([...videos, newVideo]);
+    };
+  
+    return (
+      &lt;div className="video-list"&gt;
+        {videos.map((video) => (
+          &lt;VideoItem key={video.id} title={video.title} duration={video.duration} /&gt;
+        ))}
+        &lt;button onClick={addVideo}&gt;Añadir Video&lt;/button&gt;
+      &lt;/div&gt;
+    );
+  };
+  
+  const App = () => {
+    return (
+      &lt;div className="app"&gt;
+        &lt;h1&gt;Bienvenido a Desarrollo Útil&lt;/h1&gt;
+        &lt;VideoList /&gt;
+      &lt;/div&gt;
+    );
+  };
+  
+  const root = ReactDOM.createRoot(document.getElementById('root'));
+  root.render(&lt;App /&gt;);
+    </code></pre>
+
+    <h3>Explicación:</h3>
+    <h4>Montaje:</h4>
+    <p>
+      Al cargar la aplicación, se montan los componentes App, VideoList y los
+      primeros VideoItem. Cada VideoItem ejecuta el useEffect que registra en la
+      consola que ha sido montado.
+    </p>
+
+    <h4>Actualización:</h4>
+    <p>
+      Al hacer clic en "Añadir Video", se actualiza el estado en VideoList, lo
+      que provoca una nueva renderización. Se monta un nuevo VideoItem,
+      ejecutando nuevamente el useEffect.
+    </p>
+
+    <h4>Desmontaje:</h4>
+    <p>
+      Si se implementara una funcionalidad para eliminar videos, al desmontar un
+      VideoItem, se ejecutaría la función de limpieza en useEffect, registrando
+      en la consola que ha sido desmontado.
+    </p>
+
+    <h3>Ejemplo 2: Optimización con shouldComponentUpdate y React.memo</h3>
+
+    <h4>Componentes de Clase:</h4>
+    <pre><code class="language-javascript">
+  import React, { Component } from 'react';
+  
+  class VideoItem extends Component {
+    shouldComponentUpdate(nextProps) {
+      // Solo actualizar si el título cambia
+      return nextProps.title !== this.props.title;
+    }
+  
+    render() {
+      const { title, duration } = this.props;
+      return (
+        &lt;div className="video-item"&gt;
+          &lt;h2&gt;{title}&lt;/h2&gt;
+          &lt;p&gt;Duración: {duration}&lt;/p&gt;
+        &lt;/div&gt;
+      );
+    }
+  }
+  
+  export default VideoItem;
+    </code></pre>
+
+    <h4>Componentes Funcionales con React.memo:</h4>
+    <pre><code class="language-javascript">
+  import React from 'react';
+  
+  const VideoItem = React.memo(({ title, duration }) => {
+    console.log(`Renderizando VideoItem: ${title}`);
+    return (
+      &lt;div className="video-item"&gt;
+        &lt;h2&gt;{title}&lt;/h2&gt;
+        &lt;p&gt;Duración: {duration}&lt;/p&gt;
+      &lt;/div&gt;
+    );
+  }, (prevProps, nextProps) => {
+    return prevProps.title === nextProps.title;
+  });
+  
+  export default VideoItem;
+    </code></pre>
+
+    <h3>Explicación:</h3>
+    <h4>Componentes de Clase:</h4>
+    <p>
+      shouldComponentUpdate evita re-renderizados innecesarios verificando si
+      las props han cambiado.
+    </p>
+
+    <h4>Componentes Funcionales:</h4>
+    <p>
+      React.memo optimiza el componente funcional evitando re-renderizados si
+      las props no han cambiado. La función de comparación personalizada
+      (prevProps, nextProps) determina si el componente debe re-renderizarse.
+    </p>
+  </section>
+
+  <div class="links">
+    <h3>Enlaces Relacionados:</h3>
+    <a
+      href="https://chatgpt.com/c/670c59c3-c770-8008-add4-1e745b1a1f0a"
+      target="_blank"
+      >Virtual Dom</a
+    >
+    <a
+      href="https://chatgpt.com/share/670c5ab2-8204-8008-a459-82505f6802ae"
+      target="_blank"
+      >Virtual Dom y renderizado</a
+    >
+  </div>
+</section>

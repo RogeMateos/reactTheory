@@ -1,0 +1,124 @@
+<section id="useReducer" class="box">
+    <h2>useReducer</h2>
+    <article>
+      <h3>What is useReducer?</h3>
+      <p>
+        useReducer is an alternative to useState for managing state in React. It is useful when dealing with complex state logic, especially when multiple states need to be updated simultaneously. 
+        Similar to Redux, useReducer works with a reducer function that determines how state changes in response to actions. It is beneficial when you have multiple actions altering multiple states at once, avoiding the complexity of handling numerous useState hooks.
+      </p>
+  
+      <h3>How useReducer Differs from useState:</h3>
+      <p>
+        Both are used to manage state, but useReducer is more structured and allows for more complex state updates.
+        In useState, you manage each state individually, while in useReducer, you can manage multiple states collectively in one object, updated by actions.
+      </p>
+  
+      <h3>When to Use useReducer:</h3>
+      <p>
+        - When you have several pieces of state that change together in response to a single user interaction (e.g., a button click).<br>
+        - When managing more complex state transitions, especially those with interdependent values.
+      </p>
+  
+      <h3>How to Implement useReducer:</h3>
+      <p>
+        You start by importing useReducer and then defining an initial state object containing all the necessary pieces of state.
+        You define a reducer function that handles the logic for updating the state based on the actions dispatched.
+        A dispatch function is used to trigger state changes by passing an action to the reducer.
+      </p>
+  
+      <h3>Example Code:</h3>
+      <p>Let's go through an example based on the description.</p>
+  
+      <h4>Step 1: Setting Up Initial State</h4>
+      <p>In <code>useState</code>, we might define state like this:</p>
+  
+      <pre><code class="language-javascript">
+        const [count, setCount] = useState(0);
+        const [showText, setShowText] = useState(true);
+      </code></pre>
+  
+      <p>With <code>useReducer</code>, we consolidate both pieces of state into a single state object:</p>
+  
+      <pre><code class="language-javascript">
+        import React, { useReducer } from 'react';
+  
+        // Step 2: Define initial state
+        const initialState = { count: 0, showText: true };
+  
+        // Step 3: Define reducer function
+        function reducer(state, action) {
+          switch (action.type) {
+            case 'INCREMENT':
+              return {
+                ...state, 
+                count: state.count + 1
+              };
+            case 'TOGGLE_TEXT':
+              return {
+                ...state, 
+                showText: !state.showText
+              };
+            default:
+              return state;
+          }
+        }
+  
+        function Counter() {
+          // Step 4: Use useReducer
+          const [state, dispatch] = useReducer(reducer, initialState);
+  
+          return (
+            <div>
+              <p>Count: {state.count}</p>
+              {state.showText && <p>Text is showing!</p>}
+              
+              {/* Step 5: Dispatch actions on button click */}
+              <button onClick={() => {
+                dispatch({ type: 'INCREMENT' });
+                dispatch({ type: 'TOGGLE_TEXT' });
+              }}>
+                Increment and Toggle Text
+              </button>
+            </div>
+          );
+        }
+  
+        export default Counter;
+      </code></pre>
+  
+      <h3>Code Explanation:</h3>
+      <p>
+        The initial state object holds the variables <code>count</code> and <code>showText</code>. The reducer function handles state updates based on actions dispatched, which modify either the count or the visibility of the text. When the button is clicked, both actions are dispatched.
+      </p>
+  
+    </article>
+  
+    <div class="links">
+      <a
+      href="https://claude.ai/chat/6afcf130-bfb3-49f7-aa13-160ee64c5098"
+      target="_blank"
+      >Chat Gpt Example</a
+    >
+    <a
+    href="https://codesandbox.io/p/sandbox/gtmwsy?file=%2Fsrc%2FApp.js%3A16%2C1
+    target="_blank"
+    >Code Example</a
+  >
+      <a
+        href="https://reactjs.org/docs/hooks-reference.html#usereducer"
+        target="_blank"
+        >React Docs: useReducer</a
+      >
+      <a
+        href="https://www.youtube.com/watch?v=kK_Wqx3RnHk"
+        target="_blank"
+        >YouTube: useReducer in React</a
+      >
+      <a
+        href="https://www.smashingmagazine.com/2020/12/react-use-reducer-hook/"
+        target="_blank"
+        >Smashing Magazine: React useReducer Hook</a
+      >
+    </div>
+  </section>
+  

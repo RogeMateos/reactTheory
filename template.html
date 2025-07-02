@@ -1,0 +1,45 @@
+<section class="box">
+  <h1>Understanding the useEffect Hook in React</h1>
+
+  <div class="description">
+    <p>
+      The useEffect hook is a fundamental part of React's functional components, allowing you to perform side effects such as data fetching, subscriptions, or manual DOM manipulations. Here's a detailed breakdown of how to use useEffect effectively.
+    </p>
+
+    <h2>What is useEffect?</h2>
+    <p>
+  
+    </p>
+
+    <h2>Basic Syntax</h2>
+    <pre><code class="language-javascript">
+import React, { useState, useEffect } from 'react';
+
+function ExampleComponent() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    // Side effect: Update the document title
+    document.title = `Count: ${count}`;
+  }, [count]); // Dependency array
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Count: {count}&lt;/p&gt;
+      &lt;button onClick={() => setCount(prev =&gt; prev + 1)}&gt;Add&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+    </code></pre>
+
+      
+    <div class="links">
+      <h3>Related Links:</h3>
+      <a
+        href="https://github.com/HD-IT-Development/digital-renewals/pull/2000/files"
+        target="_blank"
+        >GitHub Pull Request</a
+      >
+    </div>
+  </section>
+  
