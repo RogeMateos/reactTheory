@@ -101,9 +101,9 @@ DESPUÉS: &lt;h1&gt;Hola Roge&lt;/h1&gt;</code></pre>
     </p>
   </div>
 
-  <h2>Ejemplos de Código</h2>
+  <h2>Ejemplos de Código – Virtual DOM y Renderizado en React</h2>
 
-  <h3>1. Renderizado Inicial con ReactDOM.createRoot</h3>
+  <h3>1️⃣ Renderizado inicial con createRoot</h3>
   <pre><code class="language-jsx">
 // index.js
 import React from 'react';
@@ -114,149 +114,141 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(&lt;App /&gt;);
   </code></pre>
 
-  <h3>2. Definición de Componentes Básicos</h3>
+  <p>🔹 En este punto:</p>
+  <ul>
+    <li>React crea el Virtual DOM inicial</li>
+    <li>Se genera el DOM real</li>
+    <li>La UI se pinta por primera vez en pantalla</li>
+  </ul>
+
+  <h3>2️⃣ Definición de componentes</h3>
   <pre><code class="language-jsx">
 // App.js
-import React from 'react';
 import VideoList from './VideoList';
 
 const App = () => {
-return (
-  &lt;div className="app" alt="Contenedor principal de la aplicación"&gt;
+  return (
+    &lt;div className="app"&gt;
       &lt;h1&gt;Bienvenido a Desarrollo Útil&lt;/h1&gt;
       &lt;VideoList /&gt;
-  &lt;/div&gt;
-);
+    &lt;/div&gt;
+  );
 };
 
 export default App;
   </code></pre>
+
   <pre><code class="language-jsx">
 // VideoList.js
-import React from 'react';
 import VideoItem from './VideoItem';
 
 const VideoList = () => {
-return (
-  &lt;div className="video-list" alt="Lista de videos"&gt;
+  return (
+    &lt;div className="video-list"&gt;
       &lt;VideoItem title="Curso de React" duration="2 horas" /&gt;
       &lt;VideoItem title="Curso de Node.js" duration="3 horas" /&gt;
       &lt;VideoItem title="Curso de JavaScript" duration="1.5 horas" /&gt;
-  &lt;/div&gt;
-);
+    &lt;/div&gt;
+  );
 };
 
 export default VideoList;
   </code></pre>
+
   <pre><code class="language-jsx">
 // VideoItem.js
-import React from 'react';
-
 const VideoItem = ({ title, duration }) => {
-return (
-  &lt;div className="video-item" alt="Elemento individual de video"&gt;
+  return (
+    &lt;div className="video-item"&gt;
       &lt;h2&gt;{title}&lt;/h2&gt;
       &lt;p&gt;Duración: {duration}&lt;/p&gt;
-  &lt;/div&gt;
-);
+    &lt;/div&gt;
+  );
 };
 
 export default VideoItem;
   </code></pre>
 
-  <h3>3. Uso de setTimeout para Demorar el Renderizado</h3>
-  <p>
-    Este ejemplo muestra cómo se puede retrasar el renderizado de un componente
-    utilizando setTimeout.
-  </p>
+  <p>🔹 Cada componente contribuye a crear el árbol del Virtual DOM.</p>
+
+  <h3>3️⃣ Re-render provocado por cambio de estado</h3>
   <pre><code class="language-jsx">
 // index.js
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 
 const Root = () => {
-const [showApp, setShowApp] = useState(false);
+  const [showApp, setShowApp] = useState(false);
 
-useEffect(() => {
-  const timer = setTimeout(() => {
+  useEffect(() => {
+    const timer = setTimeout(() => {
       setShowApp(true);
-  }, 5000); // 5 segundos de espera
+    }, 5000);
 
-  return () => clearTimeout(timer);
-}, []);
+    return () => clearTimeout(timer);
+  }, []);
 
-return showApp ? &lt;App /&gt; : &lt;div alt="Mensaje de carga"&gt;Cargando...&lt;/div&gt;;
+  return showApp ? &lt;App /&gt; : &lt;div&gt;Cargando...&lt;/div&gt;;
 };
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(&lt;Root /&gt;);
   </code></pre>
 
-  <h3>4. Explicación del Virtual DOM en el Código</h3>
-  <p>
-    Cuando ejecutas el renderizado inicial, React crea una representación
-    simplificada del DOM real. Por ejemplo, al definir componentes como App,
-    VideoList y VideoItem, React construye una estructura de Virtual DOM que
-    luego se compara con el DOM real para aplicar solo los cambios necesarios.
-  </p>
+  <p><strong>🧠 Punto clave para entender React:</strong></p>
+  <ul>
+    <li>Cada vez que cambia el state, React vuelve a ejecutar el componente</li>
+    <li>→ crea un nuevo Virtual DOM</li>
+    <li>→ lo compara con el anterior</li>
+  </ul>
+
+  <h3>4️⃣ ¿Qué pasa internamente? (Virtual DOM)</h3>
+  <p>⚠️ Esto NO es código real de React, es una representación conceptual:</p>
   <pre><code class="language-jsx">
-// Estructura simplificada del Virtual DOM
 const virtualDOM = {
-type: 'div',
-props: { className: 'app', alt: 'Contenedor principal de la aplicación' },
-children: [
-  {
-      type: 'h1',
-      props: {},
-      children: ['Bienvenido a Desarrollo Útil'],
-  },
-  {
-      type: VideoList,
-      props: {},
-      children: [
-          {
-              type: VideoItem,
-              props: { title: 'Curso de React', duration: '2 horas' },
-              children: [],
-          },
-          // Otros VideoItem...
-      ],
-  },
-],
+  type: 'div',
+  props: { className: 'app' },
+  children: [
+    { type: 'h1', children: ['Bienvenido a Desarrollo Útil'] },
+    { type: VideoList }
+  ]
 };
   </code></pre>
-  <p>
-    Cuando el estado de algún componente cambia, React crea una nueva versión
-    del Virtual DOM y lo compara con la anterior. Solo las diferencias
-    detectadas se aplican al DOM real, lo que minimiza las operaciones costosas
-    en el navegador y mejora el rendimiento.
-  </p>
 
-  <h3>5. Patrón de Componente Básico</h3>
+  <p>🔹 React compara:</p>
+  <ul>
+    <li>Virtual DOM anterior</li>
+    <li>Virtual DOM nuevo</li>
+  </ul>
+
+  <p>🔹 Y solo actualiza las diferencias en el DOM real<br>(Este proceso se llama <strong>diffing</strong>).</p>
+
+  <h3>5️⃣ Patrón básico de componente</h3>
   <pre><code class="language-jsx">
 import ComponentA from "./ComponentA";
 
 export default function App() {
-return (
-&lt;div className="App" alt="Contenedor principal de la aplicación"&gt;
-&lt;ComponentA /&gt;
-&lt;/div&gt;
-);
+  return (
+    &lt;div className="App"&gt;
+      &lt;ComponentA /&gt;
+    &lt;/div&gt;
+  );
 }
   </code></pre>
 
-  <h2>Conclusión</h2>
+  <p>🔹 React siempre renderiza:</p>
+  <ul>
+    <li>Componentes</li>
+    <li>No "pantallas completas"</li>
+    <li>No HTML suelto</li>
+  </ul>
+
+  <h2>🎯 Conclusión mejorada</h2>
   <p>
-    Entender el funcionamiento del Virtual DOM y el proceso de renderizado en
-    React es esencial para desarrollar aplicaciones eficientes y optimizadas.
-    Los ejemplos de código proporcionados muestran cómo se estructuran los
-    componentes y cómo React maneja las actualizaciones de manera eficiente.
-  </p>
-  <p>
-    Para seguir profundizando en React, en próximos contenidos se abordarán
-    temas como los estados (states) y hooks, que permiten manejar la lógica de
-    la aplicación de manera más dinámica y reactiva.
+    <strong>React no actualiza el DOM directamente.</strong><br>
+    Primero crea un nuevo Virtual DOM, lo compara con el anterior y solo aplica los cambios necesarios.<br>
+    Esto hace que las aplicaciones sean más rápidas, predecibles y fáciles de mantener.
   </p>
 
   <section class="box">
