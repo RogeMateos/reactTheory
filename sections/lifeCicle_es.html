@@ -252,206 +252,135 @@ export default function App() {
   </p>
 
   <section class="box">
-    <h2>Life Cycle Relación con el Virtual DOM y el Renderizado</h2>
+    <h2>Life Cycle, Virtual DOM, Rendering y DOM real (cómo encaja todo)</h2>
+
     <p>
-      El Virtual DOM juega un papel crucial en cada fase del ciclo de vida del
-      componente:
+      En React, cuando un componente "vive" (monta, actualiza, desmonta), pasan dos ideas clave:
     </p>
 
-    <h3>Montaje:</h3>
     <ul>
-      <li>
-        Cuando un componente se monta, React crea su representación en el
-        Virtual DOM.
-      </li>
-      <li>
-        El método render() (o el retorno en componentes funcionales) define qué
-        se renderiza.
-      </li>
-      <li>
-        React compara el Virtual DOM con el DOM real y actualiza solo lo
-        necesario.
-      </li>
-    </ul>
-
-    <h3>Actualización:</h3>
-    <ul>
-      <li>
-        Al cambiar el estado o las props, React genera una nueva versión del
-        Virtual DOM.
-      </li>
-      <li>
-        Utiliza el algoritmo de diffing para identificar las diferencias entre
-        la versión anterior y la nueva.
-      </li>
-      <li>
-        Solo las partes del DOM real que han cambiado se actualizan, optimizando
-        el rendimiento.
-      </li>
-    </ul>
-
-    <h3>Desmontaje:</h3>
-    <ul>
-      <li>React elimina la representación del componente en el Virtual DOM.</li>
-      <li>
-        Se ejecutan los métodos de limpieza (componentWillUnmount o la función
-        de limpieza en useEffect).
-      </li>
+      <li><strong>Render (reconciliación):</strong> React ejecuta tu componente para calcular qué UI debería existir (un árbol de elementos).</li>
+      <li><strong>Commit:</strong> React aplica los cambios necesarios al DOM real y luego ejecuta effects (useEffect).</li>
     </ul>
 
     <p>
-      Este enfoque permite que React maneje eficientemente las actualizaciones
-      de la interfaz, minimizando las manipulaciones directas y costosas del DOM
-      real, lo que resulta en aplicaciones más rápidas y responsivas.
+      <strong>⚠️ Importante:</strong> render no significa "pintar en el DOM". Render es calcular el resultado. El DOM se toca en la fase de commit.
     </p>
 
-    <h2>Ejemplos Prácticos del Ciclo de Vida</h2>
+    <h3>🟢 Mounting (Montaje)</h3>
+    <ul>
+      <li>React ejecuta el componente por primera vez.</li>
+      <li>Se genera el árbol "virtual" (representación de la UI).</li>
+      <li>React hace commit: crea nodos/atributos necesarios en el DOM real.</li>
+      <li>Después del commit, corre <code>useEffect(() => { ... }, [])</code> (si existe).</li>
+    </ul>
+
+    <h3>🔄 Updating (Actualización)</h3>
+    <p>Ocurre cuando cambian state, props, o el padre re-renderiza:</p>
+    <ul>
+      <li>React vuelve a ejecutar el componente (nuevo árbol).</li>
+      <li>Compara el árbol nuevo con el anterior (reconciliation / diff).</li>
+      <li>En el commit, actualiza solo lo que cambió en el DOM real.</li>
+      <li>Luego React ejecuta effects:
+        <ul>
+          <li>Si el effect tiene dependencias y cambiaron, hace:
+            <ul>
+              <li>cleanup anterior</li>
+              <li>effect nuevo</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+
+    <h3>🔴 Unmounting (Desmontaje)</h3>
+    <ul>
+      <li>React elimina el componente del árbol.</li>
+      <li>En el commit, quita sus nodos del DOM real.</li>
+      <li>Ejecuta el cleanup final del effect (si lo hay).</li>
+    </ul>
+
     <p>
-      A continuación, se presentan ejemplos que demuestran cómo las diferentes
-      fases del ciclo de vida interactúan con el Virtual DOM y el proceso de
-      renderizado.
+      <strong>✅ Resultado:</strong> React evita tocar el DOM "a mano" continuamente, y por eso es más eficiente y consistente.
     </p>
 
-    <h3>Ejemplo 1: Montaje y Actualización con Componentes Funcionales</h3>
+    <h2>Ejemplo práctico (Mount / Update / Unmount) con logs claros</h2>
+
+    <p>Este ejemplo demuestra:</p>
+    <ul>
+      <li><strong>Mount:</strong> cuando aparece el VideoItem</li>
+      <li><strong>Update:</strong> cuando cambia duration (misma instancia, re-render + effect si depende)</li>
+      <li><strong>Unmount:</strong> cuando lo ocultas (cleanup final)</li>
+    </ul>
+
     <pre><code class="language-javascript">
-  import React, { useState, useEffect } from 'react';
-  import ReactDOM from 'react-dom/client';
-  
-  const VideoItem = ({ title, duration }) => {
-    useEffect(() => {
-      console.log(`VideoItem Montado: ${title}`);
-  
-      return () => {
-        console.log(`VideoItem Desmontado: ${title}`);
-      };
-    }, [title]);
-  
-    return (
-      &lt;div className="video-item"&gt;
-        &lt;h2&gt;{title}&lt;/h2&gt;
-        &lt;p&gt;Duración: {duration}&lt;/p&gt;
-      &lt;/div&gt;
-    );
-  };
-  
-  const VideoList = () => {
-    const [videos, setVideos] = useState([
-      { id: 1, title: 'Curso de React', duration: '2 horas' },
-      { id: 2, title: 'Curso de Node.js', duration: '3 horas' },
-    ]);
-  
-    const addVideo = () => {
-      const newVideo = {
-        id: videos.length + 1,
-        title: `Curso de JavaScript ${videos.length + 1}`,
-        duration: '1.5 horas',
-      };
-      setVideos([...videos, newVideo]);
+import React, { useState, useEffect } from "react";
+import ReactDOM from "react-dom/client";
+
+function VideoItem({ title, duration }) {
+  console.log("[Render] VideoItem:", title, duration);
+
+  useEffect(() => {
+    console.log("[Effect mount] VideoItem mounted:", title);
+
+    return () => {
+      console.log("[Effect cleanup] VideoItem unmounted:", title);
     };
-  
-    return (
-      &lt;div className="video-list"&gt;
-        {videos.map((video) => (
-          &lt;VideoItem key={video.id} title={video.title} duration={video.duration} /&gt;
-        ))}
-        &lt;button onClick={addVideo}&gt;Añadir Video&lt;/button&gt;
-      &lt;/div&gt;
-    );
-  };
-  
-  const App = () => {
-    return (
-      &lt;div className="app"&gt;
-        &lt;h1&gt;Bienvenido a Desarrollo Útil&lt;/h1&gt;
-        &lt;VideoList /&gt;
-      &lt;/div&gt;
-    );
-  };
-  
-  const root = ReactDOM.createRoot(document.getElementById('root'));
-  root.render(&lt;App /&gt;);
+  }, []); // solo mount/unmount
+
+  useEffect(() => {
+    console.log("[Effect] duration changed:", duration);
+
+    return () => {
+      console.log("[Cleanup] before next duration effect:", duration);
+    };
+  }, [duration]); // update + cleanup en cada cambio de duration
+
+  return (
+    &lt;div className="video-item"&gt;
+      &lt;h2&gt;{title}&lt;/h2&gt;
+      &lt;p&gt;Duration: {duration}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}
+
+function VideoList() {
+  const [visible, setVisible] = useState(true);
+  const [duration, setDuration] = useState("2 hours");
+
+  return (
+    &lt;div&gt;
+      {visible && &lt;VideoItem title="React Course" duration={duration} /&gt;}
+
+      &lt;button onClick={() => setVisible((v) => !v)}&gt;
+        Toggle component (mount/unmount)
+      &lt;/button&gt;
+
+      &lt;button onClick={() => setDuration((d) => (d === "2 hours" ? "3 hours" : "2 hours"))}&gt;
+        Change duration (update)
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(&lt;VideoList /&gt;);
     </code></pre>
 
-    <h3>Explicación:</h3>
-    <h4>Montaje:</h4>
-    <p>
-      Al cargar la aplicación, se montan los componentes App, VideoList y los
-      primeros VideoItem. Cada VideoItem ejecuta el useEffect que registra en la
-      consola que ha sido montado.
-    </p>
+    <h3>📊 Qué verás en consola (idea mental rápida)</h3>
 
-    <h4>Actualización:</h4>
-    <p>
-      Al hacer clic en "Añadir Video", se actualiza el estado en VideoList, lo
-      que provoca una nueva renderización. Se monta un nuevo VideoItem,
-      ejecutando nuevamente el useEffect.
-    </p>
+    <h4>Al cargar:</h4>
+    <pre><code>[Render] ...
+[Effect mount] ...
+[Effect] duration changed ... (primera vez también cuenta)</code></pre>
 
-    <h4>Desmontaje:</h4>
-    <p>
-      Si se implementara una funcionalidad para eliminar videos, al desmontar un
-      VideoItem, se ejecutaría la función de limpieza en useEffect, registrando
-      en la consola que ha sido desmontado.
-    </p>
+    <h4>Al cambiar duration:</h4>
+    <pre><code>[Render] ...
+[Cleanup] before next duration effect ...
+[Effect] duration changed ...</code></pre>
 
-    <h3>Ejemplo 2: Optimización con shouldComponentUpdate y React.memo</h3>
-
-    <h4>Componentes de Clase:</h4>
-    <pre><code class="language-javascript">
-  import React, { Component } from 'react';
-  
-  class VideoItem extends Component {
-    shouldComponentUpdate(nextProps) {
-      // Solo actualizar si el título cambia
-      return nextProps.title !== this.props.title;
-    }
-  
-    render() {
-      const { title, duration } = this.props;
-      return (
-        &lt;div className="video-item"&gt;
-          &lt;h2&gt;{title}&lt;/h2&gt;
-          &lt;p&gt;Duración: {duration}&lt;/p&gt;
-        &lt;/div&gt;
-      );
-    }
-  }
-  
-  export default VideoItem;
-    </code></pre>
-
-    <h4>Componentes Funcionales con React.memo:</h4>
-    <pre><code class="language-javascript">
-  import React from 'react';
-  
-  const VideoItem = React.memo(({ title, duration }) => {
-    console.log(`Renderizando VideoItem: ${title}`);
-    return (
-      &lt;div className="video-item"&gt;
-        &lt;h2&gt;{title}&lt;/h2&gt;
-        &lt;p&gt;Duración: {duration}&lt;/p&gt;
-      &lt;/div&gt;
-    );
-  }, (prevProps, nextProps) => {
-    return prevProps.title === nextProps.title;
-  });
-  
-  export default VideoItem;
-    </code></pre>
-
-    <h3>Explicación:</h3>
-    <h4>Componentes de Clase:</h4>
-    <p>
-      shouldComponentUpdate evita re-renderizados innecesarios verificando si
-      las props han cambiado.
-    </p>
-
-    <h4>Componentes Funcionales:</h4>
-    <p>
-      React.memo optimiza el componente funcional evitando re-renderizados si
-      las props no han cambiado. La función de comparación personalizada
-      (prevProps, nextProps) determina si el componente debe re-renderizarse.
-    </p>
+    <h4>Al ocultar:</h4>
+    <pre><code>[Effect cleanup] VideoItem unmounted ...</code></pre>
   </section>
 
   <div class="links">
