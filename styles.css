@@ -93,18 +93,23 @@ p {
 .box {
   padding: 1.5rem;
   margin: 1.5rem 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .box article {
   max-width: 100%;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .description {
   width: 100%;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  box-sizing: border-box;
 }
 
 /* Links */
@@ -254,6 +259,8 @@ nav a.active {
 /* Miscellaneous */
 #content {
   min-height: 300px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* Tab Styles */
