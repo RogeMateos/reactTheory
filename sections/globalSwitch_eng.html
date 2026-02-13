@@ -1,0 +1,501 @@
+<section class="box">
+  <h1>Global Switch with React Context (Dark/Light Mode)</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="key-ideas">
+      Key Ideas
+    </button>
+    <button class="tab-button" data-tab="concept">
+      The Concept
+    </button>
+    <button class="tab-button" data-tab="implementation">
+      Complete Implementation
+    </button>
+  </div>
+
+  <article id="key-ideas" class="tab-content active">
+    <h2>0) The Key Idea (Why React Context)</h2>
+    <p>
+      When you have <strong>global state</strong> (like theme), if you pass it through props across many components, you create <strong>prop drilling</strong>: props that "travel" through components that don't even use them.
+    </p>
+    <p>
+      In your PDF, the concept is shown as <strong>"broadcast global state"</strong>: instead of passing props down every level, you connect components to the context and they read what they need directly.
+    </p>
+
+    <h2>1) What We're Going to Build</h2>
+    <p>A system where:</p>
+    <ul>
+      <li>There exists a global state: <code>theme</code> (light/dark)</li>
+      <li>There exists a global modifier: <code>setTheme(themeKey)</code> (so any component can change it)</li>
+      <li>Everything lives in a "Provider" component and is "broadcast" to the tree</li>
+      <li>Components like MovieCard or DarkModeToggle read the theme from context and change styles</li>
+    </ul>
+
+    <h2>2) Step 1 — Define Your Types + Theme List (ThemeList)</h2>
+    <p>Your notes mention that we need initial data and TypeScript to enforce the type (ThemeName).</p>
+    <pre><code class="language-jsx">
+// store/theme.ts
+export type ThemeName = "LIGHT" | "DARK";
+
+export type Theme = {
+  foreground: string;
+  background: string;
+  background_secondary: string;
+};
+
+export const themeList: Record&lt;ThemeName, Theme&gt; = {
+  LIGHT: {
+    foreground: "#111",
+    background: "#fff",
+    background_secondary: "#f3f3f3",
+  },
+  DARK: {
+    foreground: "#fff",
+    background: "#111",
+    background_secondary: "#222",
+  },
+};
+    </code></pre>
+    <p>
+      <strong>Junior Key Point:</strong> The ThemeName type limits possible options. This way, you avoid calling setTheme("blue") by mistake.
+    </p>
+
+    <h2>3) Step 2 — Create the Context (createContext) with Initial Data</h2>
+    <p>Your slides say: "Check react context" + "We need initial data".</p>
+    <p>The context normally stores an object with:</p>
+    <ul>
+      <li><code>theme</code> (active theme)</li>
+      <li><code>setTheme</code> (function to change it)</li>
+    </ul>
+    <pre><code class="language-jsx">
+// store/context.tsx
+import { createContext } from "react";
+import type { Theme, ThemeName } from "./theme";
+import { themeList } from "./theme";
+
+type ThemeContextValue = {
+  theme: Theme;
+  setTheme: (themeKey: ThemeName) =&gt; void;
+};
+
+export const ThemeContext = createContext&lt;ThemeContextValue&gt;({
+  theme: themeList.LIGHT,         // initial value
+  setTheme: () => {},             // placeholder (replaced in Provider)
+});
+    </code></pre>
+    <p>
+      <strong>Why that "placeholder" setTheme: () => {}?</strong> Because createContext requires an initial value. The real implementation goes in the Provider.
+    </p>
+
+    <h2>4) Step 3 — Create the Provider: This is Where the Global State Lives</h2>
+    <p>Your PDF is clear:</p>
+    <ul>
+      <li>"All the state lives in this component"</li>
+      <li>"broadcasted to other components by using context"</li>
+      <li>value has theme and setTheme</li>
+      <li>setTheme receives themeKey: ThemeName and uses themeList</li>
+    </ul>
+    <pre><code class="language-jsx">
+// store/ThemeProvider.tsx
+import React, { useMemo, useState } from "react";
+import { ThemeContext } from "./context";
+import { themeList, type ThemeName } from "./theme";
+
+type Props = { children: React.ReactNode };
+
+export function ThemeProvider({ children }: Props) {
+  const [activeTheme, setActiveTheme] = useState(themeList.LIGHT);
+
+  const setTheme = (themeKey: ThemeName) =&gt; {
+    setActiveTheme(themeList[themeKey]);
+  };
+
+  const value = useMemo(
+    () =&gt; ({ theme: activeTheme, setTheme }),
+    [activeTheme]
+  );
+
+  return &lt;ThemeContext.Provider value={value}&gt;{children}&lt;/ThemeContext.Provider&gt;;
+}
+    </code></pre>
+    <p>
+      <strong>Senior Detail:</strong> I use useMemo to avoid recreating the value object "just because". (It's not required for learning, but it helps avoid extra renders in consuming components.)
+    </p>
+
+    <h2>5) Step 4 — Connect the Provider to the Component Tree</h2>
+    <p>This is "Connect Context to the component tree".</p>
+    <p>Usually in main.tsx / index.tsx:</p>
+    <pre><code class="language-jsx">
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import { ThemeProvider } from "./store/ThemeProvider";
+
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  &lt;React.StrictMode&gt;
+    &lt;ThemeProvider&gt;
+      &lt;App /&gt;
+    &lt;/ThemeProvider&gt;
+  &lt;/React.StrictMode&gt;
+);
+    </code></pre>
+    <p>
+      <strong>What you've accomplished:</strong> Any component inside &lt;ThemeProvider&gt; can now access theme and setTheme without props.
+    </p>
+
+    <h2>6) Step 5 — Consume the Context in Components (e.g., MovieCard)</h2>
+    <p>Your PDF mentions "Movie card connected to context" and that the color "comes from context", and that dynamic props are modified using context.theme.foreground.</p>
+    <pre><code class="language-jsx">
+import React, { useContext } from "react";
+import { ThemeContext } from "../store/context";
+
+export function MovieCardTitle({ title }: { title: string }) {
+  const { theme } = useContext(ThemeContext);
+
+  return (
+    &lt;h3 style={{ color: theme.foreground }}&gt;
+      {title}
+    &lt;/h3&gt;
+  );
+}
+    </code></pre>
+    <p>
+      <strong>Junior Mental Model:</strong>
+    </p>
+    <ul>
+      <li><strong>Before:</strong> App → MovieList → MovieCard → Title passing theme through props</li>
+      <li><strong>After:</strong> Title reads it directly from Context</li>
+    </ul>
+
+    <h2>7) Step 6 — Create the "Global Switch" (DarkModeToggle)</h2>
+    <p>In your slide you see a DarkModeToggle.tsx component that:</p>
+    <ul>
+      <li>uses useContext</li>
+      <li>depends on the active theme</li>
+      <li>calls context.setTheme(ThemeName.LIGHT/DARK)</li>
+      <li>is connected to the context, and when it changes, it affects the rest</li>
+    </ul>
+    <pre><code class="language-jsx">
+import React, { useContext } from "react";
+import { ThemeContext } from "../store/context";
+
+export function DarkModeToggle() {
+  const { theme, setTheme } = useContext(ThemeContext);
+
+  const isDark = theme.background === "#111";
+
+  return (
+    &lt;button
+      onClick={() =&gt; setTheme(isDark ? "LIGHT" : "DARK")}
+    &gt;
+      {isDark ? "Switch to Light" : "Switch to Dark"}
+    &lt;/button&gt;
+  );
+}
+    </code></pre>
+    <p>If you want to replicate the PDF's "toggle" idea:</p>
+    <ul>
+      <li>defaultChecked depends on the active theme</li>
+      <li>onChange changes the theme</li>
+    </ul>
+
+    <h2>8) Step 7 — "Connected" Styles to Theme (Styled Folder Idea)</h2>
+    <p>Your PDF mentions:</p>
+    <ul>
+      <li>"Styled folder"</li>
+      <li>components that are reflections of styled components</li>
+      <li>change color because they consume context</li>
+    </ul>
+    <p>A typical way: create wrappers that use theme from context.</p>
+    <pre><code class="language-jsx">
+import React, { useContext } from "react";
+import { ThemeContext } from "../store/context";
+
+export function PageContainer({ children }: { children: React.ReactNode }) {
+  const { theme } = useContext(ThemeContext);
+
+  return (
+    &lt;div style={{ background: theme.background, minHeight: "100vh" }}&gt;
+      {children}
+    &lt;/div&gt;
+  );
+}
+    </code></pre>
+
+    <h2>9) The Most Important Thing to Really Understand</h2>
+    <h3>A) "Pass State Modifier Down"</h3>
+    <p>Your slides say: "We pass state modifier down… so the component can go all the way back change the state… and all components connected refresh".</p>
+    <p>
+      <strong>Senior Translation:</strong> Instead of just passing theme, you also pass the ability to change it: setTheme. When you call setTheme, it changes the Provider's state → React re-renders Provider → re-renders consumers.
+    </p>
+    <h3>B) Context is Not "Magic"</h3>
+    <p>Context is:</p>
+    <ul>
+      <li>A Provider above with real state (useState / useReducer)</li>
+      <li>A shared value</li>
+      <li>useContext below to read it</li>
+    </ul>
+
+    <h2>10) Final Checklist (If Something Doesn't Work)</h2>
+    <ul>
+      <li>Does your &lt;ThemeProvider&gt; wrap &lt;App /&gt;? (if not, useContext will read the initial value and your setTheme dummy won't do anything)</li>
+      <li>Does setTheme use ThemeName and themeList[themeKey]?</li>
+      <li>Are your components consuming ThemeContext inside the tree?</li>
+    </ul>
+
+    <h2>Related Links</h2>
+    <ul>
+      <li>
+        <a href="https://react.dev/reference/react/useContext" target="_blank">
+          React useContext Documentation
+        </a>
+      </li>
+      <li>
+        <a href="https://react.dev/reference/react/createContext" target="_blank">
+          React createContext Documentation
+        </a>
+      </li>
+    </ul>
+  </article>
+
+  <article id="concept" class="tab-content">
+    <h2>Why React Context? (The Problem: Prop Drilling)</h2>
+    <p>
+      When you have <strong>global state</strong> (like theme), passing it through props across many levels causes <strong>prop drilling</strong>: props travel through components that don't even use them.
+    </p>
+
+    <h3>Without Context (Prop Drilling ❌)</h3>
+    <pre><code class="language-jsx">
+// Props must pass through every level:
+// App -> MovieList -> MovieCard -> Title
+// Even if MovieList doesn't need 'theme'!
+
+&lt;App theme="dark" /&gt;
+  &lt;MovieList theme={theme} /&gt;
+    &lt;MovieCard theme={theme} /&gt;
+      &lt;Title theme={theme} /&gt;
+    </code></pre>
+
+    <h3>With Context (Broadcast ✅)</h3>
+    <p>
+      Instead of passing props down every level, components <strong>connect directly to the context</strong> and read what they need.
+    </p>
+    <pre><code class="language-jsx">
+// Title reads directly from context, no props needed!
+&lt;ThemeProvider&gt;
+  &lt;App /&gt;
+    &lt;MovieList /&gt;
+      &lt;MovieCard /&gt;
+        &lt;Title /&gt; {/* Reads theme from context directly */}
+&lt;/ThemeProvider&gt;
+    </code></pre>
+
+    <h2>Key Principles</h2>
+    <ol>
+      <li><strong>Single Source of Truth:</strong> State lives in one Provider component</li>
+      <li><strong>Broadcast to Tree:</strong> Value is available to all descendants</li>
+      <li><strong>Pass State Modifier Down:</strong> Components can call setTheme to change global state</li>
+      <li><strong>Auto Refresh:</strong> When state changes, all consuming components re-render</li>
+    </ol>
+
+    <h2>Related Links</h2>
+    <ul>
+      <li>
+        <a href="https://react.dev/reference/react/useContext" target="_blank">
+          React useContext Documentation
+        </a>
+      </li>
+      <li>
+        <a href="https://react.dev/reference/react/createContext" target="_blank">
+          React createContext Documentation
+        </a>
+      </li>
+    </ul>
+  </article>
+
+  <article id="implementation" class="tab-content">
+    <h2>Complete Implementation</h2>
+    <p>
+      Here's how to build a global dark/light mode switcher step by step.
+    </p>
+
+    <h3>Step 1: Define Types and Theme List</h3>
+    <p><strong>store/theme.ts</strong> - Create initial data and use TypeScript to enforce valid theme names.</p>
+    <pre><code class="language-jsx">
+export type ThemeName = "LIGHT" | "DARK";
+
+export type Theme = {
+  foreground: string;
+  background: string;
+  background_secondary: string;
+};
+
+export const themeList: Record&lt;ThemeName, Theme&gt; = {
+  LIGHT: {
+    foreground: "#111",
+    background: "#fff",
+    background_secondary: "#f3f3f3",
+  },
+  DARK: {
+    foreground: "#fff",
+    background: "#111",
+    background_secondary: "#222",
+  },
+};
+    </code></pre>
+
+    <h3>Step 2: Create the Context</h3>
+    <p><strong>store/context.tsx</strong> - createContext holds the shape of data we'll share.</p>
+    <pre><code class="language-jsx">
+import { createContext } from "react";
+import type { Theme, ThemeName } from "./theme";
+import { themeList } from "./theme";
+
+type ThemeContextValue = {
+  theme: Theme;
+  setTheme: (themeKey: ThemeName) =&gt; void;
+};
+
+export const ThemeContext = createContext&lt;ThemeContextValue&gt;({
+  theme: themeList.LIGHT,  // Initial theme
+  setTheme: () => {},      // Placeholder (real implementation in Provider)
+});
+    </code></pre>
+
+    <h3>Step 3: Create the Provider</h3>
+    <p><strong>store/ThemeProvider.tsx</strong> - This is where "all the state lives" and gets broadcast to children.</p>
+    <pre><code class="language-jsx">
+import React, { useMemo, useState } from "react";
+import { ThemeContext } from "./context";
+import { themeList, type ThemeName } from "./theme";
+
+type Props = { children: React.ReactNode };
+
+export function ThemeProvider({ children }: Props) {
+  const [activeTheme, setActiveTheme] = useState(themeList.LIGHT);
+
+  const setTheme = (themeKey: ThemeName) =&gt; {
+    setActiveTheme(themeList[themeKey]);
+  };
+
+  const value = useMemo(
+    () =&gt; ({ theme: activeTheme, setTheme }),
+    [activeTheme]
+  );
+
+  return (
+    &lt;ThemeContext.Provider value={value}&gt;
+      {children}
+    &lt;/ThemeContext.Provider&gt;
+  );
+}
+    </code></pre>
+
+    <h3>Step 4: Connect Provider to Tree</h3>
+    <p><strong>main.tsx</strong> - Wrap your app with ThemeProvider so all components can access the context.</p>
+    <pre><code class="language-jsx">
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import { ThemeProvider } from "./store/ThemeProvider";
+
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  &lt;React.StrictMode&gt;
+    &lt;ThemeProvider&gt;
+      &lt;App /&gt;
+    &lt;/ThemeProvider&gt;
+  &lt;/React.StrictMode&gt;
+);
+    </code></pre>
+
+    <h3>Step 5: Consume Context in Components</h3>
+    <p><strong>components/MovieCardTitle.tsx</strong> - Use useContext to read theme in any component.</p>
+    <pre><code class="language-jsx">
+import React, { useContext } from "react";
+import { ThemeContext } from "../store/context";
+
+export function MovieCardTitle({ title }: { title: string }) {
+  const { theme } = useContext(ThemeContext);
+
+  return (
+    &lt;h3 style={{ color: theme.foreground }}&gt;
+      {title}
+    &lt;/h3&gt;
+  );
+}
+    </code></pre>
+
+    <h3>Step 6: Create the Global Switch</h3>
+    <p><strong>components/DarkModeToggle.tsx</strong> - This component changes the global theme for everyone.</p>
+    <pre><code class="language-jsx">
+import React, { useContext } from "react";
+import { ThemeContext } from "../store/context";
+
+export function DarkModeToggle() {
+  const { theme, setTheme } = useContext(ThemeContext);
+
+  const isDark = theme.background === "#111";
+
+  return (
+    &lt;button
+      onClick={() =&gt; setTheme(isDark ? "LIGHT" : "DARK")}
+    &gt;
+      {isDark ? "☀️ Light Mode" : "🌙 Dark Mode"}
+    &lt;/button&gt;
+  );
+}
+    </code></pre>
+
+    <h3>Step 7: Use in Your App</h3>
+    <p><strong>App.tsx</strong> - All components inside can now read and modify the theme.</p>
+    <pre><code class="language-jsx">
+import { useContext } from "react";
+import { ThemeContext } from "./store/context";
+import { DarkModeToggle } from "./components/DarkModeToggle";
+import { MovieList } from "./components/MovieList";
+
+export default function App() {
+  const { theme } = useContext(ThemeContext);
+
+  return (
+    &lt;div style={{
+      background: theme.background,
+      color: theme.foreground,
+      minHeight: "100vh",
+      padding: "20px"
+    }}&gt;
+      &lt;header&gt;
+        &lt;h1&gt;My Movies&lt;/h1&gt;
+        &lt;DarkModeToggle /&gt;
+      &lt;/header&gt;
+      &lt;MovieList /&gt;
+    &lt;/div&gt;
+  );
+}
+    </code></pre>
+
+    <h2>How It Works (The Flow)</h2>
+    <ol>
+      <li>User clicks DarkModeToggle button</li>
+      <li>Button calls setTheme("DARK")</li>
+      <li>Provider's state updates (activeTheme changes)</li>
+      <li>Provider re-renders with new context value</li>
+      <li>ALL components using useContext(ThemeContext) automatically re-render</li>
+      <li>Everything sees the new theme instantly!</li>
+    </ol>
+
+    <h2>Related Links</h2>
+    <ul>
+      <li>
+        <a href="https://react.dev/learn/passing-data-deeply-with-context" target="_blank">
+          React Context Step-by-Step Guide
+        </a>
+      </li>
+      <li>
+        <a href="https://react.dev/reference/react/useMemo" target="_blank">
+          React useMemo Hook
+        </a>
+      </li>
+    </ul>
+  </article>
+</section>

@@ -1,0 +1,125 @@
+<section class="box">
+  <h1>React Interview Questions</h1>
+
+  <div class="description">
+    <p>
+      Common React interview questions with detailed explanations to help you prepare for technical interviews.
+    </p>
+  </div>
+
+  <article class="interview-question">
+    <h2>📝 "How would you access the previous state or prop in React?"</h2>
+
+    <p>In React function components, every render is a fresh function call. That means:</p>
+    <ul>
+      <li>You can't just say "give me the previous count" automatically.</li>
+      <li>State/props you read inside render are always the current render's values.</li>
+      <li>If you want the previous value, you must store it somewhere that survives renders.</li>
+    </ul>
+    <p>That "somewhere" is usually a <strong>ref</strong>.</p>
+
+    <h3>🧠 The Core Idea (What Interviewers Want You to Understand)</h3>
+
+    <h4>1) useRef persists across renders</h4>
+    <ul>
+      <li>A ref object (<code>ref.current</code>) keeps the same identity between renders.</li>
+      <li>Updating <code>ref.current</code> does not trigger a re-render.</li>
+      <li>So it's perfect for "remembering something".</li>
+    </ul>
+
+    <h4>2) useEffect runs after the render is committed</h4>
+    <ul>
+      <li>useEffect runs after React paints the UI for that render.</li>
+      <li>So inside the effect, you can say: "Now that the UI shows the latest value, save it as the previous value for next time."</li>
+    </ul>
+
+    <h4>3) Combine both</h4>
+    <ul>
+      <li><strong>During render:</strong> you read <code>ref.current</code> → that's the previous value.</li>
+      <li><strong>After render:</strong> useEffect updates <code>ref.current</code> to the current value.</li>
+      <li><strong>Next render:</strong> the ref holds the value from last time.</li>
+    </ul>
+    <p>That is literally a <code>usePrevious</code> hook.</p>
+
+    <h3>🛠️ Step-by-Step Tutorial: Build usePrevious</h3>
+
+    <h4>Step 1 — Create the hook</h4>
+    <pre><code class="language-javascript">
+import { useEffect, useRef } from "react";
+
+export function usePrevious(value) {
+  const ref = useRef();
+
+  useEffect(() => {
+    ref.current = value;
+  }, [value]);
+
+  return ref.current;
+}
+    </code></pre>
+
+    <h4>Step 2 — Understand what happens on each render</h4>
+    <p>Imagine <code>value</code> is <code>count</code>.</p>
+
+    <p><strong>First render (count = 0)</strong></p>
+    <ul>
+      <li><code>ref.current</code> is <code>undefined</code> (nothing stored yet)</li>
+      <li>hook returns <code>undefined</code> → previous is unknown (expected)</li>
+      <li>effect runs after paint → sets <code>ref.current = 0</code></li>
+    </ul>
+
+    <p><strong>Second render (count = 1)</strong></p>
+    <ul>
+      <li><code>ref.current</code> is <code>0</code> (stored from last render)</li>
+      <li>hook returns <code>0</code> → previous count is 0</li>
+      <li>effect runs after paint → sets <code>ref.current = 1</code></li>
+    </ul>
+
+    <p>…and so on. <strong>✅ That's why it works.</strong></p>
+
+    <h4>Step 3 — Use it in a component</h4>
+    <pre><code class="language-javascript">
+import React, { useState } from "react";
+import { usePrevious } from "./usePrevious";
+
+export default function CounterDemo() {
+  const [count, setCount] = useState(0);
+  const prevCount = usePrevious(count);
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Current: {count}&lt;/p&gt;
+      &lt;p&gt;Previous: {prevCount ?? "—"}&lt;/p&gt;
+
+      &lt;button onClick={() => setCount((c) => c + 1)}&gt;+&lt;/button&gt;
+      &lt;button onClick={() => setCount((c) => c - 1)}&gt;-&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+    </code></pre>
+
+    <h3>💡 Why Interviewers Like This Question</h3>
+    <p>Because it tests if you understand:</p>
+    <ul>
+      <li>Renders are snapshots</li>
+      <li>Refs persist without re-render</li>
+      <li>Effects happen after render, so they're great for "store current as previous"</li>
+    </ul>
+
+    <h3>⚠️ Common Pitfalls (Good to Mention in Interviews)</h3>
+
+    <h4>Pitfall 1: Using useState to store previous value</h4>
+    <p>You can, but it causes extra renders if you update it. <code>useRef</code> avoids that.</p>
+
+    <h4>Pitfall 2: Expecting the first previous value not to be undefined</h4>
+    <p>On first render there is no "previous", so <code>undefined</code> is correct. You can fallback with <code>??</code>.</p>
+
+    <h4>Pitfall 3: "Why not set ref during render?"</h4>
+    <p>Because you'd overwrite the previous value before returning it. You want to update it after render → <code>useEffect</code>.</p>
+
+    <h3>✅ A Strong Interview Answer (Short Script)</h3>
+    <blockquote>
+      "React doesn't give previous state/props directly in function components. I'd store the current value in a ref, because refs persist across renders without triggering re-renders. Then I'd update that ref in a useEffect that runs after each render. The hook returns ref.current, which is the value from the last render."
+    </blockquote>
+  </article>
+</section>

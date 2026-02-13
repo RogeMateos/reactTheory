@@ -1,0 +1,125 @@
+<section class="box">
+  <h1>Preguntas de Entrevista de React</h1>
+
+  <div class="description">
+    <p>
+      Preguntas comunes de entrevistas de React con explicaciones detalladas para ayudarte a prepararte para entrevistas técnicas.
+    </p>
+  </div>
+
+  <article class="interview-question">
+    <h2>📝 "¿Cómo accederías al estado o prop anterior en React?"</h2>
+
+    <p>En componentes funcionales de React, cada render es una nueva llamada a la función. Esto significa:</p>
+    <ul>
+      <li>No puedes simplemente decir "dame el count anterior" automáticamente.</li>
+      <li>El estado/props que lees dentro del render son siempre los valores del render actual.</li>
+      <li>Si quieres el valor anterior, debes guardarlo en algún lugar que sobreviva entre renders.</li>
+    </ul>
+    <p>Ese "algún lugar" es normalmente un <strong>ref</strong>.</p>
+
+    <h3>🧠 La Idea Central (Lo que los Entrevistadores Quieren que Entiendas)</h3>
+
+    <h4>1) useRef persiste entre renders</h4>
+    <ul>
+      <li>Un objeto ref (<code>ref.current</code>) mantiene la misma identidad entre renders.</li>
+      <li>Actualizar <code>ref.current</code> no dispara un re-render.</li>
+      <li>Por eso es perfecto para "recordar algo".</li>
+    </ul>
+
+    <h4>2) useEffect se ejecuta después de que el render se confirma</h4>
+    <ul>
+      <li>useEffect se ejecuta después de que React pinta la UI para ese render.</li>
+      <li>Entonces, dentro del effect, puedes decir: "Ahora que la UI muestra el último valor, guárdalo como el valor anterior para la próxima vez."</li>
+    </ul>
+
+    <h4>3) Combina ambos</h4>
+    <ul>
+      <li><strong>Durante el render:</strong> lees <code>ref.current</code> → ese es el valor anterior.</li>
+      <li><strong>Después del render:</strong> useEffect actualiza <code>ref.current</code> al valor actual.</li>
+      <li><strong>Siguiente render:</strong> el ref contiene el valor de la última vez.</li>
+    </ul>
+    <p>Eso es literalmente un hook <code>usePrevious</code>.</p>
+
+    <h3>🛠️ Tutorial Paso a Paso: Construir usePrevious</h3>
+
+    <h4>Paso 1 — Crear el hook</h4>
+    <pre><code class="language-javascript">
+import { useEffect, useRef } from "react";
+
+export function usePrevious(value) {
+  const ref = useRef();
+
+  useEffect(() => {
+    ref.current = value;
+  }, [value]);
+
+  return ref.current;
+}
+    </code></pre>
+
+    <h4>Paso 2 — Entender qué pasa en cada render</h4>
+    <p>Imagina que <code>value</code> es <code>count</code>.</p>
+
+    <p><strong>Primer render (count = 0)</strong></p>
+    <ul>
+      <li><code>ref.current</code> es <code>undefined</code> (nada guardado aún)</li>
+      <li>el hook retorna <code>undefined</code> → el anterior es desconocido (esperado)</li>
+      <li>effect se ejecuta después del pintado → establece <code>ref.current = 0</code></li>
+    </ul>
+
+    <p><strong>Segundo render (count = 1)</strong></p>
+    <ul>
+      <li><code>ref.current</code> es <code>0</code> (guardado del último render)</li>
+      <li>el hook retorna <code>0</code> → el count anterior es 0</li>
+      <li>effect se ejecuta después del pintado → establece <code>ref.current = 1</code></li>
+    </ul>
+
+    <p>…y así sucesivamente. <strong>✅ Por eso funciona.</strong></p>
+
+    <h4>Paso 3 — Usarlo en un componente</h4>
+    <pre><code class="language-javascript">
+import React, { useState } from "react";
+import { usePrevious } from "./usePrevious";
+
+export default function CounterDemo() {
+  const [count, setCount] = useState(0);
+  const prevCount = usePrevious(count);
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Actual: {count}&lt;/p&gt;
+      &lt;p&gt;Anterior: {prevCount ?? "—"}&lt;/p&gt;
+
+      &lt;button onClick={() => setCount((c) => c + 1)}&gt;+&lt;/button&gt;
+      &lt;button onClick={() => setCount((c) => c - 1)}&gt;-&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+    </code></pre>
+
+    <h3>💡 Por Qué a los Entrevistadores les Gusta Esta Pregunta</h3>
+    <p>Porque evalúa si entiendes:</p>
+    <ul>
+      <li>Los renders son snapshots (instantáneas)</li>
+      <li>Los refs persisten sin causar re-render</li>
+      <li>Los effects ocurren después del render, así que son ideales para "guardar el actual como anterior"</li>
+    </ul>
+
+    <h3>⚠️ Errores Comunes (Buenos para Mencionar en Entrevistas)</h3>
+
+    <h4>Error 1: Usar useState para guardar el valor anterior</h4>
+    <p>Puedes hacerlo, pero causa renders extra si lo actualizas. <code>useRef</code> evita eso.</p>
+
+    <h4>Error 2: Esperar que el primer valor anterior no sea undefined</h4>
+    <p>En el primer render no hay "anterior", así que <code>undefined</code> es correcto. Puedes usar fallback con <code>??</code>.</p>
+
+    <h4>Error 3: "¿Por qué no establecer el ref durante el render?"</h4>
+    <p>Porque sobrescribirías el valor anterior antes de retornarlo. Quieres actualizarlo después del render → <code>useEffect</code>.</p>
+
+    <h3>✅ Una Respuesta Fuerte para Entrevistas (Guión Corto)</h3>
+    <blockquote>
+      "React no proporciona el estado/props anterior directamente en componentes funcionales. Yo guardaría el valor actual en un ref, porque los refs persisten entre renders sin disparar re-renders. Luego actualizaría ese ref en un useEffect que se ejecuta después de cada render. El hook retorna ref.current, que es el valor del último render."
+    </blockquote>
+  </article>
+</section>

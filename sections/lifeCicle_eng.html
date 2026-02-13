@@ -263,80 +263,89 @@ export default function App() {
   </article>
 
   <article id="lifecycle-examples" class="tab-content">
-    <h2>Life Cycle in Relation to Virtual DOM and Rendering</h2>
+    <h2>Life Cycle, Virtual DOM, Rendering and Real DOM (How It All Fits Together)</h2>
+
     <p>
-      The Virtual DOM plays a crucial role in each phase of the component's life
-      cycle:
+      In React, when a component "lives" (mounts, updates, unmounts), two key ideas happen:
     </p>
 
-    <h3>Mounting:</h3>
     <ul>
-      <li>
-        When a component is mounted, React creates its representation in the
-        Virtual DOM.
-      </li>
-      <li>
-        The render() method (or the return in functional components) defines
-        what is rendered.
-      </li>
-      <li>
-        React compares the Virtual DOM with the real DOM and updates only what
-        is necessary.
-      </li>
-    </ul>
-
-    <h3>Updating:</h3>
-    <ul>
-      <li>
-        When state or props change, React generates a new version of the Virtual
-        DOM.
-      </li>
-      <li>
-        It uses the diffing algorithm to identify the differences between the
-        previous and new versions.
-      </li>
-      <li>
-        Only the changed parts of the real DOM are updated, optimizing
-        performance.
-      </li>
-    </ul>
-
-    <h3>Unmounting:</h3>
-    <ul>
-      <li>
-        React removes the component's representation from the Virtual DOM.
-      </li>
-      <li>
-        Cleanup methods (componentWillUnmount or the cleanup function in
-        useEffect) are executed.
-      </li>
+      <li><strong>Render (reconciliation):</strong> React executes your component to calculate what UI should exist (a tree of elements).</li>
+      <li><strong>Commit:</strong> React applies the necessary changes to the real DOM and then executes effects (useEffect).</li>
     </ul>
 
     <p>
-      This approach allows React to efficiently manage interface updates,
-      minimizing direct and costly manipulations of the real DOM, resulting in
-      faster and more responsive applications.
+      <strong>⚠️ Important:</strong> render does not mean "paint to the DOM". Render is calculating the result. The DOM is touched in the commit phase.
     </p>
 
-    <h2>Practical Life Cycle Examples</h2>
+    <h3>🟢 Mounting</h3>
+    <ul>
+      <li>React executes the component for the first time.</li>
+      <li>The "virtual" tree is generated (UI representation).</li>
+      <li>React commits: creates necessary nodes/attributes in the real DOM.</li>
+      <li>After commit, runs <code>useEffect(() => { ... }, [])</code> (if it exists).</li>
+    </ul>
+
+    <h3>🔄 Updating</h3>
+    <p>Occurs when state, props change, or the parent re-renders:</p>
+    <ul>
+      <li>React re-executes the component (new tree).</li>
+      <li>Compares the new tree with the previous one (reconciliation / diff).</li>
+      <li>In commit, updates only what changed in the real DOM.</li>
+      <li>Then React executes effects:
+        <ul>
+          <li>If the effect has dependencies and they changed, it does:
+            <ul>
+              <li>previous cleanup</li>
+              <li>new effect</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+
+    <h3>🔴 Unmounting</h3>
+    <ul>
+      <li>React removes the component from the tree.</li>
+      <li>In commit, removes its nodes from the real DOM.</li>
+      <li>Executes the final effect cleanup (if any).</li>
+    </ul>
+
     <p>
-      Below are examples demonstrating how the different life cycle phases
-      interact with the Virtual DOM and the rendering process.
+      <strong>✅ Result:</strong> React avoids touching the DOM "manually" continuously, which is why it's more efficient and consistent.
     </p>
 
-    <h3>Example 1: Mounting and Updating with Functional Components</h3>
+    <h2>Practical Example (Mount / Update / Unmount) with Clear Logs</h2>
+
+    <p>This example demonstrates:</p>
+    <ul>
+      <li><strong>Mount:</strong> when VideoItem appears</li>
+      <li><strong>Update:</strong> when duration changes (same instance, re-render + effect if it depends)</li>
+      <li><strong>Unmount:</strong> when you hide it (final cleanup)</li>
+    </ul>
+
     <pre><code class="language-javascript">
-import React, { useState, useEffect } from 'react';
-import ReactDOM from 'react-dom/client';
+import React, { useState, useEffect } from "react";
+import ReactDOM from "react-dom/client";
 
-const VideoItem = ({ title, duration }) => {
+function VideoItem({ title, duration }) {
+  console.log("[Render] VideoItem:", title, duration);
+
   useEffect(() => {
-    console.log(`VideoItem Mounted: ${title}`);
+    console.log("[Effect mount] VideoItem mounted:", title);
 
     return () => {
-      console.log(`VideoItem Unmounted: ${title}`);
+      console.log("[Effect cleanup] VideoItem unmounted:", title);
     };
-  }, [title]);
+  }, []); // only mount/unmount
+
+  useEffect(() => {
+    console.log("[Effect] duration changed:", duration);
+
+    return () => {
+      console.log("[Cleanup] before next duration effect:", duration);
+    };
+  }, [duration]); // update + cleanup on each duration change
 
   return (
     &lt;div className="video-item"&gt;
@@ -344,23 +353,44 @@ const VideoItem = ({ title, duration }) => {
       &lt;p&gt;Duration: {duration}&lt;/p&gt;
     &lt;/div&gt;
   );
-};
+}
 
-const VideoList = () => {
-  const [showReactCourse, setShowReactCourse] = useState(true);
+function VideoList() {
+  const [visible, setVisible] = useState(true);
+  const [duration, setDuration] = useState("2 hours");
 
   return (
     &lt;div&gt;
-      {showReactCourse && &lt;VideoItem title="React Course" duration="2 hours" /&gt;}
-      &lt;button onClick={() => setShowReactCourse(!showReactCourse)}&gt;
-        Toggle React Course
+      {visible && &lt;VideoItem title="React Course" duration={duration} /&gt;}
+
+      &lt;button onClick={() => setVisible((v) => !v)}&gt;
+        Toggle component (mount/unmount)
+      &lt;/button&gt;
+
+      &lt;button onClick={() => setDuration((d) => (d === "2 hours" ? "3 hours" : "2 hours"))}&gt;
+        Change duration (update)
       &lt;/button&gt;
     &lt;/div&gt;
   );
-};
+}
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(&lt;VideoList /&gt;);
     </code></pre>
+
+    <h3>📊 What You'll See in Console (Quick Mental Idea)</h3>
+
+    <h4>On load:</h4>
+    <pre><code>[Render] ...
+[Effect mount] ...
+[Effect] duration changed ... (first time also counts)</code></pre>
+
+    <h4>On duration change:</h4>
+    <pre><code>[Render] ...
+[Cleanup] before next duration effect ...
+[Effect] duration changed ...</code></pre>
+
+    <h4>On hide:</h4>
+    <pre><code>[Effect cleanup] VideoItem unmounted ...</code></pre>
   </article>
 </section>

@@ -8,6 +8,9 @@
     <button class="tab-button" data-tab="context-example">
       Context Example
     </button>
+    <button class="tab-button" data-tab="key-concepts">
+      Key Concepts
+    </button>
   </div>
 
   <article id="props-example" class="tab-content active">
@@ -214,6 +217,151 @@ export default ComponentD;
           href="https://www.youtube.com/watch?v=FpNfvbNYPsg&t=195s"
           target="_blank"
           >YouTube Tutorial</a
+        >
+      </li>
+    </ul>
+  </article>
+
+  <article id="key-concepts" class="tab-content">
+    <h2>0) The Key Idea (Why React Context)</h2>
+    <p>
+      When you have <strong>global state</strong> (like a user, theme, etc.), if you pass it through props across many components, you create <strong>prop drilling</strong>: props that "travel" through components that don't even use them.
+    </p>
+
+    <h2>The Problem: Prop Drilling</h2>
+    <pre><code class="language-jsx">
+// Props must pass through every level:
+// App -> ComponentA -> ComponentB -> ComponentC -> ComponentD
+// Even if ComponentB and ComponentC don't need 'user'!
+
+&lt;App /&gt;
+  &lt;ComponentA user={user} /&gt;
+    &lt;ComponentB user={user} /&gt;
+      &lt;ComponentC user={user} /&gt;
+        &lt;ComponentD user={user} /&gt; {/* Finally uses it here */}
+    </code></pre>
+
+    <h2>The Solution: React Context</h2>
+    <p>
+      Instead of passing props down every level, you connect components to the context and they read what they need directly.
+    </p>
+    <pre><code class="language-jsx">
+// With Context, ComponentD reads directly without prop drilling
+&lt;UserProvider&gt;
+  &lt;App /&gt;
+    &lt;ComponentA /&gt;
+      &lt;ComponentB /&gt;
+        &lt;ComponentC /&gt;
+          &lt;ComponentD /&gt; {/* useContext(UserContext) to read */}
+&lt;/UserProvider&gt;
+    </code></pre>
+
+    <h2>1) Key Principles</h2>
+    <ul>
+      <li><strong>Single Source of Truth:</strong> State lives in one Provider component</li>
+      <li><strong>Broadcast to Tree:</strong> Value is available to all descendants</li>
+      <li><strong>No Prop Drilling:</strong> Components that need data can access it directly</li>
+      <li><strong>Auto Refresh:</strong> When context changes, all consuming components re-render</li>
+    </ul>
+
+    <h2>2) How to Use Context - Step by Step</h2>
+
+    <h3>Step 1: Create the Context</h3>
+    <pre><code class="language-jsx">
+import { createContext } from "react";
+
+export const UserContext = createContext();
+    </code></pre>
+
+    <h3>Step 2: Create a Provider Component</h3>
+    <pre><code class="language-jsx">
+import { UserContext } from "./UserContext";
+import { useState } from "react";
+
+export function UserProvider({ children }) {
+  const [user, setUser] = useState("Roge");
+
+  return (
+    &lt;UserContext.Provider value={user}&gt;
+      {children}
+    &lt;/UserContext.Provider&gt;
+  );
+}
+    </code></pre>
+
+    <h3>Step 3: Wrap Your App with the Provider</h3>
+    <pre><code class="language-jsx">
+import { UserProvider } from "./UserProvider";
+import App from "./App";
+
+export default function Root() {
+  return (
+    &lt;UserProvider&gt;
+      &lt;App /&gt;
+    &lt;/UserProvider&gt;
+  );
+}
+    </code></pre>
+
+    <h3>Step 4: Use useContext in Any Component</h3>
+    <pre><code class="language-jsx">
+import { useContext } from "react";
+import { UserContext } from "./UserContext";
+
+export function ComponentD() {
+  const user = useContext(UserContext);
+
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;ComponentD&lt;/h1&gt;
+      &lt;h2&gt;Hello {user}&lt;/h2&gt;
+    &lt;/div&gt;
+  );
+}
+    </code></pre>
+
+    <h2>3) Mental Model</h2>
+    <p>
+      <strong>Before Context:</strong> If ComponentD needs user data, it must receive it as a prop from its parent, which received it from its parent, all the way down from App.
+    </p>
+    <p>
+      <strong>After Context:</strong> ComponentD directly reads from the UserContext without any props being passed through intermediate components.
+    </p>
+
+    <h2>4) When to Use Context</h2>
+    <ul>
+      <li>Global theme (dark/light mode) ✅</li>
+      <li>Current user authentication ✅</li>
+      <li>Language/localization settings ✅</li>
+      <li>Notification/toast messages ✅</li>
+      <li>Complex state that needs to be accessed by many components ✅</li>
+    </ul>
+
+    <h2>5) Important: Context vs Props</h2>
+    <p><strong>Use Props When:</strong> Passing data between parent and child (usually 1-2 levels)</p>
+    <p><strong>Use Context When:</strong> Many components need the same data (prop drilling problem)</p>
+
+    <h2>Related Links</h2>
+    <ul>
+      <li>
+        <a
+          href="https://react.dev/reference/react/useContext"
+          target="_blank"
+          >React useContext Documentation</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://react.dev/reference/react/createContext"
+          target="_blank"
+          >React createContext Documentation</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://react.dev/learn/passing-data-deeply-with-context"
+          target="_blank"
+          >React Context Step-by-Step Guide</a
         >
       </li>
     </ul>

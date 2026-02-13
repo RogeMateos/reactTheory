@@ -91,7 +91,16 @@ document.addEventListener("DOMContentLoaded", () => {
       fundamentals: { en: "Fundamentals", es: "Fundamentos" },
       hooks: { en: "Hooks", es: "Hooks" },
       routing: { en: "Routing", es: "Enrutamiento" },
+      globalSwitch: { en: "Global Switch (useContext)", es: "Global Switch (useContext)" },
       virtualDOM: { en: "Virtual DOM", es: "DOM Virtual" },
+      interviewQuestions: {
+        en: "Accessing Previous State/Props",
+        es: "Acceder al Estado/Props Anterior",
+      },
+      interviewQuestionsHeader: {
+        en: "Interview Questions",
+        es: "Preguntas de Entrevista",
+      },
     };
     return translations[key] ? translations[key][currentLanguage] : key;
   }
