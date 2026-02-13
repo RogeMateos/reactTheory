@@ -202,7 +202,7 @@ nav a.active {
 @media (max-width: 768px) {
   body {
     padding: 10px;
-    font-size: 16px;
+    font-size: 18px;
   }
 
   .container {
@@ -216,23 +216,23 @@ nav a.active {
   }
 
   h1 {
-    font-size: 1.8rem;
+    font-size: 2rem;
   }
   h2 {
-    font-size: 1.4rem;
+    font-size: 1.6rem;
   }
   h3 {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
   }
 
   p {
-    font-size: 16px;
+    font-size: 18px;
     line-height: 1.8;
   }
 
   ul,
   ol {
-    font-size: 16px;
+    font-size: 18px;
   }
 
   code {
@@ -241,24 +241,24 @@ nav a.active {
 
   pre {
     padding: 12px;
-    font-size: 14px;
+    font-size: 16px;
     overflow-x: auto;
   }
 
   .tab-button {
-    padding: 8px 12px;
-    font-size: 12px;
+    padding: 10px 14px;
+    font-size: 14px;
     margin-right: 8px;
     margin-bottom: 8px;
   }
 
   .state-table {
-    font-size: 14px;
+    font-size: 16px;
   }
 
   .state-table th,
   .state-table td {
-    padding: 8px 10px;
+    padding: 10px 12px;
   }
 
   nav {
