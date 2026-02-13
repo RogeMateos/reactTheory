@@ -3,12 +3,27 @@
   --primary-color: #007bff;
   --primary-hover-color: #0056b3;
   --text-color: #333;
-  --text-secondary-color: #666;
+  --text-secondary-color: #555;
   --background-color: #f9f9f9;
   --box-background: #ffffff;
   --border-color: #ddd;
   --heading-color: #222;
   --shadow-color: rgba(0, 0, 0, 0.1);
+
+  /* Typographic Scale (1.25x ratio) */
+  --fs-body: 1.125rem;     /* 18px en móvil */
+  --fs-sm: 0.9375rem;      /* 15px - small text */
+  --fs-h3: 1.40625rem;     /* 22.5px - h3 */
+  --fs-h2: 1.75rem;        /* 28px - h2 */
+  --fs-h1: 2.1875rem;      /* 35px - h1 */
+
+  /* Line heights */
+  --lh-tight: 1.2;         /* For headings */
+  --lh-normal: 1.5;        /* For body text */
+  --lh-relaxed: 1.75;      /* For better readability in lists */
+
+  /* Content width */
+  --max-content-width: 65ch; /* ~65-75 characters = optimal reading line */
 }
 
 /* Reset and Base Styles */
@@ -21,12 +36,12 @@ body {
 }
 
 body {
-  font-family: Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   color: var(--text-color);
   background-color: var(--background-color);
-  line-height: 1.6;
-  padding: 20px;
-  font-size: 15px;
+  line-height: var(--lh-normal);
+  padding: 1rem;
+  font-size: var(--fs-body);
 }
 
 /* Typography */
@@ -34,39 +49,51 @@ h1,
 h2,
 h3 {
   color: var(--heading-color);
-  margin-top: 0;
-  margin-bottom: 1rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  line-height: var(--lh-tight);
+  font-weight: 700;
 }
 
 h1 {
-  font-size: 2.2rem;
+  font-size: var(--fs-h1);
+  margin-top: 2rem;
 }
+
 h2 {
-  font-size: 1.8rem;
+  font-size: var(--fs-h2);
 }
+
 h3 {
-  font-size: 1rem;
+  font-size: var(--fs-h3);
+  font-weight: 600;
 }
 
 p {
-  color: var(--text-secondary-color);
-  margin: 0 0 15px;
+  color: var(--text-color);
+  margin: 0 0 1rem;
+  max-width: var(--max-content-width);
 }
 
 /* Layout */
 .container {
   display: grid;
   grid-template-columns: 250px 1fr;
-  gap: 30px;
+  gap: 2rem;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 1.25rem;
 }
 
 /* Box Styling */
 .box {
-  padding: 20px;
-  margin: 20px 0;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  max-width: var(--max-content-width);
+}
+
+.box article {
+  max-width: 100%;
 }
 
 /* Links */
@@ -83,13 +110,13 @@ a:hover {
 
 .box a {
   display: block;
-  margin-top: 12px;
-  font-size: 14px;
+  margin-top: 0.75rem;
+  font-size: var(--fs-sm);
 }
 
 .links {
   margin-top: 1.5rem;
-  margin-bottom: 10px;
+  margin-bottom: 0.625rem;
 }
 
 .links a {
@@ -105,6 +132,9 @@ pre {
   border-radius: 4px;
   padding: 1rem;
   overflow-x: auto;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  max-width: 100%;
 }
 
 code {
@@ -116,10 +146,18 @@ code {
 ul,
 ol {
   padding-left: 1.5rem;
-  margin-bottom: 1.2rem;
+  margin-bottom: 1.25rem;
+  line-height: var(--lh-relaxed);
+  max-width: var(--max-content-width);
 }
 
 li {
+  margin-bottom: 0.5rem;
+}
+
+li ul,
+li ol {
+  margin-top: 0.5rem;
   margin-bottom: 0.5rem;
 }
 
@@ -127,8 +165,8 @@ li {
 nav {
   background-color: white;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 20px;
+  box-shadow: 0 2px 4px var(--shadow-color);
+  padding: 1.25rem;
 }
 
 nav ul {
@@ -137,7 +175,7 @@ nav ul {
 }
 
 nav li {
-  margin-bottom: 10px;
+  margin-bottom: 0.625rem;
 }
 
 nav a {
@@ -145,6 +183,7 @@ nav a {
   color: var(--text-color);
   transition: color 0.3s ease;
   cursor: pointer;
+  font-size: 0.95rem;
 }
 
 nav a:hover {
@@ -152,7 +191,7 @@ nav a:hover {
 }
 
 nav a.active {
-  font-weight: bold;
+  font-weight: 600;
   color: var(--primary-color);
 }
 
@@ -171,10 +210,12 @@ nav a.active {
   outline: none;
   transition: 0.4s;
   margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
 }
 
 .accordion-content {
-  padding: 0 18px;
+  padding: 0 1.125rem;
   background-color: white;
   max-height: 0;
   overflow: hidden;
@@ -182,10 +223,7 @@ nav a.active {
 }
 
 .accordion-header.active + .accordion-content {
-  max-height: 1000px; /* Adjust this value based on your content */
-}
-
-.accordion-content li {
+  max-height: 1000px;
 }
 
 .accordion-content a {
@@ -198,93 +236,29 @@ nav a.active {
   color: var(--primary-color);
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  body {
-    padding: 10px;
-    font-size: 18px;
-  }
-
-  .container {
-    grid-template-columns: 1fr;
-    padding: 10px;
-  }
-
-  .box {
-    margin: 10px 0;
-    padding: 15px;
-  }
-
-  h1 {
-    font-size: 2rem;
-  }
-  h2 {
-    font-size: 1.6rem;
-  }
-  h3 {
-    font-size: 1.2rem;
-  }
-
-  p {
-    font-size: 18px;
-    line-height: 1.8;
-  }
-
-  ul,
-  ol {
-    font-size: 18px;
-  }
-
-  code {
-    font-size: 1em;
-  }
-
-  pre {
-    padding: 12px;
-    font-size: 16px;
-    overflow-x: auto;
-  }
-
-  .tab-button {
-    padding: 10px 14px;
-    font-size: 14px;
-    margin-right: 8px;
-    margin-bottom: 8px;
-  }
-
-  .state-table {
-    font-size: 16px;
-  }
-
-  .state-table th,
-  .state-table td {
-    padding: 10px 12px;
-  }
-
-  nav {
-    margin-bottom: 20px;
-  }
-}
-
 /* Miscellaneous */
 #content {
-  min-height: 300px; /* Adjust this value to prevent layout shifts */
+  min-height: 300px;
 }
-/* Estilos para tabs */
+
+/* Tab Styles */
 .tab-buttons {
-  margin-bottom: 20px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .tab-button {
-  padding: 10px 20px;
+  padding: 0.625rem 1rem;
   background-color: #f0f0f0;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
   border-radius: 5px;
   cursor: pointer;
-  margin-right: 10px;
-  display: inline-block;
-  font-size: 14px;
+  font-size: 0.95rem;
+  font-weight: 500;
   transition: all 0.3s ease;
+  white-space: nowrap;
 }
 
 .tab-button:hover {
@@ -294,14 +268,18 @@ nav a.active {
 .tab-button.active {
   background-color: var(--primary-color);
   color: white;
+  border-color: var(--primary-color);
 }
 
 .tab-button.active:hover {
   background-color: var(--primary-hover-color);
+  border-color: var(--primary-hover-color);
 }
+
 .tab-content {
   display: none;
 }
+
 .tab-content.active {
   display: block;
 }
@@ -310,13 +288,15 @@ nav a.active {
 .state-table {
   width: 100%;
   border-collapse: collapse;
-  margin: 20px 0;
+  margin: 1.5rem 0;
   border: 1px solid var(--border-color);
+  font-size: 0.95rem;
+  overflow-x: auto;
 }
 
 .state-table th,
 .state-table td {
-  padding: 12px 15px;
+  padding: 0.75rem 1rem;
   text-align: left;
   border: 1px solid var(--border-color);
 }
@@ -324,7 +304,12 @@ nav a.active {
 .state-table th {
   background-color: var(--primary-color);
   color: white;
-  font-weight: bold;
+  font-weight: 700;
+  line-height: var(--lh-tight);
+}
+
+.state-table td {
+  line-height: var(--lh-normal);
 }
 
 .state-table tr:nth-child(even) {
@@ -332,5 +317,120 @@ nav a.active {
 }
 
 .state-table tr:hover {
-  background-color: #f0f0f0;
+  background-color: #f5f5f5;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN - MOBILE FIRST APPROACH
+   ============================================ */
+
+/* Tablet: 768px and up */
+@media (min-width: 769px) {
+  :root {
+    /* Escala aumentada para tablet */
+    --fs-body: 1.1875rem;    /* 19px */
+    --fs-sm: 0.984375rem;    /* 15.75px */
+    --fs-h3: 1.484375rem;    /* 23.75px */
+    --fs-h2: 1.859375rem;    /* 29.75px */
+    --fs-h1: 2.3242rem;      /* 37.19px */
+  }
+
+  body {
+    padding: 1.5rem;
+  }
+
+  .container {
+    padding: 1.5rem;
+  }
+
+  h1 {
+    margin-top: 2.5rem;
+  }
+
+  p {
+    margin-bottom: 1.25rem;
+  }
+
+  .tab-buttons {
+    margin-bottom: 2rem;
+  }
+}
+
+/* Desktop: 1024px and up */
+@media (min-width: 1024px) {
+  :root {
+    /* Escala máxima para desktop grande */
+    --fs-body: 1.25rem;      /* 20px */
+    --fs-sm: 1.03125rem;     /* 16.5px */
+    --fs-h3: 1.5625rem;      /* 25px */
+    --fs-h2: 1.953125rem;    /* 31.25px */
+    --fs-h1: 2.44140625rem;  /* 39.06px */
+  }
+
+  .container {
+    gap: 2.5rem;
+  }
+}
+
+/* Small devices: smartphones */
+@media (max-width: 480px) {
+  body {
+    padding: 0.75rem;
+  }
+
+  .container {
+    grid-template-columns: 1fr;
+    padding: 0.75rem;
+    gap: 1rem;
+  }
+
+  .box {
+    padding: 1rem;
+    margin: 1rem 0;
+  }
+
+  h1 {
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  h2 {
+    margin-bottom: 0.5rem;
+  }
+
+  h3 {
+    margin-bottom: 0.5rem;
+  }
+
+  .tab-buttons {
+    gap: 0.25rem;
+  }
+
+  .tab-button {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  .state-table {
+    font-size: 0.875rem;
+  }
+
+  .state-table th,
+  .state-table td {
+    padding: 0.5rem 0.75rem;
+  }
+}
+
+/* Tablet and up: hide mobile nav if exists */
+@media (min-width: 769px) {
+  .container {
+    grid-template-columns: 250px 1fr;
+  }
+}
+
+/* Small tablet: adjust nav width */
+@media (max-width: 768px) {
+  .container {
+    grid-template-columns: 1fr;
+  }
 }
