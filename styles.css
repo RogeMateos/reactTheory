@@ -26,6 +26,7 @@ body {
   background-color: var(--background-color);
   line-height: 1.6;
   padding: 20px;
+  font-size: 15px;
 }
 
 /* Typography */
@@ -108,7 +109,7 @@ pre {
 
 code {
   font-family: "Courier New", Courier, monospace;
-  font-size: 0.9em;
+  font-size: 0.95em;
 }
 
 /* Lists */
@@ -201,6 +202,7 @@ nav a.active {
 @media (max-width: 768px) {
   body {
     padding: 10px;
+    font-size: 16px;
   }
 
   .container {
@@ -214,13 +216,49 @@ nav a.active {
   }
 
   h1 {
-    font-size: 2rem;
+    font-size: 1.8rem;
   }
   h2 {
-    font-size: 1.6rem;
+    font-size: 1.4rem;
   }
   h3 {
     font-size: 1.1rem;
+  }
+
+  p {
+    font-size: 16px;
+    line-height: 1.8;
+  }
+
+  ul,
+  ol {
+    font-size: 16px;
+  }
+
+  code {
+    font-size: 1em;
+  }
+
+  pre {
+    padding: 12px;
+    font-size: 14px;
+    overflow-x: auto;
+  }
+
+  .tab-button {
+    padding: 8px 12px;
+    font-size: 12px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+  }
+
+  .state-table {
+    font-size: 14px;
+  }
+
+  .state-table th,
+  .state-table td {
+    padding: 8px 10px;
   }
 
   nav {
