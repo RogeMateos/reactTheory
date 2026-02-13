@@ -1,0 +1,310 @@
+<section class="box">
+  <h1>04.1 — The Bare Bone Method: Arquitectura de Estado en React</h1>
+
+  <article>
+    <h2>🎯 Objetivo de esta lección</h2>
+    <p>Aprender a:</p>
+    <ul>
+      <li>Diseñar primero la estructura</li>
+      <li>Definir correctamente el flujo de datos</li>
+      <li>Colocar el estado en el lugar correcto</li>
+      <li>Evitar errores clásicos como:
+        <ul>
+          <li>Props drilling innecesario</li>
+          <li>Estado duplicado</li>
+          <li>Global state mal usado</li>
+        </ul>
+      </li>
+    </ul>
+
+    <h2>🧠 1. Mentalidad: Coder vs Engineer</h2>
+    <p><strong>Antes de escribir código, piensa.</strong></p>
+
+    <h3>❌ Coder:</h3>
+    <ul>
+      <li>Empieza con useState</li>
+      <li>Prueba cosas hasta que funcionen</li>
+      <li>Parchea problemas</li>
+    </ul>
+
+    <h3>✅ Engineer:</h3>
+    <ul>
+      <li>Define estructura</li>
+      <li>Analiza flujo</li>
+      <li>Decide arquitectura</li>
+      <li>Luego implementa</li>
+    </ul>
+
+    <h2>🏗 2. Paso 1 — Component Structure</h2>
+    <p><strong>Nunca empieces con estado.</strong></p>
+    <p>Primero rompe la UI en piezas independientes.</p>
+
+    <h3>Ejemplo: App tipo IMDb</h3>
+    <p>Componentes posibles:</p>
+    <pre><code class="language-jsx">
+&lt;App&gt;
+  &lt;Search /&gt;
+  &lt;ResultsPage&gt;
+    &lt;MovieList&gt;
+      &lt;MovieCard /&gt;
+    &lt;/MovieList&gt;
+  &lt;/ResultsPage&gt;
+&lt;/App&gt;
+    </code></pre>
+
+    <h3>🔎 Pregunta clave:</h3>
+    <p>¿Qué partes visuales tienen responsabilidad propia?</p>
+
+    <h3>Regla senior:</h3>
+    <p><strong>Un componente = una responsabilidad clara.</strong></p>
+
+    <h2>🔄 3. Paso 2 — Data Flow</h2>
+    <p>Una vez tienes la estructura, pregunta:</p>
+    <p><strong>¿Quién cambia el estado?</strong></p>
+
+    <h3>Ejemplo:</h3>
+    <ul>
+      <li><code>&lt;Search /&gt;</code> cambia el texto</li>
+      <li><code>&lt;MovieList /&gt;</code> usa ese texto</li>
+      <li>Ambos necesitan el mismo valor.</li>
+    </ul>
+
+    <h3>❌ Error común (Junior)</h3>
+    <pre><code class="language-jsx">
+function Search() {
+  const [query, setQuery] = useState("")
+}
+    </code></pre>
+    <p><strong>Problema:</strong> MovieList no puede acceder.</p>
+
+    <h3>✅ Solución correcta — Lift State Up</h3>
+    <p>Mover el estado al padre común.</p>
+    <pre><code class="language-jsx">
+function App() {
+  const [query, setQuery] = useState("")
+
+  return (
+    &lt;&gt;
+      &lt;Search query={query} setQuery={setQuery} /&gt;
+      &lt;MovieList query={query} /&gt;
+    &lt;/&gt;
+  )
+}
+    </code></pre>
+
+    <h3>Principio:</h3>
+    <p><strong>Si dos hermanos necesitan el mismo estado → súbelo al padre común.</strong></p>
+
+    <h2>🧵 4. Props Drilling</h2>
+
+    <h3>¿Qué es?</h3>
+    <p>Pasar props por múltiples niveles:</p>
+    <pre><code class="language-text">
+App
+ └── ResultsPage
+      └── MovieList
+           └── MovieCard
+    </code></pre>
+
+    <p>Si query se pasa por todos aunque no lo usen → props drilling.</p>
+
+    <h3>🤔 ¿Siempre es malo?</h3>
+    <p><strong>No.</strong></p>
+    <ul>
+      <li>✔ 1–2 niveles → aceptable</li>
+      <li>❌ 4–5 niveles → mala arquitectura</li>
+    </ul>
+
+    <h2>🌍 5. Global State</h2>
+
+    <h3>¿Cuándo usarlo?</h3>
+    <p>Cuando el estado:</p>
+    <ul>
+      <li>Es necesario en muchas partes</li>
+      <li>No cambia constantemente</li>
+      <li>Representa algo transversal</li>
+    </ul>
+
+    <h3>Ejemplos:</h3>
+    <ul>
+      <li>Autenticación</li>
+      <li>Idioma</li>
+      <li>Tema</li>
+      <li>Datos de usuario</li>
+    </ul>
+
+    <h3>Ejemplo con Context</h3>
+    <pre><code class="language-jsx">
+const AuthContext = createContext(null)
+
+function App() {
+  const [user, setUser] = useState(null)
+
+  return (
+    &lt;AuthContext.Provider value={{ user, setUser }}&gt;
+      &lt;Search /&gt;
+      &lt;ResultsPage /&gt;
+    &lt;/AuthContext.Provider&gt;
+  )
+}
+    </code></pre>
+
+    <p>Ahora cualquier componente puede acceder sin props drilling.</p>
+
+    <h2>🧠 6. Reducer — Cuando el estado crece</h2>
+    <p>Si el estado tiene múltiples transiciones:</p>
+    <pre><code class="language-jsx">
+const initialState = {
+  status: "idle",
+  data: [],
+  error: null
+}
+    </code></pre>
+
+    <p>Usa <code>useReducer</code>.</p>
+
+    <pre><code class="language-jsx">
+function reducer(state, action) {
+  switch (action.type) {
+    case "FETCH_START":
+      return { ...state, status: "loading" }
+
+    case "FETCH_SUCCESS":
+      return { ...state, status: "success", data: action.payload }
+
+    case "FETCH_ERROR":
+      return { ...state, status: "error" }
+
+    default:
+      return state
+  }
+}
+    </code></pre>
+
+    <p>Esto convierte tu UI en una mini state machine.</p>
+    <p><strong>Nivel profesional.</strong></p>
+
+    <h2>📜 7. Principios Fundamentales del Estado</h2>
+
+    <h3>1️⃣ Usa el menor estado posible</h3>
+    <p>❌ No guardes lo que puedes derivar.</p>
+    <pre><code class="language-jsx">
+const fullName = firstName + lastName
+    </code></pre>
+    <p>No necesitas useState para eso.</p>
+
+    <h3>2️⃣ Mantén el estado lo más cerca posible</h3>
+    <ul>
+      <li>Modal abierto → local</li>
+      <li>Toggle → local</li>
+      <li>Auth → global</li>
+    </ul>
+
+    <h3>3️⃣ Evita redundancia</h3>
+    <p>❌ Mal:</p>
+    <pre><code class="language-jsx">
+const [movies, setMovies]
+const [filteredMovies, setFilteredMovies]
+    </code></pre>
+
+    <p>✔ Mejor:</p>
+    <pre><code class="language-jsx">
+const filteredMovies = movies.filter(...)
+    </code></pre>
+
+    <p><strong>Estado derivado ≠ estado real.</strong></p>
+
+    <h2>🧩 8. Decidir Qué Tipo de Estado Usar</h2>
+    <table class="state-table">
+      <thead>
+        <tr>
+          <th>Situación</th>
+          <th>Solución</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Solo un componente lo usa</td>
+          <td>useState local</td>
+        </tr>
+        <tr>
+          <td>Dos hermanos lo necesitan</td>
+          <td>Lift state up</td>
+        </tr>
+        <tr>
+          <td>Muchas partes lo usan</td>
+          <td>Context / Store</td>
+        </tr>
+        <tr>
+          <td>Estado complejo</td>
+          <td>useReducer</td>
+        </tr>
+        <tr>
+          <td>Flujo avanzado</td>
+          <td>State machine</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>🏁 Flujo Profesional Completo</h2>
+    <p>Siempre sigue este orden:</p>
+    <ol>
+      <li>Component Structure</li>
+      <li>Data Flow</li>
+      <li>State Placement</li>
+      <li>Logic</li>
+      <li>Styling</li>
+    </ol>
+
+    <p>Si inviertes el orden → deuda técnica.</p>
+
+    <h2>✅ Checklist Final</h2>
+    <p>Antes de terminar una feature pregúntate:</p>
+    <ul>
+      <li>☐ ¿Dividí bien los componentes?</li>
+      <li>☐ ¿Sé quién cambia el estado?</li>
+      <li>☐ ¿El estado está en el lugar correcto?</li>
+      <li>☐ ¿Estoy duplicando estado?</li>
+      <li>☐ ¿Necesito realmente global state?</li>
+      <li>☐ ¿Este estado podría ser derivado?</li>
+    </ul>
+    <p>Si respondes bien → estás pensando como engineer.</p>
+
+    <h2>📚 Recursos adicionales</h2>
+    <ul>
+      <li><a href="https://react.dev/learn/sharing-state-between-components" target="_blank">React Docs — Lifting State Up</a></li>
+      <li><a href="https://react.dev/reference/react/useReducer" target="_blank">React Docs — useReducer</a></li>
+      <li><a href="https://stately.ai/viz" target="_blank">XState Visualizer (para state machines)</a></li>
+      <li>Arquitectura basada en eventos</li>
+      <li>Patrones de diseño en frontend</li>
+      <li><a href="https://chatgpt.com/g/g-p-696fbea2755481919c8258fb23e8f822-react/c/698e74a9-6610-8390-9857-5369c211dbec" target="_blank">Guía React ChatGPT</a></li>
+    </ul>
+
+    <h2>🎓 Ejercicio Propuesto</h2>
+    <p>Construye una mini app con:</p>
+    <ul>
+      <li>Search input</li>
+      <li>Movie list</li>
+      <li>Login button</li>
+    </ul>
+
+    <p>Y decide:</p>
+    <ul>
+      <li>¿Qué estado es local?</li>
+      <li>¿Qué estado se levanta?</li>
+      <li>¿Qué estado sería global?</li>
+      <li>¿Necesitas reducer?</li>
+    </ul>
+
+    <h2>🚀 Siguientes Pasos</h2>
+    <p>Una vez que domines el bare bones method, puedes:</p>
+    <ul>
+      <li>🔥 Convertir esto en componente real en TypeScript</li>
+      <li>🧠 Hacer una versión para entrevista técnica</li>
+      <li>🏗 Integrarlo en Next.js</li>
+      <li>🎨 Añadir versión visual tipo diagrama</li>
+    </ul>
+
+    <p><strong>Tú decides el siguiente nivel 🚀</strong></p>
+  </article>
+</section>

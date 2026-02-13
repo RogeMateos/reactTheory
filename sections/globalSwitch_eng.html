@@ -22,7 +22,109 @@
       In your PDF, the concept is shown as <strong>"broadcast global state"</strong>: instead of passing props down every level, you connect components to the context and they read what they need directly.
     </p>
 
-    <h2>1) What We're Going to Build</h2>
+    <h2>1) The Problem: Prop Drilling</h2>
+    <pre><code class="language-text">
+App (has state theme)
+│
+├─ Header   (does NOT use theme, but receives it)
+│   └─ Nav  (does NOT use theme, but receives it)
+│       └─ Toggle (YES, uses it)
+│
+└─ MovieList (does NOT use theme, but receives it)
+    └─ MovieCard (YES, uses it)
+        └─ Title (YES, uses it)
+
+Result:
+- Props travel through layers that don't need them.
+- More coupling, more noise, more maintenance.
+    </code></pre>
+
+    <h2>2) The Solution: React Context "Broadcast"</h2>
+    <pre><code class="language-text">
+                 ┌───────────────────────────────┐
+                 │ ThemeProvider (TOP COMPONENT) │
+                 │                               │
+                 │  useState(activeTheme)        │
+                 │  setTheme(themeKey)           │
+                 │   └─ setActiveTheme(...)      │
+                 │                               │
+                 │  &lt;ThemeContext.Provider       │
+                 │     value={{                  │
+                 │       theme,                  │
+                 │       setTheme                │
+                 │     }}&gt;                       │
+                 └───────────────┬───────────────┘
+                                 │  (broadcast)
+                                 ▼
+            ┌───────────────────────────────┐
+            │           App / Tree          │
+            │    (everything inside)        │
+            └───────────────┬───────────────┘
+                            │
+      ┌─────────────────────┼─────────────────────┐
+      ▼                     ▼                     ▼
+┌───────────────┐    ┌───────────────┐     ┌─────────────────┐
+│ MovieCard     │    │ Styled comps  │     │ DarkModeToggle  │
+│ useContext    │    │ useContext    │     │ useContext      │
+│ reads theme   │    │ change colors │     │ calls setTheme()│
+└───────────────┘    └───────────────┘     └─────────────────┘
+    </code></pre>
+
+    <p><strong>Key Idea (from your PDF):</strong></p>
+    <ul>
+      <li>✅ "All the state lives in the Provider"</li>
+      <li>✅ It's "broadcast" to all components below</li>
+      <li>✅ No need to pass props through every level</li>
+    </ul>
+
+    <h2>3) What Happens When You Toggle (The "Refresh")</h2>
+    <p>Your PDF says: "We pass state modifier down… and that refreshes all connected components".</p>
+    <pre><code class="language-text">
+User clicks Toggle button
+        │
+        ▼
+DarkModeToggle calls: setTheme("DARK")
+        │
+        ▼
+ThemeProvider executes:
+setActiveTheme(themeList["DARK"])
+        │
+        ▼
+React re-renders ThemeProvider
+(value changes: theme is now DARK)
+        │
+        ▼
+React re-renders ONLY consumers of ThemeContext
+(MovieCard, Styled components, etc.)
+        │
+        ▼
+UI changes colors / styles
+    </code></pre>
+
+    <h2>4) The Provider's Value Object (Most Important)</h2>
+    <p>Your PDF describes value as an object with theme and setTheme.</p>
+    <pre><code class="language-jsx">
+ThemeContext value = {
+  theme: activeTheme,         // current state (anyone can READ)
+  setTheme: (themeKey) =&gt; {   // "state modifier" (anyone can CALL)
+     setActiveTheme(themeList[themeKey])
+  }
+}
+
+Why this is powerful:
+
+theme     → any component can READ the theme
+setTheme  → any component can CHANGE the theme
+WITHOUT passing props.
+    </code></pre>
+
+    <h2>5) Final Mental Map (One Line)</h2>
+    <pre><code class="language-text">
+Provider (real state) → Context "broadcast" → Consumers read theme
+  → Toggle calls setTheme → Provider changes state → Consumers re-render
+    </code></pre>
+
+    <h2>6) What We're Going to Build</h2>
     <p>A system where:</p>
     <ul>
       <li>There exists a global state: <code>theme</code> (light/dark)</li>
@@ -494,6 +596,11 @@ export default function App() {
       <li>
         <a href="https://react.dev/reference/react/useMemo" target="_blank">
           React useMemo Hook
+        </a>
+      </li>
+      <li>
+        <a href="https://chatgpt.com/g/g-p-696fbea2755481919c8258fb23e8f822-react/c/698e3077-be04-8388-a042-08fce31f150f" target="_blank">
+          ChatGPT React Guide
         </a>
       </li>
     </ul>

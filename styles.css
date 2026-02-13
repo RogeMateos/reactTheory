@@ -267,3 +267,32 @@ nav a.active {
 .tab-content.active {
   display: block;
 }
+
+/* Table Styling */
+.state-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  border: 1px solid var(--border-color);
+}
+
+.state-table th,
+.state-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border: 1px solid var(--border-color);
+}
+
+.state-table th {
+  background-color: var(--primary-color);
+  color: white;
+  font-weight: bold;
+}
+
+.state-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.state-table tr:hover {
+  background-color: #f0f0f0;
+}

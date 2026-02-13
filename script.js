@@ -81,6 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function getTranslation(key) {
     const translations = {
       lifeCycle: { en: "LifeCycle", es: "Ciclo de Vida" },
+      bareBonesMethod: { en: "04.1 — The Bare Bones Method", es: "04.1 — The Bare Bones Method" },
       routerBrowser: {
         en: "Router Browser Navigation",
         es: "Navegación del Enrutador",
