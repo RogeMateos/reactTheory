@@ -1,10 +1,26 @@
 document.addEventListener("DOMContentLoaded", () => {
   const content = document.getElementById("content");
   const nav = document.querySelector("nav");
+  const navbar = document.getElementById("navbar");
+  const menuToggle = document.getElementById("menuToggle");
   const languageToggle = document.getElementById("languageToggle");
   const title = document.getElementById("title");
 
   let currentLanguage = "en";
+
+  // Menu toggle functionality
+  menuToggle.addEventListener("click", () => {
+    menuToggle.classList.toggle("active");
+    navbar.classList.toggle("active");
+  });
+
+  // Close menu when a link is clicked
+  nav.addEventListener("click", (e) => {
+    if (e.target.tagName === "A") {
+      menuToggle.classList.remove("active");
+      navbar.classList.remove("active");
+    }
+  });
 
   // Accordion functionality
   nav.addEventListener("click", (e) => {

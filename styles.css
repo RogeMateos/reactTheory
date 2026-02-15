@@ -1,32 +1,34 @@
-/* Variables */
+/* ==========================================
+   VARIABLES & DESIGN TOKENS
+   ========================================== */
+
 :root {
+  /* Colors */
   --primary-color: #007bff;
-  --primary-hover-color: #0056b3;
+  --primary-hover: #0056b3;
   --text-color: #333;
-  --text-secondary-color: #555;
   --background-color: #f9f9f9;
-  --box-background: #ffffff;
   --border-color: #ddd;
   --heading-color: #222;
   --shadow-color: rgba(0, 0, 0, 0.1);
 
-  /* Typographic Scale (1.25x ratio) */
-  --fs-body: 1.125rem;     /* 18px en móvil */
-  --fs-sm: 0.9375rem;      /* 15px - small text */
-  --fs-h3: 1.40625rem;     /* 22.5px - h3 */
-  --fs-h2: 1.75rem;        /* 28px - h2 */
-  --fs-h1: 2.1875rem;      /* 35px - h1 */
+  /* Typography - Mobile First (1.25x scale) */
+  --fs-body: 1.125rem;
+  --fs-sm: 0.9375rem;
+  --fs-h3: 1.40625rem;
+  --fs-h2: 1.75rem;
+  --fs-h1: 2.1875rem;
 
-  /* Line heights */
-  --lh-tight: 1.2;         /* For headings */
-  --lh-normal: 1.5;        /* For body text */
-  --lh-relaxed: 1.75;      /* For better readability in lists */
-
-  /* Content width */
-  --max-content-width: 65ch; /* ~65-75 characters = optimal reading line */
+  /* Line Heights */
+  --lh-tight: 1.2;
+  --lh-normal: 1.5;
+  --lh-relaxed: 1.75;
 }
 
-/* Reset and Base Styles */
+/* ==========================================
+   RESET & BASE STYLES
+   ========================================== */
+
 html,
 body {
   height: 100%;
@@ -47,15 +49,43 @@ body {
   overflow-wrap: break-word;
 }
 
-/* Typography */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+header h1 {
+  margin: 0;
+  font-size: var(--fs-h1);
+}
+
+.header-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* ==========================================
+   TYPOGRAPHY
+   ========================================== */
+
 h1,
 h2,
 h3 {
   color: var(--heading-color);
-  margin-top: 1.5rem;
-  margin-bottom: 0.75rem;
   line-height: var(--lh-tight);
   font-weight: 700;
+  margin: 1.5rem 0 0.75rem;
 }
 
 h1 {
@@ -73,46 +103,28 @@ h3 {
 }
 
 p {
-  color: var(--text-color);
   margin: 0 0 1rem;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
 }
 
-/* Layout */
+/* ==========================================
+   LAYOUT
+   ========================================== */
+
 .container {
-  display: grid;
-  grid-template-columns: 250px 1fr;
-  gap: 2rem;
   max-width: 1400px;
   margin: 0 auto;
   padding: 1.25rem;
 }
 
-/* Box Styling */
 .box {
   padding: 1.5rem;
   margin: 1.5rem 0;
-  width: 100%;
-  box-sizing: border-box;
 }
 
-.box article {
-  max-width: 100%;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  width: 100%;
-  box-sizing: border-box;
-}
+/* ==========================================
+   LINKS
+   ========================================== */
 
-.description {
-  width: 100%;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  box-sizing: border-box;
-}
-
-/* Links */
 a {
   color: var(--primary-color);
   text-decoration: none;
@@ -120,7 +132,7 @@ a {
 }
 
 a:hover {
-  color: var(--primary-hover-color);
+  color: var(--primary-hover);
   text-decoration: underline;
 }
 
@@ -130,41 +142,39 @@ a:hover {
   font-size: var(--fs-sm);
 }
 
-.links {
-  margin-top: 1.5rem;
-  margin-bottom: 0.625rem;
-}
+/* ==========================================
+   CODE BLOCKS
+   ========================================== */
 
-.links a {
-  display: block;
-  margin-right: 1rem;
-  margin-bottom: 0.5rem;
-}
-
-/* Code Blocks */
 pre {
   background-color: #f4f4f4;
   border: 1px solid var(--border-color);
   border-radius: 4px;
-  padding: 1rem;
+  padding: 0.75rem;
   overflow-x: auto;
-  font-size: 0.9rem;
-  line-height: 1.5;
-  max-width: 100%;
+  font-size: 0.85rem;
+  line-height: 1.3;
+  white-space: pre-wrap;
   word-wrap: break-word;
   overflow-wrap: break-word;
-  white-space: pre-wrap;
+  max-width: 100%;
+  margin: 1rem 0;
 }
 
 code {
   font-family: "Courier New", Courier, monospace;
   font-size: 0.95em;
+  display: block;
 }
 
-/* Lists */
+/* ==========================================
+   LISTS
+   ========================================== */
+
 ul,
 ol {
-  padding-left: 1.5rem;
+  list-style: none;
+  padding-left: 0;
   margin-bottom: 1.25rem;
   line-height: var(--lh-relaxed);
   word-wrap: break-word;
@@ -177,11 +187,43 @@ li {
 
 li ul,
 li ol {
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
+  margin: 0.5rem 0;
 }
 
-/* Navigation */
+/* ==========================================
+   NAVIGATION & MENU TOGGLE
+   ========================================== */
+
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 0.375rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.menu-toggle span {
+  width: 1.5rem;
+  height: 0.25rem;
+  background-color: var(--text-color);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.menu-toggle.active span:nth-child(1) {
+  transform: rotate(45deg) translate(0.5rem, 0.75rem);
+}
+
+.menu-toggle.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-toggle.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(0.5rem, -0.75rem);
+}
+
 nav {
   background-color: white;
   border-radius: 8px;
@@ -190,7 +232,7 @@ nav {
 }
 
 nav ul {
-  list-style-type: none;
+  list-style: none;
   padding: 0;
 }
 
@@ -199,7 +241,6 @@ nav li {
 }
 
 nav a {
-  text-decoration: none;
   color: var(--text-color);
   transition: color 0.3s ease;
   cursor: pointer;
@@ -215,7 +256,10 @@ nav a.active {
   color: var(--primary-color);
 }
 
-/* Accordion */
+/* ==========================================
+   ACCORDION
+   ========================================== */
+
 .accordion {
   list-style: none;
   padding: 0;
@@ -247,7 +291,6 @@ nav a.active {
 }
 
 .accordion-content a {
-  text-decoration: none;
   color: var(--text-color);
   transition: color 0.3s ease;
 }
@@ -256,14 +299,14 @@ nav a.active {
   color: var(--primary-color);
 }
 
-/* Miscellaneous */
+/* ==========================================
+   TABS
+   ========================================== */
+
 #content {
   min-height: 300px;
-  width: 100%;
-  box-sizing: border-box;
 }
 
-/* Tab Styles */
 .tab-buttons {
   margin-bottom: 1.5rem;
   display: flex;
@@ -294,8 +337,8 @@ nav a.active {
 }
 
 .tab-button.active:hover {
-  background-color: var(--primary-hover-color);
-  border-color: var(--primary-hover-color);
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
 }
 
 .tab-content {
@@ -306,7 +349,10 @@ nav a.active {
   display: block;
 }
 
-/* Table Styling */
+/* ==========================================
+   TABLES
+   ========================================== */
+
 .state-table {
   width: 100%;
   border-collapse: collapse;
@@ -342,68 +388,45 @@ nav a.active {
   background-color: #f5f5f5;
 }
 
-/* ============================================
-   RESPONSIVE DESIGN - MOBILE FIRST APPROACH
-   ============================================ */
+/* ==========================================
+   RESPONSIVE DESIGN - MOBILE FIRST
+   ========================================== */
 
-/* Tablet: 768px and up */
-@media (min-width: 769px) {
-  :root {
-    /* Escala aumentada para tablet */
-    --fs-body: 1.1875rem;    /* 19px */
-    --fs-sm: 0.984375rem;    /* 15.75px */
-    --fs-h3: 1.484375rem;    /* 23.75px */
-    --fs-h2: 1.859375rem;    /* 29.75px */
-    --fs-h1: 2.3242rem;      /* 37.19px */
-  }
-
-  body {
-    padding: 1.5rem;
-  }
-
-  .container {
-    padding: 1.5rem;
-  }
-
-  h1 {
-    margin-top: 2.5rem;
-  }
-
-  p {
-    margin-bottom: 1.25rem;
-  }
-
-  .tab-buttons {
-    margin-bottom: 2rem;
-  }
-}
-
-/* Desktop: 1024px and up */
-@media (min-width: 1024px) {
-  :root {
-    /* Escala máxima para desktop grande */
-    --fs-body: 1.25rem;      /* 20px */
-    --fs-sm: 1.03125rem;     /* 16.5px */
-    --fs-h3: 1.5625rem;      /* 25px */
-    --fs-h2: 1.953125rem;    /* 31.25px */
-    --fs-h1: 2.44140625rem;  /* 39.06px */
-  }
-
-  .container {
-    gap: 2.5rem;
-  }
-}
-
-/* Small devices: smartphones */
 @media (max-width: 480px) {
   body {
     padding: 0.75rem;
   }
 
-  .container {
-    grid-template-columns: 1fr;
-    padding: 0.75rem;
-    gap: 1rem;
+  header {
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+  }
+
+  header h1 {
+    font-size: var(--fs-h2);
+  }
+
+  .menu-toggle {
+    display: flex;
+  }
+
+  .navbar {
+    display: none;
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    background-color: white;
+    border-radius: 0;
+    box-shadow: 0 4px 8px var(--shadow-color);
+    padding: 1rem;
+    z-index: 1000;
+    max-height: calc(100vh - 60px);
+    overflow-y: auto;
+  }
+
+  .navbar.active {
+    display: block;
   }
 
   .box {
@@ -412,14 +435,10 @@ nav a.active {
   }
 
   h1 {
-    margin-top: 1.5rem;
-    margin-bottom: 0.5rem;
+    margin: 1.5rem 0 0.5rem;
   }
 
-  h2 {
-    margin-bottom: 0.5rem;
-  }
-
+  h2,
   h3 {
     margin-bottom: 0.5rem;
   }
@@ -441,18 +460,72 @@ nav a.active {
   .state-table td {
     padding: 0.5rem 0.75rem;
   }
-}
 
-/* Tablet and up: hide mobile nav if exists */
-@media (min-width: 769px) {
-  .container {
-    grid-template-columns: 250px 1fr;
+  pre {
+    padding: 0.5rem;
+    font-size: 0.7rem;
+    line-height: 1.2;
+    margin: 0.75rem 0;
+  }
+
+  code {
+    font-size: 0.7em;
+    line-height: 1.2;
   }
 }
 
-/* Small tablet: adjust nav width */
-@media (max-width: 768px) {
+@media (min-width: 481px) {
+  body {
+    padding: 1rem;
+  }
+
+  .box {
+    padding: 1.25rem;
+    margin: 1.25rem 0;
+  }
+}
+
+@media (min-width: 768px) {
+  :root {
+    --fs-body: 1.1875rem;
+    --fs-sm: 0.984375rem;
+    --fs-h3: 1.484375rem;
+    --fs-h2: 1.859375rem;
+    --fs-h1: 2.3242rem;
+  }
+
+  body {
+    padding: 1.5rem;
+  }
+
+  .box {
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  h1 {
+    margin-top: 2.5rem;
+  }
+
+  p {
+    margin-bottom: 1.25rem;
+  }
+
+  .tab-buttons {
+    margin-bottom: 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --fs-body: 1.25rem;
+    --fs-sm: 1.03125rem;
+    --fs-h3: 1.5625rem;
+    --fs-h2: 1.953125rem;
+    --fs-h1: 2.44140625rem;
+  }
+
   .container {
-    grid-template-columns: 1fr;
+    gap: 2.5rem;
   }
 }

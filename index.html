@@ -16,11 +16,18 @@
   <body>
     <header>
       <h1 id="title">React Theory</h1>
-      <button id="languageToggle">Español</button>
+      <div class="header-controls">
+        <button id="menuToggle" class="menu-toggle" aria-label="Toggle menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <button id="languageToggle">Español</button>
+      </div>
     </header>
 
     <main class="container">
-      <nav>
+      <nav id="navbar" class="navbar">
         <ul class="accordion">
           <li>
             <h3 class="accordion-header">Fundamentos</h3>
