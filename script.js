@@ -53,8 +53,8 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   function loadContent(section) {
-    const lang = currentLanguage === "es" ? "_es" : "_eng";
-    const fileName = `sections/${section}${lang}.html`;
+    const lang = currentLanguage === "es" ? "es" : "en";
+    const fileName = `sections/${lang}/${section}.html`;
 
     fetch(fileName)
       .then((response) => {
