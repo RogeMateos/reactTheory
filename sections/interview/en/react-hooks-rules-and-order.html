@@ -1,0 +1,347 @@
+<section class="box">
+  <h1>React Hooks Rules and Order: Execution Order and Real-World Pitfalls</h1>
+
+  <div class="description">
+    <p>
+      Understanding the execution order of React hooks and their rules is crucial for writing bug-free code. This tutorial explores the key principles behind hooks, common pitfalls, and how to avoid them.
+    </p>
+
+    <h2>The Two Essential Rules of Hooks</h2>
+    <p>
+      React has established two fundamental rules that govern how hooks must be used:
+    </p>
+
+    <h3>Rule 1: Only Call Hooks at the Top Level</h3>
+    <p>
+      Never call hooks inside conditionals, loops, or nested functions. This is because React relies on the order of hook calls to maintain state correctly between renders.
+    </p>
+
+    <pre><code class="language-javascript">
+// ❌ WRONG - Hook inside conditional
+function MyComponent({ isLoggedIn }) {
+  if (isLoggedIn) {
+    const [user, setUser] = useState(null); // WRONG!
+  }
+}
+
+// ✅ CORRECT - Hook at top level
+function MyComponent({ isLoggedIn }) {
+  const [user, setUser] = useState(null);
+
+  if (isLoggedIn) {
+    // Use the state here
+  }
+}
+    </code></pre>
+
+    <h3>Rule 2: Only Call Hooks from React Functions</h3>
+    <p>
+      Hooks can only be called from React functional components or custom hooks. Not from regular JavaScript functions or class components.
+    </p>
+
+    <pre><code class="language-javascript">
+// ❌ WRONG - Hook in regular function
+function regularFunction() {
+  const [count, setCount] = useState(0); // WRONG!
+}
+
+// ✅ CORRECT - Hook in React component
+function MyComponent() {
+  const [count, setCount] = useState(0);
+  return &lt;div&gt;{count}&lt;/div&gt;;
+}
+
+// ✅ CORRECT - Hook in custom hook
+function useCustomHook() {
+  const [data, setData] = useState(null);
+  return data;
+}
+    </code></pre>
+
+    <h2>Why Does Hook Order Matter? The Internal Mechanism</h2>
+    <p>
+      React maintains a linked list of hooks for each component instance. When you call hooks, React doesn't use their names—it uses the order in which they're called. This is why the order must be consistent across renders.
+    </p>
+
+    <pre><code class="language-javascript">
+// First render - hooks are stored in order
+function Counter() {
+  const [count, setCount] = useState(0);     // Hook #1
+  const [name, setName] = useState("John");  // Hook #2
+  useEffect(() => {}, [count]);              // Hook #3
+}
+
+// React's internal storage (simplified):
+// component.hooks = [
+//   { state: 0, setState: ... },        // useState for count
+//   { state: "John", setState: ... },   // useState for name
+//   { effect: ..., deps: [0] }          // useEffect
+// ]
+    </code></pre>
+
+    <h2>Common Pitfall #1: Conditional Hook Calls</h2>
+    <p>
+      This breaks the hook order rule and causes React to misalign state with hooks.
+    </p>
+
+    <pre><code class="language-javascript">
+// ❌ WRONG
+function MyComponent({ showEmail }) {
+  const [name, setName] = useState("");
+
+  if (showEmail) {
+    const [email, setEmail] = useState(""); // Conditional hook!
+  }
+
+  const [age, setAge] = useState(0);
+}
+
+// First render (showEmail = true):
+// Hooks: [name, email, age]
+
+// Second render (showEmail = false):
+// Hooks: [name, age] - but React expects email!
+// Result: age value goes to email, chaos ensues!
+
+// ✅ CORRECT
+function MyComponent({ showEmail }) {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [age, setAge] = useState(0);
+
+  // Use conditional logic, not conditional hooks
+}
+    </code></pre>
+
+    <h2>Common Pitfall #2: Hooks Inside Loops</h2>
+    <p>
+      Loops cause the number of hook calls to vary, breaking the consistent order assumption.
+    </p>
+
+    <pre><code class="language-javascript">
+// ❌ WRONG
+function TodoList({ todos }) {
+  todos.forEach((todo) => {
+    const [completed, setCompleted] = useState(false); // Number of hooks varies!
+  });
+}
+
+// ✅ CORRECT - Use a custom hook or state management
+function TodoList({ todos }) {
+  const [completed, setCompleted] = useState(
+    todos.reduce((acc, todo) => ({ ...acc, [todo.id]: false }), {})
+  );
+}
+    </code></pre>
+
+    <h2>Execution Order Deep Dive</h2>
+    <p>
+      Understanding when hooks execute is crucial for debugging performance and state issues.
+    </p>
+
+    <h3>useState Execution Order</h3>
+    <pre><code class="language-javascript">
+function Counter() {
+  console.log("1. Component render starts");
+
+  const [count, setCount] = useState(() => {
+    console.log("2. useState initializer (only first render)");
+    return 0;
+  });
+
+  console.log("3. After useState, count =", count);
+
+  return (
+    &lt;button onClick={() => setCount(count + 1)}&gt;
+      Click me: {count}
+    &lt;/button&gt;
+  );
+}
+
+// First mount:
+// 1. Component render starts
+// 2. useState initializer (only first render)
+// 3. After useState, count = 0
+// (component renders on screen)
+
+// Click button:
+// 1. Component render starts (state updated)
+// 2. After useState, count = 1 (initializer NOT called)
+// 3. (component renders on screen)
+    </code></pre>
+
+    <h3>useEffect Execution Order</h3>
+    <pre><code class="language-javascript">
+function DataFetcher() {
+  const [data, setData] = useState(null);
+
+  console.log("1. Component render");
+
+  useEffect(() => {
+    console.log("2. Effect setup (after render, browser paint)");
+
+    return () => {
+      console.log("3. Cleanup (before next effect or unmount)");
+    };
+  }, []);
+
+  console.log("4. Before return");
+  return &lt;div&gt;{data}&lt;/div&gt;;
+}
+
+// Mount:
+// 1. Component render
+// 4. Before return
+// (browser paints component on screen)
+// 2. Effect setup
+
+// Unmount:
+// 3. Cleanup
+
+// Update with dependency change:
+// 3. Cleanup (previous effect)
+// 1. Component render
+// 4. Before return
+// (browser paints)
+// 2. Effect setup (new effect)
+    </code></pre>
+
+    <h2>Real-World Pitfall #3: Missing Dependencies</h2>
+    <p>
+      Forgetting dependencies in useEffect causes stale closures and bugs.
+    </p>
+
+    <pre><code class="language-javascript">
+// ❌ WRONG - user is stale in the effect
+function UserProfile({ userId }) {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    fetch(`/api/users/${userId}`)
+      .then(res => res.json())
+      .then(data => setUser(data));
+  }, []); // Missing userId dependency!
+}
+
+// First load with userId=1: fetches user 1 ✓
+// Change userId to 2: effect doesn't re-run ✗
+// Still shows user 1
+
+// ✅ CORRECT
+useEffect(() => {
+  fetch(`/api/users/${userId}`)
+    .then(res => res.json())
+    .then(data => setUser(data));
+}, [userId]); // Include all dependencies
+    </code></pre>
+
+    <h2>Real-World Pitfall #4: Infinite Effect Loops</h2>
+    <p>
+      Setting state in effects without proper dependencies causes infinite loops.
+    </p>
+
+    <pre><code class="language-javascript">
+// ❌ WRONG - Infinite loop!
+function BadComponent() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    setCount(count + 1); // Effect updates state
+  }); // No dependency array! Runs after every render
+
+  // Sequence: render → effect → state update → render → effect → ...
+}
+
+// ✅ CORRECT - Controlled update
+function GoodComponent() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (count &lt; 5) {
+      setCount(count + 1);
+    }
+  }, [count]); // Effect only runs when count changes
+}
+
+// ✅ BETTER - Use functional update
+function BetterComponent() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCount(c => c + 1); // Functional form uses latest state
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []); // Empty deps - runs once on mount
+}
+    </code></pre>
+
+    <h2>Interview Question Examples</h2>
+
+    <h3>Q1: Why can't you call hooks conditionally?</h3>
+    <p>
+      <strong>Answer:</strong> React maintains a linked list of hooks indexed by their call order. If you conditionally call hooks, the order changes between renders, causing React to associate state with the wrong hook. Think of it like a numbered list: if you skip numbers, all subsequent items get misaligned.
+    </p>
+    <p>
+      <strong>Analogy:</strong> It's like seating guests at a dinner table. If you assign seats by the order guests arrive (1st guest = seat 1, 2nd = seat 2), then next time the 1st guest skips coming but the 2nd and 3rd do, the 2nd guest sits in seat 1 instead of seat 2. Chaos!
+    </p>
+
+    <h3>Q2: What's the difference between these two implementations?</h3>
+    <pre><code class="language-javascript">
+// Version A
+useEffect(() => {
+  setData(fetchedData);
+}, []); // Runs once
+
+// Version B
+useEffect(() => {
+  setData(fetchedData);
+}); // No dependency array
+    </code></pre>
+    <p>
+      <strong>Answer:</strong> Version A runs only once after the component mounts. Version B runs after every render, causing infinite loops if it updates state.
+    </p>
+    <p>
+      <strong>Analogy:</strong> Version A is like setting an alarm to go off once. Version B is like a loop: "Take medicine → feeling better → check if sick → still need medicine → take it again → better → check again..."
+    </p>
+
+    <h3>Q3: How do you avoid stale closures in effects?</h3>
+    <p>
+      <strong>Answer:</strong> Include all variables used in the effect in the dependency array. You can also use functional setState to avoid capturing stale values.
+    </p>
+    <pre><code class="language-javascript">
+// Stale closure problem
+useEffect(() => {
+  const timer = setTimeout(() => {
+    console.log(count); // Always logs the count from when effect ran
+  }, 1000);
+}, []);
+
+// Solution 1: Add dependency
+useEffect(() => {
+  const timer = setTimeout(() => {
+    console.log(count);
+  }, 1000);
+}, [count]); // Re-run when count changes
+
+// Solution 2: Use functional update
+const [count, setCount] = useState(0);
+useEffect(() => {
+  setCount(c => c + 1); // 'c' is always current state
+}, []);
+    </code></pre>
+
+    <h2>Key Takeaways</h2>
+    <ul>
+      <li>Hook order must be consistent—never call hooks conditionally or in loops</li>
+      <li>React uses hook call order, not names, to manage state</li>
+      <li>Always include dependencies in useEffect to prevent bugs</li>
+      <li>Use functional setState to avoid stale closures</li>
+      <li>Understand execution order: render → browser paint → effects</li>
+      <li>Effects with no dependency array run after every render</li>
+      <li>Effects with empty dependency array run once on mount</li>
+    </ul>
+
+  </div>
+</section>

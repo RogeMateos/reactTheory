@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const lang = currentLanguage === "es" ? "es" : "en";
     const hooks = ["useState", "useEffect", "useContext", "useRef", "useReducer", "globalSwitch"];
     const fundamentals = ["bareBonesMethod", "lifeCicle"];
-    const interview = ["interviewQuestions"];
+    const interview = ["interviewQuestions", "react-hooks-rules-and-order"];
 
     let folder = "";
     if (hooks.includes(section)) {

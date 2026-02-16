@@ -1,0 +1,347 @@
+<section class="box">
+  <h1>Reglas de React Hooks y Orden: Orden de Ejecución y Errores Comunes</h1>
+
+  <div class="description">
+    <p>
+      Entender el orden de ejecución de los hooks de React y sus reglas es crucial para escribir código sin errores. Este tutorial explora los principios clave detrás de los hooks, los errores comunes y cómo evitarlos.
+    </p>
+
+    <h2>Las Dos Reglas Esenciales de los Hooks</h2>
+    <p>
+      React ha establecido dos reglas fundamentales que rigen cómo se deben usar los hooks:
+    </p>
+
+    <h3>Regla 1: Solo Llama Hooks en el Nivel Superior</h3>
+    <p>
+      Nunca llames hooks dentro de condicionales, bucles o funciones anidadas. Esto es porque React se basa en el orden de las llamadas de hooks para mantener el estado correctamente entre renderizaciones.
+    </p>
+
+    <pre><code class="language-javascript">
+// ❌ INCORRECTO - Hook dentro de condicional
+function MyComponent({ isLoggedIn }) {
+  if (isLoggedIn) {
+    const [user, setUser] = useState(null); // ¡INCORRECTO!
+  }
+}
+
+// ✅ CORRECTO - Hook en nivel superior
+function MyComponent({ isLoggedIn }) {
+  const [user, setUser] = useState(null);
+
+  if (isLoggedIn) {
+    // Usa el estado aquí
+  }
+}
+    </code></pre>
+
+    <h3>Regla 2: Solo Llama Hooks desde Funciones React</h3>
+    <p>
+      Los hooks solo se pueden llamar desde componentes funcionales de React o hooks personalizados. No desde funciones JavaScript regulares o componentes de clase.
+    </p>
+
+    <pre><code class="language-javascript">
+// ❌ INCORRECTO - Hook en función regular
+function regularFunction() {
+  const [count, setCount] = useState(0); // ¡INCORRECTO!
+}
+
+// ✅ CORRECTO - Hook en componente React
+function MyComponent() {
+  const [count, setCount] = useState(0);
+  return &lt;div&gt;{count}&lt;/div&gt;;
+}
+
+// ✅ CORRECTO - Hook en hook personalizado
+function useCustomHook() {
+  const [data, setData] = useState(null);
+  return data;
+}
+    </code></pre>
+
+    <h2>¿Por Qué Importa el Orden de los Hooks? El Mecanismo Interno</h2>
+    <p>
+      React mantiene una lista vinculada de hooks para cada instancia de componente. Cuando llamas a los hooks, React no usa sus nombres—usa el orden en que se llaman. Por eso el orden debe ser consistente entre renderizaciones.
+    </p>
+
+    <pre><code class="language-javascript">
+// Primer renderizado - los hooks se almacenan en orden
+function Counter() {
+  const [count, setCount] = useState(0);     // Hook #1
+  const [name, setName] = useState("John");  // Hook #2
+  useEffect(() => {}, [count]);              // Hook #3
+}
+
+// Almacenamiento interno de React (simplificado):
+// component.hooks = [
+//   { state: 0, setState: ... },        // useState para count
+//   { state: "John", setState: ... },   // useState para name
+//   { effect: ..., deps: [0] }          // useEffect
+// ]
+    </code></pre>
+
+    <h2>Error Común #1: Llamadas Condicionales de Hooks</h2>
+    <p>
+      Esto rompe la regla del orden de hooks y causa que React alinee mal el estado con los hooks.
+    </p>
+
+    <pre><code class="language-javascript">
+// ❌ INCORRECTO
+function MyComponent({ showEmail }) {
+  const [name, setName] = useState("");
+
+  if (showEmail) {
+    const [email, setEmail] = useState(""); // ¡Hook condicional!
+  }
+
+  const [age, setAge] = useState(0);
+}
+
+// Primer renderizado (showEmail = true):
+// Hooks: [name, email, age]
+
+// Segundo renderizado (showEmail = false):
+// Hooks: [name, age] - ¡pero React espera email!
+// Resultado: el valor de age va a email, ¡caos!
+
+// ✅ CORRECTO
+function MyComponent({ showEmail }) {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [age, setAge] = useState(0);
+
+  // Usa lógica condicional, no hooks condicionales
+}
+    </code></pre>
+
+    <h2>Error Común #2: Hooks Dentro de Bucles</h2>
+    <p>
+      Los bucles hacen que el número de llamadas de hooks varíe, rompiendo el supuesto de orden consistente.
+    </p>
+
+    <pre><code class="language-javascript">
+// ❌ INCORRECTO
+function TodoList({ todos }) {
+  todos.forEach((todo) => {
+    const [completed, setCompleted] = useState(false); // ¡El número de hooks varía!
+  });
+}
+
+// ✅ CORRECTO - Usa un hook personalizado o gestión de estado
+function TodoList({ todos }) {
+  const [completed, setCompleted] = useState(
+    todos.reduce((acc, todo) => ({ ...acc, [todo.id]: false }), {})
+  );
+}
+    </code></pre>
+
+    <h2>Inmersión Profunda en el Orden de Ejecución</h2>
+    <p>
+      Entender cuándo se ejecutan los hooks es crucial para depurar problemas de rendimiento y estado.
+    </p>
+
+    <h3>Orden de Ejecución de useState</h3>
+    <pre><code class="language-javascript">
+function Counter() {
+  console.log("1. Comienza el renderizado del componente");
+
+  const [count, setCount] = useState(() => {
+    console.log("2. Inicializador de useState (solo primer renderizado)");
+    return 0;
+  });
+
+  console.log("3. Después de useState, count =", count);
+
+  return (
+    &lt;button onClick={() => setCount(count + 1)}&gt;
+      Haz clic: {count}
+    &lt;/button&gt;
+  );
+}
+
+// Primer montaje:
+// 1. Comienza el renderizado del componente
+// 2. Inicializador de useState (solo primer renderizado)
+// 3. Después de useState, count = 0
+// (el componente se renderiza en pantalla)
+
+// Clic en botón:
+// 1. Comienza el renderizado del componente (estado actualizado)
+// 2. Después de useState, count = 1 (inicializador NO se llama)
+// 3. (el componente se renderiza en pantalla)
+    </code></pre>
+
+    <h3>Orden de Ejecución de useEffect</h3>
+    <pre><code class="language-javascript">
+function DataFetcher() {
+  const [data, setData] = useState(null);
+
+  console.log("1. Renderizado del componente");
+
+  useEffect(() => {
+    console.log("2. Configuración del efecto (después del renderizado, pintura del navegador)");
+
+    return () => {
+      console.log("3. Limpieza (antes del próximo efecto o desmontaje)");
+    };
+  }, []);
+
+  console.log("4. Antes de retornar");
+  return &lt;div&gt;{data}&lt;/div&gt;;
+}
+
+// Montaje:
+// 1. Renderizado del componente
+// 4. Antes de retornar
+// (el navegador pinta el componente en pantalla)
+// 2. Configuración del efecto
+
+// Desmontaje:
+// 3. Limpieza
+
+// Actualización con cambio de dependencia:
+// 3. Limpieza (efecto anterior)
+// 1. Renderizado del componente
+// 4. Antes de retornar
+// (el navegador pinta)
+// 2. Configuración del efecto (nuevo efecto)
+    </code></pre>
+
+    <h2>Error Real-World #3: Dependencias Faltantes</h2>
+    <p>
+      Olvidar dependencias en useEffect causa cierres obsoletos y errores.
+    </p>
+
+    <pre><code class="language-javascript">
+// ❌ INCORRECTO - user está obsoleto en el efecto
+function UserProfile({ userId }) {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    fetch(`/api/users/${userId}`)
+      .then(res => res.json())
+      .then(data => setUser(data));
+  }, []); // ¡Falta la dependencia userId!
+}
+
+// Primera carga con userId=1: obtiene usuario 1 ✓
+// Cambiar userId a 2: el efecto no se ejecuta ✗
+// Sigue mostrando usuario 1
+
+// ✅ CORRECTO
+useEffect(() => {
+  fetch(`/api/users/${userId}`)
+    .then(res => res.json())
+    .then(data => setUser(data));
+}, [userId]); // Incluye todas las dependencias
+    </code></pre>
+
+    <h2>Error Real-World #4: Bucles de Efecto Infinito</h2>
+    <p>
+      Establecer estado en efectos sin dependencias adecuadas causa bucles infinitos.
+    </p>
+
+    <pre><code class="language-javascript">
+// ❌ INCORRECTO - ¡Bucle infinito!
+function BadComponent() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    setCount(count + 1); // El efecto actualiza el estado
+  }); // ¡Sin array de dependencias! Se ejecuta después de cada renderizado
+
+  // Secuencia: renderizado → efecto → actualización de estado → renderizado → efecto → ...
+}
+
+// ✅ CORRECTO - Actualización controlada
+function GoodComponent() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (count &lt; 5) {
+      setCount(count + 1);
+    }
+  }, [count]); // El efecto solo se ejecuta cuando count cambia
+}
+
+// ✅ MEJOR - Usa actualización funcional
+function BetterComponent() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCount(c => c + 1); // La forma funcional usa el estado más reciente
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []); // Dependencias vacías - se ejecuta una vez en montaje
+}
+    </code></pre>
+
+    <h2>Ejemplos de Preguntas de Entrevista</h2>
+
+    <h3>P1: ¿Por qué no puedes llamar hooks condicionalmente?</h3>
+    <p>
+      <strong>Respuesta:</strong> React mantiene una lista vinculada de hooks indexada por su orden de llamada. Si llamas hooks condicionalmente, el orden cambia entre renderizaciones, causando que React asocie el estado con el hook incorrecto. Piénsalo como una lista numerada: si saltas números, todos los elementos posteriores quedan desalineados.
+    </p>
+    <p>
+      <strong>Analogía:</strong> Es como asignar asientos en una cena. Si asignas asientos según el orden en que llegan los invitados (1er invitado = asiento 1, 2do = asiento 2), entonces la próxima vez que el 1er invitado no viene pero vienen el 2do y 3ro, el 2do invitado se sienta en el asiento 1 en lugar del 2. ¡Caos!
+    </p>
+
+    <h3>P2: ¿Cuál es la diferencia entre estas dos implementaciones?</h3>
+    <pre><code class="language-javascript">
+// Versión A
+useEffect(() => {
+  setData(fetchedData);
+}, []); // Se ejecuta una vez
+
+// Versión B
+useEffect(() => {
+  setData(fetchedData);
+}); // Sin array de dependencias
+    </code></pre>
+    <p>
+      <strong>Respuesta:</strong> La versión A se ejecuta solo una vez después de que el componente se monta. La versión B se ejecuta después de cada renderizado, causando bucles infinitos si actualiza el estado.
+    </p>
+    <p>
+      <strong>Analogía:</strong> La versión A es como una alarma que suena una sola vez. La versión B es como un bucle: "Tomar medicina → sentirse mejor → verificar si está enfermo → aún necesita medicina → tomarla nuevamente → mejor → verificar de nuevo..."
+    </p>
+
+    <h3>P3: ¿Cómo evitas cierres obsoletos en efectos?</h3>
+    <p>
+      <strong>Respuesta:</strong> Incluye todas las variables utilizadas en el efecto en el array de dependencias. También puedes usar setState funcional para evitar capturar valores obsoletos.
+    </p>
+    <pre><code class="language-javascript">
+// Problema de cierre obsoleto
+useEffect(() => {
+  const timer = setTimeout(() => {
+    console.log(count); // Siempre registra el count desde cuando se ejecutó el efecto
+  }, 1000);
+}, []);
+
+// Solución 1: Añade dependencia
+useEffect(() => {
+  const timer = setTimeout(() => {
+    console.log(count);
+  }, 1000);
+}, [count]); // Se ejecuta nuevamente cuando count cambia
+
+// Solución 2: Usa actualización funcional
+const [count, setCount] = useState(0);
+useEffect(() => {
+  setCount(c => c + 1); // 'c' es siempre el estado actual
+}, []);
+    </code></pre>
+
+    <h2>Puntos Clave</h2>
+    <ul>
+      <li>El orden de los hooks debe ser consistente—nunca llames hooks condicionalmente o en bucles</li>
+      <li>React usa el orden de llamadas de hooks, no los nombres, para gestionar el estado</li>
+      <li>Siempre incluye dependencias en useEffect para prevenir errores</li>
+      <li>Usa setState funcional para evitar cierres obsoletos</li>
+      <li>Entiende el orden de ejecución: renderizado → pintura del navegador → efectos</li>
+      <li>Los efectos sin array de dependencias se ejecutan después de cada renderizado</li>
+      <li>Los efectos con array de dependencias vacío se ejecutan una vez en montaje</li>
+    </ul>
+
+  </div>
+</section>
