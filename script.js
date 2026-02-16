@@ -54,7 +54,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function loadContent(section) {
     const lang = currentLanguage === "es" ? "es" : "en";
-    const fileName = `sections/${lang}/${section}.html`;
+    const hooks = ["useState", "useEffect", "useContext", "useRef", "useReducer"];
+    const folder = hooks.includes(section) ? "hooks/" : "";
+    const fileName = `sections/${folder}${lang}/${section}.html`;
 
     fetch(fileName)
       .then((response) => {
