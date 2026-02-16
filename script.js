@@ -55,7 +55,18 @@ document.addEventListener("DOMContentLoaded", () => {
   function loadContent(section) {
     const lang = currentLanguage === "es" ? "es" : "en";
     const hooks = ["useState", "useEffect", "useContext", "useRef", "useReducer"];
-    const folder = hooks.includes(section) ? "hooks/" : "";
+    const fundamentals = ["bareBonesMethod", "lifeCicle"];
+    const interview = ["interviewQuestions"];
+
+    let folder = "";
+    if (hooks.includes(section)) {
+      folder = "hooks/";
+    } else if (fundamentals.includes(section)) {
+      folder = "fundamentals/";
+    } else if (interview.includes(section)) {
+      folder = "interview/";
+    }
+
     const fileName = `sections/${folder}${lang}/${section}.html`;
 
     fetch(fileName)
