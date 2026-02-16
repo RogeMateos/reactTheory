@@ -1,0 +1,472 @@
+<section class="box">
+  <h1>React Hooks: Reglas, Orden de Ejecución y Errores Reales - Masterclass</h1>
+
+  <div class="description">
+    <p>
+      En esta masterclass, entenderás qué son realmente los hooks, por qué deben llamarse en el mismo orden, qué pasa si rompes las reglas y cómo funcionan internamente.
+    </p>
+
+    <h2>📌 Objetivos de Aprendizaje</h2>
+    <p>
+      Al final de este tutorial, entenderás:
+    </p>
+    <ul>
+      <li>Qué son realmente los hooks (no solo "manejan estado")</li>
+      <li>Por qué deben llamarse en el mismo orden</li>
+      <li>Qué pasa si rompes las reglas</li>
+      <li>Cómo funcionan internamente los hooks</li>
+      <li>Errores comunes en entrevistas</li>
+      <li>Diferencia entre useEffect y useLayoutEffect</li>
+      <li>Cómo evitar bugs reales</li>
+    </ul>
+
+    <h2>🧠 Qué son Realmente los Hooks</h2>
+    <p>
+      Los hooks permiten que los componentes funcionales:
+    </p>
+    <ul>
+      <li>Tengan estado (useState)</li>
+      <li>Ejecuten efectos secundarios (useEffect)</li>
+      <li>Memoricen valores (useMemo)</li>
+      <li>Accedan al DOM (useRef)</li>
+    </ul>
+    <p>
+      Pero aquí está la cosa que casi nadie explica…
+    </p>
+    <p>
+      <strong>No se trata de lo que hacen. Se trata de cómo React los gestiona internamente.</strong>
+    </p>
+
+    <h2>⚙️ Cómo React Guarda los Hooks (Lo Que Casi Nadie Explica)</h2>
+    <p>
+      React NO identifica un hook por su nombre.
+    </p>
+    <p>
+      React identifica los hooks por:
+    </p>
+    <ul>
+      <li><strong>🔢 El orden en que se ejecutan</strong></li>
+    </ul>
+    <p>
+      Imagina que React guarda algo así internamente:
+    </p>
+
+    <h3>Renderizado 1:</h3>
+    <pre><code class="language-javascript">
+Hook 1 → useState
+Hook 2 → useEffect
+Hook 3 → useState
+    </code></pre>
+
+    <p>
+      En el siguiente renderizado, React espera EXACTAMENTE el mismo orden:
+    </p>
+
+    <h3>Renderizado 2:</h3>
+    <pre><code class="language-javascript">
+Hook 1 → useState
+Hook 2 → useEffect
+Hook 3 → useState
+    </code></pre>
+
+    <p>
+      Si el orden cambia… 💥 bugs impredecibles.
+    </p>
+
+    <h2>🚨 Las Reglas de los Hooks</h2>
+
+    <h3>Regla 1: Solo Llama Hooks en el Nivel Superior</h3>
+    <p>
+      ❌ Nunca dentro de:
+    </p>
+    <ul>
+      <li>if statements</li>
+      <li>bucles</li>
+      <li>funciones regulares</li>
+      <li>callbacks</li>
+      <li>funciones anidadas</li>
+    </ul>
+
+    <p><strong>❌ Incorrecto:</strong></p>
+    <pre><code class="language-javascript">
+if (condition) {
+  useEffect(() => {});
+}
+    </code></pre>
+
+    <p><strong>✅ Correcto:</strong></p>
+    <pre><code class="language-javascript">
+useEffect(() => {
+  if (condition) {
+    // lógica aquí
+  }
+}, [condition]);
+    </code></pre>
+
+    <h3>Regla 2: Solo en Componentes o Custom Hooks</h3>
+    <p><strong>❌ Incorrecto:</strong></p>
+    <pre><code class="language-javascript">
+function logger() {
+  useEffect(() => {});
+}
+    </code></pre>
+
+    <p><strong>✅ Correcto (custom hook):</strong></p>
+    <pre><code class="language-javascript">
+function useLogger(value) {
+  useEffect(() => {
+    console.log(value);
+  }, [value]);
+}
+
+function Component() {
+  useLogger("hello");
+}
+    </code></pre>
+
+    <h2>💥 ¿Qué Pasa Si Rompes el Orden?</h2>
+    <p>
+      Ejemplo peligroso:
+    </p>
+
+    <pre><code class="language-javascript">
+function Component({ show }) {
+  useState(0);
+
+  if (show) {
+    useEffect(() => {});
+  }
+
+  useState(10);
+}
+    </code></pre>
+
+    <p><strong>Renderizado 1 (show = true):</strong></p>
+    <pre><code class="language-javascript">
+1 → useState
+2 → useEffect
+3 → useState
+    </code></pre>
+
+    <p><strong>Renderizado 2 (show = false):</strong></p>
+    <pre><code class="language-javascript">
+1 → useState
+2 → useState ❌
+    </code></pre>
+
+    <p>
+      React ahora cree que el segundo useState es el useEffect.
+    </p>
+
+    <p><strong>Resultado:</strong></p>
+    <ul>
+      <li>Estados mezclados</li>
+      <li>Valores incorrectos</li>
+      <li>Bugs difíciles de depurar</li>
+    </ul>
+
+    <h2>🧩 Analogía Importante: El Archivador</h2>
+    <p>
+      React es como un archivador con cajones numerados:
+    </p>
+    <pre><code class="language-javascript">
+Cajón 1 → Estado A
+Cajón 2 → Efecto B
+Cajón 3 → Estado C
+    </code></pre>
+
+    <p>
+      Si un día te saltas el cajón 2, todo lo demás queda desplazado.
+    </p>
+    <p>
+      <strong>Analogía:</strong> Es como asignar asientos en una cena. Asignas asientos según el orden de llegada. Si el 1er invitado no viene pero vienen el 2do y 3ro, el 2do invitado se sienta en el asiento 1 en lugar del 2. ¡Caos!
+    </p>
+
+    <h2>🔍 Dependencias en useEffect (Error Muy Común)</h2>
+
+    <p><strong>❌ Código Incorrecto:</strong></p>
+    <pre><code class="language-javascript">
+useEffect(() => {
+  fetchData(userId);
+}, []);
+    </code></pre>
+
+    <p><strong>Problema:</strong></p>
+    <ul>
+      <li>userId puede cambiar</li>
+      <li>Pero el efecto solo se ejecuta una vez</li>
+      <li>Se queda con el valor inicial (cierre obsoleto)</li>
+    </ul>
+
+    <p><strong>✅ Correcto:</strong></p>
+    <pre><code class="language-javascript">
+useEffect(() => {
+  fetchData(userId);
+}, [userId]);
+    </code></pre>
+
+    <h2>🧠 ¿Qué es un Cierre Obsoleto?</h2>
+    <p>
+      Cuando haces esto:
+    </p>
+
+    <pre><code class="language-javascript">
+useEffect(() => {
+  console.log(userId);
+}, []);
+    </code></pre>
+
+    <p>
+      El efecto "recuerda" el userId del primer renderizado.
+    </p>
+    <p>
+      Aunque cambie después, el efecto sigue usando el valor antiguo.
+    </p>
+    <p>
+      Es como tomar una foto del valor en el momento en que creaste el efecto.
+    </p>
+
+    <p>
+      <strong>Analogía:</strong> Imagina que anotas el número de teléfono de tu amigo. Más tarde, cambia su número. Pero tú todavía tienes el número antiguo anotado. Cada vez que llamas, usas el antiguo del pasado.
+    </p>
+
+    <h2>🏗 Componente vs Custom Hook</h2>
+
+    <h3>Componente</h3>
+    <ul>
+      <li>Devuelve JSX</li>
+      <li>Renderiza UI</li>
+    </ul>
+
+    <pre><code class="language-javascript">
+function Button() {
+  return &lt;button&gt;Click&lt;/button&gt;;
+}
+    </code></pre>
+
+    <h3>Custom Hook</h3>
+    <ul>
+      <li>No devuelve JSX</li>
+      <li>Reutiliza lógica</li>
+    </ul>
+
+    <pre><code class="language-javascript">
+function useFetch(url) {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    fetch(url)
+      .then(res => res.json())
+      .then(setData);
+  }, [url]);
+
+  return data;
+}
+    </code></pre>
+
+    <p>
+      Usa custom hooks cuando:
+    </p>
+    <ul>
+      <li>Repites lógica en múltiples componentes</li>
+      <li>Quieres abstraer comportamiento</li>
+      <li>Quieres separar UI de lógica</li>
+    </ul>
+
+    <h2>🎨 useEffect vs useLayoutEffect</h2>
+
+    <h3>useEffect</h3>
+    <ul>
+      <li>Se ejecuta <strong>después</strong> del paint</li>
+      <li>No bloquea la UI</li>
+    </ul>
+    <p>
+      Ideal para:
+    </p>
+    <ul>
+      <li>Obtener datos</li>
+      <li>Logging</li>
+      <li>Suscripciones</li>
+    </ul>
+
+    <pre><code class="language-javascript">
+useEffect(() => {
+  fetchData();
+}, []);
+    </code></pre>
+
+    <h3>useLayoutEffect</h3>
+    <ul>
+      <li>Se ejecuta <strong>antes</strong> del paint</li>
+      <li>Bloquea el renderizado</li>
+    </ul>
+    <p>
+      Úsalo cuando necesites:
+    </p>
+    <ul>
+      <li>Medir el DOM</li>
+      <li>Ajustar layout antes de que el usuario lo vea</li>
+      <li>Evitar flickering</li>
+    </ul>
+
+    <pre><code class="language-javascript">
+useLayoutEffect(() => {
+  const height = elementRef.current.offsetHeight;
+  setHeight(height);
+}, []);
+    </code></pre>
+
+    <h2>Comparación de Timing</h2>
+    <pre><code class="language-javascript">
+// useEffect (no bloquea)
+Renderizado → Paint navegador → Se ejecuta el efecto
+
+// useLayoutEffect (bloquea)
+Renderizado → Se ejecuta el efecto → Paint navegador
+    </code></pre>
+
+    <h2>🎯 Respuesta Perfecta en Entrevista</h2>
+    <p>
+      Si preguntan: "¿Por qué deben llamarse los hooks en el mismo orden?"
+    </p>
+    <p>
+      <strong>Respuesta Perfecta:</strong>
+    </p>
+    <blockquote>
+      "React se basa en el orden de llamadas de hooks para asociar estado y efectos con una instancia específica del componente. Internamente, React mantiene una lista vinculada de hooks indexada por su orden de llamada. Si el orden cambia entre renderizaciones, React puede asignar estado o efectos incorrectamente, causando bugs impredecibles como estado desalineado con el hook incorrecto o efectos que no se disparan cuando deberían."
+    </blockquote>
+
+    <p>
+      <strong>Luego añade:</strong>
+    </p>
+    <blockquote>
+      "Por eso no podemos llamar hooks condicionalmente o dentro de bucles—el número de hooks cambiaría entre renderizaciones, rompiendo el sistema de ordenamiento fijo. Es como una lista numerada: si saltas números, todo lo posterior queda desalineado."
+    </blockquote>
+
+    <h2>🔥 Errores Reales Que Cometen Muchos Devs</h2>
+    <ul>
+      <li>❌ Hooks dentro de if statements</li>
+      <li>❌ Dependencias mal definidas</li>
+      <li>❌ Usar [] sin entender closures</li>
+      <li>❌ No limpiar efectos (event listeners, suscripciones)</li>
+      <li>❌ Abusar de useLayoutEffect</li>
+      <li>❌ No memoizar callbacks cuando es necesario</li>
+      <li>❌ Bucles infinitos de efectos</li>
+      <li>❌ Modificar el orden de hooks según condiciones</li>
+    </ul>
+
+    <h2>Ejemplos de Bugs Reales</h2>
+
+    <h3>Bug #1: ID de Usuario Obsoleto</h3>
+    <pre><code class="language-javascript">
+// ❌ BUG
+function UserProfile({ userId }) {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    fetch(`/api/users/${userId}`)
+      .then(res => res.json())
+      .then(setUser);
+  }, []); // ¡Falta userId!
+}
+
+// userId cambia a 2, pero el efecto no se ejecuta
+// Sigue mostrando el usuario antiguo
+
+// ✅ ARREGLADO
+useEffect(() => {
+  fetch(`/api/users/${userId}`)
+    .then(res => res.json())
+    .then(setUser);
+}, [userId]); // Incluye la dependencia
+    </code></pre>
+
+    <h3>Bug #2: Event Listener No Limpiado</h3>
+    <pre><code class="language-javascript">
+// ❌ BUG - Memory leak
+useEffect(() => {
+  const handleResize = () => {
+    setWidth(window.innerWidth);
+  };
+
+  window.addEventListener("resize", handleResize);
+  // ¡Sin limpieza! Los listeners se acumulan en cada renderizado
+}, []);
+
+// ✅ ARREGLADO
+useEffect(() => {
+  const handleResize = () => {
+    setWidth(window.innerWidth);
+  };
+
+  window.addEventListener("resize", handleResize);
+
+  return () => {
+    window.removeEventListener("resize", handleResize);
+  };
+}, []);
+    </code></pre>
+
+    <h3>Bug #3: Bucle Infinito</h3>
+    <pre><code class="language-javascript">
+// ❌ BUG - Bucle infinito
+useEffect(() => {
+  setCount(count + 1);
+}); // ¡Sin array de dependencias!
+
+// Se ejecuta después de cada renderizado → actualiza estado → re-renderizado → se ejecuta el efecto de nuevo
+
+// ✅ ARREGLADO - Muchas opciones
+// Opción 1: Añade dependencia
+useEffect(() => {
+  if (count &lt; 5) setCount(count + 1);
+}, [count]);
+
+// Opción 2: Usa actualización funcional
+useEffect(() => {
+  const timer = setInterval(() => {
+    setCount(c => c + 1);
+  }, 1000);
+  return () => clearInterval(timer);
+}, []);
+
+// Opción 3: Array de dependencias vacío (solo una vez)
+useEffect(() => {
+  const timer = setTimeout(() => {
+    setCount(10);
+  }, 1000);
+  return () => clearTimeout(timer);
+}, []);
+    </code></pre>
+
+    <h2>📌 Puntos Clave</h2>
+    <ul>
+      <li>✅ Los hooks se identifican por orden de llamada, no por nombre</li>
+      <li>✅ Siempre llama hooks en el nivel superior</li>
+      <li>✅ Siempre incluye dependencias en useEffect</li>
+      <li>✅ Usa custom hooks para extraer lógica reutilizable</li>
+      <li>✅ Entiende los cierres obsoletos</li>
+      <li>✅ Limpia los efectos (listeners, timers, suscripciones)</li>
+      <li>✅ useEffect se ejecuta después del paint, useLayoutEffect antes</li>
+      <li>✅ Nunca saltes hooks condicionalmente</li>
+      <li>✅ El orden importa más de lo que crees</li>
+      <li>✅ Si algo se siente "raro", probablemente sea un problema de orden de hooks</li>
+    </ul>
+
+    <h2>Checklist de Entrevista</h2>
+    <p>
+      Antes de tu entrevista, asegúrate de poder explicar:
+    </p>
+    <ul>
+      <li>Por qué deben estar los hooks en el mismo orden</li>
+      <li>La diferencia entre [] y sin array de dependencias</li>
+      <li>Qué es un cierre obsoleto</li>
+      <li>Cómo limpiar efectos</li>
+      <li>useEffect vs useLayoutEffect</li>
+      <li>Cuándo usar custom hooks</li>
+      <li>Pitfalls comunes</li>
+      <li>Bugs reales y soluciones</li>
+    </ul>
+
+  </div>
+</section>
