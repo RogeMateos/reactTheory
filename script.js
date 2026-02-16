@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function loadContent(section) {
     const lang = currentLanguage === "es" ? "es" : "en";
-    const hooks = ["useState", "useEffect", "useContext", "useRef", "useReducer"];
+    const hooks = ["useState", "useEffect", "useContext", "useRef", "useReducer", "globalSwitch"];
     const fundamentals = ["bareBonesMethod", "lifeCicle"];
     const interview = ["interviewQuestions"];
 
