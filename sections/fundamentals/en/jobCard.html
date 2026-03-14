@@ -1,0 +1,679 @@
+<section class="box">
+  <h1>Creating JobCard: Our First Real Component</h1>
+
+  <div class="description">
+    <p>
+      Until now we've learned:
+    </p>
+    <ul>
+      <li>What JSX is</li>
+      <li>What components are</li>
+      <li>The difference between components and normal functions</li>
+    </ul>
+
+    <p>Now we're going to apply all of that by creating a real component for our DevJobs application.</p>
+    <p>This will be the first component that represents a real piece of UI.</p>
+
+    <h3>1️⃣ The Goal: A Job Card</h3>
+    <p>We want to create something like this:</p>
+    <pre><code>-------------------------------
+Frontend Developer
+Tech Solutions | Remote
+
+We are looking for a developer...
+[ Apply ]
+-------------------------------</code></pre>
+
+    <p>Each card will have different data, but the structure will be the same.</p>
+    <p><strong>This is where React shines.</strong></p>
+    <p>We create a reusable component.</p>
+
+    <h3>2️⃣ The JobCard Component</h3>
+    <p>This is our first real component.</p>
+
+    <pre><code class="language-jsx">function JobCard({ title, company, location, description }) {
+  return (
+    &lt;article className="job-listing-card"&gt;
+      &lt;h3&gt;{title}&lt;/h3&gt;
+      &lt;small&gt;
+        {company} | {location}
+      &lt;/small&gt;
+      &lt;p&gt;{description}&lt;/p&gt;
+      &lt;button className="button-apply-job"&gt;
+        Apply
+      &lt;/button&gt;
+    &lt;/article&gt;
+  )
+}</code></pre>
+
+    <p>This component:</p>
+    <ul>
+      <li>Receives 4 props</li>
+      <li>Returns JSX</li>
+      <li>Represents a job card</li>
+    </ul>
+
+    <h3>3️⃣ What are Props?</h3>
+    <p>Props are data passed to a component.</p>
+
+    <h4>Example:</h4>
+    <pre><code class="language-jsx">&lt;JobCard
+  title="Frontend Developer"
+  company="Tech Solutions"
+  location="Remote"
+  description="We are looking for a developer..."
+/&gt;</code></pre>
+
+    <p>Inside the component we can use them:</p>
+    <pre><code>{title}
+{company}
+{location}
+{description}</code></pre>
+
+    <p>React replaces those values automatically.</p>
+
+    <h3>4️⃣ Props Destructuring</h3>
+    <p>Notice this line:</p>
+    <pre><code class="language-jsx">function JobCard({ title, company, location, description })</code></pre>
+
+    <p>This is called destructuring.</p>
+
+    <p>Instead of doing this:</p>
+    <pre><code class="language-jsx">function JobCard(props) {
+  return (
+    &lt;h3&gt;{props.title}&lt;/h3&gt;
+  )
+}</code></pre>
+
+    <p>We can do this:</p>
+    <pre><code class="language-jsx">function JobCard({ title }) {
+  return &lt;h3&gt;{title}&lt;/h3&gt;
+}</code></pre>
+
+    <h4>Advantages:</h4>
+    <ul>
+      <li>Cleaner code</li>
+      <li>Easier to read</li>
+      <li>Very common in React</li>
+    </ul>
+
+    <h3>5️⃣ The App Component</h3>
+    <p>Now we have a main component that uses JobCard.</p>
+
+    <pre><code class="language-jsx">function App() {
+  return (
+    &lt;section&gt;
+      &lt;h2&gt;Available Jobs&lt;/h2&gt;
+      &lt;div className="jobs-listings"&gt;
+        &lt;JobCard
+          title="Frontend Developer"
+          company="Tech Solutions"
+          location="Remote"
+          description="We are looking..."
+        /&gt;
+        &lt;JobCard
+          title="Senior Software Engineer"
+          company="Data Driven Co."
+          location="Mexico City"
+          description="Looking for an engineer..."
+        /&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+  )
+}</code></pre>
+
+    <p>Here we see component composition.</p>
+
+    <h3>6️⃣ What is Component Composition?</h3>
+    <p>React works like LEGO.</p>
+    <p>You build interfaces using small components.</p>
+
+    <h4>Example:</h4>
+    <pre><code>App
+ ├── Header
+ ├── JobList
+ │    ├── JobCard
+ │    ├── JobCard
+ │    └── JobCard
+ └── Footer</code></pre>
+
+    <p>Each component has its own responsibility.</p>
+
+    <h3>7️⃣ Comparison with Vanilla JavaScript</h3>
+
+    <h4>Before with plain JavaScript we did this:</h4>
+    <pre><code class="language-javascript">jobs.forEach((job) => {
+  const article = document.createElement('article')
+  article.innerHTML = `
+    &lt;h3&gt;${job.title}&lt;/h3&gt;
+    &lt;small&gt;${job.company}&lt;/small&gt;
+  `
+  container.appendChild(article)
+})</code></pre>
+
+    <h4>Problems:</h4>
+    <ul>
+      <li>❌ Lots of repeated code</li>
+      <li>❌ Manual DOM manipulation</li>
+      <li>❌ HTML inside strings</li>
+      <li>❌ Hard to maintain</li>
+    </ul>
+
+    <h3>8️⃣ With React</h3>
+    <p>We write the component once:</p>
+
+    <pre><code class="language-jsx">function JobCard({ title, company, location, description }) {
+  return (
+    &lt;article className="job-listing-card"&gt;
+      &lt;h3&gt;{title}&lt;/h3&gt;
+      &lt;p&gt;{description}&lt;/p&gt;
+    &lt;/article&gt;
+  )
+}</code></pre>
+
+    <p>And we use it as many times as we want.</p>
+
+    <h4>Advantages:</h4>
+    <ul>
+      <li>✅ Declarative code</li>
+      <li>✅ Reusable components</li>
+      <li>✅ React manages the DOM</li>
+      <li>✅ Easier to maintain</li>
+    </ul>
+
+    <h3>9️⃣ Using Dynamic Data</h3>
+    <p>We can use real data.</p>
+
+    <pre><code class="language-jsx">const jobs = [
+  {
+    title: "Frontend Developer",
+    company: "Tech Co",
+    location: "Remote",
+    description: "React developer"
+  },
+  {
+    title: "Backend Developer",
+    company: "Startup",
+    location: "Madrid",
+    description: "Node developer"
+  }
+]</code></pre>
+
+    <p>Then pass them as props.</p>
+
+    <h3>🔟 Extending the Component</h3>
+    <p>We can add more information.</p>
+
+    <pre><code class="language-jsx">function JobCard({
+  title,
+  company,
+  location,
+  description,
+  salary,
+  modality,
+  level
+}) {
+  return (
+    &lt;article className="job-listing-card"&gt;
+      &lt;h3&gt;{title}&lt;/h3&gt;
+      &lt;small&gt;
+        {company} | {location}
+      &lt;/small&gt;
+      &lt;p&gt;{description}&lt;/p&gt;
+      &lt;div&gt;
+        &lt;span&gt;💰 {salary}&lt;/span&gt;
+        &lt;span&gt;📍 {modality}&lt;/span&gt;
+        &lt;span&gt;📊 {level}&lt;/span&gt;
+      &lt;/div&gt;
+      &lt;button&gt;Apply&lt;/button&gt;
+    &lt;/article&gt;
+  )
+}</code></pre>
+
+    <h3>1️⃣1️⃣ Best Practices with Components</h3>
+
+    <h4>1. One component = One responsibility</h4>
+
+    <p><strong>Correct:</strong></p>
+    <pre><code class="language-jsx">function JobTitle({ children }) {
+  return &lt;h3&gt;{children}&lt;/h3&gt;
+}</code></pre>
+
+    <p><strong>Incorrect:</strong></p>
+    <pre><code class="language-jsx">function EverythingComponent() {
+  // does too many things
+}</code></pre>
+
+    <h4>2. Clear names</h4>
+
+    <p><strong>Correct:</strong></p>
+    <pre><code>UserProfileCard
+JobListingItem
+NavigationMenu</code></pre>
+
+    <p><strong>Incorrect:</strong></p>
+    <pre><code>Item
+Thing
+Comp1</code></pre>
+
+    <h4>3. Descriptive props</h4>
+
+    <p><strong>Correct:</strong></p>
+    <pre><code class="language-jsx">function Button({ text, onClick, disabled })</code></pre>
+
+    <p><strong>Incorrect:</strong></p>
+    <pre><code class="language-jsx">function Button({ t, oc, d })</code></pre>
+
+    <h3>1️⃣2️⃣ What You've Learned</h3>
+    <p>Now you know:</p>
+    <ul>
+      <li>🎯 Create a real component</li>
+      <li>🧩 Compose components</li>
+      <li>📦 Reuse UI</li>
+      <li>📊 Pass props</li>
+      <li>✨ Organize React applications</li>
+    </ul>
+
+    <h3>💡 Key Idea</h3>
+    <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+      <strong>React is based on this principle:</strong><br>
+      <strong>UI = Reusable components</strong><br><br>
+      Divide your interface into small, reusable components.
+    </p>
+
+    <h3>🎯 Next Step</h3>
+    <p>
+      Next, we'll show you how a senior would write this same example using <code>.map()</code>
+      (the real way it's used in React).
+      Because what you just wrote is exactly the step before handling lists of data.
+    </p>
+  </div>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="complete-example">
+      Complete Example
+    </button>
+    <button class="tab-button" data-tab="exercises">
+      Practice Exercises
+    </button>
+  </div>
+
+  <article id="complete-example" class="tab-content active">
+    <h2>Complete Working Example</h2>
+
+    <h3>Full HTML File</h3>
+    <pre><code class="language-html">
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;meta charset="UTF-8" /&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0" /&gt;
+    &lt;title&gt;React - JobCard&lt;/title&gt;
+    &lt;style&gt;
+      body {
+        font-family: Arial, sans-serif;
+        background: #f5f5f5;
+        padding: 20px;
+      }
+
+      .job-listing-card {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+
+      .job-listing-card h3 {
+        margin: 0 0 10px 0;
+        font-size: 20px;
+      }
+
+      .job-listing-card small {
+        display: block;
+        color: #666;
+        margin-bottom: 10px;
+      }
+
+      .job-listing-card p {
+        color: #555;
+        margin: 10px 0;
+      }
+
+      .button-apply-job {
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+
+      .button-apply-job:hover {
+        background: #0056b3;
+      }
+
+      .jobs-listings {
+        max-width: 600px;
+      }
+
+      h2 {
+        color: #333;
+      }
+    &lt;/style&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;div id="root"&gt;&lt;/div&gt;
+
+    &lt;script type="module"&gt;
+      import React from 'https://esm.sh/react?dev'
+      import ReactDOM from 'https://esm.sh/react-dom/client?dev'
+      window.React = React
+      window.ReactDOMClient = ReactDOM
+    &lt;/script&gt;
+
+    &lt;script src="https://unpkg.com/@babel/standalone/babel.min.js"&gt;&lt;/script&gt;
+
+    &lt;script type="text/babel"&gt;
+      function JobCard({ title, company, location, description }) {
+        return (
+          &lt;article className="job-listing-card"&gt;
+            &lt;h3&gt;{title}&lt;/h3&gt;
+            &lt;small&gt;
+              {company} | {location}
+            &lt;/small&gt;
+            &lt;p&gt;{description}&lt;/p&gt;
+            &lt;button className="button-apply-job"&gt;
+              Apply
+            &lt;/button&gt;
+          &lt;/article&gt;
+        )
+      }
+
+      function App() {
+        return (
+          &lt;section&gt;
+            &lt;h2&gt;Available Jobs&lt;/h2&gt;
+            &lt;div className="jobs-listings"&gt;
+              &lt;JobCard
+                title="Frontend Developer"
+                company="Tech Solutions Inc."
+                location="Remote"
+                description="We are looking for a frontend developer with React experience."
+              /&gt;
+              &lt;JobCard
+                title="Senior Software Engineer"
+                company="Data Driven Co."
+                location="Mexico City"
+                description="We are looking for an engineer with web development experience."
+              /&gt;
+              &lt;JobCard
+                title="Full Stack Developer"
+                company="Startup Hub"
+                location="San Francisco"
+                description="Join our team to build amazing web applications."
+              /&gt;
+            &lt;/div&gt;
+          &lt;/section&gt;
+        )
+      }
+
+      window.onload = () =&gt; {
+        const rootEl = document.querySelector('#root')
+        const root = ReactDOMClient.createRoot(rootEl)
+        root.render(&lt;App /&gt;)
+      }
+    &lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+    </code></pre>
+
+    <h3>Breaking It Down</h3>
+
+    <h4>1. The JobCard Component</h4>
+    <pre><code class="language-jsx">
+function JobCard({ title, company, location, description }) {
+  return (
+    &lt;article className="job-listing-card"&gt;
+      &lt;h3&gt;{title}&lt;/h3&gt;
+      &lt;small&gt;{company} | {location}&lt;/small&gt;
+      &lt;p&gt;{description}&lt;/p&gt;
+      &lt;button className="button-apply-job"&gt;Apply&lt;/button&gt;
+    &lt;/article&gt;
+  )
+}
+    </code></pre>
+
+    <h4>2. The App Component</h4>
+    <pre><code class="language-jsx">
+function App() {
+  return (
+    &lt;section&gt;
+      &lt;h2&gt;Available Jobs&lt;/h2&gt;
+      &lt;div className="jobs-listings"&gt;
+        &lt;JobCard
+          title="Frontend Developer"
+          company="Tech Solutions"
+          location="Remote"
+          description="React experience required"
+        /&gt;
+        &lt;JobCard
+          title="Backend Developer"
+          company="StartUp"
+          location="NYC"
+          description="Node.js experience"
+        /&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+  )
+}
+    </code></pre>
+
+    <h4>3. Rendering</h4>
+    <pre><code class="language-jsx">
+window.onload = () =&gt; {
+  const rootEl = document.querySelector('#root')
+  const root = ReactDOMClient.createRoot(rootEl)
+  root.render(&lt;App /&gt;)
+}
+    </code></pre>
+  </article>
+
+  <article id="exercises" class="tab-content">
+    <h2>Practice Exercises</h2>
+
+    <h3>Exercise 1: Create a ProductCard Component</h3>
+    <p><strong>Challenge:</strong> Create a component similar to JobCard but for products.</p>
+
+    <p>It should display:</p>
+    <ul>
+      <li>Product name</li>
+      <li>Price</li>
+      <li>Description</li>
+      <li>An "Add to Cart" button</li>
+    </ul>
+
+    <p><strong>Solution:</strong></p>
+    <pre><code class="language-jsx">
+function ProductCard({ name, price, description }) {
+  return (
+    &lt;article className="product-card"&gt;
+      &lt;h3&gt;{name}&lt;/h3&gt;
+      &lt;p className="price"&gt;${price}&lt;/p&gt;
+      &lt;p&gt;{description}&lt;/p&gt;
+      &lt;button className="button-add-cart"&gt;
+        Add to Cart
+      &lt;/button&gt;
+    &lt;/article&gt;
+  )
+}
+
+// Usage
+function App() {
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;Our Products&lt;/h2&gt;
+      &lt;ProductCard
+        name="Laptop"
+        price={999}
+        description="High-performance laptop for developers"
+      /&gt;
+      &lt;ProductCard
+        name="Mouse"
+        price={25}
+        description="Wireless mouse with 2.4GHz connection"
+      /&gt;
+    &lt;/div&gt;
+  )
+}
+    </code></pre>
+
+    <h3>Exercise 2: Extend JobCard with More Information</h3>
+    <p><strong>Challenge:</strong> Add to the JobCard component:</p>
+    <ul>
+      <li>Salary range</li>
+      <li>Experience level (Junior, Senior, etc.)</li>
+      <li>Employment type (Full-time, Contract, etc.)</li>
+    </ul>
+
+    <p><strong>Solution:</strong></p>
+    <pre><code class="language-jsx">
+function JobCard({
+  title,
+  company,
+  location,
+  description,
+  salary,
+  level,
+  type
+}) {
+  return (
+    &lt;article className="job-listing-card"&gt;
+      &lt;h3&gt;{title}&lt;/h3&gt;
+      &lt;small&gt;{company} | {location}&lt;/small&gt;
+      &lt;p&gt;{description}&lt;/p&gt;
+
+      &lt;div className="job-details"&gt;
+        &lt;span&gt;💰 {salary}&lt;/span&gt;
+        &lt;span&gt;📊 {level}&lt;/span&gt;
+        &lt;span&gt;⏰ {type}&lt;/span&gt;
+      &lt;/div&gt;
+
+      &lt;button className="button-apply-job"&gt;
+        Apply
+      &lt;/button&gt;
+    &lt;/article&gt;
+  )
+}
+
+// Usage
+&lt;JobCard
+  title="Frontend Developer"
+  company="Tech Solutions"
+  location="Remote"
+  description="React specialist needed"
+  salary="$50,000 - $70,000"
+  level="Senior"
+  type="Full-time"
+/&gt;
+    </code></pre>
+
+    <h3>Exercise 3: Create a BlogPostCard Component</h3>
+    <p><strong>Challenge:</strong> Create a component for displaying blog posts.</p>
+
+    <p>It should have:</p>
+    <ul>
+      <li>Title</li>
+      <li>Author</li>
+      <li>Date published</li>
+      <li>Excerpt</li>
+      <li>A "Read More" button</li>
+    </ul>
+
+    <p><strong>Solution:</strong></p>
+    <pre><code class="language-jsx">
+function BlogPostCard({ title, author, date, excerpt }) {
+  return (
+    &lt;article className="blog-post-card"&gt;
+      &lt;h2&gt;{title}&lt;/h2&gt;
+      &lt;div className="post-meta"&gt;
+        &lt;small&gt;By {author} | {date}&lt;/small&gt;
+      &lt;/div&gt;
+      &lt;p&gt;{excerpt}&lt;/p&gt;
+      &lt;button className="button-read-more"&gt;
+        Read More
+      &lt;/button&gt;
+    &lt;/article&gt;
+  )
+}
+
+// Usage
+function BlogApp() {
+  return (
+    &lt;section&gt;
+      &lt;h1&gt;Latest Articles&lt;/h1&gt;
+      &lt;BlogPostCard
+        title="Understanding React Hooks"
+        author="Jane Smith"
+        date="March 14, 2024"
+        excerpt="Learn how to use React Hooks to manage state and side effects in functional components."
+      /&gt;
+      &lt;BlogPostCard
+        title="Best Practices for React Components"
+        author="John Doe"
+        date="March 10, 2024"
+        excerpt="Discover the best practices for writing clean, maintainable React components."
+      /&gt;
+    &lt;/section&gt;
+  )
+}
+    </code></pre>
+
+    <h3>Exercise 4: Create a UserProfileCard Component</h3>
+    <p><strong>Challenge:</strong> Create a reusable user profile card.</p>
+
+    <p>It should display:</p>
+    <ul>
+      <li>Profile picture</li>
+      <li>Username</li>
+      <li>Bio</li>
+      <li>Location</li>
+      <li>A "Follow" button</li>
+    </ul>
+
+    <p><strong>Solution:</strong></p>
+    <pre><code class="language-jsx">
+function UserProfileCard({ avatar, username, bio, location }) {
+  return (
+    &lt;article className="user-profile-card"&gt;
+      &lt;img src={avatar} alt={username} className="avatar" /&gt;
+      &lt;h3&gt;{username}&lt;/h3&gt;
+      &lt;p className="bio"&gt;{bio}&lt;/p&gt;
+      &lt;p className="location"&gt;📍 {location}&lt;/p&gt;
+      &lt;button className="button-follow"&gt;
+        Follow
+      &lt;/button&gt;
+    &lt;/article&gt;
+  )
+}
+
+// Usage
+&lt;UserProfileCard
+  avatar="https://example.com/avatar1.jpg"
+  username="Jane Developer"
+  bio="React enthusiast and full-stack developer"
+  location="San Francisco, CA"
+/&gt;
+    </code></pre>
+  </article>
+
+  <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-left: 4px solid #007bff; border-radius: 4px;">
+    <p><strong>📚 Additional Resources:</strong></p>
+    <p>
+      For more in-depth discussions and interactive examples about Building Real Components,
+      check out this <a href="https://chatgpt.com/g/g-p-696fbea2755481919c8258fb23e8f822-react/c/69b4bd67-f1ec-8393-a09b-a9c06a34b254" target="_blank" style="color: #007bff; text-decoration: none;">React GPT Guide</a>.
+    </p>
+  </div>
+</section>

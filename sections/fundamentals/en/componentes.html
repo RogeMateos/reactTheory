@@ -1,0 +1,709 @@
+<section class="box">
+  <h1>React Components: A Clear Guide to Understanding Them</h1>
+
+  <div class="description">
+    <p>
+      Before React, when we built interfaces with plain JavaScript, the code became a mess:
+    </p>
+    <ul>
+      <li>HTML + JS mixed everywhere</li>
+      <li>Many <code>querySelector</code> calls</li>
+      <li>Many <code>appendChild</code> calls</li>
+      <li>Repeated code</li>
+    </ul>
+
+    <p><strong>React solves this with one key idea:</strong></p>
+    <p style="text-align: center; font-size: 18px;">👉 <strong>Components</strong></p>
+
+    <p>A component is a <strong>reusable piece of the interface</strong>.</p>
+    <p>Think of them as <strong>LEGO blocks for building interfaces.</strong></p>
+
+    <h3>1️⃣ What is a Component?</h3>
+    <p>
+      A component is simply a <strong>JavaScript function that returns JSX</strong>.
+    </p>
+    <pre><code class="language-jsx">function Greeting() {
+  return &lt;h1&gt;Hello from a component!&lt;/h1&gt;
+}</code></pre>
+    <p>React will convert that JSX into HTML.</p>
+
+    <h4>Using the Component</h4>
+    <p>Once created, you use it like an HTML tag:</p>
+    <pre><code class="language-jsx">&lt;Greeting /&gt;</code></pre>
+
+    <p><strong>This is one of React's most important ideas.</strong></p>
+
+    <p>Instead of writing repeated HTML:</p>
+    <pre><code class="language-jsx">&lt;h1&gt;Hello&lt;/h1&gt;
+&lt;h1&gt;Hello&lt;/h1&gt;
+&lt;h1&gt;Hello&lt;/h1&gt;</code></pre>
+
+    <p>You can use:</p>
+    <pre><code class="language-jsx">&lt;Greeting /&gt;
+&lt;Greeting /&gt;
+&lt;Greeting /&gt;</code></pre>
+
+    <h3>2️⃣ Element vs Component (Very Important for Interviews)</h3>
+    <p>This question appears a lot in React interviews.</p>
+
+    <h4>Element</h4>
+    <p>An element is simple JSX.</p>
+    <pre><code class="language-jsx">&lt;h1&gt;Hello&lt;/h1&gt;</code></pre>
+    <p>React renders it directly to the DOM.</p>
+
+    <h4>Component</h4>
+    <p>A component is a function that returns elements.</p>
+    <pre><code class="language-jsx">function Greet() {
+  return &lt;h1&gt;Hello&lt;/h1&gt;
+}
+</code></pre>
+    <p>Then you use it like this:</p>
+    <pre><code class="language-jsx">&lt;Greet /&gt;</code></pre>
+
+    <p style="padding: 15px; background: #f0f0f0; border-left: 4px solid #007bff;">
+      <strong>🎯 Key rule for interviews:</strong><br>
+      A component is a function that returns JSX elements.
+    </p>
+
+    <h3>3️⃣ Your First Complete Component</h3>
+    <p>Let's see a real example.</p>
+
+    <h4>HTML Base</h4>
+    <pre><code class="language-html">&lt;div id="root"&gt;&lt;/div&gt;</code></pre>
+    <p>React always renders inside a container.</p>
+
+    <h4>React Component</h4>
+    <pre><code class="language-jsx">function Greet() {
+  return &lt;h1&gt;Hello from a component!&lt;/h1&gt;
+}</code></pre>
+
+    <h4>Rendering it</h4>
+    <pre><code class="language-jsx">const rootEl = document.querySelector('#root')
+const root = ReactDOMClient.createRoot(rootEl)
+
+root.render(&lt;Greet /&gt;)</code></pre>
+
+    <h4>What happens internally</h4>
+    <pre><code>&lt;Greet /&gt;
+  ↓
+executes the function
+  ↓
+return &lt;h1&gt;
+  ↓
+converts to real DOM</code></pre>
+
+    <h3>4️⃣ Props: Passing Data to Components</h3>
+    <p>Components can receive data.</p>
+    <p>It's like passing arguments to a function.</p>
+
+    <pre><code class="language-jsx">function Greet(props) {
+  return &lt;h1&gt;Hello {props.name}!&lt;/h1&gt;
+}</code></pre>
+
+    <h4>Usage</h4>
+    <pre><code class="language-jsx">&lt;Greet name="Miguel" /&gt;</code></pre>
+
+    <h4>Result</h4>
+    <pre><code>Hello Miguel</code></pre>
+
+    <h4>Simple Analogy</h4>
+    <p>A component is like a coffee machine.</p>
+    <ul>
+      <li>Component = machine</li>
+      <li>Props = ingredients</li>
+      <li>UI = final coffee</li>
+    </ul>
+
+    <p>Example:</p>
+    <pre><code class="language-jsx">&lt;Greet name="Miguel" /&gt;
+&lt;Greet name="Ana" /&gt;</code></pre>
+    <p>Same machine, different ingredients.</p>
+
+    <h3>5️⃣ Props Destructuring</h3>
+    <p>In React, you'll almost always see this:</p>
+    <pre><code class="language-jsx">function Greet({ name }) {
+  return &lt;h1&gt;Hello {name}&lt;/h1&gt;
+}</code></pre>
+
+    <p>This is equivalent to:</p>
+    <pre><code class="language-jsx">props.name</code></pre>
+
+    <p>But cleaner.</p>
+
+    <h3>6️⃣ Multiple Props</h3>
+    <p>You can pass several pieces of data.</p>
+
+    <pre><code class="language-jsx">function Greet({ name, age, city }) {
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Hello {name}&lt;/h1&gt;
+      &lt;p&gt;You are {age} years old and live in {city}&lt;/p&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+    <h4>Usage</h4>
+    <pre><code class="language-jsx">&lt;Greet name="Miguel" age={25} city="Madrid" /&gt;</code></pre>
+
+    <h4>Important Rule</h4>
+    <p><strong>Strings:</strong></p>
+    <pre><code class="language-jsx">name="Miguel"</code></pre>
+
+    <p><strong>JavaScript values:</strong></p>
+    <pre><code class="language-jsx">age={25}</code></pre>
+
+    <p>The curly braces mean:</p>
+    <p style="text-align: center; font-size: 16px;">👉 <strong>"This is JavaScript"</strong></p>
+
+    <h3>7️⃣ Styles in JSX</h3>
+    <p>In normal HTML we'd do:</p>
+    <pre><code class="language-html">&lt;h1 style="color:red; font-size:32px"&gt;</code></pre>
+
+    <p>But in JSX, styles are JavaScript objects.</p>
+    <pre><code class="language-jsx">&lt;h1 style={{ color: 'red', fontSize: '32px' }}&gt;</code></pre>
+
+    <h4>Complete Example</h4>
+    <pre><code class="language-jsx">function Greet({ name, color }) {
+
+  const styles = {
+    color: color,
+    fontSize: '32px',
+    fontWeight: 'bold',
+    textAlign: 'center'
+  }
+
+  return &lt;h1 style={styles}&gt;Hello {name}&lt;/h1&gt;
+}
+</code></pre>
+
+    <h4>Usage</h4>
+    <pre><code class="language-jsx">&lt;Greet name="Miguel" color="blue" /&gt;
+&lt;Greet name="Ana" color="green" /&gt;</code></pre>
+
+    <h3>8️⃣ CamelCase in Styles</h3>
+    <p>In CSS we use:</p>
+    <pre><code>font-size
+background-color
+text-align</code></pre>
+
+    <p>In JSX we use:</p>
+    <pre><code>fontSize
+backgroundColor
+textAlign</code></pre>
+
+    <p>Because JSX is JavaScript, not HTML.</p>
+
+    <h3>9️⃣ Inline Styles with Props</h3>
+    <p>We can write it shorter:</p>
+    <pre><code class="language-jsx">function Greet({ name, color }) {
+  return (
+    &lt;h1 style={{ color, fontSize: '32px' }}&gt;
+      Hello {name}
+    &lt;/h1&gt;
+  )
+}</code></pre>
+
+    <p>This works because in JavaScript:</p>
+    <pre><code>color: color</code></pre>
+
+    <p>Can be written as:</p>
+    <pre><code>color</code></pre>
+
+    <h3>🔟 Component Reusability</h3>
+    <p>Here's the true power of React.</p>
+
+    <pre><code class="language-jsx">&lt;Greet name="Miguel" color="blue" /&gt;
+&lt;Greet name="Ana" color="green" /&gt;
+&lt;Greet name="Carlos" color="red" /&gt;</code></pre>
+
+    <p>One component generates different interfaces.</p>
+
+    <h3>1️⃣1️⃣ Component Composition</h3>
+    <p>Components can be combined.</p>
+
+    <p>Example:</p>
+    <pre><code class="language-jsx">function App() {
+  return (
+    &lt;div&gt;
+      &lt;Greet name="Miguel" /&gt;
+      &lt;Greet name="Ana" /&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+    <p>This is like building with LEGO blocks.</p>
+
+    <h3>1️⃣2️⃣ Advantages of Components</h3>
+    <ul>
+      <li><strong>Reusability:</strong> Write once, use many times.</li>
+      <li><strong>Organization:</strong> Each component has its logic.</li>
+      <li><strong>Maintainability:</strong> Easier to change things.</li>
+      <li><strong>Scalability:</strong> Large apps are built with many small components.</li>
+    </ul>
+
+    <h3>1️⃣3️⃣ Mental Model (Very Important)</h3>
+    <p>Think of React like this:</p>
+    <pre><code>App
+ ├── Header
+ ├── Sidebar
+ ├── ProductCard
+ ├── ProductCard
+ ├── ProductCard
+ └── Footer</code></pre>
+
+    <p>Each part of the UI is a component.</p>
+
+    <h3>1️⃣4️⃣ Final Summary</h3>
+    <p>Components are:</p>
+    <pre><code>Functions
+  ↓
+Receive props
+  ↓
+Return JSX
+  ↓
+React converts to DOM</code></pre>
+
+    <h4>What You Must Remember</h4>
+    <ul>
+      <li>✔ Components = functions that return JSX</li>
+      <li>✔ Props = data the component receives</li>
+      <li>✔ JSX = JavaScript + HTML</li>
+      <li>✔ Styles = JavaScript objects</li>
+      <li>✔ Components = reusability</li>
+    </ul>
+
+    <h3>1️⃣5️⃣ Exercise (Very Common in Interviews)</h3>
+    <p>Create a <code>UserCard</code> component.</p>
+
+    <p>It should receive:</p>
+    <ul>
+      <li>name</li>
+      <li>age</li>
+      <li>city</li>
+    </ul>
+
+    <p>It should display:</p>
+    <ul>
+      <li>Name</li>
+      <li>Age</li>
+      <li>City</li>
+    </ul>
+
+    <p>Expected usage:</p>
+    <pre><code class="language-jsx">&lt;UserCard name="Ana" age={28} city="Barcelona" /&gt;</code></pre>
+
+    <p style="padding: 15px; background: #f0f0f0; border-left: 4px solid #28a745;">
+      <strong>💡 Tip:</strong> Once you understand components, you've understood 80% of React. Components are the foundation of everything.
+    </p>
+  </div>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="code-examples">
+      Code Examples
+    </button>
+    <button class="tab-button" data-tab="component-exercises">
+      Practice Exercises
+    </button>
+  </div>
+
+  <article id="code-examples" class="tab-content active">
+    <h2>Complete Code Examples</h2>
+
+    <h3>Example 1: Simple Component</h3>
+    <pre><code class="language-jsx">
+function Welcome() {
+  return &lt;h1&gt;Welcome to React!&lt;/h1&gt;
+}
+
+export default Welcome;
+    </code></pre>
+
+    <h3>Example 2: Component with Props</h3>
+    <pre><code class="language-jsx">
+function UserGreeting({ name }) {
+  return &lt;h1&gt;Hello, {name}!&lt;/h1&gt;
+}
+
+// Usage
+&lt;UserGreeting name="Maria" /&gt;
+    </code></pre>
+
+    <h3>Example 3: Multiple Props and Styles</h3>
+    <pre><code class="language-jsx">
+function UserCard({ name, age, city }) {
+  const cardStyles = {
+    border: '1px solid #ccc',
+    padding: '20px',
+    borderRadius: '8px',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+  }
+
+  const titleStyles = {
+    color: '#333',
+    fontSize: '24px',
+    marginBottom: '10px'
+  }
+
+  return (
+    &lt;div style={cardStyles}&gt;
+      &lt;h2 style={titleStyles}&gt;{name}&lt;/h2&gt;
+      &lt;p&gt;Age: {age} years old&lt;/p&gt;
+      &lt;p&gt;City: {city}&lt;/p&gt;
+    &lt;/div&gt;
+  )
+}
+
+// Usage
+&lt;UserCard name="Ana" age={28} city="Barcelona" /&gt;
+&lt;UserCard name="Carlos" age={32} city="Madrid" /&gt;
+    </code></pre>
+
+    <h3>Example 4: Component Composition</h3>
+    <pre><code class="language-jsx">
+function Header() {
+  return &lt;header&gt;&lt;h1&gt;My App&lt;/h1&gt;&lt;/header&gt;
+}
+
+function Footer() {
+  return &lt;footer&gt;&lt;p&gt;&copy; 2024 My App&lt;/p&gt;&lt;/footer&gt;
+}
+
+function App() {
+  return (
+    &lt;div&gt;
+      &lt;Header /&gt;
+      &lt;main&gt;
+        &lt;h2&gt;Welcome&lt;/h2&gt;
+        &lt;p&gt;This is the main content.&lt;/p&gt;
+      &lt;/main&gt;
+      &lt;Footer /&gt;
+    &lt;/div&gt;
+  )
+}
+
+export default App;
+    </code></pre>
+
+    <h3>Example 5: Reusable Component (LEGO blocks)</h3>
+    <pre><code class="language-jsx">
+function Button({ text, color, onClick }) {
+  const buttonStyles = {
+    padding: '10px 20px',
+    backgroundColor: color,
+    color: 'white',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    fontSize: '16px'
+  }
+
+  return (
+    &lt;button style={buttonStyles} onClick={onClick}&gt;
+      {text}
+    &lt;/button&gt;
+  )
+}
+
+// Usage
+function App() {
+  return (
+    &lt;div&gt;
+      &lt;Button text="Click me!" color="blue" onClick={() =&gt; alert('Clicked!')} /&gt;
+      &lt;Button text="Save" color="green" onClick={() =&gt; alert('Saved!')} /&gt;
+      &lt;Button text="Delete" color="red" onClick={() =&gt; alert('Deleted!')} /&gt;
+    &lt;/div&gt;
+  )
+}
+    </code></pre>
+
+    <h3>Example 6: Props with Default Behavior</h3>
+    <pre><code class="language-jsx">
+function Badge({ count, backgroundColor = '#007bff' }) {
+  const badgeStyles = {
+    display: 'inline-block',
+    padding: '4px 8px',
+    backgroundColor: backgroundColor,
+    color: 'white',
+    borderRadius: '12px',
+    fontSize: '12px',
+    fontWeight: 'bold'
+  }
+
+  return &lt;span style={badgeStyles}&gt;{count}&lt;/span&gt;
+}
+
+// Usage
+&lt;Badge count={5} /&gt;  // Uses default color
+&lt;Badge count={10} backgroundColor="red" /&gt;  // Custom color
+    </code></pre>
+
+    <h3>Example 7: Complex Component with Multiple Props</h3>
+    <pre><code class="language-jsx">
+function ProductCard({ title, price, description, image }) {
+  const cardStyles = {
+    border: '1px solid #ddd',
+    borderRadius: '8px',
+    overflow: 'hidden',
+    maxWidth: '300px',
+    boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+  }
+
+  const imageStyles = {
+    width: '100%',
+    height: '200px',
+    objectFit: 'cover'
+  }
+
+  const contentStyles = {
+    padding: '16px'
+  }
+
+  const titleStyles = {
+    fontSize: '18px',
+    fontWeight: 'bold',
+    marginBottom: '8px'
+  }
+
+  const priceStyles = {
+    fontSize: '20px',
+    color: '#28a745',
+    fontWeight: 'bold',
+    marginBottom: '8px'
+  }
+
+  return (
+    &lt;div style={cardStyles}&gt;
+      &lt;img src={image} alt={title} style={imageStyles} /&gt;
+      &lt;div style={contentStyles}&gt;
+        &lt;h3 style={titleStyles}&gt;{title}&lt;/h3&gt;
+        &lt;p style={priceStyles}&gt;${price}&lt;/p&gt;
+        &lt;p&gt;{description}&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  )
+}
+
+// Usage
+&lt;ProductCard
+  title="Laptop"
+  price={999}
+  description="Powerful and portable"
+  image="laptop.jpg"
+/&gt;
+    </code></pre>
+  </article>
+
+  <article id="component-exercises" class="tab-content">
+    <h2>Practice Exercises</h2>
+
+    <h3>Exercise 1: Simple Greeting Component</h3>
+    <p><strong>Challenge:</strong> Create a <code>Greeting</code> component that:</p>
+    <ul>
+      <li>Accepts a prop called <code>time</code> (morning, afternoon, evening)</li>
+      <li>Returns different greetings based on the time:
+        <ul>
+          <li>Morning: "Good morning!"</li>
+          <li>Afternoon: "Good afternoon!"</li>
+          <li>Evening: "Good evening!"</li>
+        </ul>
+      </li>
+    </ul>
+
+    <p><strong>Expected usage:</strong></p>
+    <pre><code class="language-jsx">&lt;Greeting time="morning" /&gt;  // "Good morning!"</code></pre>
+
+    <p><strong>Solution:</strong></p>
+    <pre><code class="language-jsx">
+function Greeting({ time }) {
+  const greetings = {
+    morning: 'Good morning!',
+    afternoon: 'Good afternoon!',
+    evening: 'Good evening!'
+  }
+
+  return &lt;h1&gt;{greetings[time]}&lt;/h1&gt;
+}
+    </code></pre>
+
+    <h3>Exercise 2: User Profile Component</h3>
+    <p><strong>Challenge:</strong> Create a <code>UserProfile</code> component that:</p>
+    <ul>
+      <li>Accepts props: <code>name</code>, <code>role</code>, <code>email</code>, <code>avatar</code></li>
+      <li>Displays the user information in a styled card</li>
+      <li>Includes an avatar image</li>
+    </ul>
+
+    <p><strong>Expected usage:</strong></p>
+    <pre><code class="language-jsx">
+&lt;UserProfile
+  name="John Doe"
+  role="Developer"
+  email="john@example.com"
+  avatar="john.jpg"
+/&gt;
+    </code></pre>
+
+    <p><strong>Solution:</strong></p>
+    <pre><code class="language-jsx">
+function UserProfile({ name, role, email, avatar }) {
+  const profileStyles = {
+    textAlign: 'center',
+    padding: '20px',
+    border: '1px solid #ddd',
+    borderRadius: '8px'
+  }
+
+  const avatarStyles = {
+    width: '100px',
+    height: '100px',
+    borderRadius: '50%',
+    objectFit: 'cover',
+    marginBottom: '10px'
+  }
+
+  return (
+    &lt;div style={profileStyles}&gt;
+      &lt;img src={avatar} alt={name} style={avatarStyles} /&gt;
+      &lt;h2&gt;{name}&lt;/h2&gt;
+      &lt;p&gt;&lt;strong&gt;{role}&lt;/strong&gt;&lt;/p&gt;
+      &lt;p&gt;{email}&lt;/p&gt;
+    &lt;/div&gt;
+  )
+}
+    </code></pre>
+
+    <h3>Exercise 3: Alert Component</h3>
+    <p><strong>Challenge:</strong> Create an <code>Alert</code> component that:</p>
+    <ul>
+      <li>Accepts props: <code>type</code> (success, error, warning, info), <code>message</code></li>
+      <li>Shows different colors for different types:
+        <ul>
+          <li>Success: green</li>
+          <li>Error: red</li>
+          <li>Warning: orange</li>
+          <li>Info: blue</li>
+        </ul>
+      </li>
+      <li>Displays the message</li>
+    </ul>
+
+    <p><strong>Expected usage:</strong></p>
+    <pre><code class="language-jsx">
+&lt;Alert type="success" message="Data saved successfully!" /&gt;
+&lt;Alert type="error" message="Something went wrong!" /&gt;
+    </code></pre>
+
+    <p><strong>Solution:</strong></p>
+    <pre><code class="language-jsx">
+function Alert({ type, message }) {
+  const colors = {
+    success: '#28a745',
+    error: '#dc3545',
+    warning: '#ffc107',
+    info: '#17a2b8'
+  }
+
+  const alertStyles = {
+    padding: '12px 16px',
+    borderRadius: '4px',
+    backgroundColor: colors[type],
+    color: type === 'warning' ? '#000' : '#fff',
+    marginBottom: '10px'
+  }
+
+  return &lt;div style={alertStyles}&gt;{message}&lt;/div&gt;
+}
+    </code></pre>
+
+    <h3>Exercise 4: Multiple Components Composition</h3>
+    <p><strong>Challenge:</strong> Create a complete app with:</p>
+    <ul>
+      <li>A <code>Header</code> component</li>
+      <li>A <code>Card</code> component</li>
+      <li>An <code>App</code> component that uses both</li>
+    </ul>
+
+    <p><strong>Solution:</strong></p>
+    <pre><code class="language-jsx">
+function Header() {
+  return &lt;header style={{ background: '#333', color: '#fff', padding: '20px' }}&gt;
+    &lt;h1&gt;My Website&lt;/h1&gt;
+  &lt;/header&gt;
+}
+
+function Card({ title, content }) {
+  const cardStyle = {
+    border: '1px solid #ddd',
+    padding: '16px',
+    margin: '10px',
+    borderRadius: '8px'
+  }
+
+  return (
+    &lt;div style={cardStyle}&gt;
+      &lt;h3&gt;{title}&lt;/h3&gt;
+      &lt;p&gt;{content}&lt;/p&gt;
+    &lt;/div&gt;
+  )
+}
+
+function App() {
+  return (
+    &lt;div&gt;
+      &lt;Header /&gt;
+      &lt;Card title="Card 1" content="This is the first card" /&gt;
+      &lt;Card title="Card 2" content="This is the second card" /&gt;
+    &lt;/div&gt;
+  )
+}
+
+export default App;
+    </code></pre>
+
+    <h3>Exercise 5: Interactive Challenge</h3>
+    <p><strong>Challenge:</strong> Create a <code>Badge</code> component that:</p>
+    <ul>
+      <li>Shows a number badge</li>
+      <li>Has configurable color</li>
+      <li>Can be sized (small, medium, large)</li>
+    </ul>
+
+    <p><strong>Expected usage:</strong></p>
+    <pre><code class="language-jsx">
+&lt;Badge number={5} color="red" size="small" /&gt;
+&lt;Badge number={12} color="blue" size="large" /&gt;
+    </code></pre>
+
+    <p><strong>Solution:</strong></p>
+    <pre><code class="language-jsx">
+function Badge({ number, color = 'blue', size = 'medium' }) {
+  const sizes = {
+    small: { width: '24px', height: '24px', fontSize: '12px' },
+    medium: { width: '32px', height: '32px', fontSize: '16px' },
+    large: { width: '40px', height: '40px', fontSize: '20px' }
+  }
+
+  const badgeStyles = {
+    ...sizes[size],
+    borderRadius: '50%',
+    backgroundColor: color,
+    color: '#fff',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontWeight: 'bold'
+  }
+
+  return &lt;div style={badgeStyles}&gt;{number}&lt;/div&gt;
+}
+    </code></pre>
+  </article>
+
+  <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-left: 4px solid #007bff; border-radius: 4px;">
+    <p><strong>📚 Additional Resources:</strong></p>
+    <p>
+      For more in-depth discussions and interactive examples about React Components,
+      check out this <a href="https://chatgpt.com/g/g-p-696fbea2755481919c8258fb23e8f822-react/c/69b4b4a3-564c-8387-8dad-eb38f3e3a1e8" target="_blank" style="color: #007bff; text-decoration: none;">React GPT Guide</a>.
+    </p>
+  </div>
+</section>

@@ -1,0 +1,755 @@
+<section class="box">
+  <h1>Events in React: Making Components Respond to User Actions</h1>
+
+  <div class="description">
+    <p>
+      Until now, our React components only display information.
+      <strong>They are static.</strong>
+    </p>
+
+    <p>But real applications need interaction:</p>
+    <ul>
+      <li>Click on buttons</li>
+      <li>Type in inputs</li>
+      <li>Submit forms</li>
+      <li>Move the mouse</li>
+      <li>Press keys</li>
+    </ul>
+
+    <p>All of that is handled with <strong>events</strong>.</p>
+    <p>In this lesson, you'll learn to listen to events in React and execute code when they occur.</p>
+
+    <h3>1️⃣ What are Events?</h3>
+    <p>An event is an action that occurs in the browser.</p>
+
+    <p>Common examples:</p>
+    <ul>
+      <li>👆 <strong>Click</strong> → user clicks</li>
+      <li>⌨️ <strong>Input</strong> → user types in a field</li>
+      <li>📝 <strong>Change</strong> → input value changes</li>
+      <li>📤 <strong>Submit</strong> → form is submitted</li>
+      <li>🖱️ <strong>Hover</strong> → mouse passes over an element</li>
+    </ul>
+
+    <p>React allows you to listen to those events and react to them.</p>
+
+    <h3>2️⃣ Our Example: "Apply" Button</h3>
+    <p>Let's update our JobCard component so the Apply button responds to clicks.</p>
+
+    <pre><code class="language-jsx">function JobCard({ title, company, location, description }) {
+
+  const handleApply = () => {
+    console.log('Click on the button!')
+    console.log('Applying to:', title, '-', company)
+
+    alert(`You have applied to: ${title} at ${company}`)
+  }
+
+  return (
+    &lt;article className="job-listing-card"&gt;
+      &lt;div&gt;
+        &lt;h3&gt;{title}&lt;/h3&gt;
+        &lt;small&gt;
+          {company} | {location}
+        &lt;/small&gt;
+        &lt;p&gt;{description}&lt;/p&gt;
+      &lt;/div&gt;
+
+      &lt;button
+        className="button-apply-job"
+        onClick={handleApply}
+      &gt;
+        Apply
+      &lt;/button&gt;
+
+    &lt;/article&gt;
+  )
+}</code></pre>
+
+    <p>Now the button executes a function when we click it.</p>
+
+    <h3>3️⃣ Event Handler Functions</h3>
+    <p>First, we define a function that will execute when the event occurs.</p>
+
+    <pre><code class="language-jsx">const handleApply = () => {
+  console.log('Click on the button!')
+  alert(`You have applied to: ${title} at ${company}`)
+}</code></pre>
+
+    <p>This is called:</p>
+    <ul>
+      <li>Event Handler</li>
+      <li>or Event Handler Function</li>
+    </ul>
+
+    <p>By convention, they usually start with <code>handle</code>.</p>
+
+    <p>Examples:</p>
+    <ul>
+      <li>handleClick</li>
+      <li>handleSubmit</li>
+      <li>handleChange</li>
+      <li>handleApply</li>
+    </ul>
+
+    <p>This makes the code clearer.</p>
+
+    <h3>4️⃣ Connect the Function to the Event</h3>
+    <p>Then we connect the function to the button.</p>
+
+    <pre><code class="language-jsx">&lt;button onClick={handleApply}&gt;
+  Apply
+&lt;/button&gt;</code></pre>
+
+    <p>When the user clicks:</p>
+    <ul>
+      <li>React → detects the click</li>
+      <li>React → executes handleApply()</li>
+    </ul>
+
+    <h3>5️⃣ Event Syntax in React</h3>
+    <p>Events in React have two important rules.</p>
+
+    <h4>1. Use camelCase</h4>
+
+    <p><strong>❌ Incorrect:</strong></p>
+    <pre><code>onclick
+onchange</code></pre>
+
+    <p><strong>✅ Correct:</strong></p>
+    <pre><code>onClick
+onChange
+onSubmit
+onMouseEnter</code></pre>
+
+    <h4>2. Pass a Reference to the Function</h4>
+
+    <p><strong>✅ Correct:</strong></p>
+    <pre><code class="language-jsx">&lt;button onClick={handleApply}&gt;</code></pre>
+
+    <p><strong>❌ Incorrect:</strong></p>
+    <pre><code class="language-jsx">&lt;button onClick={handleApply()}&gt;</code></pre>
+
+    <p><strong>Why?</strong></p>
+    <p>Because this would execute the function immediately when rendering, not when we click.</p>
+
+    <h3>6️⃣ Alternative: Inline Functions</h3>
+    <p>You can also write the function directly.</p>
+
+    <pre><code class="language-jsx">&lt;button onClick={() => alert('Click!')}&gt;
+  Apply
+&lt;/button&gt;</code></pre>
+
+    <p>This is called an <strong>inline function</strong>.</p>
+
+    <h4>When to use each option?</h4>
+
+    <p><strong>Separate function (recommended)</strong></p>
+    <pre><code class="language-jsx">const handleClick = () => {
+  console.log('Click!')
+  alert(title)
+}
+
+&lt;button onClick={handleClick}&gt;Apply&lt;/button&gt;</code></pre>
+
+    <p>Better when:</p>
+    <ul>
+      <li>There are multiple lines</li>
+      <li>You reuse the function</li>
+      <li>You want to test it</li>
+    </ul>
+
+    <p><strong>Inline function</strong></p>
+    <pre><code class="language-jsx">&lt;button onClick={() => alert('Click!')}&gt;
+  Apply
+&lt;/button&gt;</code></pre>
+
+    <p>Better when:</p>
+    <ul>
+      <li>It's a single line</li>
+      <li>It's very simple</li>
+    </ul>
+
+    <h3>7️⃣ Accessing Props Inside the Event</h3>
+    <p>Event handlers can use all the component's props.</p>
+
+    <pre><code class="language-jsx">function JobCard({ title, company, location }) {
+
+  const handleApply = () => {
+    console.log(title)
+    console.log(company)
+    console.log(location)
+
+    alert(`Applying to ${title}`)
+  }
+
+  return (
+    &lt;button onClick={handleApply}&gt;
+      Apply
+    &lt;/button&gt;
+  )
+}</code></pre>
+
+    <p>This works because of a fundamental JavaScript concept:</p>
+    <p><strong>Closures</strong></p>
+    <p>The function remembers the variables from the context where it was created.</p>
+
+    <h3>8️⃣ Comparison with Vanilla JavaScript</h3>
+
+    <p><strong>Before (traditional JavaScript):</strong></p>
+    <pre><code class="language-javascript">const jobsListingSection = document.querySelector('.jobs-listings')
+
+jobsListingSection.addEventListener('click', function (event) {
+
+  const element = event.target
+
+  if (element.classList.contains('button-apply-job')) {
+
+    element.textContent = 'Applied!'
+    element.classList.add('is-applied')
+    element.disabled = true
+
+  }
+
+})</code></pre>
+
+    <p>Problems:</p>
+    <ul>
+      <li>❌ Search for elements with querySelector</li>
+      <li>❌ Event delegation</li>
+      <li>❌ Manual DOM manipulation</li>
+      <li>❌ Hard to maintain code</li>
+    </ul>
+
+    <p><strong>In React, everything is much simpler:</strong></p>
+    <pre><code class="language-jsx">const handleApply = () => {
+  alert(`Applying to ${title}`)
+}
+
+&lt;button onClick={handleApply}&gt;
+  Apply
+&lt;/button&gt;</code></pre>
+
+    <p>Advantages:</p>
+    <ul>
+      <li>✅ Cleaner code</li>
+      <li>✅ Each component manages its own logic</li>
+      <li>✅ No manual DOM manipulation</li>
+      <li>✅ Direct access to props</li>
+    </ul>
+
+    <h3>9️⃣ Common Events in React</h3>
+
+    <h4>Click</h4>
+    <pre><code class="language-jsx">&lt;button onClick={() => console.log('Click!')}&gt;
+  Click
+&lt;/button&gt;</code></pre>
+
+    <h4>Change (inputs)</h4>
+    <pre><code class="language-jsx">&lt;input
+  onChange={(e) => console.log(e.target.value)}
+/&gt;</code></pre>
+
+    <h4>Submit (forms)</h4>
+    <pre><code class="language-jsx">&lt;form
+  onSubmit={(e) => {
+    e.preventDefault()
+    console.log('Form submitted')
+  }}
+&gt;
+  &lt;button type="submit"&gt;Send&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+
+    <h4>Hover</h4>
+    <pre><code class="language-jsx">&lt;div
+  onMouseEnter={() => console.log('Entering')}
+  onMouseLeave={() => console.log('Leaving')}
+&gt;
+  Hover over me
+&lt;/div&gt;</code></pre>
+
+    <h4>Keyboard</h4>
+    <pre><code class="language-jsx">&lt;input
+  onKeyDown={(e) => console.log(e.key)}
+/&gt;</code></pre>
+
+    <h3>🔟 The Event Object</h3>
+    <p>Events receive an event object.</p>
+
+    <pre><code class="language-jsx">const handleClick = (event) => {
+  console.log(event)
+}</code></pre>
+
+    <p>Useful properties:</p>
+    <ul>
+      <li><code>event.target</code> - the element that triggered the event</li>
+      <li><code>event.currentTarget</code> - the element with the event listener</li>
+      <li><code>event.type</code> - type of event</li>
+      <li><code>event.preventDefault()</code> - prevent default behavior</li>
+      <li><code>event.stopPropagation()</code> - stop event bubbling</li>
+    </ul>
+
+    <h3>1️⃣1️⃣ preventDefault Example</h3>
+    <p>When we submit a form, the browser reloads the page.</p>
+    <p>We can prevent this.</p>
+
+    <pre><code class="language-jsx">function Form() {
+
+  const handleSubmit = (event) => {
+    event.preventDefault()
+
+    console.log('Form submitted')
+  }
+
+  return (
+    &lt;form onSubmit={handleSubmit}&gt;
+      &lt;input type="text" /&gt;
+      &lt;button type="submit"&gt;Send&lt;/button&gt;
+    &lt;/form&gt;
+  )
+}</code></pre>
+
+    <h3>1️⃣2️⃣ Passing Arguments to Events</h3>
+    <p>Sometimes you need to pass extra data.</p>
+
+    <p>Example:</p>
+    <pre><code class="language-jsx">function JobCard({ id }) {
+
+  const handleApply = (jobId) => {
+    console.log(jobId)
+  }
+
+  return (
+    &lt;button onClick={() => handleApply(id)}&gt;
+      Apply
+    &lt;/button&gt;
+  )
+}</code></pre>
+
+    <h3>1️⃣3️⃣ Multiple Events in One Component</h3>
+    <p>A component can have several handlers.</p>
+
+    <pre><code class="language-jsx">function JobCard({ title }) {
+
+  const handleApply = () => {
+    alert(`Applying to ${title}`)
+  }
+
+  const handleSave = () => {
+    alert(`Saving ${title}`)
+  }
+
+  const handleShare = () => {
+    alert(`Sharing ${title}`)
+  }
+
+  return (
+    &lt;article&gt;
+
+      &lt;h3&gt;{title}&lt;/h3&gt;
+
+      &lt;button onClick={handleApply}&gt;
+        Apply
+      &lt;/button&gt;
+
+      &lt;button onClick={handleSave}&gt;
+        Save
+      &lt;/button&gt;
+
+      &lt;button onClick={handleShare}&gt;
+        Share
+      &lt;/button&gt;
+
+    &lt;/article&gt;
+  )
+}</code></pre>
+
+    <h3>1️⃣4️⃣ Current Limitation</h3>
+    <p>When we click Apply:</p>
+    <ul>
+      <li>✔ The function executes</li>
+      <li>✔ An alert appears</li>
+      <li>✔ We see messages in console</li>
+    </ul>
+
+    <p>But...</p>
+    <ul>
+      <li>❌ The button doesn't change</li>
+      <li>❌ It doesn't remember that you applied</li>
+    </ul>
+
+    <p><strong>Why?</strong></p>
+    <p>Because we haven't used <strong>state</strong> yet.</p>
+
+    <h3>1️⃣5️⃣ Common Beginner Mistakes</h3>
+
+    <h4>Mistake 1: Executing the function instead of passing it</h4>
+
+    <p><strong>❌ Incorrect:</strong></p>
+    <pre><code class="language-jsx">&lt;button onClick={handleClick()}&gt;</code></pre>
+
+    <p><strong>✅ Correct:</strong></p>
+    <pre><code class="language-jsx">&lt;button onClick={handleClick}&gt;</code></pre>
+
+    <h4>Mistake 2: Using onclick instead of onClick</h4>
+
+    <p><strong>❌ Incorrect:</strong></p>
+    <pre><code>onclick</code></pre>
+
+    <p><strong>✅ Correct:</strong></p>
+    <pre><code>onClick</code></pre>
+
+    <h4>Mistake 3: Forgetting preventDefault in forms</h4>
+    <p>This causes page reload.</p>
+
+    <h4>Mistake 4: Using huge inline functions</h4>
+    <p>This makes maintenance difficult.</p>
+
+    <h3>📋 What You Learned</h3>
+    <p>In this lesson you learned:</p>
+    <ul>
+      <li>🎯 What events are in React</li>
+      <li>👆 How to use onClick, onChange, onSubmit</li>
+      <li>🔧 Create event handlers</li>
+      <li>📦 Access props inside the event</li>
+      <li>⚡ Difference with vanilla JavaScript</li>
+      <li>📝 Use the event object</li>
+      <li>🔀 Handle multiple events in one component</li>
+    </ul>
+
+    <h3>🎯 Next Step</h3>
+    <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+      In the next lesson, we'll learn the <strong>most important concept in React:</strong><br>
+      <strong>useState</strong><br><br>
+      With that, you'll be able to:
+      <ul style="margin: 10px 0;">
+        <li>Change the button text</li>
+        <li>Disable the button</li>
+        <li>Save that the user already applied</li>
+        <li>Start building truly interactive components</li>
+      </ul>
+    </p>
+  </div>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="code-examples">
+      Code Examples
+    </button>
+    <button class="tab-button" data-tab="exercises">
+      Practice Exercises
+    </button>
+  </div>
+
+  <article id="code-examples" class="tab-content active">
+    <h2>Complete Code Examples</h2>
+
+    <h3>Example 1: Simple Click Handler</h3>
+    <pre><code class="language-jsx">
+function Button() {
+  const handleClick = () => {
+    console.log('Button clicked!')
+    alert('You clicked the button!')
+  }
+
+  return (
+    &lt;button onClick={handleClick}&gt;
+      Click me
+    &lt;/button&gt;
+  )
+}
+    </code></pre>
+
+    <h3>Example 2: Form with Submit Handler</h3>
+    <pre><code class="language-jsx">
+function LoginForm() {
+  const handleSubmit = (event) => {
+    event.preventDefault()
+    console.log('Form submitted')
+    alert('Login successful!')
+  }
+
+  return (
+    &lt;form onSubmit={handleSubmit}&gt;
+      &lt;input type="email" placeholder="Email" /&gt;
+      &lt;input type="password" placeholder="Password" /&gt;
+      &lt;button type="submit"&gt;Login&lt;/button&gt;
+    &lt;/form&gt;
+  )
+}
+    </code></pre>
+
+    <h3>Example 3: Input Change Handler</h3>
+    <pre><code class="language-jsx">
+function SearchBox() {
+  const handleChange = (event) => {
+    const value = event.target.value
+    console.log('Search for:', value)
+  }
+
+  return (
+    &lt;input
+      type="text"
+      placeholder="Search..."
+      onChange={handleChange}
+    /&gt;
+  )
+}
+    </code></pre>
+
+    <h3>Example 4: Multiple Event Handlers</h3>
+    <pre><code class="language-jsx">
+function InteractiveCard() {
+  const handleMouseEnter = () => {
+    console.log('Mouse entered')
+  }
+
+  const handleMouseLeave = () => {
+    console.log('Mouse left')
+  }
+
+  const handleClick = () => {
+    console.log('Card clicked')
+  }
+
+  return (
+    &lt;div
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onClick={handleClick}
+      style={{
+        padding: '20px',
+        border: '1px solid #ddd',
+        borderRadius: '8px',
+        cursor: 'pointer'
+      }}
+    &gt;
+      Interact with me!
+    &lt;/div&gt;
+  )
+}
+    </code></pre>
+
+    <h3>Example 5: Passing Arguments to Handlers</h3>
+    <pre><code class="language-jsx">
+function ItemList() {
+  const items = ['Item 1', 'Item 2', 'Item 3']
+
+  const handleDelete = (itemId) => {
+    console.log(`Deleting item: ${itemId}`)
+    alert(`Deleted: ${itemId}`)
+  }
+
+  return (
+    &lt;ul&gt;
+      {items.map((item) => (
+        &lt;li key={item}&gt;
+          {item}
+          &lt;button onClick={() => handleDelete(item)}&gt;
+            Delete
+          &lt;/button&gt;
+        &lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  )
+}
+    </code></pre>
+
+    <h3>Example 6: Event Object Properties</h3>
+    <pre><code class="language-jsx">
+function EventDemo() {
+  const handleEvent = (event) => {
+    console.log('Event type:', event.type)
+    console.log('Target element:', event.target)
+    console.log('Current target:', event.currentTarget)
+  }
+
+  return (
+    &lt;div&gt;
+      &lt;button onClick={handleEvent}&gt;
+        Click and check console
+      &lt;/button&gt;
+
+      &lt;input
+        type="text"
+        onChange={handleEvent}
+        placeholder="Type and check console"
+      /&gt;
+    &lt;/div&gt;
+  )
+}
+    </code></pre>
+
+    <h3>Example 7: Keyboard Events</h3>
+    <pre><code class="language-jsx">
+function SearchInput() {
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      console.log('Search for:', event.target.value)
+    }
+    console.log('Key pressed:', event.key)
+  }
+
+  return (
+    &lt;input
+      type="text"
+      placeholder="Type and press Enter"
+      onKeyDown={handleKeyDown}
+    /&gt;
+  )
+}
+    </code></pre>
+  </article>
+
+  <article id="exercises" class="tab-content">
+    <h2>Practice Exercises</h2>
+
+    <h3>Exercise 1: Simple Counter Button</h3>
+    <p><strong>Challenge:</strong> Create a button that logs a count to the console when clicked.</p>
+
+    <p><strong>Solution:</strong></p>
+    <pre><code class="language-jsx">
+function CounterButton() {
+  let count = 0
+
+  const handleClick = () => {
+    count++
+    console.log('Count:', count)
+  }
+
+  return (
+    &lt;button onClick={handleClick}&gt;
+      Click me
+    &lt;/button&gt;
+  )
+}
+    </code></pre>
+
+    <h3>Exercise 2: Form Validation</h3>
+    <p><strong>Challenge:</strong> Create a form that prevents submission if email is invalid.</p>
+
+    <p><strong>Solution:</strong></p>
+    <pre><code class="language-jsx">
+function EmailForm() {
+  const handleSubmit = (event) => {
+    event.preventDefault()
+
+    const email = event.target.email.value
+
+    if (!email.includes('@')) {
+      alert('Invalid email!')
+      return
+    }
+
+    alert('Email is valid!')
+  }
+
+  return (
+    &lt;form onSubmit={handleSubmit}&gt;
+      &lt;input
+        type="email"
+        name="email"
+        placeholder="Enter email"
+      /&gt;
+      &lt;button type="submit"&gt;Submit&lt;/button&gt;
+    &lt;/form&gt;
+  )
+}
+    </code></pre>
+
+    <h3>Exercise 3: Key Detection</h3>
+    <p><strong>Challenge:</strong> Create an input that logs when specific keys are pressed.</p>
+
+    <p><strong>Solution:</strong></p>
+    <pre><code class="language-jsx">
+function KeyDetector() {
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      console.log('Enter was pressed')
+    } else if (event.key === 'Escape') {
+      console.log('Escape was pressed')
+    } else {
+      console.log('Key:', event.key)
+    }
+  }
+
+  return (
+    &lt;input
+      type="text"
+      onKeyDown={handleKeyPress}
+      placeholder="Press any key"
+    /&gt;
+  )
+}
+    </code></pre>
+
+    <h3>Exercise 4: Button with Multiple Actions</h3>
+    <p><strong>Challenge:</strong> Create a component with buttons for different actions.</p>
+
+    <p><strong>Solution:</strong></p>
+    <pre><code class="language-jsx">
+function ActionButtons() {
+  const handleSave = () => {
+    console.log('Saving...')
+    alert('File saved!')
+  }
+
+  const handleDelete = () => {
+    console.log('Deleting...')
+    alert('File deleted!')
+  }
+
+  const handleShare = () => {
+    console.log('Sharing...')
+    alert('File shared!')
+  }
+
+  return (
+    &lt;div&gt;
+      &lt;button onClick={handleSave}&gt;Save&lt;/button&gt;
+      &lt;button onClick={handleDelete}&gt;Delete&lt;/button&gt;
+      &lt;button onClick={handleShare}&gt;Share&lt;/button&gt;
+    &lt;/div&gt;
+  )
+}
+    </code></pre>
+
+    <h3>Exercise 5: Hover Effects</h3>
+    <p><strong>Challenge:</strong> Create a component that responds to mouse enter/leave.</p>
+
+    <p><strong>Solution:</strong></p>
+    <pre><code class="language-jsx">
+function HoverCard() {
+  const handleMouseEnter = () => {
+    console.log('Mouse entered the card')
+  }
+
+  const handleMouseLeave = () => {
+    console.log('Mouse left the card')
+  }
+
+  return (
+    &lt;div
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        padding: '20px',
+        border: '1px solid #ddd',
+        borderRadius: '8px',
+        transition: 'all 0.3s'
+      }}
+    &gt;
+      Hover over me!
+    &lt;/div&gt;
+  )
+}
+    </code></pre>
+  </article>
+
+  <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-left: 4px solid #007bff; border-radius: 4px;">
+    <p><strong>📚 Additional Resources:</strong></p>
+    <p>
+      For more in-depth discussions and interactive examples about React Events,
+      check out this <a href="https://chatgpt.com/g/g-p-696fbea2755481919c8258fb23e8f822-react/c/69b4bd67-f1ec-8393-a09b-a9c06a34b254" target="_blank" style="color: #007bff; text-decoration: none;">React GPT Guide</a>.
+    </p>
+  </div>
+</section>

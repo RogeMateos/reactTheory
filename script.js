@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function loadContent(section) {
     const lang = currentLanguage === "es" ? "es" : "en";
     const hooks = ["useState", "useEffect", "useContext", "useRef", "useReducer", "globalSwitch"];
-    const fundamentals = ["bareBonesMethod", "lifeCicle"];
+    const fundamentals = ["componentes", "componentesVsFunciones", "jobCard", "eventos", "useState", "bareBonesMethod", "lifeCicle"];
     const interview = ["interviewQuestions", "react-hooks-rules-and-order", "react-hooks-masterclass"];
 
     let folder = "";
@@ -109,6 +109,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function getTranslation(key) {
     const translations = {
+      componentes: { en: "Components", es: "Componentes" },
+      componentesVsFunciones: { en: "Components vs Functions", es: "Componentes vs Funciones" },
+      jobCard: { en: "Creating JobCard", es: "Creando JobCard" },
+      eventos: { en: "Events", es: "Eventos" },
+      useState: { en: "State with useState", es: "Estado con useState" },
       lifeCycle: { en: "LifeCycle", es: "Ciclo de Vida" },
       bareBonesMethod: { en: "The Bare Bones Method", es: "The Bare Bones Method" },
       routerBrowser: {

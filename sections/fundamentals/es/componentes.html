@@ -1,0 +1,709 @@
+<section class="box">
+  <h1>Tutorial: Componentes en React (Guía clara para entenderlos de verdad)</h1>
+
+  <div class="description">
+    <p>
+      Antes de React, cuando hacíamos interfaces con JavaScript puro, el código se volvía algo así:
+    </p>
+    <ul>
+      <li>HTML + JS mezclado</li>
+      <li>Muchos <code>querySelector</code></li>
+      <li>Muchos <code>appendChild</code></li>
+      <li>Código repetido</li>
+    </ul>
+
+    <p><strong>React resuelve esto con una idea clave:</strong></p>
+    <p style="text-align: center; font-size: 18px;">👉 <strong>Componentes</strong></p>
+
+    <p>Un componente es una <strong>pieza reutilizable de la interfaz</strong>.</p>
+    <p>Piensa en ellos como <strong>bloques LEGO para construir interfaces</strong>.</p>
+
+    <h3>1️⃣ ¿Qué es un componente?</h3>
+    <p>
+      Un componente es simplemente una <strong>función de JavaScript que devuelve JSX</strong>.
+    </p>
+    <pre><code class="language-jsx">function Saludo() {
+  return &lt;h1&gt;¡Hola desde un componente!&lt;/h1&gt;
+}</code></pre>
+    <p>Ese JSX React lo convertirá en HTML.</p>
+
+    <h4>Usar el componente</h4>
+    <p>Una vez creado, se usa como si fuera una etiqueta HTML:</p>
+    <pre><code class="language-jsx">&lt;Saludo /&gt;</code></pre>
+
+    <p><strong>Esto es una de las ideas más importantes de React.</strong></p>
+
+    <p>En vez de escribir HTML repetido:</p>
+    <pre><code class="language-jsx">&lt;h1&gt;Hola&lt;/h1&gt;
+&lt;h1&gt;Hola&lt;/h1&gt;
+&lt;h1&gt;Hola&lt;/h1&gt;</code></pre>
+
+    <p>Puedes usar:</p>
+    <pre><code class="language-jsx">&lt;Saludo /&gt;
+&lt;Saludo /&gt;
+&lt;Saludo /&gt;</code></pre>
+
+    <h3>2️⃣ Diferencia entre elemento y componente</h3>
+    <p>Esta pregunta aparece muchísimo en entrevistas React.</p>
+
+    <h4>Elemento</h4>
+    <p>Un elemento es JSX simple.</p>
+    <pre><code class="language-jsx">&lt;h1&gt;Hola&lt;/h1&gt;</code></pre>
+    <p>React lo renderiza directamente en el DOM.</p>
+
+    <h4>Componente</h4>
+    <p>Un componente es una función que devuelve elementos.</p>
+    <pre><code class="language-jsx">function Saludar() {
+  return &lt;h1&gt;Hola&lt;/h1&gt;
+}
+</code></pre>
+    <p>Luego se usa así:</p>
+    <pre><code class="language-jsx">&lt;Saludar /&gt;</code></pre>
+
+    <p style="padding: 15px; background: #f0f0f0; border-left: 4px solid #007bff;">
+      <strong>🎯 Regla clave para entrevistas:</strong><br>
+      Un componente es una función que retorna elementos JSX
+    </p>
+
+    <h3>3️⃣ Tu primer componente completo</h3>
+    <p>Vamos a verlo en un ejemplo real.</p>
+
+    <h4>HTML base</h4>
+    <pre><code class="language-html">&lt;div id="root"&gt;&lt;/div&gt;</code></pre>
+    <p>React siempre renderiza dentro de un contenedor.</p>
+
+    <h4>Componente React</h4>
+    <pre><code class="language-jsx">function Saludar() {
+  return &lt;h1&gt;¡Hola desde un componente!&lt;/h1&gt;
+}</code></pre>
+
+    <h4>Renderizarlo</h4>
+    <pre><code class="language-jsx">const rootEl = document.querySelector('#root')
+const root = ReactDOMClient.createRoot(rootEl)
+
+root.render(&lt;Saludar /&gt;)</code></pre>
+
+    <h4>Qué ocurre internamente</h4>
+    <pre><code>&lt;Saludar /&gt;
+     ↓
+ejecuta la función
+     ↓
+return &lt;h1&gt;
+     ↓
+lo convierte en DOM real</code></pre>
+
+    <h3>4️⃣ Props: pasar datos a los componentes</h3>
+    <p>Los componentes pueden recibir datos.</p>
+    <p>Es como pasar argumentos a una función.</p>
+
+    <pre><code class="language-jsx">function Saludar(props) {
+  return &lt;h1&gt;¡Hola {props.nombre}!&lt;/h1&gt;
+}</code></pre>
+
+    <h4>Uso</h4>
+    <pre><code class="language-jsx">&lt;Saludar nombre="Miguel" /&gt;</code></pre>
+
+    <h4>Resultado</h4>
+    <pre><code>Hola Miguel</code></pre>
+
+    <h4>Analogía simple</h4>
+    <p>Un componente es como una máquina de café.</p>
+    <ul>
+      <li>Componente = máquina</li>
+      <li>Props = ingredientes</li>
+      <li>UI = café final</li>
+    </ul>
+
+    <p>Ejemplo:</p>
+    <pre><code class="language-jsx">&lt;Saludar nombre="Miguel" /&gt;
+&lt;Saludar nombre="Ana" /&gt;</code></pre>
+    <p>Misma máquina, diferentes ingredientes.</p>
+
+    <h3>5️⃣ Destructuring de props</h3>
+    <p>En React casi siempre verás esto:</p>
+    <pre><code class="language-jsx">function Saludar({ nombre }) {
+  return &lt;h1&gt;Hola {nombre}&lt;/h1&gt;
+}</code></pre>
+
+    <p>Esto es equivalente a:</p>
+    <pre><code class="language-jsx">props.nombre</code></pre>
+
+    <p>Pero más limpio.</p>
+
+    <h3>6️⃣ Múltiples props</h3>
+    <p>Puedes pasar varios datos.</p>
+
+    <pre><code class="language-jsx">function Saludar({ nombre, edad, ciudad }) {
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Hola {nombre}&lt;/h1&gt;
+      &lt;p&gt;Tienes {edad} años y vives en {ciudad}&lt;/p&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+    <h4>Uso</h4>
+    <pre><code class="language-jsx">&lt;Saludar nombre="Miguel" edad={25} ciudad="Madrid" /&gt;</code></pre>
+
+    <h4>Regla importante</h4>
+    <p><strong>Strings:</strong></p>
+    <pre><code class="language-jsx">nombre="Miguel"</code></pre>
+
+    <p><strong>Valores JavaScript:</strong></p>
+    <pre><code class="language-jsx">edad={25}</code></pre>
+
+    <p>Las llaves significan:</p>
+    <p style="text-align: center; font-size: 16px;">👉 <strong>"Esto es JavaScript"</strong></p>
+
+    <h3>7️⃣ Estilos en JSX</h3>
+    <p>En HTML normal haríamos:</p>
+    <pre><code class="language-html">&lt;h1 style="color:red; font-size:32px"&gt;</code></pre>
+
+    <p>Pero en JSX los estilos son objetos JavaScript.</p>
+    <pre><code class="language-jsx">&lt;h1 style={{ color: 'red', fontSize: '32px' }}&gt;</code></pre>
+
+    <h4>Ejemplo completo</h4>
+    <pre><code class="language-jsx">function Saludar({ nombre, color }) {
+
+  const estilos = {
+    color: color,
+    fontSize: '32px',
+    fontWeight: 'bold',
+    textAlign: 'center'
+  }
+
+  return &lt;h1 style={estilos}&gt;Hola {nombre}&lt;/h1&gt;
+}
+</code></pre>
+
+    <h4>Uso</h4>
+    <pre><code class="language-jsx">&lt;Saludar nombre="Miguel" color="blue" /&gt;
+&lt;Saludar nombre="Ana" color="green" /&gt;</code></pre>
+
+    <h3>8️⃣ CamelCase en estilos</h3>
+    <p>En CSS usamos:</p>
+    <pre><code>font-size
+background-color
+text-align</code></pre>
+
+    <p>En JSX usamos:</p>
+    <pre><code>fontSize
+backgroundColor
+textAlign</code></pre>
+
+    <p>Porque JSX es JavaScript, no HTML.</p>
+
+    <h3>9️⃣ Estilos inline con props</h3>
+    <p>Podemos escribirlo más corto:</p>
+    <pre><code class="language-jsx">function Saludar({ nombre, color }) {
+  return (
+    &lt;h1 style={{ color, fontSize: '32px' }}&gt;
+      Hola {nombre}
+    &lt;/h1&gt;
+  )
+}</code></pre>
+
+    <p>Esto funciona porque en JavaScript:</p>
+    <pre><code>color: color</code></pre>
+
+    <p>Puede escribirse:</p>
+    <pre><code>color</code></pre>
+
+    <h3>🔟 Reutilización de componentes</h3>
+    <p>Aquí está el verdadero poder de React.</p>
+
+    <pre><code class="language-jsx">&lt;Saludar nombre="Miguel" color="blue" /&gt;
+&lt;Saludar nombre="Ana" color="green" /&gt;
+&lt;Saludar nombre="Carlos" color="red" /&gt;</code></pre>
+
+    <p>Un mismo componente genera interfaces diferentes.</p>
+
+    <h3>1️⃣1️⃣ Composición de componentes</h3>
+    <p>Los componentes se pueden combinar.</p>
+
+    <p>Ejemplo:</p>
+    <pre><code class="language-jsx">function App() {
+  return (
+    &lt;div&gt;
+      &lt;Saludar nombre="Miguel" /&gt;
+      &lt;Saludar nombre="Ana" /&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+    <p>Esto es como construir con bloques LEGO.</p>
+
+    <h3>1️⃣2️⃣ Ventajas de los componentes</h3>
+    <ul>
+      <li><strong>Reutilización:</strong> Escribes una vez, usas muchas.</li>
+      <li><strong>Organización:</strong> Cada componente tiene su lógica.</li>
+      <li><strong>Mantenibilidad:</strong> Es más fácil cambiar cosas.</li>
+      <li><strong>Escalabilidad:</strong> Las apps grandes se construyen con muchos componentes pequeños.</li>
+    </ul>
+
+    <h3>1️⃣3️⃣ Mental model (muy importante)</h3>
+    <p>Piensa en React así:</p>
+    <pre><code>App
+ ├── Header
+ ├── Sidebar
+ ├── ProductCard
+ ├── ProductCard
+ ├── ProductCard
+ └── Footer</code></pre>
+
+    <p>Cada parte de la UI es un componente.</p>
+
+    <h3>1️⃣4️⃣ Resumen final</h3>
+    <p>Los componentes son:</p>
+    <pre><code>Funciones
+     ↓
+Reciben props
+     ↓
+Retornan JSX
+     ↓
+React lo convierte en DOM</code></pre>
+
+    <h4>Lo que debes recordar</h4>
+    <ul>
+      <li>✔ Componentes = funciones que devuelven JSX</li>
+      <li>✔ Props = datos que recibe el componente</li>
+      <li>✔ JSX = JavaScript + HTML</li>
+      <li>✔ Estilos = objetos JavaScript</li>
+      <li>✔ Componentes = reutilización</li>
+    </ul>
+
+    <h3>1️⃣5️⃣ Ejercicio (muy típico en entrevistas)</h3>
+    <p>Crea un componente <code>UserCard</code>.</p>
+
+    <p>Debe recibir:</p>
+    <ul>
+      <li>nombre</li>
+      <li>edad</li>
+      <li>ciudad</li>
+    </ul>
+
+    <p>Debe mostrar:</p>
+    <ul>
+      <li>Nombre</li>
+      <li>Edad</li>
+      <li>Ciudad</li>
+    </ul>
+
+    <p>Uso esperado:</p>
+    <pre><code class="language-jsx">&lt;UserCard nombre="Ana" edad={28} ciudad="Barcelona" /&gt;</code></pre>
+
+    <p style="padding: 15px; background: #f0f0f0; border-left: 4px solid #28a745;">
+      <strong>💡 Tip:</strong> Una vez que entiendes componentes, has entendido el 80% de React. Los componentes son la base de todo.
+    </p>
+  </div>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="code-examples">
+      Ejemplos de Código
+    </button>
+    <button class="tab-button" data-tab="component-exercises">
+      Ejercicios Prácticos
+    </button>
+  </div>
+
+  <article id="code-examples" class="tab-content active">
+    <h2>Ejemplos de Código Completos</h2>
+
+    <h3>Ejemplo 1: Componente Simple</h3>
+    <pre><code class="language-jsx">
+function Bienvenida() {
+  return &lt;h1&gt;¡Bienvenido a React!&lt;/h1&gt;
+}
+
+export default Bienvenida;
+    </code></pre>
+
+    <h3>Ejemplo 2: Componente con Props</h3>
+    <pre><code class="language-jsx">
+function SaludoUsuario({ nombre }) {
+  return &lt;h1&gt;¡Hola, {nombre}!&lt;/h1&gt;
+}
+
+// Uso
+&lt;SaludoUsuario nombre="María" /&gt;
+    </code></pre>
+
+    <h3>Ejemplo 3: Múltiples Props y Estilos</h3>
+    <pre><code class="language-jsx">
+function TarjetaUsuario({ nombre, edad, ciudad }) {
+  const estilosTarjeta = {
+    border: '1px solid #ccc',
+    padding: '20px',
+    borderRadius: '8px',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+  }
+
+  const estilosTítulo = {
+    color: '#333',
+    fontSize: '24px',
+    marginBottom: '10px'
+  }
+
+  return (
+    &lt;div style={estilosTarjeta}&gt;
+      &lt;h2 style={estilosTítulo}&gt;{nombre}&lt;/h2&gt;
+      &lt;p&gt;Edad: {edad} años&lt;/p&gt;
+      &lt;p&gt;Ciudad: {ciudad}&lt;/p&gt;
+    &lt;/div&gt;
+  )
+}
+
+// Uso
+&lt;TarjetaUsuario nombre="Ana" edad={28} ciudad="Barcelona" /&gt;
+&lt;TarjetaUsuario nombre="Carlos" edad={32} ciudad="Madrid" /&gt;
+    </code></pre>
+
+    <h3>Ejemplo 4: Composición de Componentes</h3>
+    <pre><code class="language-jsx">
+function Encabezado() {
+  return &lt;header&gt;&lt;h1&gt;Mi Aplicación&lt;/h1&gt;&lt;/header&gt;
+}
+
+function Pie() {
+  return &lt;footer&gt;&lt;p&gt;&copy; 2024 Mi Aplicación&lt;/p&gt;&lt;/footer&gt;
+}
+
+function App() {
+  return (
+    &lt;div&gt;
+      &lt;Encabezado /&gt;
+      &lt;main&gt;
+        &lt;h2&gt;Bienvenido&lt;/h2&gt;
+        &lt;p&gt;Este es el contenido principal.&lt;/p&gt;
+      &lt;/main&gt;
+      &lt;Pie /&gt;
+    &lt;/div&gt;
+  )
+}
+
+export default App;
+    </code></pre>
+
+    <h3>Ejemplo 5: Componente Reutilizable (bloques LEGO)</h3>
+    <pre><code class="language-jsx">
+function Botón({ texto, color, onClick }) {
+  const estilosBotón = {
+    padding: '10px 20px',
+    backgroundColor: color,
+    color: 'white',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    fontSize: '16px'
+  }
+
+  return (
+    &lt;button style={estilosBotón} onClick={onClick}&gt;
+      {texto}
+    &lt;/button&gt;
+  )
+}
+
+// Uso
+function App() {
+  return (
+    &lt;div&gt;
+      &lt;Botón texto="¡Hazme clic!" color="blue" onClick={() =&gt; alert('¡Hecho!')} /&gt;
+      &lt;Botón texto="Guardar" color="green" onClick={() =&gt; alert('¡Guardado!')} /&gt;
+      &lt;Botón texto="Eliminar" color="red" onClick={() =&gt; alert('¡Eliminado!')} /&gt;
+    &lt;/div&gt;
+  )
+}
+    </code></pre>
+
+    <h3>Ejemplo 6: Props con Comportamiento por Defecto</h3>
+    <pre><code class="language-jsx">
+function Insignia({ cantidad, backgroundColor = '#007bff' }) {
+  const estilosInsignia = {
+    display: 'inline-block',
+    padding: '4px 8px',
+    backgroundColor: backgroundColor,
+    color: 'white',
+    borderRadius: '12px',
+    fontSize: '12px',
+    fontWeight: 'bold'
+  }
+
+  return &lt;span style={estilosInsignia}&gt;{cantidad}&lt;/span&gt;
+}
+
+// Uso
+&lt;Insignia cantidad={5} /&gt;  // Usa color por defecto
+&lt;Insignia cantidad={10} backgroundColor="red" /&gt;  // Color personalizado
+    </code></pre>
+
+    <h3>Ejemplo 7: Componente Complejo con Múltiples Props</h3>
+    <pre><code class="language-jsx">
+function TarjetaProducto({ título, precio, descripción, imagen }) {
+  const estilosTarjeta = {
+    border: '1px solid #ddd',
+    borderRadius: '8px',
+    overflow: 'hidden',
+    maxWidth: '300px',
+    boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+  }
+
+  const estilosImagen = {
+    width: '100%',
+    height: '200px',
+    objectFit: 'cover'
+  }
+
+  const estilosContenido = {
+    padding: '16px'
+  }
+
+  const estilosTítulo = {
+    fontSize: '18px',
+    fontWeight: 'bold',
+    marginBottom: '8px'
+  }
+
+  const estilosPrecio = {
+    fontSize: '20px',
+    color: '#28a745',
+    fontWeight: 'bold',
+    marginBottom: '8px'
+  }
+
+  return (
+    &lt;div style={estilosTarjeta}&gt;
+      &lt;img src={imagen} alt={título} style={estilosImagen} /&gt;
+      &lt;div style={estilosContenido}&gt;
+        &lt;h3 style={estilosTítulo}&gt;{título}&lt;/h3&gt;
+        &lt;p style={estilosPrecio}&gt;${precio}&lt;/p&gt;
+        &lt;p&gt;{descripción}&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  )
+}
+
+// Uso
+&lt;TarjetaProducto
+  título="Laptop"
+  precio={999}
+  descripción="Potente y portátil"
+  imagen="laptop.jpg"
+/&gt;
+    </code></pre>
+  </article>
+
+  <article id="component-exercises" class="tab-content">
+    <h2>Ejercicios Prácticos</h2>
+
+    <h3>Ejercicio 1: Componente Saludo Simple</h3>
+    <p><strong>Desafío:</strong> Crea un componente <code>Saludo</code> que:</p>
+    <ul>
+      <li>Acepte una prop llamada <code>hora</code> (mañana, tarde, noche)</li>
+      <li>Retorne diferentes saludos según la hora:
+        <ul>
+          <li>Mañana: "¡Buenos días!"</li>
+          <li>Tarde: "¡Buenas tardes!"</li>
+          <li>Noche: "¡Buenas noches!"</li>
+        </ul>
+      </li>
+    </ul>
+
+    <p><strong>Uso esperado:</strong></p>
+    <pre><code class="language-jsx">&lt;Saludo hora="mañana" /&gt;  // "¡Buenos días!"</code></pre>
+
+    <p><strong>Solución:</strong></p>
+    <pre><code class="language-jsx">
+function Saludo({ hora }) {
+  const saludos = {
+    mañana: '¡Buenos días!',
+    tarde: '¡Buenas tardes!',
+    noche: '¡Buenas noches!'
+  }
+
+  return &lt;h1&gt;{saludos[hora]}&lt;/h1&gt;
+}
+    </code></pre>
+
+    <h3>Ejercicio 2: Componente Perfil de Usuario</h3>
+    <p><strong>Desafío:</strong> Crea un componente <code>PerfilUsuario</code> que:</p>
+    <ul>
+      <li>Acepte props: <code>nombre</code>, <code>rol</code>, <code>email</code>, <code>avatar</code></li>
+      <li>Muestre la información del usuario en una tarjeta estilizada</li>
+      <li>Incluya una imagen de avatar</li>
+    </ul>
+
+    <p><strong>Uso esperado:</strong></p>
+    <pre><code class="language-jsx">
+&lt;PerfilUsuario
+  nombre="Juan Pérez"
+  rol="Desarrollador"
+  email="juan@example.com"
+  avatar="juan.jpg"
+/&gt;
+    </code></pre>
+
+    <p><strong>Solución:</strong></p>
+    <pre><code class="language-jsx">
+function PerfilUsuario({ nombre, rol, email, avatar }) {
+  const estilosPerfil = {
+    textAlign: 'center',
+    padding: '20px',
+    border: '1px solid #ddd',
+    borderRadius: '8px'
+  }
+
+  const estilosAvatar = {
+    width: '100px',
+    height: '100px',
+    borderRadius: '50%',
+    objectFit: 'cover',
+    marginBottom: '10px'
+  }
+
+  return (
+    &lt;div style={estilosPerfil}&gt;
+      &lt;img src={avatar} alt={nombre} style={estilosAvatar} /&gt;
+      &lt;h2&gt;{nombre}&lt;/h2&gt;
+      &lt;p&gt;&lt;strong&gt;{rol}&lt;/strong&gt;&lt;/p&gt;
+      &lt;p&gt;{email}&lt;/p&gt;
+    &lt;/div&gt;
+  )
+}
+    </code></pre>
+
+    <h3>Ejercicio 3: Componente Alerta</h3>
+    <p><strong>Desafío:</strong> Crea un componente <code>Alerta</code> que:</p>
+    <ul>
+      <li>Acepte props: <code>tipo</code> (éxito, error, advertencia, info), <code>mensaje</code></li>
+      <li>Muestre diferentes colores según el tipo:
+        <ul>
+          <li>Éxito: verde</li>
+          <li>Error: rojo</li>
+          <li>Advertencia: naranja</li>
+          <li>Info: azul</li>
+        </ul>
+      </li>
+      <li>Muestre el mensaje</li>
+    </ul>
+
+    <p><strong>Uso esperado:</strong></p>
+    <pre><code class="language-jsx">
+&lt;Alerta tipo="éxito" mensaje="¡Datos guardados con éxito!" /&gt;
+&lt;Alerta tipo="error" mensaje="¡Algo salió mal!" /&gt;
+    </code></pre>
+
+    <p><strong>Solución:</strong></p>
+    <pre><code class="language-jsx">
+function Alerta({ tipo, mensaje }) {
+  const colores = {
+    éxito: '#28a745',
+    error: '#dc3545',
+    advertencia: '#ffc107',
+    info: '#17a2b8'
+  }
+
+  const estilosAlerta = {
+    padding: '12px 16px',
+    borderRadius: '4px',
+    backgroundColor: colores[tipo],
+    color: tipo === 'advertencia' ? '#000' : '#fff',
+    marginBottom: '10px'
+  }
+
+  return &lt;div style={estilosAlerta}&gt;{mensaje}&lt;/div&gt;
+}
+    </code></pre>
+
+    <h3>Ejercicio 4: Composición Múltiple de Componentes</h3>
+    <p><strong>Desafío:</strong> Crea una app completa con:</p>
+    <ul>
+      <li>Un componente <code>Encabezado</code></li>
+      <li>Un componente <code>Tarjeta</code></li>
+      <li>Un componente <code>App</code> que use ambos</li>
+    </ul>
+
+    <p><strong>Solución:</strong></p>
+    <pre><code class="language-jsx">
+function Encabezado() {
+  return &lt;header style={{ background: '#333', color: '#fff', padding: '20px' }}&gt;
+    &lt;h1&gt;Mi Sitio Web&lt;/h1&gt;
+  &lt;/header&gt;
+}
+
+function Tarjeta({ título, contenido }) {
+  const estiloTarjeta = {
+    border: '1px solid #ddd',
+    padding: '16px',
+    margin: '10px',
+    borderRadius: '8px'
+  }
+
+  return (
+    &lt;div style={estiloTarjeta}&gt;
+      &lt;h3&gt;{título}&lt;/h3&gt;
+      &lt;p&gt;{contenido}&lt;/p&gt;
+    &lt;/div&gt;
+  )
+}
+
+function App() {
+  return (
+    &lt;div&gt;
+      &lt;Encabezado /&gt;
+      &lt;Tarjeta título="Tarjeta 1" contenido="Esta es la primera tarjeta" /&gt;
+      &lt;Tarjeta título="Tarjeta 2" contenido="Esta es la segunda tarjeta" /&gt;
+    &lt;/div&gt;
+  )
+}
+
+export default App;
+    </code></pre>
+
+    <h3>Ejercicio 5: Desafío Interactivo</h3>
+    <p><strong>Desafío:</strong> Crea un componente <code>Insignia</code> que:</p>
+    <ul>
+      <li>Muestre una insignia con un número</li>
+      <li>Tenga color configurable</li>
+      <li>Pueda ser de diferentes tamaños (pequeña, mediana, grande)</li>
+    </ul>
+
+    <p><strong>Uso esperado:</strong></p>
+    <pre><code class="language-jsx">
+&lt;Insignia número={5} color="red" tamaño="pequeña" /&gt;
+&lt;Insignia número={12} color="blue" tamaño="grande" /&gt;
+    </code></pre>
+
+    <p><strong>Solución:</strong></p>
+    <pre><code class="language-jsx">
+function Insignia({ número, color = 'blue', tamaño = 'mediana' }) {
+  const tamaños = {
+    pequeña: { width: '24px', height: '24px', fontSize: '12px' },
+    mediana: { width: '32px', height: '32px', fontSize: '16px' },
+    grande: { width: '40px', height: '40px', fontSize: '20px' }
+  }
+
+  const estilosInsignia = {
+    ...tamaños[tamaño],
+    borderRadius: '50%',
+    backgroundColor: color,
+    color: '#fff',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontWeight: 'bold'
+  }
+
+  return &lt;div style={estilosInsignia}&gt;{número}&lt;/div&gt;
+}
+    </code></pre>
+  </article>
+
+  <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-left: 4px solid #007bff; border-radius: 4px;">
+    <p><strong>📚 Recursos Adicionales:</strong></p>
+    <p>
+      Para más discusiones en profundidad y ejemplos interactivos sobre Componentes en React,
+      consulta esta <a href="https://chatgpt.com/g/g-p-696fbea2755481919c8258fb23e8f822-react/c/69b4b4a3-564c-8387-8dad-eb38f3e3a1e8" target="_blank" style="color: #007bff; text-decoration: none;">Guía React GPT</a>.
+    </p>
+  </div>
+</section>

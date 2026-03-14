@@ -1,0 +1,715 @@
+<section class="box">
+  <h1>Componentes vs Funciones Normales: Entender la Diferencia</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">
+      Conceptos y Analogías
+    </button>
+    <button class="tab-button" data-tab="code-examples">
+      Ejemplos de Código
+    </button>
+    <button class="tab-button" data-tab="exercises">
+      Ejercicios Prácticos
+    </button>
+  </div>
+
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+    <p>
+      Cuando empezamos con React es muy común pensar:
+    </p>
+    <p style="font-style: italic; padding: 10px; background: #f0f0f0; border-left: 4px solid #ffc107;">
+      "Si los componentes son funciones… ¿entonces cualquier función es un componente?"
+    </p>
+
+    <p><strong>La respuesta es no.</strong></p>
+
+    <p>Aunque los componentes son funciones de JavaScript, no todas las funciones son componentes.</p>
+    <p>Entender esta diferencia es clave para escribir React correctamente.</p>
+
+    <h3>1️⃣ ¿Qué es un componente en React?</h3>
+    <p>
+      Un componente de React es una <strong>función especial que React usa para renderizar interfaz (UI)</strong>.
+    </p>
+
+    <p>Un componente:</p>
+    <ul>
+      <li>Retorna algo que React puede mostrar en pantalla</li>
+      <li>Se escribe en PascalCase</li>
+      <li>Se usa como una etiqueta JSX</li>
+    </ul>
+
+    <h4>Ejemplo</h4>
+    <pre><code class="language-jsx">function Saludo() {
+  return &lt;h1&gt;¡Hola desde React!&lt;/h1&gt;
+}</code></pre>
+
+    <h4>Usar el componente:</h4>
+    <pre><code class="language-jsx">&lt;Saludo /&gt;</code></pre>
+
+    <p>React ejecutará la función y renderizará:</p>
+    <pre><code>&lt;h1&gt;¡Hola desde React!&lt;/h1&gt;</code></pre>
+
+    <h4>Analogía sencilla: La Impresora</h4>
+    <p>Imagina React como una impresora de interfaz.</p>
+    <p>Los componentes son como plantillas.</p>
+    <ul>
+      <li>Componente → plantilla de UI</li>
+      <li>React → impresora</li>
+      <li>Resultado → HTML renderizado</li>
+    </ul>
+
+    <p>Ejemplo mental:</p>
+    <pre><code>&lt;Saludo /&gt;
+  ↓
+function Saludo()
+  ↓
+&lt;h1&gt;Hola&lt;/h1&gt;</code></pre>
+
+    <h4>Otra Analogía: El Semáforo</h4>
+    <p>Piensa en Componentes y Funciones Normales como un sistema de semáforo:</p>
+    <ul>
+      <li><strong>🟢 Componentes (Luz verde)</strong> → Controlan lo que VES en pantalla
+        <ul>
+          <li>Renderan UI</li>
+          <li>Están en PascalCase</li>
+          <li>Son la parte "visual"</li>
+        </ul>
+      </li>
+      <li><strong>🟡 Funciones Normales (Luz amarilla)</strong> → Ayudan con la lógica DETRÁS de escenas
+        <ul>
+          <li>Hacen cálculos</li>
+          <li>Están en camelCase</li>
+          <li>Apoyan a los componentes</li>
+        </ul>
+      </li>
+    </ul>
+
+    <p>El semáforo te dice:</p>
+    <pre><code>🟢 Verde = "Esto es UI" (Componente)
+🟡 Amarillo = "Esto es lógica" (Función Normal)</code></pre>
+
+    <h3>2️⃣ ¿Qué es una función normal?</h3>
+    <p>
+      Una función normal de JavaScript es simplemente una función que ejecuta lógica.
+    </p>
+    <p>No está diseñada para renderizar UI.</p>
+
+    <h4>Ejemplo</h4>
+    <pre><code class="language-jsx">function calcularTotal(precio, iva) {
+  return precio + precio * iva
+}
+
+const total = calcularTotal(100, 0.21)</code></pre>
+
+    <p>Esta función:</p>
+    <ul>
+      <li>No devuelve JSX</li>
+      <li>No se usa como etiqueta</li>
+      <li>Solo ejecuta lógica</li>
+    </ul>
+
+    <h4>Diferencia clave</h4>
+    <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+      <tr style="background: #f0f0f0;">
+        <th style="border: 1px solid #ddd; padding: 10px; text-align: left;">Tipo</th>
+        <th style="border: 1px solid #ddd; padding: 10px; text-align: left;">Propósito</th>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #ddd; padding: 10px;">Componente</td>
+        <td style="border: 1px solid #ddd; padding: 10px;">Renderizar UI</td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #ddd; padding: 10px;">Función normal</td>
+        <td style="border: 1px solid #ddd; padding: 10px;">Ejecutar lógica</td>
+      </tr>
+    </table>
+
+    <h3>3️⃣ Cómo se invocan</h3>
+    <p>Esta es una de las diferencias más importantes.</p>
+
+    <h4>Componentes</h4>
+    <p>Se usan como etiquetas JSX.</p>
+    <pre><code class="language-jsx">function Boton() {
+  return &lt;button&gt;Haz clic&lt;/button&gt;
+}
+
+&lt;Boton /&gt;</code></pre>
+
+    <p>React internamente hace algo parecido a:</p>
+    <pre><code>Boton()</code></pre>
+
+    <p>Pero gestiona el ciclo de renderizado.</p>
+
+    <h4>Funciones normales</h4>
+    <p>Se llaman con paréntesis.</p>
+    <pre><code class="language-jsx">function saludar(nombre) {
+  return `Hola ${nombre}`
+}
+
+saludar("Miguel")</code></pre>
+
+    <h3>4️⃣ Lo que retornan</h3>
+
+    <h4>Componentes</h4>
+    <p>Devuelven cosas que React puede renderizar.</p>
+    <pre><code class="language-jsx">function Titulo() {
+  return &lt;h1&gt;Mi título&lt;/h1&gt;
+}</code></pre>
+
+    <p>React lo convierte en HTML.</p>
+
+    <h4>Funciones normales</h4>
+    <p>Pueden devolver cualquier cosa.</p>
+    <pre><code class="language-jsx">function sumar(a, b) {
+  return a + b
+}
+
+function obtenerUsuario() {
+  return { nombre: "Miguel", edad: 25 }
+}</code></pre>
+
+    <h3>5️⃣ Convención de nombres</h3>
+    <p>React usa una regla muy importante.</p>
+
+    <h4>Componentes → PascalCase</h4>
+    <pre><code class="language-jsx">function MiComponente() {}
+function BotonPrimario() {}
+function TarjetaProducto() {}</code></pre>
+
+    <h4>Funciones normales → camelCase</h4>
+    <pre><code class="language-jsx">function calcularPrecio() {}
+function validarEmail() {}
+function obtenerFecha() {}</code></pre>
+
+    <h3>6️⃣ ¿Por qué PascalCase es obligatorio?</h3>
+    <p>React necesita distinguir entre:</p>
+
+    <h4>1️⃣ HTML nativo</h4>
+    <pre><code>&lt;div&gt;
+&lt;button&gt;
+&lt;h1&gt;</code></pre>
+
+    <h4>2️⃣ Componentes personalizados</h4>
+    <pre><code>&lt;MiBoton&gt;
+&lt;App&gt;
+&lt;Producto&gt;</code></pre>
+
+    <h4>Ejemplo</h4>
+    <pre><code class="language-jsx">&lt;MiBoton /&gt;</code></pre>
+
+    <p>React entiende: → Es un componente personalizado</p>
+
+    <p>Si usas minúscula:</p>
+    <pre><code class="language-jsx">&lt;miboton /&gt;</code></pre>
+
+    <p>React piensa: → Es una etiqueta HTML</p>
+    <p>Y eso no funciona correctamente.</p>
+
+    <h3>7️⃣ Qué puede renderizar React</h3>
+    <p>Un componente puede devolver varios tipos de valores.</p>
+
+    <h4>JSX</h4>
+    <pre><code class="language-jsx">function App() {
+  return &lt;h1&gt;Hola mundo&lt;/h1&gt;
+}</code></pre>
+
+    <h4>Strings</h4>
+    <pre><code class="language-jsx">function Saludo() {
+  return "Hola"
+}</code></pre>
+
+    <h4>Números</h4>
+    <pre><code class="language-jsx">function Contador() {
+  return 42
+}</code></pre>
+
+    <h4>null o undefined</h4>
+    <p>No renderizan nada.</p>
+    <pre><code class="language-jsx">function Invisible() {
+  return null
+}</code></pre>
+
+    <p>Esto se usa mucho para renderizado condicional.</p>
+
+    <h3>8️⃣ Mezclando componentes y funciones</h3>
+    <p>En proyectos reales siempre se mezclan.</p>
+    <p>Las funciones normales ayudan a los componentes.</p>
+
+    <h4>Ejemplo</h4>
+    <pre><code class="language-jsx">function formatearPrecio(precio) {
+  return `${precio}€`
+}
+
+function Producto({ nombre, precio }) {
+  const precioFormateado = formatearPrecio(precio)
+
+  return (
+    &lt;div&gt;
+      &lt;h3&gt;{nombre}&lt;/h3&gt;
+      &lt;p&gt;{precioFormateado}&lt;/p&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+    <p>Aquí tenemos:</p>
+    <ul>
+      <li>Producto → componente</li>
+      <li>formatearPrecio → función helper</li>
+    </ul>
+
+    <h3>9️⃣ Cuándo usar cada uno</h3>
+
+    <h4>Usa componentes cuando</h4>
+    <p>Necesitas UI.</p>
+
+    <p>Ejemplos:</p>
+    <ul>
+      <li>Tarjetas</li>
+      <li>Botones</li>
+      <li>Layouts</li>
+      <li>Listas</li>
+      <li>Formularios</li>
+    </ul>
+
+    <pre><code class="language-jsx">function Tarjeta({ titulo, descripcion }) {
+  return (
+    &lt;div className="card"&gt;
+      &lt;h2&gt;{titulo}&lt;/h2&gt;
+      &lt;p&gt;{descripcion}&lt;/p&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+    <h4>Usa funciones normales cuando</h4>
+    <p>Necesitas lógica.</p>
+
+    <p>Ejemplos:</p>
+    <ul>
+      <li>Formatear precio</li>
+      <li>Validar email</li>
+      <li>Calcular totales</li>
+      <li>Transformar datos</li>
+    </ul>
+
+    <pre><code class="language-jsx">function validarEmail(email) {
+  return email.includes("@")
+}</code></pre>
+
+    <h3>🔟 Errores comunes de principiantes</h3>
+
+    <h4>Error 1: Llamar un componente como función</h4>
+    <p>❌ Incorrecto:</p>
+    <pre><code class="language-jsx">function Saludo() {
+  return &lt;h1&gt;Hola&lt;/h1&gt;
+}
+
+Saludo()</code></pre>
+
+    <p>✅ Correcto:</p>
+    <pre><code class="language-jsx">&lt;Saludo /&gt;</code></pre>
+
+    <h4>Error 2: Usar minúscula</h4>
+    <p>❌ Incorrecto:</p>
+    <pre><code class="language-jsx">function saludo() {
+  return &lt;h1&gt;Hola&lt;/h1&gt;
+}</code></pre>
+
+    <p>✅ Correcto:</p>
+    <pre><code class="language-jsx">function Saludo() {
+  return &lt;h1&gt;Hola&lt;/h1&gt;
+}</code></pre>
+
+    <h4>Error 3: Intentar renderizar objetos</h4>
+    <p>❌ Incorrecto:</p>
+    <pre><code class="language-jsx">function Usuario() {
+  return { nombre: "Miguel" }
+}</code></pre>
+
+    <p>React no puede renderizar objetos.</p>
+
+    <p>✅ Correcto:</p>
+    <pre><code class="language-jsx">function Usuario() {
+  const usuario = { nombre: "Miguel", edad: 25 }
+  return (
+    &lt;div&gt;
+      {usuario.nombre} - {usuario.edad}
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+    <h3>📋 Resumen final</h3>
+    <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+      <tr style="background: #f0f0f0;">
+        <th style="border: 1px solid #ddd; padding: 10px; text-align: left;">Concepto</th>
+        <th style="border: 1px solid #ddd; padding: 10px; text-align: left;">Componente</th>
+        <th style="border: 1px solid #ddd; padding: 10px; text-align: left;">Función normal</th>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #ddd; padding: 10px;">Uso</td>
+        <td style="border: 1px solid #ddd; padding: 10px;">Renderizar UI</td>
+        <td style="border: 1px solid #ddd; padding: 10px;">Ejecutar lógica</td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #ddd; padding: 10px;">Cómo se usa</td>
+        <td style="border: 1px solid #ddd; padding: 10px;">&lt;Componente /&gt;</td>
+        <td style="border: 1px solid #ddd; padding: 10px;">funcion()</td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #ddd; padding: 10px;">Nombre</td>
+        <td style="border: 1px solid #ddd; padding: 10px;">PascalCase</td>
+        <td style="border: 1px solid #ddd; padding: 10px;">camelCase</td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #ddd; padding: 10px;">Retorna</td>
+        <td style="border: 1px solid #ddd; padding: 10px;">JSX o valores renderizables</td>
+        <td style="border: 1px solid #ddd; padding: 10px;">Cualquier dato JS</td>
+      </tr>
+    </table>
+
+    <h3>💡 Idea clave que debes recordar</h3>
+    <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+      <strong>Componentes → construyen la interfaz</strong><br>
+      <strong>Funciones → ayudan con la lógica</strong><br><br>
+      React está construido alrededor de componer componentes pequeños.
+    </p>
+
+    <h3>🎯 Próximo paso</h3>
+    <p>
+      Ahora que entiendes componentes vs funciones, estás listo para aprender sobre
+      <strong>los 7 errores más comunes que cometen los juniors con componentes React</strong>.
+      ¡Eso te va a ayudar muchísimo si estás preparando entrevistas o enseñando React!
+    </p>
+    </div>
+  </article>
+
+  <article id="code-examples" class="tab-content active">
+    <h2>Ejemplos de Código Completos</h2>
+
+    <h3>Ejemplo 1: Componente vs Función lado a lado</h3>
+    <pre><code class="language-jsx">
+// COMPONENTE - renderiza UI
+function Bienvenida() {
+  return &lt;h1&gt;¡Bienvenido!&lt;/h1&gt;
+}
+
+// FUNCIÓN NORMAL - ejecuta lógica
+function calcularDescuento(precio, porcentaje) {
+  return precio * (1 - porcentaje / 100)
+}
+
+// Uso
+export default function App() {
+  const precioConDescuento = calcularDescuento(100, 20)
+
+  return (
+    &lt;div&gt;
+      &lt;Bienvenida /&gt;
+      &lt;p&gt;Precio: ${precioConDescuento}&lt;/p&gt;
+    &lt;/div&gt;
+  )
+}
+    </code></pre>
+
+    <h3>Ejemplo 2: Producto con función helper</h3>
+    <pre><code class="language-jsx">
+// Función helper (función normal)
+function formatearMoneda(valor) {
+  return new Intl.NumberFormat('es-ES', {
+    style: 'currency',
+    currency: 'EUR'
+  }).format(valor)
+}
+
+function aplicarIVA(precio, tasaIVA) {
+  return precio + (precio * tasaIVA)
+}
+
+// Componente
+function TarjetaProducto({ nombre, precioBase, tasaIVA }) {
+  const precioTotal = aplicarIVA(precioBase, tasaIVA)
+  const precioFormateado = formatearMoneda(precioTotal)
+
+  return (
+    &lt;div style={{
+      border: '1px solid #ddd',
+      padding: '16px',
+      borderRadius: '8px'
+    }}&gt;
+      &lt;h3&gt;{nombre}&lt;/h3&gt;
+      &lt;p style={{ fontSize: '20px', fontWeight: 'bold' }}&gt;
+        {precioFormateado}
+      &lt;/p&gt;
+      &lt;button&gt;Añadir al carrito&lt;/button&gt;
+    &lt;/div&gt;
+  )
+}
+
+// Uso
+&lt;TarjetaProducto nombre="Laptop" precioBase={999} tasaIVA={0.21} /&gt;
+    </code></pre>
+
+    <h3>Ejemplo 3: Validación de formulario</h3>
+    <pre><code class="language-jsx">
+// Funciones helper (funciones normales)
+function validarEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+}
+
+function validarContraseña(contraseña) {
+  return contraseña.length >= 8
+}
+
+// Componente
+function FormularioLogin() {
+  const [email, setEmail] = React.useState('')
+  const [contraseña, setContraseña] = React.useState('')
+  const [errores, setErrores] = React.useState({})
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    const nuevosErrores = {}
+
+    if (!validarEmail(email)) {
+      nuevosErrores.email = 'Email inválido'
+    }
+
+    if (!validarContraseña(contraseña)) {
+      nuevosErrores.contraseña = 'La contraseña debe tener al menos 8 caracteres'
+    }
+
+    if (Object.keys(nuevosErrores).length > 0) {
+      setErrores(nuevosErrores)
+    } else {
+      console.log('¡Formulario enviado!')
+    }
+  }
+
+  return (
+    &lt;form onSubmit={handleSubmit}&gt;
+      &lt;div&gt;
+        &lt;input
+          type="email"
+          value={email}
+          onChange={(e) =&gt; setEmail(e.target.value)}
+          placeholder="Email"
+        /&gt;
+        {errores.email && &lt;p style={{ color: 'red' }}&gt;{errores.email}&lt;/p&gt;}
+      &lt;/div&gt;
+
+      &lt;div&gt;
+        &lt;input
+          type="password"
+          value={contraseña}
+          onChange={(e) =&gt; setContraseña(e.target.value)}
+          placeholder="Contraseña"
+        /&gt;
+        {errores.contraseña && &lt;p style={{ color: 'red' }}&gt;{errores.contraseña}&lt;/p&gt;}
+      &lt;/div&gt;
+
+      &lt;button type="submit"&gt;Ingresar&lt;/button&gt;
+    &lt;/form&gt;
+  )
+}
+    </code></pre>
+
+    <h3>Ejemplo 4: Transformación de datos</h3>
+    <pre><code class="language-jsx">
+// Funciones helper para transformar datos
+function filtrarPorPrecio(productos, precioMaximo) {
+  return productos.filter(p =&gt; p.precio &lt;= precioMaximo)
+}
+
+function ordenarPorNombre(productos) {
+  return [...productos].sort((a, b) =&gt; a.nombre.localeCompare(b.nombre))
+}
+
+// Componente
+function ListaProductos({ productos, precioMaximo = Infinity }) {
+  const filtrados = filtrarPorPrecio(productos, precioMaximo)
+  const ordenados = ordenarPorNombre(filtrados)
+
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;Productos&lt;/h2&gt;
+      &lt;ul&gt;
+        {ordenados.map(producto =&gt; (
+          &lt;li key={producto.id}&gt;
+            {producto.nombre} - ${producto.precio}
+          &lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  )
+}
+
+// Uso
+const productos = [
+  { id: 1, nombre: 'Laptop', precio: 1000 },
+  { id: 2, nombre: 'Ratón', precio: 25 },
+  { id: 3, nombre: 'Teclado', precio: 75 }
+]
+
+&lt;ListaProductos productos={productos} precioMaximo={500} /&gt;
+    </code></pre>
+  </article>
+
+  <article id="exercises" class="tab-content">
+    <h2>Ejercicios Prácticos</h2>
+
+    <h3>Ejercicio 1: Identifica componentes vs funciones</h3>
+    <p><strong>Desafío:</strong> Mira el siguiente código e identifica cuáles son componentes y cuáles son funciones normales. Explica por qué.</p>
+
+    <pre><code class="language-jsx">
+// 1
+function calcularEdad(añoNacimiento) {
+  return new Date().getFullYear() - añoNacimiento
+}
+
+// 2
+function PerfilUsuario({ nombre, añoNacimiento }) {
+  const edad = calcularEdad(añoNacimiento)
+  return (
+    &lt;div&gt;
+      &lt;h3&gt;{nombre}&lt;/h3&gt;
+      &lt;p&gt;Edad: {edad}&lt;/p&gt;
+    &lt;/div&gt;
+  )
+}
+
+// 3
+function obtenerInicialeS(nombre) {
+  return nombre
+    .split(' ')
+    .map(palabra =&gt; palabra[0])
+    .join('')
+}
+
+// 4
+function Avatar({ iniciales }) {
+  return &lt;div className="avatar"&gt;{iniciales}&lt;/div&gt;
+}
+    </code></pre>
+
+    <p><strong>Solución:</strong></p>
+    <ul>
+      <li><strong>calcularEdad</strong> → Función normal (calcula lógica)</li>
+      <li><strong>PerfilUsuario</strong> → Componente (renderiza JSX)</li>
+      <li><strong>obtenerInicialeS</strong> → Función normal (transforma datos)</li>
+      <li><strong>Avatar</strong> → Componente (renderiza JSX)</li>
+    </ul>
+
+    <h3>Ejercicio 2: Crea un componente con funciones helper</h3>
+    <p><strong>Desafío:</strong> Crea un componente llamado <code>TarjetaEstudiante</code> que:</p>
+    <ul>
+      <li>Reciba props: nombre, calificación (0-100)</li>
+      <li>Use una función helper para convertir la calificación a letra (A, B, C, D, F)</li>
+      <li>Use otra función helper para determinar si el estudiante pasó (calificación >= 60)</li>
+      <li>Muestre la información en una tarjeta estilizada</li>
+    </ul>
+
+    <p><strong>Solución:</strong></p>
+    <pre><code class="language-jsx">
+function calificacionALetra(calificación) {
+  if (calificación >= 90) return 'A'
+  if (calificación >= 80) return 'B'
+  if (calificación >= 70) return 'C'
+  if (calificación >= 60) return 'D'
+  return 'F'
+}
+
+function aprobo(calificación) {
+  return calificación >= 60
+}
+
+function TarjetaEstudiante({ nombre, calificación }) {
+  const letra = calificacionALetra(calificación)
+  const paso = aprobo(calificación)
+
+  return (
+    &lt;div style={{
+      border: '1px solid #ddd',
+      padding: '16px',
+      borderRadius: '8px',
+      backgroundColor: paso ? '#e8f5e9' : '#ffebee'
+    }}&gt;
+      &lt;h3&gt;{nombre}&lt;/h3&gt;
+      &lt;p&gt;Calificación: {calificación} ({letra})&lt;/p&gt;
+      &lt;p&gt;Estado: {paso ? '✅ Aprobó' : '❌ Reprobó'}&lt;/p&gt;
+    &lt;/div&gt;
+  )
+}
+
+// Uso
+&lt;TarjetaEstudiante nombre="María" calificación={85} /&gt;
+&lt;TarjetaEstudiante nombre="Juan" calificación={55} /&gt;
+    </code></pre>
+
+    <h3>Ejercicio 3: Construye una app completa</h3>
+    <p><strong>Desafío:</strong> Crea una app con:</p>
+    <ul>
+      <li>Una función normal para calcular costo de envío</li>
+      <li>Una función normal para calcular total con impuesto</li>
+      <li>Un componente para mostrar el resumen del pedido</li>
+    </ul>
+
+    <p><strong>Solución:</strong></p>
+    <pre><code class="language-jsx">
+// Funciones helper
+function calcularEnvio(peso) {
+  return peso * 2.5 // €2.50 por kilo
+}
+
+function calcularTotal(subtotal, tasaIVA = 0.21) {
+  return subtotal + (subtotal * tasaIVA)
+}
+
+// Componente
+function ResumenPedido({ items, peso }) {
+  const subtotal = items.reduce((suma, item) =&gt; suma + item.precio, 0)
+  const envio = calcularEnvio(peso)
+  const total = calcularTotal(subtotal + envio)
+
+  return (
+    &lt;div style={{
+      border: '1px solid #ddd',
+      padding: '20px',
+      maxWidth: '400px'
+    }}&gt;
+      &lt;h2&gt;Resumen del Pedido&lt;/h2&gt;
+
+      &lt;h3&gt;Productos:&lt;/h3&gt;
+      &lt;ul&gt;
+        {items.map((item, idx) =&gt; (
+          &lt;li key={idx}&gt;{item.nombre} - ${item.precio}&lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+
+      &lt;hr /&gt;
+      &lt;p&gt;Subtotal: ${subtotal.toFixed(2)}&lt;/p&gt;
+      &lt;p&gt;Envío: ${envio.toFixed(2)}&lt;/p&gt;
+      &lt;p style={{ fontSize: '18px', fontWeight: 'bold' }}&gt;
+        Total: ${total.toFixed(2)}
+      &lt;/p&gt;
+    &lt;/div&gt;
+  )
+}
+
+// Uso
+const items = [
+  { nombre: 'Laptop', precio: 999 },
+  { nombre: 'Ratón', precio: 25 }
+]
+
+&lt;ResumenPedido items={items} peso={5} /&gt;
+    </code></pre>
+  </article>
+
+  <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-left: 4px solid #007bff; border-radius: 4px;">
+    <p><strong>📚 Recursos Adicionales:</strong></p>
+    <p>
+      Para discusiones más profundas y ejemplos interactivos sobre Componentes vs Funciones,
+      consulta esta <a href="https://chatgpt.com/g/g-p-696fbea2755481919c8258fb23e8f822-react/c/69b4bd67-f1ec-8393-a09b-a9c06a34b254" target="_blank" style="color: #007bff; text-decoration: none;">Guía React GPT</a>.
+    </p>
+  </div>
+</section>

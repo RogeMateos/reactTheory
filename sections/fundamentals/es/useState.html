@@ -1,0 +1,880 @@
+<section class="box">
+  <h1>Estado en React con useState: La Memoria del Componente</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">
+      Conceptos
+    </button>
+    <button class="tab-button" data-tab="code-examples">
+      Ejemplos de Código
+    </button>
+    <button class="tab-button" data-tab="exercises">
+      Ejercicios Prácticos
+    </button>
+  </div>
+
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+    <p>
+      Hasta ahora nuestros componentes podían mostrar información y responder a eventos, pero no recordaban nada.
+    </p>
+
+    <p>Si hacías clic en un botón, la función se ejecutaba… pero el componente no cambiaba visualmente.</p>
+
+    <p>Para solucionar esto, React nos da <strong>estado (state)</strong>.</p>
+
+    <h3>1️⃣ ¿Qué es el estado en React?</h3>
+    <p>
+      El estado es la <strong>memoria de un componente</strong>.
+    </p>
+
+    <p>Es donde guardamos información que puede cambiar con el tiempo.</p>
+
+    <p>Ejemplos de cosas que suelen estar en estado:</p>
+    <ul>
+      <li>Si un botón fue clicado</li>
+      <li>El texto de un input</li>
+      <li>Un contador</li>
+      <li>Datos cargados de una API</li>
+      <li>Si un modal está abierto</li>
+    </ul>
+
+    <h3>2️⃣ Analogía: El interruptor de luz</h3>
+    <p>Imagina un interruptor:</p>
+
+    <pre><code>apagado  →  encendido</code></pre>
+
+    <p>Cuando presionas el interruptor:</p>
+    <ul>
+      <li>cambia su estado</li>
+      <li>la luz cambia automáticamente</li>
+    </ul>
+
+    <p>React funciona igual.</p>
+
+    <pre><code>estado cambia → React actualiza la UI</code></pre>
+
+    <p>Ejemplo:</p>
+    <pre><code>aplicado = false
+  ↓
+usuario hace click
+  ↓
+aplicado = true
+  ↓
+React actualiza el botón</code></pre>
+
+    <h3>3️⃣ Problema sin estado</h3>
+    <p>Sin estado, un componente no recuerda nada.</p>
+
+    <pre><code class="language-jsx">function Boton() {
+  return &lt;button&gt;Haz clic&lt;/button&gt;
+}</code></pre>
+
+    <p>Este botón siempre será igual.</p>
+    <p>No puede recordar si hiciste clic.</p>
+
+    <h3>4️⃣ Introduciendo useState</h3>
+    <p>React tiene un Hook para manejar estado:</p>
+
+    <p><strong>useState</strong></p>
+
+    <p>Ejemplo simple:</p>
+
+    <pre><code class="language-jsx">function Boton() {
+  const [clicks, setClicks] = React.useState(0)
+
+  return (
+    &lt;button onClick={() => setClicks(clicks + 1)}&gt;
+      Clicks: {clicks}
+    &lt;/button&gt;
+  )
+}</code></pre>
+
+    <p>Ahora el botón:</p>
+    <ul>
+      <li>recuerda los clics</li>
+      <li>actualiza el número</li>
+      <li>React re-renderiza automáticamente</li>
+    </ul>
+
+    <h3>5️⃣ Cómo funciona useState</h3>
+    <p>La sintaxis:</p>
+
+    <pre><code class="language-jsx">const [estado, setEstado] = React.useState(valorInicial)</code></pre>
+
+    <p>Ejemplo real:</p>
+
+    <pre><code class="language-jsx">const [aplicado, setAplicado] = React.useState(false)</code></pre>
+
+    <p>Significado:</p>
+
+    <pre><code>React.useState(false)
+  ↓
+crea estado con valor inicial
+
+aplicado
+↓
+valor actual del estado
+
+setAplicado
+↓
+función para cambiar el estado</code></pre>
+
+    <h3>6️⃣ ¿Por qué usamos destructuring?</h3>
+    <p>useState devuelve un array.</p>
+
+    <p>Esto:</p>
+
+    <pre><code class="language-jsx">const resultado = React.useState(false)
+const aplicado = resultado[0]
+const setAplicado = resultado[1]</code></pre>
+
+    <p>Se simplifica con destructuring:</p>
+
+    <pre><code class="language-jsx">const [aplicado, setAplicado] = React.useState(false)</code></pre>
+
+    <p>Mucho más limpio.</p>
+
+    <h3>7️⃣ Ejemplo real: JobCard</h3>
+    <p>Vamos a mejorar nuestro componente de empleo.</p>
+
+    <p>Queremos que el botón:</p>
+    <ul>
+      <li>Cambie a "Aplicado"</li>
+      <li>Se desactive</li>
+      <li>Cambie el estilo</li>
+    </ul>
+
+    <h4>Componente completo</h4>
+
+    <pre><code class="language-jsx">function JobCard({ titulo, empresa, ubicacion, descripcion }) {
+  const [aplicado, setAplicado] = React.useState(false)
+
+  const handleAplicar = () => {
+    setAplicado(true)
+  }
+
+  return (
+    &lt;article className="job-listing-card"&gt;
+      &lt;div&gt;
+        &lt;h3&gt;{titulo}&lt;/h3&gt;
+        &lt;small&gt;
+          {empresa} | {ubicacion}
+        &lt;/small&gt;
+        &lt;p&gt;{descripcion}&lt;/p&gt;
+      &lt;/div&gt;
+
+      &lt;button
+        className={aplicado ? "button-apply-job is-applied" : "button-apply-job"}
+        onClick={handleAplicar}
+        disabled={aplicado}
+      &gt;
+        {aplicado ? "¡Aplicado!" : "Aplicar"}
+      &lt;/button&gt;
+
+    &lt;/article&gt;
+  )
+}</code></pre>
+
+    <h3>8️⃣ Flujo completo de React</h3>
+    <p>Cuando el usuario hace clic ocurre esto:</p>
+
+    <pre><code>Estado inicial
+aplicado = false
+  ↓
+Usuario hace click
+  ↓
+handleAplicar()
+  ↓
+setAplicado(true)
+  ↓
+React actualiza el estado
+  ↓
+React re-renderiza el componente
+  ↓
+La UI cambia automáticamente</code></pre>
+
+    <p>Esto es <strong>React declarativo</strong>.</p>
+    <p>No manipulas el DOM manualmente.</p>
+
+    <h3>9️⃣ Usando estado en JSX</h3>
+    <p>El estado controla tres cosas:</p>
+    <ul>
+      <li>Estilo</li>
+      <li>Estado del botón</li>
+      <li>Texto</li>
+    </ul>
+
+    <pre><code class="language-jsx">&lt;button
+  className={aplicado ? "button-apply-job is-applied" : "button-apply-job"}
+  disabled={aplicado}
+&gt;
+  {aplicado ? "¡Aplicado!" : "Aplicar"}
+&lt;/button&gt;</code></pre>
+
+    <p>Si aplicado === true:</p>
+    <ul>
+      <li>texto → "¡Aplicado!"</li>
+      <li>botón → disabled</li>
+      <li>clase → is-applied</li>
+    </ul>
+
+    <h3>🔟 El operador ternario</h3>
+    <p>El operador ternario es como un if corto.</p>
+
+    <pre><code>condición ? valorSiTrue : valorSiFalse</code></pre>
+
+    <p>Ejemplo:</p>
+
+    <pre><code class="language-jsx">aplicado ? "¡Aplicado!" : "Aplicar"</code></pre>
+
+    <p>Equivalente a:</p>
+
+    <pre><code class="language-javascript">if (aplicado) {
+  return "¡Aplicado!"
+} else {
+  return "Aplicar"
+}</code></pre>
+
+    <p>Pero JSX solo permite expresiones, no if.</p>
+    <p>Por eso usamos ternarios.</p>
+
+    <h3>1️⃣1️⃣ Antes vs Ahora</h3>
+
+    <h4>Antes (JavaScript vanilla)</h4>
+    <p>Manipulábamos el DOM manualmente.</p>
+
+    <pre><code class="language-javascript">jobsListingSection.addEventListener('click', function (event) {
+  const element = event.target
+
+  if (element.classList.contains('button-apply-job')) {
+    element.textContent = '¡Aplicado!'
+    element.classList.add('is-applied')
+    element.disabled = true
+  }
+})</code></pre>
+
+    <p>Problemas:</p>
+    <ul>
+      <li>❌ Manipulación manual del DOM</li>
+      <li>❌ Lógica compleja</li>
+      <li>❌ Difícil de mantener</li>
+      <li>❌ Propenso a errores</li>
+    </ul>
+
+    <h4>Ahora (React)</h4>
+
+    <pre><code class="language-jsx">function JobCard() {
+  const [aplicado, setAplicado] = React.useState(false)
+
+  return (
+    &lt;button
+      onClick={() => setAplicado(true)}
+      disabled={aplicado}
+    &gt;
+      {aplicado ? "¡Aplicado!" : "Aplicar"}
+    &lt;/button&gt;
+  )
+}</code></pre>
+
+    <p>Ventajas:</p>
+    <ul>
+      <li>✅ UI sincronizada con estado</li>
+      <li>✅ Código declarativo</li>
+      <li>✅ Fácil de testear</li>
+      <li>✅ Cada componente tiene su propio estado</li>
+    </ul>
+
+    <h3>1️⃣2️⃣ Cada componente tiene su propio estado</h3>
+    <p>Ejemplo:</p>
+
+    <pre><code class="language-jsx">&lt;JobCard titulo="Desarrollador Frontend" /&gt;
+&lt;JobCard titulo="Desarrollador Backend" /&gt;</code></pre>
+
+    <p>React crea dos instancias del componente.</p>
+
+    <ul>
+      <li>JobCard 1 → estado independiente</li>
+      <li>JobCard 2 → estado independiente</li>
+    </ul>
+
+    <p>Si aplicas al primero:</p>
+    <ul>
+      <li>Frontend → aplicado</li>
+      <li>Backend → sin aplicar</li>
+    </ul>
+
+    <p>No se afectan entre sí.</p>
+
+    <h3>1️⃣3️⃣ Tipos de estado</h3>
+    <p>Puedes guardar cualquier tipo en estado.</p>
+
+    <h4>Boolean</h4>
+    <pre><code class="language-jsx">const [visible, setVisible] = React.useState(false)</code></pre>
+
+    <h4>Número</h4>
+    <pre><code class="language-jsx">const [count, setCount] = React.useState(0)</code></pre>
+
+    <h4>String</h4>
+    <pre><code class="language-jsx">const [nombre, setNombre] = React.useState("")</code></pre>
+
+    <h4>Array</h4>
+    <pre><code class="language-jsx">const [empleos, setEmpleos] = React.useState([])</code></pre>
+
+    <h4>Objeto</h4>
+    <pre><code class="language-jsx">const [usuario, setUsuario] = React.useState({
+  nombre: "Miguel",
+  edad: 25
+})</code></pre>
+
+    <h3>1️⃣4️⃣ Múltiples estados</h3>
+    <p>Un componente puede tener varios estados.</p>
+
+    <pre><code class="language-jsx">function JobCard({ titulo }) {
+  const [aplicado, setAplicado] = React.useState(false)
+  const [guardado, setGuardado] = React.useState(false)
+  const [likes, setLikes] = React.useState(0)
+
+  return (
+    &lt;article&gt;
+      &lt;h3&gt;{titulo}&lt;/h3&gt;
+
+      &lt;button onClick={() => setAplicado(true)}&gt;
+        {aplicado ? "Aplicado" : "Aplicar"}
+      &lt;/button&gt;
+
+      &lt;button onClick={() => setGuardado(!guardado)}&gt;
+        {guardado ? "❤️ Guardado" : "🤍 Guardar"}
+      &lt;/button&gt;
+
+      &lt;button onClick={() => setLikes(likes + 1)}&gt;
+        👍 {likes}
+      &lt;/button&gt;
+    &lt;/article&gt;
+  )
+}</code></pre>
+
+    <p>Cada estado funciona independientemente.</p>
+
+    <h3>1️⃣5️⃣ Actualizar estado basado en el anterior</h3>
+    <p>A veces necesitas usar el valor anterior.</p>
+
+    <p>Forma segura:</p>
+
+    <pre><code class="language-jsx">setCount(prevCount => prevCount + 1)</code></pre>
+
+    <p>Ejemplo:</p>
+
+    <pre><code class="language-jsx">function Contador() {
+  const [count, setCount] = React.useState(0)
+
+  const incrementar = () => {
+    setCount(prev => prev + 1)
+  }
+
+  return (
+    &lt;button onClick={incrementar}&gt;
+      {count}
+    &lt;/button&gt;
+  )
+}</code></pre>
+
+    <p>Esto evita errores cuando React agrupa actualizaciones.</p>
+
+    <h3>1️⃣6️⃣ Reglas de useState</h3>
+
+    <h4>1. Solo en el nivel superior</h4>
+
+    <p><strong>❌ Incorrecto:</strong></p>
+    <pre><code class="language-jsx">if (algo) {
+  const [estado, setEstado] = React.useState(false)
+}</code></pre>
+
+    <h4>2. Solo en componentes React</h4>
+
+    <p><strong>❌ Incorrecto:</strong></p>
+    <pre><code class="language-jsx">function miFuncion() {
+  const [estado, setEstado] = React.useState(0)
+}</code></pre>
+
+    <h4>3. Nunca modificar el estado directamente</h4>
+
+    <p><strong>❌ Incorrecto:</strong></p>
+    <pre><code class="language-jsx">aplicado = true</code></pre>
+
+    <p><strong>✅ Correcto:</strong></p>
+    <pre><code class="language-jsx">setAplicado(true)</code></pre>
+
+    <h3>1️⃣7️⃣ Idea clave para entrevistas</h3>
+    <p>En entrevistas React esperan escuchar esto:</p>
+
+    <p style="padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;">
+      <strong>"React UI is a function of state."</strong><br>
+      UI = f(state)
+    </p>
+
+    <p>Significa:</p>
+
+    <pre><code>estado cambia
+  ↓
+React re-renderiza
+  ↓
+la UI se actualiza</code></pre>
+
+    <h3>📋 Lo que debes recordar</h3>
+    <ul>
+      <li>Estado = memoria del componente</li>
+      <li>Cuando el estado cambia:
+        <ul>
+          <li>React vuelve a renderizar el componente</li>
+          <li>La UI se actualiza automáticamente</li>
+        </ul>
+      </li>
+      <li>Reglas clave:
+        <ul>
+          <li>✔ usar useState</li>
+          <li>✔ nunca modificar estado directamente</li>
+          <li>✔ usar setState</li>
+          <li>✔ cada componente tiene su propio estado</li>
+        </ul>
+      </li>
+    </ul>
+
+    <h3>1️⃣8️⃣ Analogías del Mundo Real para Recordar State</h3>
+
+    <h4>🚦 Analogía 1: El Semáforo</h4>
+    <p><strong>Props (Características Fijas)</strong></p>
+    <ul>
+      <li>El poste</li>
+      <li>Colores de las luces (rojo, amarillo, verde)</li>
+      <li>Posición</li>
+      <li>Orientación (vertical/horizontal)</li>
+    </ul>
+
+    <p><strong>State (Condición Actual)</strong></p>
+    <pre><code>🔴 Rojo
+🟡 Amarillo
+🟢 Verde</code></pre>
+
+    <p>Solo UNA luz está activa a la vez. ¡Esto es exactamente como React state!</p>
+
+    <pre><code class="language-jsx">const [color, setColor] = React.useState("red")</code></pre>
+
+    <p><strong>Los Eventos Cambian el State</strong></p>
+    <pre><code>pasa tiempo
+  ↓
+rojo → amarillo → verde → rojo
+  ↓
+setColor("yellow")</code></pre>
+
+    <h4>🌡️ Analogía 2: El Termómetro</h4>
+    <p>Analogía perfecta para state numérico.</p>
+
+    <p><strong>Props</strong></p>
+    <ul>
+      <li>Escala (Celsius o Fahrenheit)</li>
+      <li>Tipo</li>
+      <li>Color</li>
+    </ul>
+
+    <p><strong>State</strong></p>
+    <pre><code class="language-jsx">const [temperatura, setTemperatura] = React.useState(20)</code></pre>
+
+    <p><strong>Cuando Cambia la Temperatura</strong></p>
+    <pre><code>cambia el clima
+  ↓
+setTemperatura(25)
+  ↓
+React re-renderiza
+  ↓
+la pantalla cambia: 20°C → 25°C</code></pre>
+
+    <h4>📝 Analogía 3: El Formulario (Ejemplo Más Real)</h4>
+    <p><strong>Props</strong></p>
+    <ul>
+      <li>Texto placeholder</li>
+      <li>Label</li>
+      <li>Tipo de input</li>
+    </ul>
+
+    <p><strong>State</strong></p>
+    <pre><code class="language-jsx">const [nombre, setNombre] = React.useState("")</code></pre>
+
+    <p><strong>Los Eventos Actualizan el State</strong></p>
+    <pre><code class="language-jsx">&lt;input
+  value={nombre}
+  onChange={(e) => setNombre(e.target.value)}
+/&gt;</code></pre>
+
+    <p><strong>React Renderiza el Cambio</strong></p>
+    <pre><code>usuario escribe
+  ↓
+onChange dispara
+  ↓
+setNombre() actualiza state
+  ↓
+React re-renderiza
+  ↓
+pantalla muestra texto nuevo</code></pre>
+
+    <h3>1️⃣9️⃣ La Ecuación Fundamental de React</h3>
+    <p style="padding: 15px; background: #ffe7e7; border-left: 4px solid #ff6b6b; border-radius: 4px; font-size: 18px; font-weight: bold; text-align: center;">
+      UI = f(state)
+    </p>
+
+    <p>Qué significa:</p>
+    <ul>
+      <li>La UI es una función del state</li>
+      <li>Cuando state cambia, la UI cambia automáticamente</li>
+      <li>No necesitas manipular el DOM manualmente</li>
+    </ul>
+
+    <p><strong>El Flujo:</strong></p>
+    <pre><code>state cambia
+  ↓
+React re-renderiza componente
+  ↓
+UI nueva aparece automáticamente</code></pre>
+
+    <h3>2️⃣0️⃣ Modelo Mental: ¿Qué Debería Ser State?</h3>
+    <p><strong>Regla de oro:</strong> Si cambia con el tiempo, probablemente es state.</p>
+
+    <p><strong>Ejemplos de State:</strong></p>
+    <ul>
+      <li>✅ Contador (incrementa)</li>
+      <li>✅ Valor de input (usuario escribe)</li>
+      <li>✅ Visibilidad del modal (abierto/cerrado)</li>
+      <li>✅ Usuario logeado (verdadero/falso)</li>
+      <li>✅ Contador de likes (aumenta)</li>
+      <li>✅ Toggle switches</li>
+    </ul>
+
+    <p><strong>Ejemplos de Props (NO State):</strong></p>
+    <ul>
+      <li>❌ Etiqueta de botón (fija)</li>
+      <li>❌ Colores del componente (fijos)</li>
+      <li>❌ Datos iniciales (estáticos)</li>
+    </ul>
+
+    <h3>🎯 Próximo paso</h3>
+    <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+      Próximamente exploraremos <strong>6 preguntas trampa sobre useState</strong> que aparecen en entrevistas React senior.<br>
+      Muchos desarrolladores fallan en estas, ¡así que entenderlas te dará una gran ventaja!
+    </p>
+    </div>
+  </article>
+
+  <article id="code-examples" class="tab-content active">
+    <h2>Ejemplos de Código Completos</h2>
+
+    <h3>Ejemplo 1: Contador simple</h3>
+    <pre><code class="language-jsx">
+function Contador() {
+  const [count, setCount] = React.useState(0)
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Contador: {count}&lt;/p&gt;
+      &lt;button onClick={() => setCount(count + 1)}&gt;
+        Incrementar
+      &lt;/button&gt;
+    &lt;/div&gt;
+  )
+}
+    </code></pre>
+
+    <h3>Ejemplo 2: Alternar visibilidad</h3>
+    <pre><code class="language-jsx">
+function CajaAlternada() {
+  const [visible, setVisible] = React.useState(false)
+
+  return (
+    &lt;div&gt;
+      {visible && &lt;p&gt;¡Este contenido está oculto/mostrado!&lt;/p&gt;}
+      &lt;button onClick={() => setVisible(!visible)}&gt;
+        {visible ? "Ocultar" : "Mostrar"}
+      &lt;/button&gt;
+    &lt;/div&gt;
+  )
+}
+    </code></pre>
+
+    <h3>Ejemplo 3: Input con visualización</h3>
+    <pre><code class="language-jsx">
+function InputVisualización() {
+  const [text, setText] = React.useState("")
+
+  const handleChange = (event) => {
+    setText(event.target.value)
+  }
+
+  return (
+    &lt;div&gt;
+      &lt;input
+        type="text"
+        value={text}
+        onChange={handleChange}
+        placeholder="Escribe algo..."
+      /&gt;
+      &lt;p&gt;Escribiste: {text}&lt;/p&gt;
+    &lt;/div&gt;
+  )
+}
+    </code></pre>
+
+    <h3>Ejemplo 4: Formulario con múltiples estados</h3>
+    <pre><code class="language-jsx">
+function FormularioSimple() {
+  const [nombre, setNombre] = React.useState("")
+  const [email, setEmail] = React.useState("")
+  const [enviado, setEnviado] = React.useState(false)
+
+  const handleSubmit = (event) => {
+    event.preventDefault()
+    setEnviado(true)
+  }
+
+  if (enviado) {
+    return (
+      &lt;div&gt;
+        &lt;h2&gt;¡Gracias, {nombre}!&lt;/h2&gt;
+        &lt;p&gt;Te contactaremos en {email}&lt;/p&gt;
+        &lt;button onClick={() => setEnviado(false)}&gt;
+          Resetear
+        &lt;/button&gt;
+      &lt;/div&gt;
+    )
+  }
+
+  return (
+    &lt;form onSubmit={handleSubmit}&gt;
+      &lt;input
+        type="text"
+        value={nombre}
+        onChange={(e) => setNombre(e.target.value)}
+        placeholder="Tu nombre"
+      /&gt;
+      &lt;input
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Tu email"
+      /&gt;
+      &lt;button type="submit"&gt;Enviar&lt;/button&gt;
+    &lt;/form&gt;
+  )
+}
+    </code></pre>
+
+    <h3>Ejemplo 5: Botón de Me gusta</h3>
+    <pre><code class="language-jsx">
+function BotonMeGusta() {
+  const [likes, setLikes] = React.useState(0)
+  const [liked, setLiked] = React.useState(false)
+
+  const handleLike = () => {
+    if (!liked) {
+      setLikes(likes + 1)
+    } else {
+      setLikes(likes - 1)
+    }
+    setLiked(!liked)
+  }
+
+  return (
+    &lt;button onClick={handleLike}&gt;
+      {liked ? "❤️" : "🤍"} {likes}
+    &lt;/button&gt;
+  )
+}
+    </code></pre>
+
+    <h3>Ejemplo 6: Lista con agregar/eliminar</h3>
+    <pre><code class="language-jsx">
+function ListaTareas() {
+  const [tareas, setTareas] = React.useState([])
+  const [input, setInput] = React.useState("")
+
+  const agregarTarea = () => {
+    if (input.trim()) {
+      setTareas([...tareas, input])
+      setInput("")
+    }
+  }
+
+  const eliminarTarea = (index) => {
+    setTareas(tareas.filter((_, i) => i !== index))
+  }
+
+  return (
+    &lt;div&gt;
+      &lt;input
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        placeholder="Agregar una tarea"
+      /&gt;
+      &lt;button onClick={agregarTarea}&gt;Agregar&lt;/button&gt;
+
+      &lt;ul&gt;
+        {tareas.map((tarea, index) => (
+          &lt;li key={index}&gt;
+            {tarea}
+            &lt;button onClick={() => eliminarTarea(index)}&gt;
+              Eliminar
+            &lt;/button&gt;
+          &lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  )
+}
+    </code></pre>
+  </article>
+
+  <article id="exercises" class="tab-content">
+    <h2>Ejercicios Prácticos</h2>
+
+    <h3>Ejercicio 1: Contador básico</h3>
+    <p><strong>Desafío:</strong> Crea un contador que incremente y decremente.</p>
+
+    <p><strong>Solución:</strong></p>
+    <pre><code class="language-jsx">
+function Contador() {
+  const [count, setCount] = React.useState(0)
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Contador: {count}&lt;/p&gt;
+      &lt;button onClick={() => setCount(count + 1)}&gt;
+        +
+      &lt;/button&gt;
+      &lt;button onClick={() => setCount(count - 1)}&gt;
+        -
+      &lt;/button&gt;
+      &lt;button onClick={() => setCount(0)}&gt;
+        Resetear
+      &lt;/button&gt;
+    &lt;/div&gt;
+  )
+}
+    </code></pre>
+
+    <h3>Ejercicio 2: Componente alternador</h3>
+    <p><strong>Desafío:</strong> Crea un componente que alterne entre dos estados.</p>
+
+    <p><strong>Solución:</strong></p>
+    <pre><code class="language-jsx">
+function Alternador() {
+  const [encendido, setEncendido] = React.useState(false)
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;El interruptor está {encendido ? "ENCENDIDO" : "APAGADO"}&lt;/p&gt;
+      &lt;button onClick={() => setEncendido(!encendido)}&gt;
+        Alternar
+      &lt;/button&gt;
+    &lt;/div&gt;
+  )
+}
+    </code></pre>
+
+    <h3>Ejercicio 3: Visualizar entrada</h3>
+    <p><strong>Desafío:</strong> Crea un input que muestre lo que escribes en tiempo real.</p>
+
+    <p><strong>Solución:</strong></p>
+    <pre><code class="language-jsx">
+function VisualizarEntrada() {
+  const [value, setValue] = React.useState("")
+
+  return (
+    &lt;div&gt;
+      &lt;input
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        placeholder="Escribe algo"
+      /&gt;
+      &lt;p&gt;Escribiste: {value}&lt;/p&gt;
+      &lt;p&gt;Longitud: {value.length}&lt;/p&gt;
+    &lt;/div&gt;
+  )
+}
+    </code></pre>
+
+    <h3>Ejercicio 4: Renderizado condicional</h3>
+    <p><strong>Desafío:</strong> Muestra/oculta contenido basado en estado.</p>
+
+    <p><strong>Solución:</strong></p>
+    <pre><code class="language-jsx">
+function Acordeon() {
+  const [expandido, setExpandido] = React.useState(false)
+
+  return (
+    &lt;div&gt;
+      &lt;button onClick={() => setExpandido(!expandido)}&gt;
+        {expandido ? "▼" : "▶"} Detalles
+      &lt;/button&gt;
+
+      {expandido && (
+        &lt;div style={{ padding: "10px", background: "#f0f0f0" }}&gt;
+          ¡Este contenido oculto se alterna!
+        &lt;/div&gt;
+      )}
+    &lt;/div&gt;
+  )
+}
+    </code></pre>
+
+    <h3>Ejercicio 5: Actualizar múltiples estados</h3>
+    <p><strong>Desafío:</strong> Crea un componente con múltiples valores de estado independientes.</p>
+
+    <p><strong>Solución:</strong></p>
+    <pre><code class="language-jsx">
+function PerfilUsuario() {
+  const [nombre, setNombre] = React.useState("")
+  const [edad, setEdad] = React.useState("")
+  const [enviado, setEnviado] = React.useState(false)
+
+  const handleSubmit = () => {
+    if (nombre && edad) {
+      setEnviado(true)
+    }
+  }
+
+  if (enviado) {
+    return (
+      &lt;div&gt;
+        &lt;h2&gt;Perfil: {nombre}, Edad {edad}&lt;/h2&gt;
+        &lt;button onClick={() => setEnviado(false)}&gt;
+          Editar
+        &lt;/button&gt;
+      &lt;/div&gt;
+    )
+  }
+
+  return (
+    &lt;div&gt;
+      &lt;input
+        value={nombre}
+        onChange={(e) => setNombre(e.target.value)}
+        placeholder="Nombre"
+      /&gt;
+      &lt;input
+        value={edad}
+        onChange={(e) => setEdad(e.target.value)}
+        placeholder="Edad"
+      /&gt;
+      &lt;button onClick={handleSubmit}&gt;Guardar&lt;/button&gt;
+    &lt;/div&gt;
+  )
+}
+    </code></pre>
+  </article>
+
+  <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-left: 4px solid #007bff; border-radius: 4px;">
+    <p><strong>📚 Recursos Adicionales:</strong></p>
+    <p>
+      Para discusiones más profundas y ejemplos interactivos sobre useState y Gestión de Estado,
+      consulta esta <a href="https://chatgpt.com/g/g-p-696fbea2755481919c8258fb23e8f822-react/c/69b4bd67-f1ec-8393-a09b-a9c06a34b254" target="_blank" style="color: #007bff; text-decoration: none;">Guía React GPT</a>.
+    </p>
+  </div>
+</section>
