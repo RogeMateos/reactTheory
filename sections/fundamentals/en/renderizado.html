@@ -1,0 +1,1163 @@
+<section class="box">
+  <h1>Rendering and Virtual DOM in React</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">
+      Concepts
+    </button>
+    <button class="tab-button" data-tab="code-examples">
+      Code Examples
+    </button>
+    <button class="tab-button" data-tab="exercises">
+      Exercises
+    </button>
+  </div>
+
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+      <h3>1️⃣ What Does "Rendering" Mean?</h3>
+      <p>
+        <strong>Rendering</strong> means that React takes your JSX and converts it into real HTML that appears in the browser.
+      </p>
+
+      <p>It's like translating from one language to another:</p>
+
+      <pre><code>JSX (React code)
+  ↓
+React processes
+  ↓
+HTML (what you see on screen)</code></pre>
+
+      <p><strong>Example:</strong></p>
+      <pre><code class="language-jsx">// Your JSX code
+function App() {
+  return &lt;h1&gt;Hello World&lt;/h1&gt;
+}
+
+// React converts it to HTML
+&lt;h1&gt;Hello World&lt;/h1&gt;</code></pre>
+
+      <h3>2️⃣ When Does React Render?</h3>
+      <p>React renders (or re-renders) your component in these situations:</p>
+
+      <pre><code>┌─────────────────────────────────────┐
+│  RENDERING SITUATIONS               │
+├─────────────────────────────────────┤
+│  1. Initial mount (first time)      │
+│  2. State changes                   │
+│  3. Props change                    │
+│  4. Parent component re-renders     │
+└─────────────────────────────────────┘</code></pre>
+
+      <h4>🎯 Situation 1: Initial Mount</h4>
+      <p>When React renders your component for the first time.</p>
+
+      <pre><code class="language-jsx">const root = ReactDOM.createRoot(document.getElementById('root'))
+root.render(&lt;App /&gt;)
+
+// React says: "Ok, first time, I'll render App"</code></pre>
+
+      <h4>🔄 Situation 2: State Changes</h4>
+      <p><strong>This is the most important one.</strong></p>
+
+      <pre><code class="language-jsx">function Counter() {
+  const [count, setCount] = React.useState(0)
+
+  // When you click:
+  // 1. setCount(1) updates the state
+  // 2. React detects the change
+  // 3. React re-renders Counter
+
+  return (
+    &lt;button onClick={() => setCount(count + 1)}&gt;
+      Clicks: {count}
+    &lt;/button&gt;
+  )
+}</code></pre>
+
+      <p><strong>Visual flow of re-rendering:</strong></p>
+      <pre><code>Initial state: count = 0
+       ↓
+User clicks
+       ↓
+setCount(1) executes
+       ↓
+🔄 React re-renders Counter
+       ↓
+Button now shows: "Clicks: 1"</code></pre>
+
+      <h3>3️⃣ Why Doesn't State Get Lost?</h3>
+      <p>Many developers wonder:</p>
+      <p style="padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;">
+        <strong>"If React re-executes the component function, why doesn't the state reset?"</strong>
+      </p>
+
+      <p><strong>Answer:</strong> Because React stores state OUTSIDE the component.</p>
+
+      <h4>🧠 Mental Model</h4>
+
+      <pre><code>┌─────────────────────────────────────────┐
+│  COMPONENT (your code)                  │
+│  ┌─────────────────────────────────┐    │
+│  │ function Counter() {            │    │
+│  │   const [count, setCount] = ... │    │
+│  │   return &lt;button&gt;...&lt;/button&gt;   │    │
+│  │ }                               │    │
+│  └─────────────────────────────────┘    │
+│           ↑                              │
+│           │ React connects               │
+│           ↓                              │
+│  ┌─────────────────────────────────┐    │
+│  │  REACT'S MEMORY                 │    │
+│  │  count = 5   ← stored here      │    │
+│  └─────────────────────────────────┘    │
+└─────────────────────────────────────────┘</code></pre>
+
+      <h4>📊 Step by Step</h4>
+
+      <pre><code>1. First execution
+   ├─ useState(0) creates state
+   ├─ React stores: count = 0
+   └─ Returns: [0, setCount]
+
+2. User clicks
+   ├─ setCount(1) executes
+   ├─ React updates in memory: count = 1
+   └─ React re-executes the component
+
+3. Second execution (re-render)
+   ├─ useState() does NOT create new state
+   ├─ React finds existing state: count = 1
+   └─ Returns: [1, setCount]</code></pre>
+
+      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+        <strong>💡 Key point:</strong> React maintains state between renders. It doesn't get lost because it's not inside your function, it's in React's internal memory.
+      </p>
+
+      <h3>4️⃣ The Render Lifecycle</h3>
+
+      <pre><code>┌──────────────────────────────────────────────────┐
+│          RENDERING LIFECYCLE                     │
+├──────────────────────────────────────────────────┤
+│                                                  │
+│  1. 🎬 TRIGGER                                   │
+│     ├─ State change                             │
+│     ├─ Props change                             │
+│     └─ Initial mount                            │
+│                                                  │
+│            ↓                                     │
+│                                                  │
+│  2. 🎨 RENDER PHASE                              │
+│     ├─ React executes your function             │
+│     ├─ Calculates new JSX                       │
+│     └─ Creates Virtual DOM                      │
+│                                                  │
+│            ↓                                     │
+│                                                  │
+│  3. 🔍 RECONCILIATION                            │
+│     ├─ Compares previous vs new Virtual DOM     │
+│     ├─ Detects differences (diffing)            │
+│     └─ Decides what to update                   │
+│                                                  │
+│            ↓                                     │
+│                                                  │
+│  4. ⚡ COMMIT PHASE                              │
+│     ├─ Updates the real DOM                     │
+│     ├─ Runs effects (useEffect)                 │
+│     └─ UI updates                               │
+│                                                  │
+└──────────────────────────────────────────────────┘</code></pre>
+
+      <h4>Example with Code</h4>
+
+      <pre><code class="language-jsx">function Counter() {
+  const [count, setCount] = React.useState(0)
+
+  console.log('🎨 Rendering... count =', count)
+
+  return (
+    &lt;button onClick={() => setCount(count + 1)}&gt;
+      Clicks: {count}
+    &lt;/button&gt;
+  )
+}
+
+// Console output:
+// 🎨 Rendering... count = 0  (initial mount)
+// (user clicks)
+// 🎨 Rendering... count = 1  (re-render)
+// (user clicks)
+// 🎨 Rendering... count = 2  (re-render)</code></pre>
+
+      <h3>5️⃣ Virtual DOM: The Magic Behind React</h3>
+
+      <p><strong>What is the Virtual DOM?</strong></p>
+      <p>
+        It's a copy of the real DOM that React keeps in memory. It's a lightweight representation (in JavaScript) of your interface.
+      </p>
+
+      <h4>🌳 Analogy: The Blueprint of a House</h4>
+
+      <pre><code>BLUEPRINT (Virtual DOM)    REAL HOUSE (Real DOM)
+     📋                           🏠
+
+Cheap to modify          Expensive to modify
+Fast to change           Slow to change
+Just paper               Wood, cement, etc.</code></pre>
+
+      <p><strong>React does the same:</strong></p>
+      <ul>
+        <li>First modifies the "blueprint" (Virtual DOM) → fast</li>
+        <li>Compares with previous blueprint</li>
+        <li>Only updates what's necessary in the "real house" (DOM) → efficient</li>
+      </ul>
+
+      <h4>📊 Visual Comparison</h4>
+
+      <pre><code>WITHOUT VIRTUAL DOM (Vanilla JS):
+┌──────────────────────────────────┐
+│  Small UI change                 │
+│         ↓                        │
+│  Re-render ENTIRE DOM            │
+│         ↓                        │
+│  💰 Very expensive               │
+│  🐌 Very slow                    │
+└──────────────────────────────────┘
+
+
+WITH VIRTUAL DOM (React):
+┌──────────────────────────────────┐
+│  Small UI change                 │
+│         ↓                        │
+│  Update Virtual DOM              │
+│         ↓                        │
+│  Compare (diffing)               │
+│         ↓                        │
+│  Update ONLY what changed        │
+│         ↓                        │
+│  ⚡ Very efficient               │
+│  🚀 Very fast                    │
+└──────────────────────────────────┘</code></pre>
+
+      <h3>6️⃣ The Diffing Algorithm</h3>
+
+      <p><strong>Diffing = Finding the differences</strong></p>
+
+      <p>React compares the previous Virtual DOM with the new one to know what changed.</p>
+
+      <h4>🔍 Visual Example</h4>
+
+      <pre><code>BEFORE (Previous Virtual DOM):
+┌─────────────────────────┐
+│ &lt;div&gt;                   │
+│   &lt;h1&gt;Count: 0&lt;/h1&gt;     │
+│   &lt;button&gt;+&lt;/button&gt;    │
+│ &lt;/div&gt;                  │
+└─────────────────────────┘
+
+
+AFTER (New Virtual DOM):
+┌─────────────────────────┐
+│ &lt;div&gt;                   │
+│   &lt;h1&gt;Count: 1&lt;/h1&gt;  ⭐ │ ← Only this changed
+│   &lt;button&gt;+&lt;/button&gt;    │
+│ &lt;/div&gt;                  │
+└─────────────────────────┘
+
+
+REACT DETECTS:
+  ✅ &lt;div&gt; → no changes
+  ⭐ &lt;h1&gt; → text changed (0 → 1)
+  ✅ &lt;button&gt; → no changes
+
+RESULT:
+React only updates the h1 text
+Doesn't touch the rest of the DOM!</code></pre>
+
+      <h4>Code with Console.log</h4>
+
+      <pre><code class="language-jsx">function Counter() {
+  const [count, setCount] = React.useState(0)
+
+  console.log('🔄 Component executing')
+
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Count: {count}&lt;/h1&gt;
+      &lt;button onClick={() => setCount(count + 1)}&gt;+&lt;/button&gt;
+    &lt;/div&gt;
+  )
+}
+
+// Console output each time you click:
+// 🔄 Component executing
+//
+// But in the real DOM, React ONLY updates the h1 text
+// Doesn't rebuild the entire component</code></pre>
+
+      <h3>7️⃣ Reconciliation: The Complete Process</h3>
+
+      <p><strong>Reconciliation</strong> is the process React uses to decide what to update in the real DOM.</p>
+
+      <pre><code>┌───────────────────────────────────────────────────────┐
+│               RECONCILIATION PROCESS                  │
+├───────────────────────────────────────────────────────┤
+│                                                       │
+│  STEP 1: Create New Virtual DOM                      │
+│  ┌─────────────────────────────────────┐             │
+│  │  React executes your function       │             │
+│  │  Generates new JSX tree             │             │
+│  └─────────────────────────────────────┘             │
+│                    ↓                                  │
+│                                                       │
+│  STEP 2: Compare (Diffing Algorithm)                 │
+│  ┌─────────────────────────────────────┐             │
+│  │  Previous Virtual DOM  vs  New      │             │
+│  │                                     │             │
+│  │  Same element type?                 │             │
+│  │  Same attributes?                   │             │
+│  │  Same content?                      │             │
+│  └─────────────────────────────────────┘             │
+│                    ↓                                  │
+│                                                       │
+│  STEP 3: Generate List of Changes                    │
+│  ┌─────────────────────────────────────┐             │
+│  │  Update h1 text                     │             │
+│  │  Change button class                │             │
+│  │  Add new li                         │             │
+│  └─────────────────────────────────────┘             │
+│                    ↓                                  │
+│                                                       │
+│  STEP 4: Apply Changes to Real DOM                   │
+│  ┌─────────────────────────────────────┐             │
+│  │  Execute minimal changes            │             │
+│  │  UI updates                         │             │
+│  └─────────────────────────────────────┘             │
+│                                                       │
+└───────────────────────────────────────────────────────┘</code></pre>
+
+      <h4>Comparative Example</h4>
+
+      <pre><code class="language-jsx">// State 1: applied = false
+&lt;button className="button-apply-job"&gt;
+  Apply
+&lt;/button&gt;
+
+// User clicks → applied = true
+// React re-renders
+
+// State 2: applied = true
+&lt;button className="button-apply-job is-applied" disabled&gt;
+  Applied!
+&lt;/button&gt;
+
+// React detects:
+// ✅ Element: &lt;button&gt; (same type)
+// ⭐ className: changed
+// ⭐ disabled: added
+// ⭐ text: changed
+
+// React applies ONLY those 3 changes to the real DOM</code></pre>
+
+      <h3>8️⃣ Batch Updates: React is Smart</h3>
+
+      <p>React does NOT re-render immediately after each setState. It batches multiple changes together.</p>
+
+      <h4>Example with Multiple States</h4>
+
+      <pre><code class="language-jsx">function Form() {
+  const [name, setName] = React.useState('')
+  const [email, setEmail] = React.useState('')
+  const [age, setAge] = React.useState(0)
+
+  const handleSubmit = () => {
+    setName('Miguel')   // 1
+    setEmail('m@g.com') // 2
+    setAge(25)          // 3
+
+    // React does NOT re-render 3 times
+    // React batches the 3 changes
+    // Re-renders ONLY ONCE
+  }
+
+  console.log('🎨 Rendering...')
+
+  return (
+    &lt;button onClick={handleSubmit}&gt;Submit&lt;/button&gt;
+  )
+}</code></pre>
+
+      <h4>🔄 Batch Updates Flow</h4>
+
+      <pre><code>User clicks
+       ↓
+setName('Miguel')   ─┐
+setEmail('m@g.com') ─┼─ React batches
+setAge(25)          ─┘
+       ↓
+React re-renders ONCE
+       ↓
+console.log executes ONCE</code></pre>
+
+      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+        <strong>💡 Automatic optimization:</strong> React automatically batches multiple setState calls into a single re-render for better performance.
+      </p>
+
+      <h3>9️⃣ When React Does NOT Re-render</h3>
+
+      <p>React is smart and does NOT re-render in these situations:</p>
+
+      <pre><code>┌────────────────────────────────────────┐
+│  CASES WITHOUT RE-RENDERING            │
+├────────────────────────────────────────┤
+│  1. setState with SAME value           │
+│  2. Local variables change             │
+│  3. Props don't change                 │
+└────────────────────────────────────────┘</code></pre>
+
+      <h4>Case 1: setState with Same Value</h4>
+
+      <pre><code class="language-jsx">function Counter() {
+  const [count, setCount] = React.useState(0)
+
+  const handleClick = () => {
+    setCount(0) // ← Already 0
+    // React detects it didn't change
+    // Does NOT re-render
+  }
+
+  console.log('🎨 Rendering...')
+
+  return &lt;button onClick={handleClick}&gt;{count}&lt;/button&gt;
+}
+
+// Console output:
+// 🎨 Rendering... (initial mount)
+// (user clicks)
+// (nothing in console - no re-render)</code></pre>
+
+      <h4>Case 2: Local Variables</h4>
+
+      <pre><code class="language-jsx">function Counter() {
+  const [count, setCount] = React.useState(0)
+  let clicks = 0 // ← Local variable
+
+  const handleClick = () => {
+    clicks = clicks + 1 // ❌ This does NOT cause re-render
+    console.log('clicks:', clicks) // You'll see the change
+    // But UI does NOT update
+  }
+
+  return &lt;button onClick={handleClick}&gt;{clicks}&lt;/button&gt;
+}
+
+// UI always shows 0
+// Because clicks is NOT state
+// React doesn't know it changed</code></pre>
+
+      <p style="padding: 15px; background: #ffe7e7; border-left: 4px solid #ff6b6b; border-radius: 4px;">
+        <strong>⚠️ Important rule:</strong> Only STATE and PROPS changes cause re-rendering. Local variables don't.
+      </p>
+
+      <h3>🔟 Re-rendering by Props</h3>
+
+      <p>When a parent component re-renders, its children also re-render (by default).</p>
+
+      <h4>Example</h4>
+
+      <pre><code class="language-jsx">function Parent() {
+  const [count, setCount] = React.useState(0)
+
+  console.log('🎨 Parent rendering')
+
+  return (
+    &lt;div&gt;
+      &lt;button onClick={() => setCount(count + 1)}&gt;
+        Count: {count}
+      &lt;/button&gt;
+      &lt;Child /&gt;
+    &lt;/div&gt;
+  )
+}
+
+function Child() {
+  console.log('🎨 Child rendering')
+  return &lt;p&gt;I'm the child&lt;/p&gt;
+}
+
+// Console output:
+// 🎨 Parent rendering
+// 🎨 Child rendering
+// (user clicks)
+// 🎨 Parent rendering  ← Parent re-renders
+// 🎨 Child rendering   ← Child also re-renders</code></pre>
+
+      <h4>🔍 Visual Flow</h4>
+
+      <pre><code>Parent re-renders
+       ↓
+React executes Parent() function
+       ↓
+Finds &lt;Child /&gt; in the JSX
+       ↓
+React executes Child() function
+       ↓
+Child re-renders too</code></pre>
+
+      <p><strong>Even though Child's props don't change, React re-renders by default.</strong></p>
+
+      <h3>1️⃣1️⃣ Comparison: Vanilla JS vs React</h3>
+
+      <h4>❌ Vanilla JavaScript (Imperative)</h4>
+
+      <pre><code class="language-javascript">// You must say HOW to make each change
+const button = document.querySelector('#myButton')
+const heading = document.querySelector('#heading')
+
+button.addEventListener('click', () => {
+  let count = parseInt(heading.textContent)
+  count = count + 1
+
+  // Manually update DOM
+  heading.textContent = count
+
+  if (count > 5) {
+    heading.style.color = 'red'
+  }
+
+  if (count > 10) {
+    button.disabled = true
+    button.textContent = 'Max reached'
+  }
+})
+
+// ❌ Imperative code
+// ❌ Manual DOM manipulation
+// ❌ Hard to maintain
+// ❌ Error-prone</code></pre>
+
+      <h4>✅ React (Declarative)</h4>
+
+      <pre><code class="language-jsx">// Just describe WHAT you want to show
+function Counter() {
+  const [count, setCount] = React.useState(0)
+
+  return (
+    &lt;div&gt;
+      &lt;h1 style={{ color: count > 5 ? 'red' : 'black' }}&gt;
+        {count}
+      &lt;/h1&gt;
+
+      &lt;button
+        onClick={() => setCount(count + 1)}
+        disabled={count > 10}
+      &gt;
+        {count > 10 ? 'Max reached' : 'Increment'}
+      &lt;/button&gt;
+    &lt;/div&gt;
+  )
+}
+
+// ✅ Declarative code
+// ✅ React updates DOM automatically
+// ✅ Easy to read and maintain
+// ✅ Less error-prone</code></pre>
+
+      <h4>📊 Comparison Table</h4>
+
+      <pre><code>┌───────────────────┬────────────────┬────────────────┐
+│                   │  Vanilla JS    │     React      │
+├───────────────────┼────────────────┼────────────────┤
+│ Style             │  Imperative    │  Declarative   │
+│ DOM               │  Manual        │  Automatic     │
+│ Updates           │  Expensive     │  Optimized     │
+│ Code              │  Complex       │  Simple        │
+│ Errors            │  Many          │  Fewer         │
+│ Scalability       │  Difficult     │  Easy          │
+└───────────────────┴────────────────┴────────────────┘</code></pre>
+
+      <h3>1️⃣2️⃣ Visual Summary of Complete Process</h3>
+
+      <pre><code>🎬 START: User clicks
+       ↓
+
+🎯 TRIGGER
+   ├─ setCount(count + 1)
+   └─ React detects state change
+       ↓
+
+🎨 RENDER PHASE
+   ├─ React executes Counter()
+   ├─ Generates new JSX
+   └─ Creates new Virtual DOM
+       ↓
+
+🔍 RECONCILIATION
+   ├─ Compares previous vs new Virtual DOM
+   ├─ Diffing algorithm
+   ├─ Detects: h1 text changed
+   └─ Generates list of changes
+       ↓
+
+⚡ COMMIT PHASE
+   ├─ Updates ONLY the h1 text
+   ├─ (Doesn't touch rest of DOM)
+   └─ UI updated
+       ↓
+
+✅ END: User sees the change</code></pre>
+
+      <h3>📋 What You Must Remember</h3>
+
+      <ul>
+        <li><strong>Rendering</strong> = React converts JSX to real HTML</li>
+        <li><strong>Re-rendering</strong> = React updates the UI when state/props change</li>
+        <li><strong>Virtual DOM</strong> = Lightweight copy of DOM in memory</li>
+        <li><strong>Diffing</strong> = Compare previous vs new Virtual DOM</li>
+        <li><strong>Reconciliation</strong> = Decide what to update in real DOM</li>
+        <li><strong>Batch Updates</strong> = React groups multiple setState into one re-render</li>
+        <li>React <strong>does NOT re-render</strong> if state didn't actually change</li>
+        <li>Local variables do NOT cause re-rendering</li>
+      </ul>
+
+      <h3>1️⃣3️⃣ Typical Interview Question</h3>
+
+      <p style="padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;">
+        <strong>❓ "Why does React use Virtual DOM?"</strong>
+      </p>
+
+      <p><strong>Correct answer:</strong></p>
+      <p>
+        Because updating the real DOM is expensive and slow. React uses Virtual DOM to:
+      </p>
+      <ul>
+        <li>Calculate changes quickly in memory</li>
+        <li>Compare previous and new versions (diffing)</li>
+        <li>Apply only the minimal necessary changes to the real DOM</li>
+        <li>Optimize performance automatically</li>
+      </ul>
+
+      <p><strong>Analogy for the interview:</strong></p>
+      <p>
+        "It's like making a draft on paper before building. Testing changes on the draft is fast and cheap.
+        Only when you know exactly what to change, do you modify the real construction."
+      </p>
+
+      <h3>🎯 Next Steps</h3>
+      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+        Now that you understand how React renders, the next step is learning about
+        <strong>useEffect</strong>, which allows you to run code after rendering finishes.
+      </p>
+    </div>
+  </article>
+
+  <article id="code-examples" class="tab-content">
+    <h2>Complete Code Examples</h2>
+
+    <h3>Example 1: Visualize Re-renders with Console.log</h3>
+    <pre><code class="language-jsx">
+function Counter() {
+  const [count, setCount] = React.useState(0)
+
+  // This console.log runs on every render
+  console.log('🎨 Component rendering, count =', count)
+
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Count: {count}&lt;/h1&gt;
+      &lt;button onClick={() => setCount(count + 1)}&gt;
+        Increment
+      &lt;/button&gt;
+    &lt;/div&gt;
+  )
+}
+
+// Open the console and click
+// You'll see:
+// 🎨 Component rendering, count = 0
+// 🎨 Component rendering, count = 1
+// 🎨 Component rendering, count = 2
+    </code></pre>
+
+    <h3>Example 2: Batch Updates in Action</h3>
+    <pre><code class="language-jsx">
+function MultipleStates() {
+  const [name, setName] = React.useState('')
+  const [email, setEmail] = React.useState('')
+  const [age, setAge] = React.useState(0)
+
+  // Render counter
+  const renderCount = React.useRef(0)
+  renderCount.current = renderCount.current + 1
+
+  const handleUpdate = () => {
+    // Three state changes
+    setName('Miguel')
+    setEmail('miguel@example.com')
+    setAge(25)
+
+    // React batches these 3 changes
+    // Only re-renders ONCE
+  }
+
+  console.log('🎨 Render #', renderCount.current)
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Renders: {renderCount.current}&lt;/p&gt;
+      &lt;p&gt;Name: {name}&lt;/p&gt;
+      &lt;p&gt;Email: {email}&lt;/p&gt;
+      &lt;p&gt;Age: {age}&lt;/p&gt;
+      &lt;button onClick={handleUpdate}&gt;
+        Update All
+      &lt;/button&gt;
+    &lt;/div&gt;
+  )
+}
+
+// Result: Only increments by 1 per click
+// Not by 3, because React batches the changes
+    </code></pre>
+
+    <h3>Example 3: setState with Same Value (No Re-render)</h3>
+    <pre><code class="language-jsx">
+function SameValue() {
+  const [count, setCount] = React.useState(0)
+  const renderCount = React.useRef(0)
+
+  renderCount.current = renderCount.current + 1
+
+  const handleClick = () => {
+    // Set the same value
+    setCount(0)
+
+    // React detects it didn't change
+    // Does NOT re-render
+  }
+
+  console.log('🎨 Render #', renderCount.current)
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Count: {count}&lt;/p&gt;
+      &lt;p&gt;Renders: {renderCount.current}&lt;/p&gt;
+      &lt;button onClick={handleClick}&gt;
+        setState(0) - Changes nothing
+      &lt;/button&gt;
+      &lt;button onClick={() => setCount(count + 1)}&gt;
+        Increment
+      &lt;/button&gt;
+    &lt;/div&gt;
+  )
+}
+
+// Click "setState(0)"
+// Renders doesn't increase because React is smart
+    </code></pre>
+
+    <h3>Example 4: Local Variable vs State</h3>
+    <pre><code class="language-jsx">
+function LocalVsState() {
+  const [stateCount, setStateCount] = React.useState(0)
+  let localCount = 0 // ❌ Local variable
+
+  const incrementLocal = () => {
+    localCount = localCount + 1
+    console.log('localCount:', localCount)
+    // ❌ UI does NOT update
+  }
+
+  const incrementState = () => {
+    setStateCount(stateCount + 1)
+    // ✅ UI updates
+  }
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Local Variable: {localCount}&lt;/p&gt;
+      &lt;p&gt;State: {stateCount}&lt;/p&gt;
+
+      &lt;button onClick={incrementLocal}&gt;
+        Increment Local (doesn't work)
+      &lt;/button&gt;
+
+      &lt;button onClick={incrementState}&gt;
+        Increment State (works)
+      &lt;/button&gt;
+    &lt;/div&gt;
+  )
+}
+
+// Local variable always shows 0 in UI
+// Even though in console you see it increases
+    </code></pre>
+
+    <h3>Example 5: Re-rendering of Child Components</h3>
+    <pre><code class="language-jsx">
+function Parent() {
+  const [count, setCount] = React.useState(0)
+
+  console.log('🎨 Parent rendering')
+
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Parent: {count}&lt;/h1&gt;
+      &lt;button onClick={() => setCount(count + 1)}&gt;
+        Increment
+      &lt;/button&gt;
+
+      &lt;Child name="Child 1" /&gt;
+      &lt;Child name="Child 2" /&gt;
+    &lt;/div&gt;
+  )
+}
+
+function Child({ name }) {
+  console.log('🎨 Child rendering:', name)
+
+  return &lt;p&gt;I'm {name}&lt;/p&gt;
+}
+
+// Console output when you click:
+// 🎨 Parent rendering
+// 🎨 Child rendering: Child 1
+// 🎨 Child rendering: Child 2
+//
+// Children re-render even though their props don't change
+    </code></pre>
+
+    <h3>Example 6: Visualizing Virtual DOM (Conceptual)</h3>
+    <pre><code class="language-jsx">
+function VirtualDOMDemo() {
+  const [applied, setApplied] = React.useState(false)
+
+  // Virtual DOM BEFORE click (conceptual):
+  // {
+  //   type: 'button',
+  //   props: {
+  //     className: 'button-apply-job',
+  //     disabled: false,
+  //     children: 'Apply'
+  //   }
+  // }
+
+  // User clicks
+
+  // Virtual DOM AFTER click (conceptual):
+  // {
+  //   type: 'button',
+  //   props: {
+  //     className: 'button-apply-job is-applied',
+  //     disabled: true,
+  //     children: 'Applied!'
+  //   }
+  // }
+
+  // React compares and detects:
+  // - className changed
+  // - disabled changed
+  // - children changed
+
+  return (
+    &lt;button
+      className={applied ? 'button-apply-job is-applied' : 'button-apply-job'}
+      onClick={() => setApplied(true)}
+      disabled={applied}
+    &gt;
+      {applied ? 'Applied!' : 'Apply'}
+    &lt;/button&gt;
+  )
+}
+    </code></pre>
+
+    <h3>Example 7: Comparison Vanilla JS vs React</h3>
+    <pre><code class="language-jsx">
+// ❌ VANILLA JAVASCRIPT (Imperative)
+const counterEl = document.getElementById('counter')
+const buttonEl = document.getElementById('btn')
+
+let count = 0
+
+buttonEl.addEventListener('click', () => {
+  count++
+
+  // Manually update DOM
+  counterEl.textContent = count
+
+  if (count >= 10) {
+    counterEl.style.color = 'red'
+  }
+
+  if (count >= 20) {
+    buttonEl.disabled = true
+  }
+})
+
+// -------------------------
+
+// ✅ REACT (Declarative)
+function Counter() {
+  const [count, setCount] = React.useState(0)
+
+  // React updates automatically
+  return (
+    &lt;div&gt;
+      &lt;h1 style={{ color: count >= 10 ? 'red' : 'black' }}&gt;
+        {count}
+      &lt;/h1&gt;
+      &lt;button
+        onClick={() => setCount(count + 1)}
+        disabled={count >= 20}
+      &gt;
+        Increment
+      &lt;/button&gt;
+    &lt;/div&gt;
+  )
+}
+    </code></pre>
+  </article>
+
+  <article id="exercises" class="tab-content">
+    <h2>Practice Exercises</h2>
+
+    <h3>Exercise 1: Render Counter</h3>
+    <p><strong>Challenge:</strong> Create a component that shows how many times it has been rendered.</p>
+
+    <p><strong>Hints:</strong></p>
+    <ul>
+      <li>Use useRef to maintain a counter that does NOT cause re-renders</li>
+      <li>Increment the counter on each render</li>
+      <li>Show the number in the UI</li>
+    </ul>
+
+    <p><strong>Solution:</strong></p>
+    <pre><code class="language-jsx">
+function RenderCounter() {
+  const [count, setCount] = React.useState(0)
+  const renderCount = React.useRef(0)
+
+  // Runs on every render
+  renderCount.current = renderCount.current + 1
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Count: {count}&lt;/p&gt;
+      &lt;p&gt;Component rendered {renderCount.current} times&lt;/p&gt;
+      &lt;button onClick={() => setCount(count + 1)}&gt;
+        Increment
+      &lt;/button&gt;
+    &lt;/div&gt;
+  )
+}
+    </code></pre>
+
+    <h3>Exercise 2: Detect Changes</h3>
+    <p><strong>Challenge:</strong> Create a component that shows when state changed.</p>
+
+    <p><strong>Solution:</strong></p>
+    <pre><code class="language-jsx">
+function ChangeDetector() {
+  const [name, setName] = React.useState('Miguel')
+  const [lastChanged, setLastChanged] = React.useState(null)
+
+  const handleChange = (newName) => {
+    setName(newName)
+    setLastChanged(new Date().toLocaleTimeString())
+  }
+
+  console.log('🎨 Rendering with name:', name)
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Name: {name}&lt;/p&gt;
+      {lastChanged && &lt;p&gt;Last update: {lastChanged}&lt;/p&gt;}
+
+      &lt;button onClick={() => handleChange('Ana')}&gt;
+        Change to Ana
+      &lt;/button&gt;
+      &lt;button onClick={() => handleChange('Carlos')}&gt;
+        Change to Carlos
+      &lt;/button&gt;
+    &lt;/div&gt;
+  )
+}
+    </code></pre>
+
+    <h3>Exercise 3: Compare Re-renders</h3>
+    <p><strong>Challenge:</strong> Create two components: one that re-renders and one that doesn't.</p>
+
+    <p><strong>Solution:</strong></p>
+    <pre><code class="language-jsx">
+function Parent() {
+  const [parentCount, setParentCount] = React.useState(0)
+  const [childProp, setChildProp] = React.useState(0)
+
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Parent Count: {parentCount}&lt;/h1&gt;
+
+      &lt;button onClick={() => setParentCount(parentCount + 1)}&gt;
+        Increment Parent (Child re-renders)
+      &lt;/button&gt;
+
+      &lt;button onClick={() => setChildProp(childProp + 1)}&gt;
+        Increment Child Prop
+      &lt;/button&gt;
+
+      &lt;Child count={childProp} /&gt;
+    &lt;/div&gt;
+  )
+}
+
+function Child({ count }) {
+  console.log('🎨 Child rendering with count:', count)
+
+  return &lt;p&gt;Child Count: {count}&lt;/p&gt;
+}
+
+// Experiment:
+// 1. Click "Increment Parent"
+//    → Child re-renders even though its prop didn't change
+// 2. Click "Increment Child Prop"
+//    → Child re-renders because its prop changed
+    </code></pre>
+
+    <h3>Exercise 4: Batch Updates</h3>
+    <p><strong>Challenge:</strong> Demonstrate that React batches multiple setState.</p>
+
+    <p><strong>Solution:</strong></p>
+    <pre><code class="language-jsx">
+function BatchDemo() {
+  const [a, setA] = React.useState(0)
+  const [b, setB] = React.useState(0)
+  const [c, setC] = React.useState(0)
+
+  const renderCount = React.useRef(0)
+  renderCount.current = renderCount.current + 1
+
+  const handleBatch = () => {
+    setA(a + 1)
+    setB(b + 1)
+    setC(c + 1)
+
+    // React batches these 3 changes
+    // Render count increases by only 1
+  }
+
+  const handleSeparate = () => {
+    setA(a + 1)
+
+    setTimeout(() => {
+      setB(b + 1)
+    }, 100)
+
+    setTimeout(() => {
+      setC(c + 1)
+    }, 200)
+
+    // These do NOT get batched (before React 18)
+    // Render count increases by 3
+  }
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Renders: {renderCount.current}&lt;/p&gt;
+      &lt;p&gt;A: {a}, B: {b}, C: {c}&lt;/p&gt;
+
+      &lt;button onClick={handleBatch}&gt;
+        Batch Update (1 render)
+      &lt;/button&gt;
+
+      &lt;button onClick={handleSeparate}&gt;
+        Separate Updates (3 renders)
+      &lt;/button&gt;
+    &lt;/div&gt;
+  )
+}
+    </code></pre>
+
+    <h3>Exercise 5: Prevent Unnecessary Re-renders</h3>
+    <p><strong>Challenge:</strong> Use React.memo to prevent re-renders of a child when not necessary.</p>
+
+    <p><strong>Solution:</strong></p>
+    <pre><code class="language-jsx">
+function Parent() {
+  const [parentCount, setParentCount] = React.useState(0)
+  const [childCount, setChildCount] = React.useState(0)
+
+  console.log('🎨 Parent rendering')
+
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Parent: {parentCount}&lt;/h1&gt;
+      &lt;button onClick={() => setParentCount(parentCount + 1)}&gt;
+        Increment Parent
+      &lt;/button&gt;
+
+      &lt;button onClick={() => setChildCount(childCount + 1)}&gt;
+        Increment Child
+      &lt;/button&gt;
+
+      {/* Child only re-renders if childCount changes */}
+      &lt;MemoizedChild count={childCount} /&gt;
+    &lt;/div&gt;
+  )
+}
+
+// Without React.memo, Child re-renders whenever Parent does
+const MemoizedChild = React.memo(function Child({ count }) {
+  console.log('🎨 Child rendering')
+
+  return &lt;p&gt;Child Count: {count}&lt;/p&gt;
+})
+
+// Now Child ONLY re-renders when count changes
+// Not when parentCount changes
+    </code></pre>
+
+    <h3>Exercise 6: Visualize the Reconciliation Process</h3>
+    <p><strong>Challenge:</strong> Create a component that shows which parts of the DOM change.</p>
+
+    <p><strong>Solution:</strong></p>
+    <pre><code class="language-jsx">
+function ReconciliationDemo() {
+  const [count, setCount] = React.useState(0)
+  const [name, setName] = React.useState('Miguel')
+
+  // Only count and name will change in the DOM
+  // The h1, h2, button elements remain the same
+
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Static Title&lt;/h1&gt;
+      &lt;h2&gt;Count: {count}&lt;/h2&gt;  {/* ⭐ Only this changes */}
+      &lt;h2&gt;Name: {name}&lt;/h2&gt;    {/* ⭐ Only this changes */}
+
+      &lt;button onClick={() => setCount(count + 1)}&gt;
+        Increment Count
+      &lt;/button&gt;
+
+      &lt;button onClick={() => setName(name === 'Miguel' ? 'Ana' : 'Miguel')}&gt;
+        Change Name
+      &lt;/button&gt;
+
+      &lt;p&gt;React only updates the content of the h2 elements&lt;/p&gt;
+      &lt;p&gt;Doesn't rebuild the entire component&lt;/p&gt;
+    &lt;/div&gt;
+  )
+}
+
+// Open React DevTools
+// Go to "Profiler" and record a render
+// You'll see that only the nodes with changes get updated
+    </code></pre>
+  </article>
+
+  <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-left: 4px solid #007bff; border-radius: 4px;">
+    <p><strong>📚 Additional Resources:</strong></p>
+    <p>
+      For more in-depth discussions and interactive examples about Rendering and Virtual DOM in React,
+      check out this <a href="https://chatgpt.com/g/g-p-696fbea2755481919c8258fb23e8f822-react" target="_blank" style="color: #007bff; text-decoration: none;">React GPT Guide</a>.
+    </p>
+  </div>
+</section>

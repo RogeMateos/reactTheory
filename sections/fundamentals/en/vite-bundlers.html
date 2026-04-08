@@ -1,0 +1,710 @@
+<section class="box">
+  <h1>🚀 Vite & Modern Bundlers</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">Concepts</button>
+    <button class="tab-button" data-tab="code-examples">Code Examples</button>
+    <button class="tab-button" data-tab="exercises">Exercises</button>
+  </div>
+
+  <article id="concepts" class="tab-content active">
+    <h2>🧠 What is a Bundler?</h2>
+    <p>
+      A <strong>bundler</strong> is a tool that takes multiple JavaScript files, CSS, images, and other assets,
+      and combines them into a few optimized files for the browser.
+    </p>
+
+    <h3>❌ Problems without a bundler</h3>
+    <ul>
+      <li>❌ <strong>100+ separate files</strong> - Each import is an additional HTTP request</li>
+      <li>❌ <strong>Slow in development</strong> - The browser must download and process each file</li>
+      <li>❌ <strong>No optimization</strong> - No minification, no tree-shaking</li>
+      <li>❌ <strong>Order issues</strong> - Scripts must load in the correct order</li>
+      <li>❌ <strong>No modern transformations</strong> - Can't use JSX, TypeScript, etc.</li>
+    </ul>
+
+    <h3>📦 Project structure example</h3>
+    <pre><code class="language-bash">my-project/
+├── src/
+│   ├── components/
+│   │   ├── Header.jsx       ← 1 file
+│   │   ├── Footer.jsx       ← 1 file
+│   │   ├── Button.jsx       ← 1 file
+│   │   └── Card.jsx         ← 1 file
+│   ├── utils/
+│   │   ├── formatDate.js    ← 1 file
+│   │   └── api.js           ← 1 file
+│   ├── styles/
+│   │   ├── main.css         ← 1 file
+│   │   └── variables.css    ← 1 file
+│   ├── App.jsx
+│   └── main.jsx
+└── index.html
+
+WITHOUT BUNDLER: 10+ separate HTTP requests
+WITH BUNDLER: 1-3 optimized files</code></pre>
+
+    <h3>✅ Solution with bundler</h3>
+    <pre style="background: #f4f4f4; padding: 15px; border-radius: 8px; font-family: monospace;">
+      100+ files (src/)
+            ⬇️
+      [BUNDLER] 🔄
+            ⬇️
+      3 optimized files (dist/)
+      ✅ index.js (minified)
+      ✅ styles.css (compressed)
+      ✅ assets/ (optimized)
+    </pre>
+
+    <hr>
+
+    <h2>🚀 What is Vite?</h2>
+    <p>
+      <strong>Vite</strong> (French word meaning "fast") is a modern development tool created by
+      <strong>Evan You</strong> (creator of Vue.js) in 2020. It's the replacement for Create React App and Webpack for modern projects.
+    </p>
+
+    <h3>🔥 Key features</h3>
+    <ul>
+      <li>⚡ <strong>Instant startup</strong> - Dev server starts in milliseconds</li>
+      <li>🔥 <strong>Ultra-fast HMR</strong> - Changes reflect instantly without page reload</li>
+      <li>📦 <strong>Optimized build</strong> - Uses Rollup for production (tree-shaking, code splitting)</li>
+      <li>🔌 <strong>Plugins</strong> - Extensible ecosystem (React, TypeScript, PWA, etc.)</li>
+      <li>🎯 <strong>Zero config</strong> - Works out-of-the-box for React, Vue, Svelte</li>
+    </ul>
+
+    <h3>⚔️ Bundler Comparison</h3>
+    <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+      <thead>
+        <tr style="background: #f0f0f0;">
+          <th style="border: 1px solid #ddd; padding: 10px;">Bundler</th>
+          <th style="border: 1px solid #ddd; padding: 10px;">Speed</th>
+          <th style="border: 1px solid #ddd; padding: 10px;">Configuration</th>
+          <th style="border: 1px solid #ddd; padding: 10px;">Technology</th>
+          <th style="border: 1px solid #ddd; padding: 10px;">Year</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="border: 1px solid #ddd; padding: 10px;"><strong>Webpack</strong></td>
+          <td style="border: 1px solid #ddd; padding: 10px;">🐢 Slow</td>
+          <td style="border: 1px solid #ddd; padding: 10px;">😫 Complex</td>
+          <td style="border: 1px solid #ddd; padding: 10px;">JavaScript</td>
+          <td style="border: 1px solid #ddd; padding: 10px;">2012</td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #ddd; padding: 10px;"><strong>esbuild</strong></td>
+          <td style="border: 1px solid #ddd; padding: 10px;">🚀 Ultra fast</td>
+          <td style="border: 1px solid #ddd; padding: 10px;">😊 Simple</td>
+          <td style="border: 1px solid #ddd; padding: 10px;">Go</td>
+          <td style="border: 1px solid #ddd; padding: 10px;">2020</td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #ddd; padding: 10px;"><strong>Vite</strong></td>
+          <td style="border: 1px solid #ddd; padding: 10px;">⚡ Instant</td>
+          <td style="border: 1px solid #ddd; padding: 10px;">😍 Zero config</td>
+          <td style="border: 1px solid #ddd; padding: 10px;">esbuild + Rollup</td>
+          <td style="border: 1px solid #ddd; padding: 10px;">2020</td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #ddd; padding: 10px;"><strong>Turbopack</strong></td>
+          <td style="border: 1px solid #ddd; padding: 10px;">🚀 Very fast</td>
+          <td style="border: 1px solid #ddd; padding: 10px;">😊 Simple</td>
+          <td style="border: 1px solid #ddd; padding: 10px;">Rust</td>
+          <td style="border: 1px solid #ddd; padding: 10px;">2022</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <hr>
+
+    <h2>💡 Why Vite for React?</h2>
+
+    <h3>1. ⚡ Instant setup</h3>
+    <pre><code class="language-bash"># With Create React App (old)
+npx create-react-app my-app
+# ⏰ Takes 2-5 minutes, installs 1000+ dependencies
+
+# With Vite (modern)
+npm create vite@latest my-app -- --template react
+# ⚡ Takes 10 seconds, installs ~50 dependencies</code></pre>
+
+    <h3>2. 🔥 Fast Refresh (HMR)</h3>
+    <p>
+      When you edit a component, Vite updates ONLY that component without reloading the entire page.
+      React state remains intact.
+    </p>
+    <pre style="background: #f4f4f4; padding: 15px; border-radius: 8px; font-family: monospace;">
+      You edit Counter.jsx
+            ⬇️
+      Vite detects the change
+            ⬇️
+      Sends new code to browser
+            ⬇️
+      React updates Counter without losing state
+      ✅ Counter stays at "5"
+    </pre>
+
+    <h3>3. 📦 Natural imports</h3>
+    <pre><code class="language-jsx">// Vite supports all types of imports without configuration
+import React from 'react'
+import './App.css'                    // CSS
+import logo from './logo.svg'         // Images
+import data from './data.json'        // JSON
+import Button from './Button.jsx'     // Components</code></pre>
+
+    <h3>4. 🏗️ Optimized production build</h3>
+    <pre><code class="language-bash">npm run build
+# Generates dist/ folder with:
+# ✅ Minified code
+# ✅ Tree-shaking (removes unused code)
+# ✅ Code splitting (divides into chunks)
+# ✅ Optimized assets</code></pre>
+
+    <hr>
+
+    <h2>🏗️ How Vite Works</h2>
+
+    <h3>🔍 Architecture in DEVELOPMENT</h3>
+    <pre style="background: #f4f4f4; padding: 15px; border-radius: 8px; font-family: monospace;">
+      Browser requests: /src/App.jsx
+            ⬇️
+      Vite intercepts the request
+            ⬇️
+      Transforms JSX → JavaScript using esbuild
+            ⬇️
+      Sends transformed file to browser
+            ⬇️
+      Browser executes the code
+
+      ⚡ KEY: Does NOT bundle in dev, uses native ES Modules
+    </pre>
+
+    <h3>📦 Architecture in PRODUCTION</h3>
+    <pre style="background: #f4f4f4; padding: 15px; border-radius: 8px; font-family: monospace;">
+      npm run build
+            ⬇️
+      Rollup analyzes entire project
+            ⬇️
+      Tree-shaking (removes unused code)
+      Code splitting (divides into chunks)
+      Minification (reduces size)
+            ⬇️
+      Generates dist/ folder
+      ├── assets/
+      │   ├── index-abc123.js  (optimized)
+      │   └── index-def456.css (compressed)
+      └── index.html
+    </pre>
+
+    <hr>
+
+    <h2>🔌 ES Modules - The technology behind Vite</h2>
+    <p>
+      <strong>ES Modules</strong> are JavaScript's native module system (introduced in ES6/2015).
+      Vite leverages this to NOT bundle in development.
+    </p>
+
+    <h3>ES Module example</h3>
+    <pre><code class="language-html">&lt;!-- index.html --&gt;
+&lt;script type="module" src="/src/main.jsx"&gt;&lt;/script&gt;
+
+&lt;!-- Browser understands "type=module" and handles imports --&gt;</code></pre>
+
+    <pre><code class="language-jsx">// src/main.jsx
+import React from 'react'  // Browser requests this file
+import App from './App'     // Browser requests this file
+
+// Each import is a separate HTTP request
+// But Vite serves them instantly from memory</code></pre>
+
+    <h3>🧠 Why this is FAST</h3>
+    <ul>
+      <li>✅ <strong>No bundling in dev</strong> - Vite does NOT combine files, just transforms them</li>
+      <li>✅ <strong>Browser caching</strong> - Unchanged files are reused</li>
+      <li>✅ <strong>On-demand transformation</strong> - Only processes files you actually use</li>
+      <li>✅ <strong>esbuild is ultra fast</strong> - Written in Go, 10-100x faster than Babel</li>
+    </ul>
+
+    <hr>
+
+    <h2>🔌 Plugins and Configuration</h2>
+
+    <h3>vite.config.js - Configuration file</h3>
+    <pre><code class="language-jsx">// vite.config.js
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()],           // Official React plugin
+  server: {
+    port: 3000,                 // Development port
+    open: true                  // Open browser automatically
+  },
+  build: {
+    outDir: 'dist',             // Output folder
+    sourcemap: true             // Generate sourcemaps for debugging
+  }
+})</code></pre>
+
+    <h3>🔌 Popular plugins</h3>
+    <ul>
+      <li><code>@vitejs/plugin-react</code> - React support with Fast Refresh</li>
+      <li><code>vite-plugin-pwa</code> - Progressive Web App</li>
+      <li><code>vite-plugin-checker</code> - TypeScript and ESLint in dev server</li>
+      <li><code>vite-plugin-compression</code> - gzip/brotli compression</li>
+    </ul>
+
+    <hr>
+
+    <h2>📝 Interview Summary</h2>
+    <ul>
+      <li>🚀 <strong>Vite is the modern bundler for React</strong> - Replaces CRA and Webpack</li>
+      <li>⚡ <strong>Uses ES Modules in dev</strong> - That's why it's instant (no bundling)</li>
+      <li>🔥 <strong>Ultra-fast HMR</strong> - Only updates the modified component</li>
+      <li>📦 <strong>Uses Rollup in production</strong> - Tree-shaking, code splitting, minification</li>
+      <li>🔧 <strong>Zero config</strong> - Works without configuration for React</li>
+      <li>🎯 <strong>esbuild</strong> - Transforms JSX 10-100x faster than Babel (written in Go)</li>
+    </ul>
+
+    <div style="margin-top: 30px; padding: 15px; background: #e8f4f8; border-radius: 8px;">
+      <p><strong>💡 Tip:</strong> In interviews, mention that Vite does NOT bundle in development (uses native ES Modules),
+      but DOES bundle in production with Rollup. This shows you understand the architecture.</p>
+    </div>
+  </article>
+
+  <article id="code-examples" class="tab-content">
+    <h2>💻 Code Examples</h2>
+
+    <h3>1️⃣ Create a project with Vite</h3>
+    <pre><code class="language-bash"># Create project with npm
+npm create vite@latest my-react-app -- --template react
+
+# Alternative with yarn
+yarn create vite my-react-app --template react
+
+# Alternative with pnpm
+pnpm create vite my-react-app --template react
+
+# Enter the project
+cd my-react-app
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev</code></pre>
+
+    <h3>2️⃣ Generated project structure</h3>
+    <pre><code class="language-bash">my-react-app/
+├── node_modules/          # Dependencies
+├── public/                # Static assets (copied as-is)
+│   └── vite.svg
+├── src/                   # Source code
+│   ├── assets/           # Images, fonts (processed)
+│   ├── App.jsx           # Main component
+│   ├── App.css
+│   ├── main.jsx          # Entry point
+│   └── index.css
+├── index.html             # Main HTML
+├── package.json           # Dependencies and scripts
+├── vite.config.js         # Vite configuration
+└── .gitignore</code></pre>
+
+    <h3>3️⃣ Scripts in package.json</h3>
+    <pre><code class="language-json">{
+  "scripts": {
+    "dev": "vite",                    // Development server
+    "build": "vite build",            // Production build
+    "preview": "vite preview"         // Preview local build
+  }
+}</code></pre>
+
+    <h3>4️⃣ Imports in Vite</h3>
+    <pre><code class="language-jsx">// src/App.jsx
+import React, { useState } from 'react'
+import './App.css'                         // CSS
+import logo from './assets/logo.png'       // Image
+import data from './data.json'             // JSON
+import Button from './components/Button'   // Component
+
+function App() {
+  return (
+    &lt;div&gt;
+      &lt;img src={logo} alt="Logo" /&gt;
+      &lt;Button /&gt;
+      &lt;pre&gt;{JSON.stringify(data, null, 2)}&lt;/pre&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+    <h3>5️⃣ Fast Refresh in action</h3>
+    <pre><code class="language-jsx">// BEFORE editing (counter is at 5)
+function Counter() {
+  const [count, setCount] = useState(0)
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Count: {count}&lt;/p&gt;
+      &lt;button onClick={() =&gt; setCount(count + 1)}&gt;
+        Increment
+      &lt;/button&gt;
+    &lt;/div&gt;
+  )
+}
+
+// AFTER editing (you change the text)
+function Counter() {
+  const [count, setCount] = useState(0)
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Counter: {count}&lt;/p&gt;  {/* ← Changed this */}
+      &lt;button onClick={() =&gt; setCount(count + 1)}&gt;
+        Increment  {/* ← And this */}
+      &lt;/button&gt;
+    &lt;/div&gt;
+  )
+}
+
+// ✅ Component updates WITHOUT reloading the page
+// ✅ State remains 5 (not lost)</code></pre>
+
+    <h3>6️⃣ Custom configuration</h3>
+    <pre><code class="language-jsx">// vite.config.js
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    port: 3000,              // Change port
+    open: true,              // Open browser automatically
+    host: true               // Expose on local network
+  },
+  resolve: {
+    alias: {
+      '@': '/src'            // Alias for imports (@/components/Button)
+    }
+  },
+  build: {
+    outDir: 'build',         // Change output folder
+    sourcemap: true,         // Generate sourcemaps
+    minify: 'esbuild'        // Use esbuild for minification
+  }
+})</code></pre>
+
+    <h3>7️⃣ Tree Shaking - Unused code elimination</h3>
+    <pre><code class="language-jsx">// utils.js - we export 3 functions
+export function add(a, b) { return a + b }
+export function subtract(a, b) { return a - b }
+export function multiply(a, b) { return a * b }
+
+// App.jsx - we only use 1 function
+import { add } from './utils'
+
+function App() {
+  const result = add(5, 3)
+  return &lt;div&gt;{result}&lt;/div&gt;
+}
+
+// ✅ In production (npm run build):
+// - Only add() is included in the bundle
+// - subtract() and multiply() are removed (tree-shaking)</code></pre>
+
+    <h3>8️⃣ Production build output</h3>
+    <pre><code class="language-bash">$ npm run build
+
+vite v5.0.0 building for production...
+✓ 34 modules transformed.
+dist/index.html                   0.45 kB │ gzip:  0.30 kB
+dist/assets/index-abc123.css      1.23 kB │ gzip:  0.65 kB
+dist/assets/index-def456.js     143.21 kB │ gzip: 46.14 kB
+✓ built in 1.23s</code></pre>
+
+    <h3>9️⃣ Environment variables</h3>
+    <pre><code class="language-bash"># .env - Environment variables
+VITE_API_URL=https://api.example.com
+VITE_APP_TITLE=My React App
+
+# IMPORTANT: Must start with VITE_ to be accessible</code></pre>
+
+    <pre><code class="language-jsx">// App.jsx - Use environment variables
+function App() {
+  const apiUrl = import.meta.env.VITE_API_URL
+  const appTitle = import.meta.env.VITE_APP_TITLE
+
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;{appTitle}&lt;/h1&gt;
+      &lt;p&gt;API: {apiUrl}&lt;/p&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+    <h3>🔟 Import assets dynamically</h3>
+    <pre><code class="language-jsx">// Import image dynamically
+function Avatar({ userId }) {
+  // URL resolves correctly in build
+  const avatarUrl = new URL(`./avatars/${userId}.png`, import.meta.url).href
+
+  return &lt;img src={avatarUrl} alt="Avatar" /&gt;
+}
+
+// Alternative: use static import
+import avatar1 from './avatars/1.png'
+import avatar2 from './avatars/2.png'
+
+const avatars = { 1: avatar1, 2: avatar2 }
+
+function Avatar({ userId }) {
+  return &lt;img src={avatars[userId]} alt="Avatar" /&gt;
+}</code></pre>
+  </article>
+
+  <article id="exercises" class="tab-content">
+    <h2>🏋️ Practical Exercises</h2>
+
+    <h3>📋 Exercise 1: Create your first Vite project</h3>
+    <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+      <h4>Goal:</h4>
+      <p>Create a React project with Vite and familiarize yourself with the structure.</p>
+
+      <h4>Steps:</h4>
+      <ol>
+        <li>Run: <code>npm create vite@latest my-first-vite -- --template react</code></li>
+        <li>Enter directory: <code>cd my-first-vite</code></li>
+        <li>Install dependencies: <code>npm install</code></li>
+        <li>Start server: <code>npm run dev</code></li>
+        <li>Open browser and observe the project</li>
+      </ol>
+
+      <h4>✅ Verification:</h4>
+      <ul>
+        <li>Server starts in less than 5 seconds</li>
+        <li>You see the React interface with Vite logo</li>
+        <li>Browser is at <code>http://localhost:5173</code></li>
+      </ul>
+    </div>
+
+    <h3>🔥 Exercise 2: Test Fast Refresh (HMR)</h3>
+    <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+      <h4>Goal:</h4>
+      <p>Experience hot reloading without losing state.</p>
+
+      <h4>Steps:</h4>
+      <ol>
+        <li>Open <code>src/App.jsx</code></li>
+        <li>Find the counter (button with <code>setCount</code>)</li>
+        <li>Click several times until reaching 10</li>
+        <li>Without closing the browser, edit the button text in the code</li>
+        <li>Save the file</li>
+      </ol>
+
+      <h4>✅ Verification:</h4>
+      <ul>
+        <li>Button text changed INSTANTLY</li>
+        <li>Counter still shows 10 (didn't reset)</li>
+        <li>Page did NOT reload completely</li>
+      </ul>
+
+      <h4>💡 Extra:</h4>
+      <p>Compare this with a Create React App project (if you have one). CRA reloads the entire page and loses state.</p>
+    </div>
+
+    <h3>📦 Exercise 3: Analyze the production bundle</h3>
+    <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+      <h4>Goal:</h4>
+      <p>See how Vite optimizes your code for production.</p>
+
+      <h4>Steps:</h4>
+      <ol>
+        <li>Run: <code>npm run build</code></li>
+        <li>Observe the terminal output (file sizes)</li>
+        <li>Open the generated <code>dist/</code> folder</li>
+        <li>Inspect files in <code>dist/assets/</code></li>
+        <li>Run: <code>npm run preview</code> to see the result</li>
+      </ol>
+
+      <h4>✅ Verification:</h4>
+      <ul>
+        <li>.js files have hashed names (e.g., <code>index-abc123.js</code>)</li>
+        <li>Code is minified (no spaces or comments)</li>
+        <li>Total bundle is less than 200 KB</li>
+        <li><code>npm run preview</code> shows your app running from <code>dist/</code></li>
+      </ul>
+    </div>
+
+    <h3>⚡ Exercise 4: Compare with CDN approach</h3>
+    <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+      <h4>Goal:</h4>
+      <p>Understand why Vite is better than importing React from CDN.</p>
+
+      <h4>Steps:</h4>
+      <ol>
+        <li>Create a file <code>test-cdn.html</code>:</li>
+      </ol>
+      <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"&gt;&lt;/script&gt;
+  &lt;script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"&gt;&lt;/script&gt;
+  &lt;script src="https://unpkg.com/@babel/standalone/babel.min.js"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div id="root"&gt;&lt;/div&gt;
+  &lt;script type="text/babel"&gt;
+    function App() {
+      return &lt;h1&gt;Hello from CDN&lt;/h1&gt;
+    }
+    ReactDOM.render(&lt;App /&gt;, document.getElementById('root'))
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+      <ol start="2">
+        <li>Open browser and go to DevTools → Network</li>
+        <li>Reload page and observe:
+          <ul>
+            <li>❌ 3+ HTTP requests for CDN libraries</li>
+            <li>❌ React in development mode (unoptimized, ~1 MB)</li>
+            <li>❌ Babel transforms JSX in browser (slow)</li>
+          </ul>
+        </li>
+      </ol>
+
+      <h4>Now compare with Vite:</h4>
+      <ol>
+        <li>In your Vite project, go to Network</li>
+        <li>Observe:
+          <ul>
+            <li>✅ 1 optimized JS file (~150 KB compressed)</li>
+            <li>✅ React in production mode (minified)</li>
+            <li>✅ JSX already transformed (not done in browser)</li>
+          </ul>
+        </li>
+      </ol>
+    </div>
+
+    <h3>🎨 Exercise 5: Import CSS and assets</h3>
+    <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+      <h4>Goal:</h4>
+      <p>Learn to import different types of files in Vite.</p>
+
+      <h4>Steps:</h4>
+      <ol>
+        <li>Create <code>src/components/Card.jsx</code>:</li>
+      </ol>
+      <pre><code class="language-jsx">import './Card.css'
+import logo from '../assets/react.svg'
+
+function Card() {
+  return (
+    &lt;div className="card"&gt;
+      &lt;img src={logo} alt="Logo" /&gt;
+      &lt;h2&gt;My Card&lt;/h2&gt;
+    &lt;/div&gt;
+  )
+}
+
+export default Card</code></pre>
+
+      <ol start="2">
+        <li>Create <code>src/components/Card.css</code>:</li>
+      </ol>
+      <pre><code class="language-css">.card {
+  padding: 20px;
+  border: 2px solid #61dafb;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.card img {
+  width: 100px;
+  height: 100px;
+}</code></pre>
+
+      <ol start="3">
+        <li>Import component in <code>App.jsx</code>:</li>
+      </ol>
+      <pre><code class="language-jsx">import Card from './components/Card'
+
+function App() {
+  return (
+    &lt;div&gt;
+      &lt;Card /&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+      <h4>✅ Verification:</h4>
+      <ul>
+        <li>Component displays with applied styles</li>
+        <li>Image loads correctly</li>
+        <li>In DevTools → Network, you see assets have optimized URLs</li>
+      </ul>
+    </div>
+
+    <h3>🔌 Exercise 6: Configure a plugin</h3>
+    <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+      <h4>Goal:</h4>
+      <p>Customize Vite with a plugin to change port and open browser automatically.</p>
+
+      <h4>Steps:</h4>
+      <ol>
+        <li>Open <code>vite.config.js</code></li>
+        <li>Modify the configuration:</li>
+      </ol>
+      <pre><code class="language-jsx">import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    port: 3000,        // ← Change to port 3000
+    open: true         // ← Open browser automatically
+  }
+})</code></pre>
+
+      <ol start="3">
+        <li>Stop the server (<code>Ctrl + C</code>)</li>
+        <li>Restart: <code>npm run dev</code></li>
+      </ol>
+
+      <h4>✅ Verification:</h4>
+      <ul>
+        <li>Server now runs on <code>http://localhost:3000</code></li>
+        <li>Browser opens automatically on start</li>
+      </ul>
+    </div>
+
+    <h3>🎯 Final Mini Challenge</h3>
+    <div style="background: #fff3cd; padding: 15px; border-radius: 8px; border: 2px solid #ffc107;">
+      <h4>Create a mini counter app with:</h4>
+      <ul>
+        <li>A <code>Counter</code> component with useState</li>
+        <li>Styles in a separate CSS file</li>
+        <li>An imported image/logo</li>
+        <li>Environment variables for the app title</li>
+      </ul>
+
+      <h4>Test:</h4>
+      <ol>
+        <li>Modify component with counter at 20</li>
+        <li>Verify HMR maintains state</li>
+        <li>Run <code>npm run build</code> and check bundle size</li>
+      </ol>
+
+      <h4>🏆 If everything works:</h4>
+      <p>Congratulations! You've mastered Vite fundamentals. You're ready for professional React projects.</p>
+    </div>
+  </article>
+
+  <hr style="margin-top: 40px;">
+  <p style="font-size: 0.9em; color: #666;">
+    💬 <strong>Questions about Vite or bundlers?</strong> Ask my custom GPT:<br>
+    <a href="https://chatgpt.com/g/g-p-696fbea2755481919c8258fb23e8f822-react/" target="_blank" style="color: #61dafb;">
+      React Tutor GPT
+    </a>
+  </p>
+</section>
