@@ -1,0 +1,585 @@
+<section class="box">
+  <h1>🔥 Fast Refresh y Actualizaciones de Estado</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="conceptos">Conceptos</button>
+    <button class="tab-button" data-tab="ejemplos">Ejemplos de Código</button>
+    <button class="tab-button" data-tab="practica">Práctica</button>
+  </div>
+
+  <article id="conceptos" class="tab-content active">
+    <h2>🧠 ¿Qué es Fast Refresh?</h2>
+    <p>
+      <strong>Fast Refresh</strong> es una tecnología específica de React que preserva el estado de tus
+      componentes cuando guardas cambios en el código durante el desarrollo.
+    </p>
+
+    <h3>📖 Ejemplo práctico</h3>
+    <p>Imagina que estás desarrollando un contador:</p>
+    <pre><code class="language-jsx">function Contador() {
+  const [count, setCount] = React.useState(0)
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Contador: {count}&lt;/p&gt;
+      &lt;button onClick={() =&gt; setCount(count + 1)}&gt;Incrementar&lt;/button&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+    <h3>❌ Sin Fast Refresh</h3>
+    <pre style="background: #ffe6e6; padding: 15px; border-radius: 8px; border-left: 4px solid #ff4444;">
+1. Has clickeado varias veces → Contador: 15
+2. Cambias el texto "Incrementar" por "Sumar"
+3. Guardas el archivo
+4. La página se recarga completamente
+5. ❌ El contador vuelve a 0
+</pre>
+
+    <h3>✅ Con Fast Refresh</h3>
+    <pre style="background: #e6ffe6; padding: 15px; border-radius: 8px; border-left: 4px solid #44ff44;">
+1. Has clickeado varias veces → Contador: 15
+2. Cambias el texto "Incrementar" por "Sumar"
+3. Guardas el archivo
+4. El componente se actualiza
+5. ✅ El contador sigue en 15
+</pre>
+
+    <p style="background: #fff3cd; padding: 15px; border-radius: 8px; border-left: 4px solid #ffc107;">
+      <strong>💡 ¡El estado se mantiene!</strong> Esto es súper útil cuando estás desarrollando porque
+      no pierdes el estado de tu aplicación cada vez que guardas un cambio.
+    </p>
+
+    <h2>🧪 Experimenta Fast Refresh tú mismo</h2>
+    <p>
+      Para ver Fast Refresh en acción, sigue estos pasos en un proyecto Vite:
+    </p>
+
+    <div style="background: #e8f5e9; padding: 20px; border-radius: 8px; margin: 20px 0;">
+      <h3 style="margin-top: 0;">Paso 1: Código inicial (App.jsx)</h3>
+      <pre><code class="language-jsx">// src/App.jsx
+import { useState } from 'react'
+
+function App() {
+  const [count, setCount] = useState(0)
+
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Mi Contador&lt;/h1&gt;
+      &lt;p&gt;Contador: {count}&lt;/p&gt;
+      &lt;button onClick={() =&gt; setCount(count + 1)}&gt;
+        Incrementar
+      &lt;/button&gt;
+    &lt;/div&gt;
+  )
+}
+
+export default App</code></pre>
+    </div>
+
+    <div style="background: #fff3cd; padding: 20px; border-radius: 8px; margin: 20px 0;">
+      <h3 style="margin-top: 0;">Paso 2: Ejecuta el proyecto</h3>
+      <pre><code class="language-bash">npm run dev</code></pre>
+      <p>Abre http://localhost:5173/ en tu navegador</p>
+    </div>
+
+    <div style="background: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0;">
+      <h3 style="margin-top: 0;">Paso 3: Incrementa el contador</h3>
+      <p>
+        Haz click en el botón varias veces hasta llegar a <strong>15</strong>
+      </p>
+      <pre style="background: white; padding: 15px; border-radius: 8px; border: 2px solid #2196f3;">Contador: 15 ← El estado actual</pre>
+    </div>
+
+    <div style="background: #ffe6e6; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #f44336;">
+      <h3 style="margin-top: 0;">❌ Sin Fast Refresh (recarga manual)</h3>
+      <p>Si recargas la página manualmente (F5 o Cmd+R):</p>
+      <pre style="background: white; padding: 15px; border-radius: 8px;">Contador: 0 ← ¡Perdiste el estado!</pre>
+      <p><strong>El estado vuelve a 0 porque la página se recargó.</strong></p>
+    </div>
+
+    <div style="background: #e8f5e9; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #4caf50;">
+      <h3 style="margin-top: 0;">✅ Con Fast Refresh (editar código)</h3>
+
+      <p><strong>Paso 4: Edita el código</strong></p>
+      <p>Cambia esta línea en App.jsx:</p>
+
+      <table style="width: 100%; border-collapse: collapse; margin: 10px 0;">
+        <thead>
+          <tr style="background: #333; color: white;">
+            <th style="padding: 10px; text-align: left;">❌ Código original</th>
+            <th style="padding: 10px; text-align: left;">✅ Nuevo código</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 15px; border: 2px solid #f44336; background: white;">
+              <pre style="margin: 0;"><code class="language-jsx">&lt;button onClick={() =&gt; setCount(count + 1)}&gt;
+  Incrementar
+&lt;/button&gt;</code></pre>
+            </td>
+            <td style="padding: 15px; border: 2px solid #4caf50; background: white;">
+              <pre style="margin: 0;"><code class="language-jsx">&lt;button onClick={() =&gt; setCount(count + 1)}&gt;
+  Sumar +1
+&lt;/button&gt;</code></pre>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p><strong>Paso 5: Guarda el archivo (Ctrl+S / Cmd+S)</strong></p>
+
+      <p><strong>¿Qué pasa?</strong></p>
+      <pre style="background: white; padding: 15px; border-radius: 8px; border: 2px solid #4caf50; font-size: 16px;">
+🔥 Fast Refresh detecta el cambio
+⚡ Actualiza el componente instantáneamente
+✅ El botón ahora dice "Sumar +1"
+💾 El contador sigue en 15 ← ¡El estado se preservó!</pre>
+    </div>
+
+    <div style="background: #fff3cd; padding: 20px; border-radius: 8px; margin: 20px 0;">
+      <h3 style="margin-top: 0;">🎯 Otros cambios que puedes probar</h3>
+
+      <p><strong>1. Cambiar el título:</strong></p>
+      <pre><code class="language-jsx">// De:
+&lt;h1&gt;Mi Contador&lt;/h1&gt;
+
+// A:
+&lt;h1&gt;🚀 Contador con Fast Refresh&lt;/h1&gt;
+
+// Estado preservado: ✅</code></pre>
+
+      <p><strong>2. Cambiar el estilo del párrafo:</strong></p>
+      <pre><code class="language-jsx">// De:
+&lt;p&gt;Contador: {count}&lt;/p&gt;
+
+// A:
+&lt;p style={{ fontSize: '24px', color: 'blue' }}&gt;
+  Contador: {count}
+&lt;/p&gt;
+
+// Estado preservado: ✅</code></pre>
+
+      <p><strong>3. Agregar un botón de reset:</strong></p>
+      <pre><code class="language-jsx">// Agregar después del botón Incrementar:
+&lt;button onClick={() =&gt; setCount(0)}&gt;
+  Reset
+&lt;/button&gt;
+
+// Estado preservado: ✅</code></pre>
+    </div>
+
+    <div style="background: #ffe6e6; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #f44336;">
+      <h3 style="margin-top: 0;">⚠️ Cuándo Fast Refresh NO preserva el estado</h3>
+      <p>Fast Refresh pierde el estado en estos casos:</p>
+      <ul>
+        <li>❌ <strong>Cambias el nombre del componente</strong> (de <code>App</code> a <code>Contador</code>)</li>
+        <li>❌ <strong>Cambias la firma del hook</strong> (de <code>useState(0)</code> a <code>useState({count: 0})</code>)</li>
+        <li>❌ <strong>Hay un error de sintaxis</strong> en el código</li>
+        <li>❌ <strong>Cambias el tipo de export</strong> (de default a named)</li>
+      </ul>
+      <p>
+        En estos casos, Vite hace una <strong>recarga completa</strong> y el estado vuelve a su valor inicial.
+      </p>
+    </div>
+
+    <h2>🔄 Fast Refresh vs Hot Module Replacement (HMR)</h2>
+    <p>Aunque parecen lo mismo, hay una diferencia importante:</p>
+
+    <h3>🔧 Hot Module Replacement (HMR)</h3>
+    <div style="background: #f4f4f4; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+      <ul style="margin: 0;">
+        <li>🔧 <strong>Tecnología genérica</strong> para cualquier tipo de código</li>
+        <li>📦 <strong>Funciona con</strong> JavaScript, CSS, imágenes, etc.</li>
+        <li>🔄 <strong>Reemplaza módulos</strong> sin recargar la página</li>
+        <li>⚠️ <strong>No preserva el estado</strong> automáticamente</li>
+        <li>💻 <strong>Usado por</strong> Vite, Webpack, Parcel, etc.</li>
+      </ul>
+
+      <pre style="background: white; padding: 10px; border-radius: 4px; margin-top: 10px;"><code>HMR: "Cambió el archivo CSS → Actualizo solo el CSS"
+HMR: "Cambió el archivo JS → Actualizo ese módulo"</code></pre>
+    </div>
+
+    <h3>⚛️ Fast Refresh</h3>
+    <div style="background: #e3f2fd; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+      <ul style="margin: 0;">
+        <li>⚛️ <strong>Tecnología específica de React</strong></li>
+        <li>🎯 <strong>Solo funciona</strong> con componentes de React</li>
+        <li>💾 <strong>Preserva el estado</strong> de los componentes inteligentemente</li>
+        <li>🔄 <strong>Re-renderiza solo</strong> los componentes que cambiaron</li>
+        <li>✨ <strong>Construido sobre HMR</strong> (lo usa por debajo)</li>
+      </ul>
+
+      <pre style="background: white; padding: 10px; border-radius: 4px; margin-top: 10px;"><code>Fast Refresh: "Cambió el componente → Actualizo Y mantengo el estado"</code></pre>
+    </div>
+
+    <h3>📊 Comparación visual</h3>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+      <thead>
+        <tr style="background: #333; color: white;">
+          <th style="padding: 12px; text-align: left;">Característica</th>
+          <th style="padding: 12px; text-align: center;">HMR</th>
+          <th style="padding: 12px; text-align: center;">Fast Refresh</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background: #f9f9f9;">
+          <td style="padding: 12px; border-bottom: 1px solid #ddd;">Específico de React</td>
+          <td style="padding: 12px; text-align: center; border-bottom: 1px solid #ddd;">❌</td>
+          <td style="padding: 12px; text-align: center; border-bottom: 1px solid #ddd;">✅</td>
+        </tr>
+        <tr>
+          <td style="padding: 12px; border-bottom: 1px solid #ddd;">Preserva estado</td>
+          <td style="padding: 12px; text-align: center; border-bottom: 1px solid #ddd;">⚠️ Manual</td>
+          <td style="padding: 12px; text-align: center; border-bottom: 1px solid #ddd;">✅ Automático</td>
+        </tr>
+        <tr style="background: #f9f9f9;">
+          <td style="padding: 12px; border-bottom: 1px solid #ddd;">Funciona con CSS/Assets</td>
+          <td style="padding: 12px; text-align: center; border-bottom: 1px solid #ddd;">✅</td>
+          <td style="padding: 12px; text-align: center; border-bottom: 1px solid #ddd;">❌ Solo componentes</td>
+        </tr>
+        <tr>
+          <td style="padding: 12px; border-bottom: 1px solid #ddd;">Velocidad</td>
+          <td style="padding: 12px; text-align: center; border-bottom: 1px solid #ddd;">⚡ Rápido</td>
+          <td style="padding: 12px; text-align: center; border-bottom: 1px solid #ddd;">⚡⚡ Más rápido</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>🎯 En resumen</h3>
+    <pre style="background: #e8f5e9; padding: 20px; border-radius: 8px; font-size: 16px; line-height: 1.8;">
+<strong>HMR</strong> = Reemplaza código sin recargar la página
+<strong>Fast Refresh</strong> = HMR + Preservar estado de React
+    </pre>
+
+    <p style="background: #e3f2fd; padding: 15px; border-radius: 8px; border-left: 4px solid #2196f3;">
+      <strong>💡 Fast Refresh usa HMR como base</strong>, pero añade inteligencia específica de React
+      para mantener el estado de tus componentes.
+    </p>
+  </article>
+
+  <article id="ejemplos" class="tab-content">
+    <h2>⚠️ El Problema: Actualizar estado con valor directo</h2>
+    <p>Intenta adivinar qué pasa cuando haces click en este botón:</p>
+
+    <pre><code class="language-jsx">function Contador() {
+  const [count, setCount] = React.useState(0)
+
+  const incrementarTresVeces = () => {
+    setCount(count + 1)
+    setCount(count + 1)
+    setCount(count + 1)
+  }
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Contador: {count}&lt;/p&gt;
+      &lt;button onClick={incrementarTresVeces}&gt;+3&lt;/button&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+    <p style="background: #ffe6e6; padding: 20px; border-radius: 8px; font-size: 18px; text-align: center;">
+      <strong>¿El resultado?</strong> ❌ Solo suma 1, no 3
+    </p>
+
+    <h3>🤔 ¿Por qué pasa esto?</h3>
+    <p>
+      Cuando llamas a <code>setCount</code>, React <strong>no actualiza el estado inmediatamente</strong>.
+      Lo hace de forma <strong>asíncrona</strong>.
+    </p>
+
+    <pre><code class="language-jsx">const incrementarTresVeces = () => {
+  // En este momento, count = 0
+  setCount(count + 1) // Programa: "poner en 0 + 1 = 1"
+  setCount(count + 1) // Programa: "poner en 0 + 1 = 1"
+  setCount(count + 1) // Programa: "poner en 0 + 1 = 1"
+  // count sigue siendo 0 aquí
+
+  // React aplica las actualizaciones después
+  // Como todas dicen "poner en 1", el resultado es 1
+}</code></pre>
+
+    <h3>🔍 Visualización paso a paso</h3>
+    <pre style="background: #fff3cd; padding: 20px; border-radius: 8px; font-family: monospace; line-height: 2;">
+<strong>Estado inicial:</strong> count = 0
+
+<strong>Click en el botón:</strong>
+  ├─ setCount(0 + 1) → "Pon count en 1"
+  ├─ setCount(0 + 1) → "Pon count en 1"
+  └─ setCount(0 + 1) → "Pon count en 1"
+
+<strong>React procesa:</strong>
+  "Todas dicen que count debe ser 1"
+  → count = 1 ❌
+
+<strong>Esperabas:</strong> count = 3 ✅
+</pre>
+
+    <p style="background: #ffe6e6; padding: 15px; border-radius: 8px; border-left: 4px solid #f44336;">
+      <strong>⚠️ El problema:</strong> Es como si dijeras tres veces "pon el contador en 1",
+      en lugar de "suma 1 al contador".
+    </p>
+
+    <h2>✅ La Solución: Usar un callback</h2>
+    <p>La forma correcta es usar una <strong>función callback</strong>:</p>
+
+    <pre><code class="language-jsx">function Contador() {
+  const [count, setCount] = React.useState(0)
+
+  const incrementarTresVeces = () => {
+    setCount((prevCount) => prevCount + 1)
+    setCount((prevCount) => prevCount + 1)
+    setCount((prevCount) => prevCount + 1)
+  }
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Contador: {count}&lt;/p&gt;
+      &lt;button onClick={incrementarTresVeces}&gt;+3&lt;/button&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+    <p style="background: #e6ffe6; padding: 20px; border-radius: 8px; font-size: 18px; text-align: center;">
+      <strong>Ahora sí funciona:</strong> ✅ Suma 3
+    </p>
+
+    <h3>🎯 ¿Cómo funciona el callback?</h3>
+    <pre><code class="language-jsx">setCount((prevCount) => prevCount + 1)</code></pre>
+    <p>Le dices a React: <strong>"Dame el valor más reciente y yo te devuelvo el nuevo valor"</strong></p>
+
+    <h3>🔍 Visualización paso a paso</h3>
+    <pre style="background: #e8f5e9; padding: 20px; border-radius: 8px; font-family: monospace; line-height: 2;">
+<strong>Estado inicial:</strong> count = 0
+
+<strong>Click en el botón:</strong>
+  ├─ setCount(prev => prev + 1)
+  │    └─ prevCount = 0 → devuelve 1
+  │
+  ├─ setCount(prev => prev + 1)
+  │    └─ prevCount = 1 → devuelve 2
+  │
+  └─ setCount(prev => prev + 1)
+       └─ prevCount = 2 → devuelve 3
+
+<strong>React procesa:</strong>
+  0 → 1 → 2 → 3
+  → count = 3 ✅
+</pre>
+
+    <p style="background: #e6ffe6; padding: 15px; border-radius: 8px; border-left: 4px solid #4caf50;">
+      <strong>✅ React procesa las actualizaciones en orden</strong>, usando siempre el valor más reciente.
+    </p>
+
+    <h3>📊 Comparación lado a lado</h3>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+      <thead>
+        <tr style="background: #333; color: white;">
+          <th style="padding: 12px;">❌ Valor directo (Incorrecto)</th>
+          <th style="padding: 12px;">✅ Callback (Correcto)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding: 20px; vertical-align: top; border: 2px solid #f44336;">
+            <pre style="margin: 0;"><code class="language-jsx">setCount(count + 1)
+setCount(count + 1)
+setCount(count + 1)
+
+// Todas usan el mismo count (0)
+// Resultado: 1 ❌</code></pre>
+          </td>
+          <td style="padding: 20px; vertical-align: top; border: 2px solid #4caf50;">
+            <pre style="margin: 0;"><code class="language-jsx">setCount(prev => prev + 1)
+setCount(prev => prev + 1)
+setCount(prev => prev + 1)
+
+// Cada una usa el valor actualizado
+// Resultado: 3 ✅</code></pre>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>🧪 Otros ejemplos comunes</h3>
+
+    <p><strong>❌ Incorrecto - Alternar booleano:</strong></p>
+    <pre><code class="language-jsx">// Si haces click múltiples veces rápido, puede fallar
+setVisible(!visible)</code></pre>
+
+    <p><strong>✅ Correcto - Alternar booleano:</strong></p>
+    <pre><code class="language-jsx">// Siempre funciona correctamente
+setVisible(prev => !prev)</code></pre>
+
+    <p><strong>❌ Incorrecto - Agregar a un array:</strong></p>
+    <pre><code class="language-jsx">// Puede perder items si se actualiza rápido
+setItems([...items, nuevoItem])</code></pre>
+
+    <p><strong>✅ Correcto - Agregar a un array:</strong></p>
+    <pre><code class="language-jsx">// Garantiza que usas el array más reciente
+setItems(prevItems => [...prevItems, nuevoItem])</code></pre>
+  </article>
+
+  <article id="practica" class="tab-content">
+    <h2>🎯 ¿Cuándo usar cada forma?</h2>
+
+    <h3>📝 Valor directo (forma simple)</h3>
+    <div style="background: #e3f2fd; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+      <p><strong>Usa esta forma cuando el nuevo valor es INDEPENDIENTE del valor actual:</strong></p>
+      <pre><code class="language-jsx">// ✅ Bien: el nuevo valor NO depende del anterior
+setNombre('Miguel')
+setMostrar(true)
+setColor('#ff0000')
+setUsuario({ id: 1, nombre: 'Ana' })</code></pre>
+    </div>
+
+    <h3>🔄 Callback (forma con función)</h3>
+    <div style="background: #e8f5e9; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+      <p><strong>Usa esta forma cuando el nuevo valor DEPENDE del valor anterior:</strong></p>
+      <pre><code class="language-jsx">// ✅ Bien: el nuevo valor depende del anterior
+setCount(prev => prev + 1)
+setItems(prevItems => [...prevItems, nuevoItem])
+setVisible(prev => !prev)
+setUsuario(prev => ({ ...prev, edad: prev.edad + 1 }))</code></pre>
+    </div>
+
+    <h3>🚦 Cuándo usar callback (checklist)</h3>
+    <p>Usa <code>setState(prev => ...)</code> cuando:</p>
+    <ul style="font-size: 16px; line-height: 2;">
+      <li>⚡ El nuevo valor <strong>depende del valor anterior</strong></li>
+      <li>🔄 Haces <strong>múltiples actualizaciones seguidas</strong></li>
+      <li>🎯 Quieres <strong>garantizar que usas el valor más reciente</strong></li>
+      <li>🐛 Estás experimentando <strong>bugs de estado desactualizado</strong></li>
+    </ul>
+
+    <h3>📚 Ejercicios para practicar</h3>
+
+    <p><strong>Ejercicio 1:</strong> ¿Cuál es correcto para este caso?</p>
+    <pre><code class="language-jsx">// Necesitas incrementar un contador cuando el usuario hace click
+const handleClick = () => {
+  // Opción A
+  setCount(count + 1)
+
+  // Opción B
+  setCount(prev => prev + 1)
+}</code></pre>
+    <details style="background: #f4f4f4; padding: 15px; border-radius: 8px; margin: 10px 0;">
+      <summary style="cursor: pointer; font-weight: bold;">Ver respuesta</summary>
+      <p style="margin-top: 10px;">
+        <strong>Respuesta: Opción B</strong> es más segura. Si el usuario hace click muy rápido
+        o hay múltiples actualizaciones, la Opción A puede perder algunos clicks. La Opción B
+        garantiza que cada click se cuente correctamente.
+      </p>
+    </details>
+
+    <p><strong>Ejercicio 2:</strong> ¿Cuál es correcto para este caso?</p>
+    <pre><code class="language-jsx">// Necesitas actualizar el nombre del usuario cuando escribe en un input
+const handleChange = (e) => {
+  // Opción A
+  setNombre(e.target.value)
+
+  // Opción B
+  setNombre(prev => e.target.value)
+}</code></pre>
+    <details style="background: #f4f4f4; padding: 15px; border-radius: 8px; margin: 10px 0;">
+      <summary style="cursor: pointer; font-weight: bold;">Ver respuesta</summary>
+      <p style="margin-top: 10px;">
+        <strong>Respuesta: Opción A</strong> está bien. El nuevo valor (<code>e.target.value</code>)
+        es completamente independiente del valor anterior. No necesitas el callback aquí.
+      </p>
+    </details>
+
+    <p><strong>Ejercicio 3:</strong> ¿Qué resultado tendrá este código?</p>
+    <pre><code class="language-jsx">const [count, setCount] = useState(0)
+
+const handleClick = () => {
+  setCount(count + 1)
+  setCount(count + 1)
+  console.log(count) // ¿Qué se imprime?
+}</code></pre>
+    <details style="background: #f4f4f4; padding: 15px; border-radius: 8px; margin: 10px 0;">
+      <summary style="cursor: pointer; font-weight: bold;">Ver respuesta</summary>
+      <p style="margin-top: 10px;">
+        <strong>Se imprime: 0</strong><br>
+        1. El <code>console.log</code> se ejecuta inmediatamente, antes de que React actualice el estado<br>
+        2. Los dos <code>setCount</code> programan actualizaciones pero no las ejecutan de inmediato<br>
+        3. Después de que la función termine, React actualiza el estado a 1 (no a 2, por el problema explicado)
+      </p>
+    </details>
+
+    <h3>🎯 Regla de oro</h3>
+    <pre style="background: #fff3cd; padding: 20px; border-radius: 8px; font-size: 16px; line-height: 1.8; border-left: 4px solid #ffc107;">
+<strong>Si ves el nombre del estado dentro del setState, usa callback:</strong>
+
+❌ setCount(count + 1)        → ¡count está aquí!
+✅ setCount(prev => prev + 1)  → Mejor con callback
+
+✅ setNombre('Ana')            → No usa el valor anterior, está bien
+    </pre>
+
+    <h2>📋 Resumen de la clase</h2>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+      <thead>
+        <tr style="background: #333; color: white;">
+          <th style="padding: 12px; text-align: left;">Concepto</th>
+          <th style="padding: 12px; text-align: left;">Qué aprendimos</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background: #f9f9f9;">
+          <td style="padding: 12px; border-bottom: 1px solid #ddd;"><strong>🔥 Fast Refresh</strong></td>
+          <td style="padding: 12px; border-bottom: 1px solid #ddd;">
+            Tecnología de React que preserva el estado al guardar cambios durante el desarrollo
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 12px; border-bottom: 1px solid #ddd;"><strong>🔄 HMR vs Fast Refresh</strong></td>
+          <td style="padding: 12px; border-bottom: 1px solid #ddd;">
+            HMR es genérico, Fast Refresh es específico de React y preserva estado automáticamente
+          </td>
+        </tr>
+        <tr style="background: #f9f9f9;">
+          <td style="padding: 12px; border-bottom: 1px solid #ddd;"><strong>📝 Callback en setState</strong></td>
+          <td style="padding: 12px; border-bottom: 1px solid #ddd;">
+            Usar función cuando el nuevo valor depende del anterior
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 12px; border-bottom: 1px solid #ddd;"><strong>⚡ Múltiples actualizaciones</strong></td>
+          <td style="padding: 12px; border-bottom: 1px solid #ddd;">
+            El callback garantiza que uses el valor más reciente en cada actualización
+          </td>
+        </tr>
+        <tr style="background: #f9f9f9;">
+          <td style="padding: 12px; border-bottom: 1px solid #ddd;"><strong>🎯 Cuándo usar cada forma</strong></td>
+          <td style="padding: 12px; border-bottom: 1px solid #ddd;">
+            Valor directo para independientes, callback para dependientes del anterior
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p style="background: #e3f2fd; padding: 20px; border-radius: 8px; margin-top: 30px; font-size: 16px; border-left: 4px solid #2196f3;">
+      <strong>💡 Recuerda:</strong> Usa <code>setState((prev) => ...)</code> cuando el nuevo valor
+      depende del anterior. Fast Refresh hace que tu experiencia de desarrollo sea más fluida al
+      mantener el estado mientras editas código.
+    </p>
+  </article>
+
+  <div style="margin-top: 40px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; text-align: center;">
+    <strong style="color: white; font-size: 1.1em; display: block; margin-bottom: 15px;">🤖 ¿Quieres profundizar más?</strong>
+    <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+      <a href="https://www.jscamp.dev/introduccion-a-react/fast-refresh-update-state"
+         target="_blank"
+         style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+        📚 Lee el artículo completo en JSCamp →
+      </a>
+      <a href="https://chatgpt.com/c/69d6eceb-8364-8386-ba70-c6a8f953dab7"
+         target="_blank"
+         style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+        💬 Pregúntale a ChatGPT sobre Fast Refresh →
+      </a>
+    </div>
+  </div>
+</section>

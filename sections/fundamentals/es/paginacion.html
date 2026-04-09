@@ -1,0 +1,353 @@
+<section class="box">
+  <h1>Paginación — Props y Comunicación Padre-Hijo</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">Conceptos</button>
+    <button class="tab-button" data-tab="code-examples">Ejemplos de Código</button>
+    <button class="tab-button" data-tab="exercises">Ejercicio Práctico</button>
+  </div>
+
+  <!-- ===================== CONCEPTS ===================== -->
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+
+      <h3>⬇️ Flujo de Datos: Padre → Hijo</h3>
+      <p>
+        El componente padre (<code>App</code>) controla los datos y los pasa al hijo (<code>Pagination</code>) como props.
+        El hijo solo sabe renderizar lo que recibe — no maneja ni decide los datos.
+      </p>
+
+      <pre><code>App (padre)
+  │
+  ├─ currentPage: 3
+  ├─ totalPages: 5
+  │
+  ▼
+Pagination (hijo)
+  └─ Renderiza botones según estos valores</code></pre>
+
+      <hr />
+
+      <h3>🎯 Props por Defecto</h3>
+      <p>¿Qué pasa si el componente se usa sin pasarle props? Sin valores por defecto, se rompe.</p>
+
+      <pre><code class="language-jsx">// ❌ Forma antigua — verboso
+function Pagination({ currentPage, totalPages }) {
+  currentPage = currentPage || 1
+  totalPages = totalPages || 5
+  // ...
+}
+
+// ✅ Forma moderna — ES6, limpio y directo
+function Pagination({ currentPage = 1, totalPages = 5 }) {
+  // Si no se pasan props, usa los valores por defecto
+}</code></pre>
+
+      <pre><code class="language-jsx">// Sin props → usa valores por defecto
+&lt;Pagination /&gt;
+// currentPage = 1, totalPages = 5
+
+// Con una prop → combina pasada + defecto
+&lt;Pagination currentPage={3} /&gt;
+// currentPage = 3, totalPages = 5
+
+// Con ambas → usa las pasadas
+&lt;Pagination currentPage={3} totalPages={10} /&gt;
+// currentPage = 3, totalPages = 10</code></pre>
+
+      <hr />
+
+      <h3>🎨 Estilos Inline con Objetos</h3>
+      <p>
+        En React, los estilos inline se pasan como <strong>objetos JavaScript</strong>, no como strings.
+        Las propiedades CSS usan <strong>camelCase</strong>.
+      </p>
+
+      <pre><code class="language-jsx">// Objeto de estilos — las propiedades son dinámicas
+const styleLinkLeft = {
+  opacity: currentPage === 1 ? 0.5 : 1,
+  cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+}
+
+// Se aplica con la prop style={}
+&lt;a href="#" style={styleLinkLeft}&gt;...&lt;/a&gt;</code></pre>
+
+      <pre><code>CSS normal       →  React
+background-color →  backgroundColor
+font-size        →  fontSize
+border-radius    →  borderRadius
+z-index          →  zIndex</code></pre>
+
+      <hr />
+
+      <h3>🚫 <code>preventDefault()</code></h3>
+      <p>
+        Los <code>&lt;a href="#"&gt;</code> por defecto navegan al inicio de la página al hacer click.
+        <code>preventDefault()</code> cancela ese comportamiento y ejecuta solo tu lógica.
+      </p>
+
+      <pre><code class="language-jsx">const handleNext = (e) => {
+  e.preventDefault()  // ← cancela el scroll al inicio
+  // ejecuta tu lógica
+}</code></pre>
+
+      <hr />
+
+      <h3>📛 Convención de Nombres para Event Handlers</h3>
+      <p>React tiene una convención clara para nombrar funciones relacionadas con eventos:</p>
+
+      <pre><code>Props que reciben funciones   →  on + Evento
+  onPageChange, onClick, onSubmit
+
+Funciones dentro del componente  →  handle + Evento
+  handleNext, handlePrevious, handlePageClick</code></pre>
+
+      <pre><code class="language-jsx">// En el padre: la función se llama handle...
+const handlePageChange = (page) => {
+  setCurrentPage(page)
+}
+
+// Al pasarla al hijo: la prop se llama on...
+&lt;Pagination onPageChange={handlePageChange} /&gt;
+
+// En el hijo: recibe on... y la invoca
+function Pagination({ onPageChange }) {
+  return &lt;button onClick={() =&gt; onPageChange(2)}&gt;2&lt;/button&gt;
+}</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== CODE EXAMPLES ===================== -->
+  <article id="code-examples" class="tab-content">
+    <div class="description">
+
+      <h3>🔢 Generando el Array de Páginas</h3>
+      <p>Para renderizar los botones de página necesitamos un array de números:</p>
+
+      <pre><code class="language-javascript">const pages = Array.from({ length: totalPages }, (_, i) => i + 1)
+
+// Si totalPages = 5 → [1, 2, 3, 4, 5]
+// Si totalPages = 3 → [1, 2, 3]</code></pre>
+
+      <pre><code>¿Cómo funciona?
+
+Array.from()             → crea un array nuevo
+{ length: totalPages }   → define cuántos elementos
+(_, i) => i + 1          → _ ignora el valor, i es el índice
+                            índice 0 → página 1
+                            índice 1 → página 2
+                            índice n → página n+1</code></pre>
+
+      <hr />
+
+      <h3>🔄 Renderizando la Lista con <code>.map()</code></h3>
+
+      <pre><code class="language-jsx">{pages.map((page) => (
+  &lt;a
+    key={page}
+    className={currentPage === page ? 'is-active' : ''}
+    href="#"
+  &gt;
+    {page}
+  &lt;/a&gt;
+))}</code></pre>
+
+      <pre><code>key={page}  → obligatorio en listas; ayuda a React a identificar cada elemento
+className   → ternaria para aplicar 'is-active' solo a la página actual</code></pre>
+
+      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+        <strong>💡 Nota:</strong> Profundizaremos en renderizado de listas con <code>.map()</code> en la próxima clase.
+        Por ahora entendé que transforma un array de datos en un array de elementos JSX.
+      </p>
+
+      <hr />
+
+      <h3>🧩 Componente Pagination Completo</h3>
+
+      <pre><code class="language-jsx">// src/components/Pagination.jsx
+
+function Pagination({ currentPage = 1, totalPages = 5 }) {
+  const pages = Array.from({ length: totalPages }, (_, i) => i + 1)
+
+  const styleLinkLeft = {
+    opacity: currentPage === 1 ? 0.5 : 1,
+    cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+  }
+
+  const styleLinkRight = {
+    opacity: currentPage === totalPages ? 0.5 : 1,
+    cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+  }
+
+  return (
+    &lt;nav className="pagination"&gt;
+
+      {/* Botón anterior */}
+      &lt;a href="#" style={styleLinkLeft}&gt;
+        &lt;svg width="16" height="16" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor"
+          strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+        &gt;
+          &lt;path stroke="none" d="M0 0h24v24H0z" fill="none" /&gt;
+          &lt;path d="M15 6l-6 6l6 6" /&gt;
+        &lt;/svg&gt;
+      &lt;/a&gt;
+
+      {/* Botones de página */}
+      {pages.map((page) => (
+        &lt;a
+          key={page}
+          className={currentPage === page ? 'is-active' : ''}
+          href="#"
+        &gt;
+          {page}
+        &lt;/a&gt;
+      ))}
+
+      {/* Botón siguiente */}
+      &lt;a href="#" style={styleLinkRight}&gt;
+        &lt;svg width="16" height="16" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor"
+          strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
+        &gt;
+          &lt;path stroke="none" d="M0 0h24v24H0z" fill="none" /&gt;
+          &lt;path d="M9 6l6 6l-6 6" /&gt;
+        &lt;/svg&gt;
+      &lt;/a&gt;
+
+    &lt;/nav&gt;
+  )
+}
+
+export default Pagination</code></pre>
+
+      <hr />
+
+      <h3>🏗️ Usando Pagination en App</h3>
+
+      <pre><code class="language-jsx">// src/App.jsx
+import Pagination from './components/Pagination'
+
+function App() {
+  const currentPage = 3
+  const totalPages = 5
+
+  return (
+    &lt;&gt;
+      &lt;header&gt;...&lt;/header&gt;
+
+      &lt;main&gt;
+        {/* ...listings */}
+        &lt;Pagination currentPage={currentPage} totalPages={totalPages} /&gt;
+      &lt;/main&gt;
+
+      &lt;footer&gt;...&lt;/footer&gt;
+    &lt;/&gt;
+  )
+}
+
+export default App</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== EXERCISES ===================== -->
+  <article id="exercises" class="tab-content">
+    <div class="description">
+
+      <h3>💪 Ejercicio: Pagination con Callbacks</h3>
+      <p>
+        El componente actual solo muestra la paginación — los clicks no hacen nada todavía.
+        Tu objetivo: agregar <strong>callbacks</strong> para que el hijo le comunique al padre qué página se seleccionó.
+      </p>
+
+      <h4>Paso 1 — Recibir la función como prop</h4>
+      <pre><code class="language-jsx">// Agregá onPageChange a las props del componente
+function Pagination({ currentPage = 1, totalPages = 5, onPageChange }) {
+  // ...
+}</code></pre>
+
+      <h4>Paso 2 — Llamarla en los event handlers</h4>
+      <pre><code class="language-jsx">const handlePrevious = (e) => {
+  e.preventDefault()
+  if (currentPage &gt; 1) onPageChange(currentPage - 1)
+}
+
+const handleNext = (e) => {
+  e.preventDefault()
+  if (currentPage &lt; totalPages) onPageChange(currentPage + 1)
+}
+
+const handlePageClick = (e, page) => {
+  e.preventDefault()
+  onPageChange(page)
+}</code></pre>
+
+      <h4>Paso 3 — Conectar en App con useState</h4>
+      <pre><code class="language-jsx">import { useState } from 'react'
+import Pagination from './components/Pagination'
+
+function App() {
+  const [currentPage, setCurrentPage] = useState(1)
+  const totalPages = 5
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page)
+    console.log('Página seleccionada:', page)
+  }
+
+  return (
+    &lt;main&gt;
+      &lt;p&gt;Estás en la página {currentPage}&lt;/p&gt;
+      &lt;Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      /&gt;
+    &lt;/main&gt;
+  )
+}</code></pre>
+
+      <pre><code>Flujo completo:
+
+App                        Pagination
+ │                              │
+ ├─ currentPage: 1              │
+ ├─ handlePageChange ──────────→│  prop: onPageChange
+ │                              │
+ │                              │  click → onPageChange(2)
+ │                              │
+ │←─────────────────────────────┤
+ │  setCurrentPage(2)           │
+ │  re-render                   │
+ └─ currentPage: 2 ────────────→│  nueva prop, re-render</code></pre>
+
+      <hr />
+
+      <h3>✅ Resumen de la Clase</h3>
+      <pre><code>🧩 Pagination       — componente de navegación entre páginas
+📊 Array.from()     — generar arrays de números [1, 2, 3...]
+🔄 .map()           — transformar array de datos en JSX
+🎯 Props por defecto — { prop = valorDefecto } en ES6
+🎨 Estilos inline   — objetos JS con propiedades camelCase
+🚫 preventDefault() — cancelar comportamiento nativo del navegador
+📛 Naming convention — onEvento para props, handleEvento para funciones</code></pre>
+
+      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+        <strong>💡 Próxima clase:</strong> Callbacks — cómo pasar funciones como props para que los
+        componentes hijos puedan comunicarse con sus padres.
+      </p>
+
+    </div>
+  </article>
+
+  <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-left: 4px solid #007bff; border-radius: 4px;">
+    <p><strong>📚 Recursos Adicionales:</strong></p>
+    <p>
+      Para profundizar en props y comunicación entre componentes,
+      consultá <a href="https://www.jscamp.dev/introduccion-a-react/props-comunicacion-componentes" target="_blank" style="color: #007bff; text-decoration: none;">JSCamp — Props: Comunicación entre Componentes</a>.
+    </p>
+  </div>
+
+</section>

@@ -1,0 +1,431 @@
+<section class="box">
+  <h1>Props — Component Communication</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">Concepts</button>
+    <button class="tab-button" data-tab="code-examples">Code Examples</button>
+    <button class="tab-button" data-tab="exercises">Practical Exercise</button>
+  </div>
+
+  <!-- ===================== CONCEPTS ===================== -->
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+
+      <h3>🎁 What are Props?</h3>
+      <p>
+        <strong>Props</strong> (short for <em>properties</em>) are arguments you pass to a React component,
+        the same way you pass arguments to a function.
+      </p>
+
+      <pre><code>// Regular function
+function greet(name) {
+  return `Hello ${name}`
+}
+greet('Miguel')  // "Hello Miguel"
+
+// React component — same idea
+function Greeting({ name }) {
+  return &lt;h1&gt;Hello {name}&lt;/h1&gt;
+}
+&lt;Greeting name="Miguel" /&gt;  // &lt;h1&gt;Hello Miguel&lt;/h1&gt;</code></pre>
+
+      <p>Props have 4 key characteristics:</p>
+      <pre><code>📦 They are objects with the data you pass to the component
+⬇️ They flow from parent to child (never the other way)
+🔒 They are immutable (cannot be modified inside the component)
+🔄 They make components reusable</code></pre>
+
+      <hr />
+
+      <h3>⬇️ One-Way Data Flow</h3>
+      <p>Props always flow from parent to child. The flow is unidirectional:</p>
+
+      <pre><code>App (parent)
+  │
+  ├─ passes: title="Frontend Developer"
+  ├─ passes: company="TechCorp"
+  │
+  ▼
+JobCard (child)
+  └─ uses: {title} and {company} to render</code></pre>
+
+      <p style="padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;">
+        <strong>⚠️ Fundamental rule:</strong> A child component can <strong>never</strong> pass props to its parent directly.
+        For that, you use callbacks — which we'll cover later.
+      </p>
+
+      <hr />
+
+      <h3>🔓 Destructuring Props</h3>
+      <p>There are two ways to receive props. The second one is recommended:</p>
+
+      <pre><code class="language-jsx">// ❌ Without destructuring — repetitive and verbose
+function JobCard(props) {
+  return (
+    &lt;article&gt;
+      &lt;h3&gt;{props.title}&lt;/h3&gt;
+      &lt;p&gt;{props.company}&lt;/p&gt;
+    &lt;/article&gt;
+  )
+}
+
+// ✅ With destructuring — clean and readable
+function JobCard({ title, company }) {
+  return (
+    &lt;article&gt;
+      &lt;h3&gt;{title}&lt;/h3&gt;
+      &lt;p&gt;{company}&lt;/p&gt;
+    &lt;/article&gt;
+  )
+}</code></pre>
+
+      <p>Benefits of destructuring:</p>
+      <pre><code>✅ Cleaner and more readable code
+✅ You immediately see which props the component uses
+✅ Less code repetition</code></pre>
+
+      <hr />
+
+      <h3>🎯 Default Props</h3>
+      <p>You can assign a default value when a prop is not provided:</p>
+
+      <pre><code class="language-jsx">function JobCard({ title, company, location = 'Remote' }) {
+  return (
+    &lt;article&gt;
+      &lt;h3&gt;{title}&lt;/h3&gt;
+      &lt;p&gt;{company}&lt;/p&gt;
+      &lt;p&gt;{location}&lt;/p&gt;  {/* "Remote" if not passed */}
+    &lt;/article&gt;
+  )
+}
+
+// Without location → uses "Remote"
+&lt;JobCard title="Frontend Dev" company="TechCorp" /&gt;
+
+// With location → uses that value
+&lt;JobCard title="Frontend Dev" company="TechCorp" location="Madrid" /&gt;</code></pre>
+
+      <hr />
+
+      <h3>❓ Conditional Rendering</h3>
+      <p>You can use props to show or hide content. Two approaches:</p>
+
+      <p><strong><code>&&</code> operator</strong> — renders if <code>true</code>, renders nothing if <code>false</code>:</p>
+      <pre><code class="language-jsx">{isRemote &amp;&amp; &lt;span&gt;🏠 Remote&lt;/span&gt;}
+{isFeatured &amp;&amp; &lt;span&gt;⭐ Featured&lt;/span&gt;}</code></pre>
+
+      <p style="padding: 15px; background: #fce4ec; border-left: 4px solid #e53935; border-radius: 4px;">
+        <strong>⚠️ Classic trap with <code>&&</code>:</strong> if the value is not a boolean but a number,
+        React renders the number <code>0</code> on screen.<br/><br/>
+        <code>{results.length &amp;&amp; &lt;span&gt;Results&lt;/span&gt;}</code><br/>
+        If <code>results.length</code> is <code>0</code>, React renders the number <code>0</code> in the UI.
+      </p>
+
+      <p><strong>Ternary</strong> — the safest and most expressive option:</p>
+      <pre><code class="language-jsx">{isRemote ? &lt;span&gt;🏠 Remote&lt;/span&gt; : null}
+{results.length &gt; 0 ? &lt;span&gt;Results&lt;/span&gt; : null}</code></pre>
+
+      <p>The ternary always works correctly because the result is explicit.</p>
+
+      <hr />
+
+      <h3>🧩 Fragments — Group Without Polluting the DOM</h3>
+      <p>
+        React has a rule: a component can only return <strong>one root element</strong>.
+        The traditional solution is wrapping in a <code>&lt;div&gt;</code>, but that adds unnecessary nodes to the DOM.
+      </p>
+
+      <pre><code class="language-jsx">// ❌ Error — multiple elements without a wrapper
+function JobActions() {
+  return (
+    &lt;button&gt;Apply&lt;/button&gt;
+    &lt;button&gt;Save&lt;/button&gt;
+  )
+}
+
+// ⚠️ Works, but adds an unnecessary &lt;div&gt;
+function JobActions() {
+  return (
+    &lt;div&gt;
+      &lt;button&gt;Apply&lt;/button&gt;
+      &lt;button&gt;Save&lt;/button&gt;
+    &lt;/div&gt;
+  )
+}
+
+// ✅ Fragment — groups without adding DOM nodes
+function JobActions() {
+  return (
+    &lt;&gt;
+      &lt;button&gt;Apply&lt;/button&gt;
+      &lt;button&gt;Save&lt;/button&gt;
+    &lt;/&gt;
+  )
+}</code></pre>
+
+      <p>Simple rule to choose:</p>
+      <pre><code>Need styles or event handlers on the wrapper  → &lt;div&gt;
+Just grouping elements, no wrapper needed     → &lt;&gt;&lt;/&gt;</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== CODE EXAMPLES ===================== -->
+  <article id="code-examples" class="tab-content">
+    <div class="description">
+
+      <h3>📦 Types of Values You Can Pass as Props</h3>
+
+      <pre><code class="language-jsx">// String
+&lt;JobCard title="Frontend Developer" location="Madrid" /&gt;
+
+// Number — always in curly braces, never in quotes
+&lt;JobCard salary={45000} experience={3} /&gt;
+
+// Boolean
+&lt;JobCard isRemote={true} isFeatured={false} /&gt;
+&lt;JobCard isRemote /&gt;          {/* shorthand for true */}
+
+// Array
+&lt;JobCard tags={['React', 'TypeScript', 'CSS']} /&gt;
+
+// Object
+&lt;JobCard
+  job={{
+    title: 'Frontend Developer',
+    company: 'TechCorp',
+    salary: 45000,
+  }}
+/&gt;
+
+// Function (callback)
+&lt;JobCard onApply={() =&gt; console.log('Applying...')} /&gt;</code></pre>
+
+      <hr />
+
+      <h3>🏗️ Nested Destructuring</h3>
+      <p>When you pass an object as a prop, you can destructure its content in two ways:</p>
+
+      <pre><code class="language-jsx">// Option 1: destructure inside the component (more readable)
+function JobCard({ job }) {
+  const { title, company, location } = job
+
+  return (
+    &lt;article&gt;
+      &lt;h3&gt;{title}&lt;/h3&gt;
+      &lt;p&gt;{company}&lt;/p&gt;
+      &lt;p&gt;{location}&lt;/p&gt;
+    &lt;/article&gt;
+  )
+}
+
+// Option 2: destructure in the parameters (more compact)
+function JobCard({ job: { title, company, location } }) {
+  return (
+    &lt;article&gt;
+      &lt;h3&gt;{title}&lt;/h3&gt;
+      &lt;p&gt;{company}&lt;/p&gt;
+      &lt;p&gt;{location}&lt;/p&gt;
+    &lt;/article&gt;
+  )
+}</code></pre>
+
+      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+        <strong>💡 Recommendation:</strong> Option 1 is more readable, especially when the object has many properties.
+      </p>
+
+      <hr />
+
+      <h3>🧩 Component Composition</h3>
+      <p>
+        Props let you build complex components from simple ones.
+        This is one of the most powerful patterns in React:
+      </p>
+
+      <pre><code class="language-jsx">// Simple, reusable component
+function Badge({ children, type = 'default' }) {
+  return &lt;span className={`badge badge-${type}`}&gt;{children}&lt;/span&gt;
+}
+
+// Component that composes Badge
+function JobCard({ title, isRemote, isFeatured }) {
+  return (
+    &lt;article&gt;
+      &lt;h3&gt;{title}&lt;/h3&gt;
+      {isRemote &amp;&amp; &lt;Badge type="info"&gt;🏠 Remote&lt;/Badge&gt;}
+      {isFeatured &amp;&amp; &lt;Badge type="success"&gt;⭐ Featured&lt;/Badge&gt;}
+    &lt;/article&gt;
+  )
+}</code></pre>
+
+      <pre><code>Benefits of composition:
+
+♻️ Badge is reusable anywhere in the app
+🧩 Easy to maintain — changing Badge updates everywhere
+📖 More readable and declarative code</code></pre>
+
+      <hr />
+
+      <h3>❓ Conditional Rendering with Fragments</h3>
+
+      <pre><code class="language-jsx">function JobCard({ job, showDetails }) {
+  return (
+    &lt;article&gt;
+      &lt;h3&gt;{job.title}&lt;/h3&gt;
+
+      {showDetails &amp;&amp; (
+        &lt;&gt;
+          &lt;p&gt;{job.description}&lt;/p&gt;
+          &lt;p&gt;{job.requirements}&lt;/p&gt;
+          &lt;p&gt;{job.benefits}&lt;/p&gt;
+        &lt;/&gt;
+      )}
+    &lt;/article&gt;
+  )
+}</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== EXERCISES ===================== -->
+  <article id="exercises" class="tab-content">
+    <div class="description">
+
+      <h3>💪 Exercise: Full JobCard with Props</h3>
+      <p>
+        Now we put it all together. You'll build a <code>JobCard</code> component that receives
+        different types of props and conditionally renders badges and details.
+      </p>
+
+      <h4>JobCard.jsx</h4>
+      <pre><code class="language-jsx">function JobCard({ job, isRemote, isFeatured, isNew }) {
+  const { title, company, location, salary, description, tags } = job
+
+  return (
+    &lt;article className={`job-card ${isFeatured ? 'featured' : ''}`}&gt;
+
+      &lt;header className="job-card-header"&gt;
+        &lt;h3 className="job-title"&gt;{title}&lt;/h3&gt;
+        &lt;p className="job-company"&gt;{company}&lt;/p&gt;
+
+        &lt;div className="badges"&gt;
+          {isNew &amp;&amp; &lt;span className="badge new"&gt;🆕 New&lt;/span&gt;}
+          {isFeatured &amp;&amp; &lt;span className="badge featured"&gt;⭐ Featured&lt;/span&gt;}
+          {isRemote &amp;&amp; &lt;span className="badge remote"&gt;🏠 Remote&lt;/span&gt;}
+        &lt;/div&gt;
+      &lt;/header&gt;
+
+      &lt;div className="job-card-body"&gt;
+        &lt;p className="job-location"&gt;📍 {location}&lt;/p&gt;
+        &lt;p className="job-salary"&gt;💰 {salary}&lt;/p&gt;
+        &lt;p className="job-description"&gt;{description}&lt;/p&gt;
+      &lt;/div&gt;
+
+      &lt;footer className="job-card-footer"&gt;
+        &lt;span className="job-tags"&gt;{tags.join(', ')}&lt;/span&gt;
+        &lt;button className="btn-apply"&gt;Apply&lt;/button&gt;
+      &lt;/footer&gt;
+
+    &lt;/article&gt;
+  )
+}
+
+export default JobCard</code></pre>
+
+      <h4>App.jsx — usage with real data</h4>
+      <pre><code class="language-jsx">function App() {
+  return (
+    &lt;main&gt;
+      &lt;h2&gt;Available Jobs&lt;/h2&gt;
+
+      &lt;div className="jobs-grid"&gt;
+
+        &lt;JobCard
+          job={{
+            title: 'Frontend Developer',
+            company: 'TechCorp',
+            location: 'Madrid, Spain',
+            salary: '€45,000 — €60,000',
+            description: 'Looking for a frontend developer with React experience.',
+            tags: ['React', 'TypeScript', 'CSS'],
+          }}
+          isFeatured={true}
+          isNew={true}
+          isRemote={false}
+        /&gt;
+
+        &lt;JobCard
+          job={{
+            title: 'Backend Developer',
+            company: 'DataStack',
+            location: 'Barcelona, Spain',
+            salary: '€50,000 — €70,000',
+            description: 'Backend developer for Node.js and databases.',
+            tags: ['Node.js', 'PostgreSQL', 'API'],
+          }}
+          isFeatured={false}
+          isNew={false}
+          isRemote={true}
+        /&gt;
+
+        &lt;JobCard
+          job={{
+            title: 'Full Stack Developer',
+            company: 'StartupX',
+            location: 'Remote',
+            salary: '€40,000 — €55,000',
+            description: 'Full stack developer for a growing startup.',
+            tags: ['React', 'Node.js', 'MongoDB'],
+          }}
+          isFeatured={false}
+          isNew={true}
+          isRemote={true}
+        /&gt;
+
+      &lt;/div&gt;
+    &lt;/main&gt;
+  )
+}</code></pre>
+
+      <hr />
+
+      <h3>🎯 Things to Practice</h3>
+      <pre><code>1. Add an "applyUrl" prop (string) and make the "Apply"
+   button open that link in a new tab.
+
+2. Add a "salary" prop with default value "To be agreed"
+   when not provided.
+
+3. Refactor the badges into a separate &lt;Badge&gt; component
+   that receives children and type as props.
+
+4. Use Fragment (&lt;&gt;&lt;/&gt;) wherever you have unnecessary divs.</code></pre>
+
+      <hr />
+
+      <h3>✅ Class Summary</h3>
+      <pre><code>🎁 Props         — arguments you pass to components
+⬇️ Flow          — always parent to child, never the reverse
+🔓 Destructure   — { title, company } in the parameters
+🎯 Defaults      — location = 'Remote' if not passed
+❓ Conditional   — ternary is safer than &&
+🧩 Fragments     — &lt;&gt;&lt;/&gt; to group without polluting the DOM</code></pre>
+
+      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+        <strong>💡 Next class:</strong> Rendering lists with <code>.map()</code> and importing data
+        from a JSON file to automatically create multiple JobCards.
+      </p>
+
+    </div>
+  </article>
+
+
+  <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-left: 4px solid #007bff; border-radius: 4px;">
+    <p><strong>📚 Additional Resources:</strong></p>
+    <p>
+      To go deeper on Props and component communication,
+      check out <a href="https://www.jscamp.dev/introduccion-a-react/props-comunicacion-componentes" target="_blank" style="color: #007bff; text-decoration: none;">JSCamp — Props: Component Communication</a>.
+    </p>
+  </div>
+
+</section>

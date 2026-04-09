@@ -1,0 +1,409 @@
+<section class="box">
+  <h1>Módulos JavaScript — Import y Export</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">Conceptos</button>
+    <button class="tab-button" data-tab="code-examples">Ejemplos de Código</button>
+    <button class="tab-button" data-tab="exercises">Errores y Ejercicio</button>
+  </div>
+
+  <!-- ===================== CONCEPTS ===================== -->
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+
+      <h3>😱 El Problema: Todo en un Archivo</h3>
+      <p>
+        A medida que tu aplicación crece, tener todo en un solo archivo se vuelve insostenible:
+      </p>
+
+      <pre><code class="language-jsx">// App.jsx — 500 líneas de código 😱
+
+function Header() { return &lt;header&gt;...&lt;/header&gt; }
+function Footer() { return &lt;footer&gt;...&lt;/footer&gt; }
+function JobCard({ job }) { return &lt;article&gt;...&lt;/article&gt; }
+function JobList({ jobs }) { return &lt;div&gt;...&lt;/div&gt; }
+function SearchForm() { return &lt;form&gt;...&lt;/form&gt; }
+
+function App() {
+  return (
+    &lt;div&gt;
+      &lt;Header /&gt;
+      &lt;SearchForm /&gt;
+      &lt;JobList /&gt;
+      &lt;Footer /&gt;
+    &lt;/div&gt;
+  )
+}
+
+export default App</code></pre>
+
+      <pre><code>📜 Difícil de leer     — 500+ líneas en un archivo
+🔍 Difícil de encontrar — ¿Dónde está el componente que necesito?
+🐛 Difícil de depurar  — Todo mezclado
+👥 Difícil de colaborar — Conflictos en Git
+♻️ No reutilizable     — No podés usar estos componentes en otros archivos</code></pre>
+
+      <hr />
+
+      <h3>✅ La Solución: Módulos</h3>
+      <p>Separamos cada componente en su propio archivo y usamos <code>import</code> / <code>export</code>:</p>
+
+      <pre><code>src/
+├── components/
+│   ├── Header.jsx
+│   ├── Footer.jsx
+│   ├── JobCard.jsx
+│   ├── JobList.jsx
+│   └── SearchForm.jsx
+└── App.jsx</code></pre>
+
+      <h4>Paso 1 — Crear el archivo del componente</h4>
+      <pre><code class="language-jsx">// src/components/Header.jsx
+
+function Header() {
+  return (
+    &lt;header className="header"&gt;
+      &lt;h1&gt;DevJobs&lt;/h1&gt;
+      &lt;nav&gt;
+        &lt;a href="#jobs"&gt;Trabajos&lt;/a&gt;
+        &lt;a href="#about"&gt;Acerca&lt;/a&gt;
+      &lt;/nav&gt;
+    &lt;/header&gt;
+  )
+}
+
+export default Header</code></pre>
+
+      <h4>Paso 2 — Importarlo en App.jsx</h4>
+      <pre><code class="language-jsx">// src/App.jsx
+import Header from './components/Header'
+
+function App() {
+  return (
+    &lt;div className="app"&gt;
+      &lt;Header /&gt;
+    &lt;/div&gt;
+  )
+}
+
+export default App</code></pre>
+
+      <hr />
+
+      <h3>📤 Export Default vs Export Named</h3>
+
+      <h4>Export Default — una exportación principal por archivo</h4>
+      <pre><code class="language-jsx">// Header.jsx
+function Header() {
+  return &lt;header&gt;...&lt;/header&gt;
+}
+
+export default Header</code></pre>
+
+      <pre><code class="language-jsx">// Al importar, podés usar CUALQUIER nombre
+import Header from './components/Header'
+import MyHeader from './components/Header'  // ✅ también funciona
+import Cabecera from './components/Header'  // ✅ también funciona</code></pre>
+
+      <p style="padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;">
+        <strong>⚠️ Problema:</strong> Si cada importador elige un nombre diferente para el mismo componente,
+        el código se vuelve inconsistente y difícil de seguir.
+      </p>
+
+      <h4>Export Named — múltiples exports con nombres específicos</h4>
+      <pre><code class="language-jsx">// Header.jsx
+export function Header() {
+  return &lt;header&gt;...&lt;/header&gt;
+}
+
+export function HeaderLogo() {
+  return &lt;img src="logo.png" alt="Logo" /&gt;
+}
+
+export function HeaderNav() {
+  return &lt;nav&gt;...&lt;/nav&gt;
+}</code></pre>
+
+      <pre><code class="language-jsx">// Al importar, DEBÉS usar el nombre exacto con llaves {}
+import { Header, HeaderLogo, HeaderNav } from './components/Header'</code></pre>
+
+      <hr />
+
+      <h3>🏆 ¿Por qué Preferimos Named Exports?</h3>
+
+      <h4>Consistencia en toda la app</h4>
+      <pre><code class="language-jsx">// ❌ Con default export — cada archivo puede elegir un nombre diferente
+import Header from './components/Header'      // App.jsx
+import MyHeader from './components/Header'    // OtherPage.jsx
+import TopBar from './components/Header'      // AnotherPage.jsx
+// 😱 Tres nombres distintos para el mismo componente
+
+// ✅ Con named export — siempre el mismo nombre
+import { Header } from './components/Header'  // App.jsx
+import { Header } from './components/Header'  // OtherPage.jsx
+import { Header } from './components/Header'  // AnotherPage.jsx
+// 🎉 Un solo nombre en toda la app</code></pre>
+
+      <h4>Refactoring seguro</h4>
+      <p>
+        Con named exports, si renombrás el componente, tu IDE puede actualizar
+        <strong>todas las referencias automáticamente</strong>. Con default exports, cada archivo
+        puede tener un nombre distinto y el IDE no sabe cuáles actualizar.
+      </p>
+
+      <h4>Autocomplete</h4>
+      <pre><code class="language-jsx">// Named: el IDE sugiere el nombre exacto mientras escribís
+import { Header } from './components/Header'
+//       ^ Autocomplete del nombre correcto ✅
+
+// Default: tenés que recordar o adivinar el nombre
+import Header from './components/Header'
+//     ^ Sin guía del IDE ⚠️</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== CODE EXAMPLES ===================== -->
+  <article id="code-examples" class="tab-content">
+    <div class="description">
+
+      <h3>✏️ Dos Formas de Escribir Named Exports</h3>
+
+      <pre><code class="language-jsx">// Forma 1: export inline (recomendada)
+export function Header() {
+  return &lt;header&gt;...&lt;/header&gt;
+}
+
+export function HeaderLogo() {
+  return &lt;img src="logo.png" /&gt;
+}</code></pre>
+
+      <pre><code class="language-jsx">// Forma 2: export al final del archivo
+function Header() {
+  return &lt;header&gt;...&lt;/header&gt;
+}
+
+function HeaderLogo() {
+  return &lt;img src="logo.png" /&gt;
+}
+
+export { Header, HeaderLogo }</code></pre>
+
+      <p>Ambas son equivalentes. La forma 1 es más común en React moderno.</p>
+
+      <hr />
+
+      <h3>🔄 Renombrando Imports con <code>as</code></h3>
+      <p>A veces dos archivos diferentes exportan algo con el mismo nombre. Usás <code>as</code> para resolver la colisión:</p>
+
+      <pre><code class="language-jsx">// ❌ Error — ambos se llaman "Button"
+import { Button } from './components/Button'
+import { Button } from './ui/Button'</code></pre>
+
+      <pre><code class="language-jsx">// ✅ Renombrar con as
+import { Button } from './components/Button'
+import { Button as UIButton } from './ui/Button'
+
+function App() {
+  return (
+    &lt;&gt;
+      &lt;Button&gt;Componente Button&lt;/Button&gt;
+      &lt;UIButton&gt;UI Button&lt;/UIButton&gt;
+    &lt;/&gt;
+  )
+}</code></pre>
+
+      <pre><code class="language-jsx">// Ejemplo real con dos "Card" distintos
+import { Card as JobCard } from './components/JobCard'
+import { Card as UserCard } from './components/UserCard'
+
+function Dashboard() {
+  return (
+    &lt;&gt;
+      &lt;JobCard job={job} /&gt;
+      &lt;UserCard user={user} /&gt;
+    &lt;/&gt;
+  )
+}</code></pre>
+
+      <hr />
+
+      <h3>📂 Rutas de Importación</h3>
+
+      <pre><code class="language-javascript">// Mismo directorio
+import { Header } from './Header'
+
+// Subdirectorio
+import { Header } from './components/Header'
+
+// Directorio padre
+import { Header } from '../Header'
+
+// Dos niveles arriba
+import { Header } from '../../Header'</code></pre>
+
+      <hr />
+
+      <h3>📥 Import de Múltiples Elementos</h3>
+
+      <pre><code class="language-jsx">// Varios named exports a la vez
+import { Header, Footer, Nav } from './components'
+
+// Default + named juntos
+import App, { config, API_URL } from './App'
+
+// Todo como namespace (usar con moderación)
+import * as Utils from './utils'
+Utils.formatDate()
+Utils.formatCurrency()</code></pre>
+
+      <hr />
+
+      <h3>🛠️ Ejemplo Completo: Separando la App</h3>
+
+      <pre><code class="language-jsx">// src/components/JobCard.jsx
+export function JobCard({ job, isRemote, isFeatured }) {
+  const { title, company, location } = job
+
+  return (
+    &lt;article className={`job-card ${isFeatured ? 'featured' : ''}`}&gt;
+      &lt;h3&gt;{title}&lt;/h3&gt;
+      &lt;p&gt;{company}&lt;/p&gt;
+      &lt;p&gt;📍 {location}&lt;/p&gt;
+      {isRemote &amp;&amp; &lt;span className="badge"&gt;🏠 Remoto&lt;/span&gt;}
+    &lt;/article&gt;
+  )
+}</code></pre>
+
+      <pre><code class="language-jsx">// src/App.jsx
+import { JobCard } from './components/JobCard'
+
+function App() {
+  return (
+    &lt;main&gt;
+      &lt;JobCard
+        job={{ title: 'Frontend Dev', company: 'TechCorp', location: 'Madrid' }}
+        isRemote={true}
+        isFeatured={true}
+      /&gt;
+    &lt;/main&gt;
+  )
+}
+
+export default App</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== EXERCISES ===================== -->
+  <article id="exercises" class="tab-content">
+    <div class="description">
+
+      <h3>🐛 Errores Comunes — y Cómo Evitarlos</h3>
+
+      <h4>1. Olvidar el export</h4>
+      <pre><code class="language-jsx">// ❌ El componente existe pero no se puede importar
+function Header() {
+  return &lt;header&gt;...&lt;/header&gt;
+}
+
+// ✅ Correcto
+export function Header() {
+  return &lt;header&gt;...&lt;/header&gt;
+}</code></pre>
+
+      <h4>2. Confundir default con named</h4>
+      <pre><code class="language-jsx">// Header.jsx — exportación NAMED
+export function Header() {
+  return &lt;header&gt;...&lt;/header&gt;
+}
+
+// ❌ Error — Header no es default export
+import Header from './components/Header'
+
+// ✅ Correcto — named export requiere llaves
+import { Header } from './components/Header'</code></pre>
+
+      <h4>3. Ruta sin el <code>./</code></h4>
+      <pre><code class="language-jsx">// ❌ Error — el bundler busca en node_modules
+import { Header } from 'components/Header'
+
+// ✅ Correcto — ruta relativa empieza con ./
+import { Header } from './components/Header'</code></pre>
+
+      <h4>4. Extensión en Vite</h4>
+      <pre><code class="language-jsx">// Vite resuelve la extensión automáticamente
+import { Header } from './components/Header'      // ✅
+import { Header } from './components/Header.jsx'  // ✅ también funciona</code></pre>
+
+      <hr />
+
+      <h3>💪 Ejercicio: Separar la App en Módulos</h3>
+      <p>Tomá este código monolítico y separalo en archivos individuales:</p>
+
+      <pre><code class="language-jsx">// App.jsx — todo junto ❌
+
+function Badge({ children, type }) {
+  return &lt;span className={`badge badge-${type}`}&gt;{children}&lt;/span&gt;
+}
+
+function JobCard({ job, isRemote }) {
+  return (
+    &lt;article&gt;
+      &lt;h3&gt;{job.title}&lt;/h3&gt;
+      &lt;p&gt;{job.company}&lt;/p&gt;
+      {isRemote &amp;&amp; &lt;Badge type="info"&gt;🏠 Remoto&lt;/Badge&gt;}
+    &lt;/article&gt;
+  )
+}
+
+function App() {
+  return (
+    &lt;main&gt;
+      &lt;JobCard
+        job={{ title: 'Frontend Dev', company: 'TechCorp' }}
+        isRemote={true}
+      /&gt;
+    &lt;/main&gt;
+  )
+}
+
+export default App</code></pre>
+
+      <pre><code>Estructura objetivo:
+
+src/
+├── components/
+│   ├── Badge.jsx      → export function Badge
+│   └── JobCard.jsx    → export function JobCard
+└── App.jsx            → import { Badge } from './components/Badge'
+                          import { JobCard } from './components/JobCard'</code></pre>
+
+      <hr />
+
+      <h3>✅ Resumen de la Clase</h3>
+      <pre><code>📦 Módulos       — separar código en múltiples archivos
+📤 export default — una exportación principal por archivo
+📤 export named  — múltiples exportaciones con nombre exacto
+📥 import        — traer código de otros archivos
+🔄 as            — renombrar imports para evitar colisiones
+🏆 Named exports  — preferidos: consistentes y con autocomplete
+🗂️ Estructura    — un componente por archivo, en /components</code></pre>
+
+      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+        <strong>💡 Próxima clase:</strong> Renderizado de listas con <code>.map()</code> e importar datos
+        desde un archivo JSON para crear múltiples <code>JobCard</code> automáticamente.
+      </p>
+
+    </div>
+  </article>
+
+  <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-left: 4px solid #007bff; border-radius: 4px;">
+    <p><strong>📚 Recursos Adicionales:</strong></p>
+    <p>
+      Para profundizar en módulos JavaScript,
+      consultá <a href="https://www.jscamp.dev/introduccion-a-react/props-comunicacion-componentes" target="_blank" style="color: #007bff; text-decoration: none;">JSCamp — Props: Comunicación entre Componentes</a>.
+    </p>
+  </div>
+
+</section>

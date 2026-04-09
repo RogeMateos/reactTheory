@@ -1,0 +1,539 @@
+<section class="box">
+  <h1>⚡ Installing Vite</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">Concepts</button>
+    <button class="tab-button" data-tab="code-examples">Code Examples</button>
+    <button class="tab-button" data-tab="commands">Commands</button>
+  </div>
+
+  <article id="concepts" class="tab-content active">
+    <h2>🎯 From HTML to Professional Project</h2>
+    <p>
+      Up until now we've been working with React directly in an HTML file, loading React from a CDN and
+      using Babel in the browser. This is fine for learning, but it's not what's done in real projects.
+    </p>
+    <p>
+      In this lesson we're going to create a professional React project using <strong>Vite</strong>, the
+      modern development tool that companies use.
+    </p>
+
+    <h2>🧠 What are Node.js and npm?</h2>
+    <p>Before installing Vite, we need to understand two fundamental concepts.</p>
+
+    <h3>📦 Node.js</h3>
+    <p>
+      <strong>Node.js</strong> is a JavaScript runtime environment that allows you to execute JavaScript outside
+      of the browser, directly on your computer.
+    </p>
+    <pre><code class="language-bash"># You can run JavaScript in the terminal
+node script.js</code></pre>
+
+    <p><strong>Why do we need it?</strong></p>
+    <ul>
+      <li>🔧 Development tools (like Vite) are written in JavaScript</li>
+      <li>📦 We need to run these tools on our computer</li>
+      <li>⚡ Node.js allows Vite to compile and transform your code</li>
+    </ul>
+
+    <h3>📚 npm (Node Package Manager)</h3>
+    <p>
+      <strong>npm</strong> is Node.js's package manager. It's like an "app store" for JavaScript code.
+    </p>
+
+    <p><strong>What is it used for?</strong></p>
+    <ul>
+      <li>📦 <strong>Install libraries</strong> - React, React Router, etc.</li>
+      <li>🔧 <strong>Install tools</strong> - Vite, ESLint, etc.</li>
+      <li>📝 <strong>Manage dependencies</strong> - What version of each library you use</li>
+      <li>🚀 <strong>Run scripts</strong> - Commands for development and production</li>
+    </ul>
+
+    <h3>💿 Installing Node.js</h3>
+    <p>If you don't have Node.js installed:</p>
+    <ol>
+      <li>Go to <a href="https://nodejs.org" target="_blank">nodejs.org</a></li>
+      <li>Download the <strong>LTS</strong> (Long Term Support) version</li>
+      <li>Install following the instructions</li>
+      <li>Verify the installation:</li>
+    </ol>
+    <pre><code class="language-bash">node --version
+# Should show something like: v22.x.x
+
+npm --version
+# Should show something like: 11.x.x</code></pre>
+
+    <h2>🚀 Creating a project with Vite</h2>
+
+    <h3>Step 1: Create the project</h3>
+    <p>Open your terminal and run:</p>
+    <pre><code class="language-bash">npm create vite@latest</code></pre>
+    <p>This command:</p>
+    <ul>
+      <li>✅ Downloads the latest version of Vite</li>
+      <li>✅ Asks you some questions</li>
+      <li>✅ Creates a new project with the necessary structure</li>
+    </ul>
+
+    <h3>Step 2: Answer the questions</h3>
+    <p><strong>1. Project name:</strong></p>
+    <pre><code class="language-bash">? Project name: › devjobs-react</code></pre>
+    <p>Type your project name. For example: <code>devjobs-react</code></p>
+
+    <p><strong>2. Select a framework:</strong></p>
+    <pre><code class="language-bash">? Select a framework: ›
+  Vanilla
+  Vue
+❯ React
+  Preact
+  Lit
+  Svelte
+  Solid
+  Qwik
+  Others</code></pre>
+    <p>Use the arrows to select <strong>React</strong> and press Enter.</p>
+
+    <p><strong>3. Select a variant:</strong></p>
+    <pre><code class="language-bash">? Select a variant: ›
+  TypeScript
+❯ TypeScript + SWC
+  JavaScript
+  JavaScript + SWC</code></pre>
+    <p>Select <strong>JavaScript + SWC</strong> and press Enter.</p>
+
+    <h3>⚡ Why SWC?</h3>
+    <p>
+      <strong>SWC</strong> (Speedy Web Compiler) is an ultra-fast compiler written in Rust.
+    </p>
+
+    <p><strong>What does SWC do?</strong></p>
+    <ul>
+      <li>Transforms JSX to JavaScript</li>
+      <li>Transforms modern code to compatible code</li>
+      <li>Is <strong>20-70x faster</strong> than Babel</li>
+    </ul>
+
+    <p><strong>SWC vs Babel:</strong></p>
+    <pre style="background: #f4f4f4; padding: 15px; border-radius: 8px; font-family: monospace;">Babel:        ████████████████ (100s)
+SWC:          █ (5s)</pre>
+
+    <p><strong>Why do we use it?</strong></p>
+    <ul>
+      <li>⚡ <strong>Speed</strong> - Nearly instantaneous compilation</li>
+      <li>🎯 <strong>Same result</strong> - Does the same as Babel but faster</li>
+      <li>🔥 <strong>Faster Hot Reload</strong> - Changes are seen instantly</li>
+    </ul>
+
+    <h3>Step 3: Install dependencies</h3>
+    <p>Once the project is created, navigate to the folder:</p>
+    <pre><code class="language-bash">cd devjobs-react</code></pre>
+
+    <p>And install the dependencies:</p>
+    <pre><code class="language-bash">npm install</code></pre>
+
+    <p>This installs:</p>
+    <ul>
+      <li>✅ React and React DOM</li>
+      <li>✅ Vite</li>
+      <li>✅ SWC</li>
+      <li>✅ Other necessary tools</li>
+    </ul>
+
+    <p><strong>What's happening?</strong></p>
+    <p>
+      npm reads the <code>package.json</code> file that Vite created, downloads all the listed libraries,
+      and saves them in a folder called <code>node_modules/</code>.
+    </p>
+
+    <h3>Step 4: Start the development server</h3>
+    <pre><code class="language-bash">npm run dev</code></pre>
+
+    <p>You'll see something like:</p>
+    <pre><code class="language-bash">  VITE v7.0.0  ready in 500 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+  ➜  press h + enter to show help</code></pre>
+
+    <p>Open your browser at <code>http://localhost:5173/</code> and you'll see your React application running.</p>
+
+    <h2>📁 Project structure</h2>
+    <p>Vite creates this folder structure:</p>
+    <pre><code class="language-bash">devjobs-react/
+├── node_modules/       # Installed dependencies (don't touch)
+├── public/             # Static files (images, etc.)
+│   └── vite.svg
+├── src/                # Your source code
+│   ├── assets/         # Resources (images, CSS, etc.)
+│   │   └── react.svg
+│   ├── App.css         # App component styles
+│   ├── App.jsx         # Main component
+│   ├── index.css       # Global styles
+│   └── main.jsx        # Application entry point
+├── .gitignore          # Files Git should ignore
+├── index.html          # Main HTML
+├── package.json        # Project configuration and dependencies
+├── package-lock.json   # Exact dependency versions
+└── vite.config.js      # Vite configuration</code></pre>
+
+    <h2>📝 The .jsx extension</h2>
+    <p>One important thing to understand is why we use the <code>.jsx</code> extension instead of just <code>.js</code>.</p>
+
+    <h3>What does .jsx mean?</h3>
+    <p>Files with the <code>.jsx</code> extension indicate they contain JSX code that needs to be transformed:</p>
+    <pre><code class="language-jsx">// App.jsx - Vite knows it has JSX
+function App() {
+  return &lt;h1&gt;Hello&lt;/h1&gt; // ← This is JSX
+}</code></pre>
+
+    <h3>Why is it important?</h3>
+    <ul>
+      <li>Vite automatically detects which files need compilation</li>
+      <li><strong>Better for editors</strong> - Your IDE knows it may have JSX</li>
+      <li><strong>Clear convention</strong> - Other developers know what to expect</li>
+      <li><strong>Optimization</strong> - Vite can optimize these files better</li>
+    </ul>
+
+    <h3>.js vs .jsx</h3>
+    <pre><code class="language-bash">App.js   ← Pure JavaScript (no JSX)
+App.jsx  ← JavaScript with JSX</code></pre>
+
+    <p><strong>Can you use .js with JSX?</strong></p>
+    <p>Technically yes, Vite will detect it, but it's better to use <code>.jsx</code> to be explicit:</p>
+    <pre><code class="language-jsx">// ✅ Recommended: .jsx for files with JSX
+// src/App.jsx
+export default function App() {
+  return &lt;h1&gt;Hello&lt;/h1&gt;
+}
+
+// ⚠️ Works but not convention: .js with JSX
+// src/App.js
+export default function App() {
+  return &lt;h1&gt;Hello&lt;/h1&gt;
+}</code></pre>
+
+    <h2>📊 Key differences from direct HTML</h2>
+
+    <h3>❌ Before (HTML + CDN)</h3>
+    <pre><code class="language-html">&lt;script src="https://esm.sh/react"&gt;&lt;/script&gt;
+&lt;script src="https://unpkg.com/@babel/standalone"&gt;&lt;/script&gt;
+&lt;script type="text/babel"&gt;
+  const [count, setCount] = React.useState(0)
+  // Everything in one file
+&lt;/script&gt;</code></pre>
+
+    <p><strong>Problems:</strong></p>
+    <ul>
+      <li>❌ Babel in the browser (slow)</li>
+      <li>❌ Single file (hard to maintain)</li>
+      <li>❌ No Hot Reload</li>
+      <li>❌ Not optimized</li>
+    </ul>
+
+    <h3>✅ Now (Vite + npm)</h3>
+    <pre><code class="language-jsx">// src/App.jsx
+import { useState } from 'react'
+
+function App() {
+  const [count, setCount] = useState(0)
+  // ...
+}</code></pre>
+
+    <p><strong>Advantages:</strong></p>
+    <ul>
+      <li>✅ SWC compiles beforehand (fast)</li>
+      <li>✅ Multiple files (organized)</li>
+      <li>✅ Instant Hot Reload</li>
+      <li>✅ Optimized for production</li>
+    </ul>
+
+    <h2>🎯 Lesson summary</h2>
+    <ul>
+      <li>🎯 <strong>Node.js and npm</strong> - What they are and why we need them</li>
+      <li>⚡ <strong>Vite</strong> - Modern and fast development tool</li>
+      <li>🚀 <strong>SWC</strong> - Ultra-fast compiler for JSX</li>
+      <li>📦 <strong>Create project</strong> - With <code>npm create vite@latest</code></li>
+      <li>📁 <strong>Folder structure</strong> - What each file does</li>
+      <li>🔑 <strong>Entry point</strong> - index.html and main.jsx</li>
+      <li>📝 <strong>The .jsx extension</strong> - To indicate files with JSX</li>
+      <li>🛠️ <strong>Useful commands</strong> - dev, build, preview</li>
+    </ul>
+
+    <p>
+      💡 <strong>Remember:</strong> Vite + SWC is the modern combination for React development.
+      It's fast, simple, and it's what companies currently use.
+    </p>
+  </article>
+
+  <article id="code-examples" class="tab-content">
+    <h2>📄 Important files</h2>
+    <p>Let's look at the most important files and what each one does.</p>
+
+    <h3>1. index.html - The main HTML</h3>
+    <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;meta charset="UTF-8" /&gt;
+    &lt;link rel="icon" type="image/svg+xml" href="/vite.svg" /&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0" /&gt;
+    &lt;title&gt;Vite + React&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;div id="root"&gt;&lt;/div&gt;
+    &lt;script type="module" src="/src/main.jsx"&gt;&lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+    <p><strong>What does it do?</strong></p>
+    <ul>
+      <li>Defines the <code>&lt;div id="root"&gt;</code> where React will render the application</li>
+      <li>Loads the <code>main.jsx</code> file as a module</li>
+      <li>It's the HTML entry point of your application</li>
+    </ul>
+
+    <p><strong>Differences from what we did before:</strong></p>
+    <pre><code class="language-html">&lt;!-- Before: we loaded React from CDN --&gt;
+&lt;script src="https://esm.sh/react"&gt;&lt;/script&gt;
+
+&lt;!-- Now: Vite manages it for us --&gt;
+&lt;script type="module" src="/src/main.jsx"&gt;&lt;/script&gt;</code></pre>
+
+    <h3>2. main.jsx - React entry point</h3>
+    <pre><code class="language-jsx">import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App.jsx'
+import './index.css'
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  &lt;React.StrictMode&gt;
+    &lt;App /&gt;
+  &lt;/React.StrictMode&gt;
+)</code></pre>
+
+    <p><strong>What does it do?</strong></p>
+    <ul>
+      <li><strong>Imports React</strong> - From node_modules/ (not from CDN)</li>
+      <li><strong>Imports ReactDOM</strong> - To render in the browser</li>
+      <li><strong>Imports App</strong> - Your main component</li>
+      <li><strong>Imports styles</strong> - Global CSS</li>
+      <li><strong>Renders the application</strong> - In the <code>&lt;div id="root"&gt;</code></li>
+    </ul>
+
+    <p><strong>React.StrictMode:</strong></p>
+    <pre><code class="language-jsx">&lt;React.StrictMode&gt;
+  &lt;App /&gt;
+&lt;/React.StrictMode&gt;</code></pre>
+    <p>It's a special component that:</p>
+    <ul>
+      <li>Detects potential problems in your code</li>
+      <li>Only works in development (doesn't affect production)</li>
+      <li>Makes components render twice to find bugs</li>
+    </ul>
+
+    <p>
+      💡 <strong>Note about .jsx files:</strong> Files with the .jsx extension tell Vite
+      that they contain JSX code that needs to be compiled. Vite automatically detects these files
+      and transforms them using SWC.
+    </p>
+
+    <h3>3. App.jsx - Main component</h3>
+    <pre><code class="language-jsx">import { useState } from 'react'
+import './App.css'
+
+function App() {
+  const [count, setCount] = useState(0)
+
+  return (
+    &lt;div className="App"&gt;
+      &lt;h1&gt;Vite + React&lt;/h1&gt;
+      &lt;button onClick={() =&gt; setCount((count) =&gt; count + 1)}&gt;
+        count is {count}
+      &lt;/button&gt;
+    &lt;/div&gt;
+  )
+}
+
+export default App</code></pre>
+
+    <p><strong>What does it do?</strong></p>
+    <ul>
+      <li>Defines the main component of your application</li>
+      <li>Uses <code>useState</code> (no longer need <code>React.useState</code>)</li>
+      <li>Exports the component so <code>main.jsx</code> can import it</li>
+    </ul>
+
+    <p><strong>Important differences:</strong></p>
+    <pre><code class="language-jsx">// Before (in HTML)
+const [count, setCount] = React.useState(0)
+
+// Now (with modules)
+import { useState } from 'react'
+const [count, setCount] = useState(0)</code></pre>
+
+    <h3>4. package.json - Project configuration</h3>
+    <pre><code class="language-json">{
+  "name": "devjobs-react",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react-swc": "^4.1.0",
+    "vite": "^7.0.0"
+  }
+}</code></pre>
+
+    <p><strong>Important sections:</strong></p>
+
+    <p><strong>scripts</strong> - Commands you can run:</p>
+    <ul>
+      <li><code>npm run dev</code> - Starts the development server</li>
+      <li><code>npm run build</code> - Creates the production version</li>
+      <li><code>npm run preview</code> - Preview of the production build</li>
+    </ul>
+
+    <p><strong>dependencies</strong> - Libraries your app needs:</p>
+    <ul>
+      <li><code>react</code> - The React library</li>
+      <li><code>react-dom</code> - To render in the browser</li>
+    </ul>
+
+    <p><strong>devDependencies</strong> - Development tools:</p>
+    <ul>
+      <li><code>vite</code> - The build tool</li>
+      <li><code>@vitejs/plugin-react-swc</code> - Plugin to use SWC with React</li>
+    </ul>
+
+    <h3>5. vite.config.js - Vite configuration</h3>
+    <pre><code class="language-javascript">import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react-swc'
+
+export default defineConfig({
+  plugins: [react()],
+})</code></pre>
+
+    <p><strong>What does it do?</strong></p>
+    <ul>
+      <li>Configures Vite to use the React plugin with SWC</li>
+      <li>For now you don't need to modify this file</li>
+    </ul>
+  </article>
+
+  <article id="commands" class="tab-content">
+    <h2>🛠️ Useful commands</h2>
+
+    <h3>Development</h3>
+    <pre><code class="language-bash">npm run dev</code></pre>
+    <p>Starts the development server at <code>http://localhost:5173/</code></p>
+
+    <p><strong>Features:</strong></p>
+    <ul>
+      <li>🔥 <strong>Hot Module Replacement</strong> - Changes are seen instantly</li>
+      <li>⚡ <strong>Fast</strong> - Starts in less than 1 second</li>
+      <li>🐛 <strong>Clear error messages</strong> - In the browser and console</li>
+    </ul>
+
+    <h3>Build for production</h3>
+    <pre><code class="language-bash">npm run build</code></pre>
+    <p>Creates an optimized version in the <code>dist/</code> folder:</p>
+    <ul>
+      <li>📦 <strong>Minified code</strong> - Smaller and faster</li>
+      <li>🗜️ <strong>Optimized CSS</strong> - Compressed and without duplicates</li>
+      <li>🎯 <strong>Optimized assets</strong> - Images, fonts, etc.</li>
+      <li>🔢 <strong>Code splitting</strong> - Divides the code into chunks</li>
+    </ul>
+
+    <h3>Production preview</h3>
+    <pre><code class="language-bash">npm run preview</code></pre>
+    <p>Serves the production build locally to test it before deploying.</p>
+
+    <h3>Verify Node.js installation</h3>
+    <pre><code class="language-bash">node --version
+npm --version</code></pre>
+
+    <h3>Install dependencies</h3>
+    <pre><code class="language-bash"># Install all dependencies from package.json
+npm install
+
+# Install a new dependency
+npm install package-name
+
+# Install a development dependency
+npm install --save-dev package-name</code></pre>
+
+    <h2>🎓 Practical exercise</h2>
+    <p><strong>Create your first project with Vite:</strong></p>
+
+    <ol>
+      <li>
+        <strong>Verify you have Node.js installed:</strong>
+        <pre><code class="language-bash">node --version
+npm --version</code></pre>
+      </li>
+
+      <li>
+        <strong>Create a new project:</strong>
+        <pre><code class="language-bash">npm create vite@latest</code></pre>
+        <ul>
+          <li>Project name: <code>my-first-vite</code></li>
+          <li>Framework: <code>React</code></li>
+          <li>Variant: <code>JavaScript + SWC</code></li>
+        </ul>
+      </li>
+
+      <li>
+        <strong>Navigate to the project and install dependencies:</strong>
+        <pre><code class="language-bash">cd my-first-vite
+npm install</code></pre>
+      </li>
+
+      <li>
+        <strong>Start the development server:</strong>
+        <pre><code class="language-bash">npm run dev</code></pre>
+      </li>
+
+      <li>
+        <strong>Open http://localhost:5173/ in your browser</strong>
+      </li>
+
+      <li>
+        <strong>Modify src/App.jsx and observe the changes in real-time</strong>
+      </li>
+
+      <li>
+        <strong>Create a production build:</strong>
+        <pre><code class="language-bash">npm run build</code></pre>
+      </li>
+
+      <li>
+        <strong>Preview the build:</strong>
+        <pre><code class="language-bash">npm run preview</code></pre>
+      </li>
+    </ol>
+
+    <h2>📚 Additional resources</h2>
+    <ul>
+      <li><a href="https://vitejs.dev/" target="_blank">Official Vite Documentation</a></li>
+      <li><a href="https://nodejs.org/" target="_blank">Node.js</a></li>
+      <li><a href="https://swc.rs/" target="_blank">SWC - Speedy Web Compiler</a></li>
+      <li><a href="https://react.dev/learn/start-a-new-react-project" target="_blank">React - Start a New React Project</a></li>
+    </ul>
+  </article>
+
+  <p style="margin-top: 40px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; text-align: center;">
+    <strong style="color: white; font-size: 1.1em;">🤖 Need help with Vite?</strong><br>
+    <a href="https://chatgpt.com/g/g-p-696fbea2755481919c8258fb23e8f822-react/c/678a9d31-fbd0-8000-8856-8b2d73867b63"
+       target="_blank"
+       style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+      Ask ChatGPT about React and Vite →
+    </a>
+  </p>
+</section>

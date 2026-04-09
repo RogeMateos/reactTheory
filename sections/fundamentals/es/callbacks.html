@@ -1,0 +1,373 @@
+<section class="box">
+  <h1>Callbacks — Pasar Funciones como Props</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">Conceptos</button>
+    <button class="tab-button" data-tab="code-examples">Ejemplos de Código</button>
+    <button class="tab-button" data-tab="exercises">Ejercicio Práctico</button>
+  </div>
+
+  <!-- ===================== CONCEPTS ===================== -->
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+
+      <h3>🔄 ¿Qué es un Callback?</h3>
+      <p>
+        Un <strong>callback</strong> es una función que se pasa como argumento a otra función,
+        y que será ejecutada más tarde — de ahí el nombre <em>"call back"</em> (llamar de vuelta).
+      </p>
+      <p>
+        En React, los callbacks son la forma en que los componentes hijos
+        <strong>se comunican de vuelta con su padre</strong>:
+      </p>
+
+      <pre><code>El padre define una función    →  handlePageChange
+El padre la pasa como prop     →  onPageChange={handlePageChange}
+El hijo la recibe              →  function Pagination({ onPageChange })
+El hijo la invoca al necesitar →  onPageChange(3)</code></pre>
+
+      <hr />
+
+      <h3>⬆️ Comunicación Hijo → Padre</h3>
+      <p>
+        Las props fluyen de padre a hijo. Los callbacks invierten esa comunicación:
+        el hijo le <em>avisa</em> al padre que algo ocurrió.
+      </p>
+
+      <pre><code>Sin callback — el hijo no puede comunicarse:
+
+  App (padre)
+    │
+    └─ currentPage, totalPages ──→ Pagination (hijo)
+                                       │
+                                     click  ← usuario
+                                       │
+                                    ¿ahora qué? 🤷</code></pre>
+
+      <pre><code>Con callback — el hijo notifica al padre:
+
+  App (padre)
+    │
+    ├─ currentPage, totalPages ──→ Pagination (hijo)
+    │                                  │
+    └─ handlePageChange ────────→ onPageChange
+                                       │
+                                     click ← usuario
+                                       │
+                                  onPageChange(3)
+                                       │
+    handlePageChange(3) ←─────────────┘
+    └─ actualiza datos en App</code></pre>
+
+      <hr />
+
+      <h3>📛 Convención on / handle</h3>
+      <pre><code>Props que reciben funciones   →  on + Evento
+  onPageChange, onClick, onSubmit, onDelete
+
+Funciones dentro del componente  →  handle + Evento
+  handlePageChange, handleClick, handleSubmit</code></pre>
+
+      <pre><code class="language-jsx">// Padre — define handle..., pasa on...
+const handlePageChange = (page) => { ... }
+&lt;Pagination onPageChange={handlePageChange} /&gt;
+
+// Hijo — recibe on..., define handle... internos
+function Pagination({ onPageChange }) {
+  const handleNext = () =&gt; {
+    onPageChange(currentPage + 1)  // invoca el callback del padre
+  }
+}</code></pre>
+
+      <hr />
+
+      <h3>⚡ Referencia vs Ejecución Inmediata</h3>
+      <p>Esta es una de las confusiones más comunes en React — prestá mucha atención:</p>
+
+      <pre><code class="language-jsx">// ✅ Correcto — pasa la REFERENCIA a la función
+&lt;button onClick={handleClick}&gt;Click&lt;/button&gt;
+
+// ❌ Incorrecto — EJECUTA la función al renderizar
+&lt;button onClick={handleClick()}&gt;Click&lt;/button&gt;
+
+// ✅ Correcto — arrow function para pasar argumentos
+&lt;button onClick={() =&gt; handleClick(id)}&gt;Click&lt;/button&gt;</code></pre>
+
+      <pre><code>La regla:
+  handleClick     → referencia → React la llamará cuando el usuario haga click
+  handleClick()   → ejecución  → se llama AHORA, durante el render ❌
+  () => handleClick(arg) → nueva función que envuelve el llamado con argumentos</code></pre>
+
+      <hr />
+
+      <h3>🛡️ Prop de Función con Valor por Defecto</h3>
+      <p>
+        Si el callback es opcional, usá una función vacía como default para que el componente
+        no rompa cuando no se pasa:
+      </p>
+
+      <pre><code class="language-jsx">// Sin default → rompe si no se pasa onPageChange
+function Pagination({ onPageChange }) {
+  onPageChange(3) // ❌ TypeError si no se proporcionó
+}
+
+// ✅ Con default → seguro aunque no se pase
+function Pagination({ onPageChange = () => {} }) {
+  onPageChange(3) // no hace nada, pero no rompe
+}</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== CODE EXAMPLES ===================== -->
+  <article id="code-examples" class="tab-content">
+    <div class="description">
+
+      <h3>🧩 Pagination con Callbacks</h3>
+      <p>Actualizamos el componente para que notifique al padre con cada click:</p>
+
+      <pre><code class="language-jsx">// src/components/Pagination.jsx
+
+function Pagination({ currentPage = 1, totalPages = 5, onPageChange = () => {} }) {
+  const pages = Array.from({ length: totalPages }, (_, i) => i + 1)
+
+  const handlePrevious = (e) => {
+    e.preventDefault()
+    if (currentPage &gt; 1) onPageChange(currentPage - 1)
+  }
+
+  const handleNext = (e) => {
+    e.preventDefault()
+    if (currentPage &lt; totalPages) onPageChange(currentPage + 1)
+  }
+
+  const handlePageClick = (e, page) => {
+    e.preventDefault()
+    onPageChange(page)
+  }
+
+  const styleLinkLeft = {
+    opacity: currentPage === 1 ? 0.5 : 1,
+    cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+  }
+
+  const styleLinkRight = {
+    opacity: currentPage === totalPages ? 0.5 : 1,
+    cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+  }
+
+  return (
+    &lt;nav className="pagination"&gt;
+
+      &lt;a href="#" style={styleLinkLeft} onClick={handlePrevious}&gt;
+        &lt;svg width="16" height="16" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor"
+          strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+        &gt;
+          &lt;path stroke="none" d="M0 0h24v24H0z" fill="none" /&gt;
+          &lt;path d="M15 6l-6 6l6 6" /&gt;
+        &lt;/svg&gt;
+      &lt;/a&gt;
+
+      {pages.map((page) => (
+        &lt;a
+          key={page}
+          className={currentPage === page ? 'is-active' : ''}
+          href="#"
+          onClick={(e) =&gt; handlePageClick(e, page)}
+        &gt;
+          {page}
+        &lt;/a&gt;
+      ))}
+
+      &lt;a href="#" style={styleLinkRight} onClick={handleNext}&gt;
+        &lt;svg width="16" height="16" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor"
+          strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
+        &gt;
+          &lt;path stroke="none" d="M0 0h24v24H0z" fill="none" /&gt;
+          &lt;path d="M9 6l6 6l-6 6" /&gt;
+        &lt;/svg&gt;
+      &lt;/a&gt;
+
+    &lt;/nav&gt;
+  )
+}
+
+export default Pagination</code></pre>
+
+      <hr />
+
+      <h3>🏗️ App conectada al callback</h3>
+
+      <pre><code class="language-jsx">// src/App.jsx
+import Pagination from './components/Pagination'
+
+function App() {
+  const currentPage = 3
+  const totalPages = 5
+
+  const handlePageChange = (page) => {
+    console.log('Página cambiada a:', page)
+    // En la próxima clase: setCurrentPage(page)
+  }
+
+  return (
+    &lt;&gt;
+      &lt;header&gt;...&lt;/header&gt;
+      &lt;main&gt;
+        &lt;Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        /&gt;
+      &lt;/main&gt;
+      &lt;footer&gt;...&lt;/footer&gt;
+    &lt;/&gt;
+  )
+}
+
+export default App</code></pre>
+
+      <hr />
+
+      <h3>🔘 Ejemplo Adicional: Button Reutilizable</h3>
+      <p>El mismo patrón funciona para cualquier componente interactivo:</p>
+
+      <pre><code class="language-jsx">// Componente Button reutilizable
+function Button({ children, onClick, variant = 'primary' }) {
+  return (
+    &lt;button className={`btn btn-${variant}`} onClick={onClick}&gt;
+      {children}
+    &lt;/button&gt;
+  )
+}
+
+// Uso en App
+function App() {
+  const handleSave = () =&gt; console.log('Guardando...')
+  const handleDelete = () =&gt; console.log('Eliminando...')
+
+  return (
+    &lt;&gt;
+      &lt;Button onClick={handleSave}&gt;Guardar&lt;/Button&gt;
+      &lt;Button onClick={handleDelete} variant="danger"&gt;Eliminar&lt;/Button&gt;
+    &lt;/&gt;
+  )
+}</code></pre>
+
+      <hr />
+
+      <h3>📦 Pasando Argumentos al Callback</h3>
+      <p>Cuando necesitás enviar datos adicionales al padre, usás una arrow function:</p>
+
+      <pre><code class="language-jsx">// JobCard notifica al padre con el ID del trabajo
+function JobCard({ job, onApply }) {
+  return (
+    &lt;article&gt;
+      &lt;h3&gt;{job.title}&lt;/h3&gt;
+      {/* Arrow function para pasar job.id como argumento */}
+      &lt;button onClick={() =&gt; onApply(job.id)}&gt;Aplicar&lt;/button&gt;
+    &lt;/article&gt;
+  )
+}
+
+// El padre recibe el ID y decide qué hacer
+function App() {
+  const handleApply = (jobId) =&gt; {
+    console.log('Aplicando a trabajo:', jobId)
+  }
+
+  return &lt;JobCard job={job} onApply={handleApply} /&gt;
+}</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== EXERCISES ===================== -->
+  <article id="exercises" class="tab-content">
+    <div class="description">
+
+      <h3>💪 Ejercicio: Flujo Completo de Callbacks</h3>
+      <p>
+        Vas a trazar el flujo completo de callbacks en la app. El objetivo es entender
+        qué sucede en cada paso cuando el usuario hace click en "Página 3".
+      </p>
+
+      <pre><code>Completá el flujo:
+
+1. Usuario hace click en "Página 3"
+   ↓
+2. Se dispara __________ en Pagination
+   ↓
+3. __________ llama a onPageChange(3)
+   ↓
+4. onPageChange es __________ del padre (App)
+   ↓
+5. __________(3) ejecuta su lógica</code></pre>
+
+      <hr />
+
+      <h3>🧪 Desafío: JobCard con Callback</h3>
+      <p>
+        Agregá un callback <code>onFavorite</code> a <code>JobCard</code> que notifique al padre
+        cuando el usuario marca un trabajo como favorito.
+      </p>
+
+      <pre><code class="language-jsx">// JobCard.jsx — agregá el botón y el callback
+function JobCard({ job, isRemote, isFeatured, onFavorite }) {
+  const { title, company, location } = job
+
+  return (
+    &lt;article className="job-card"&gt;
+      &lt;h3&gt;{title}&lt;/h3&gt;
+      &lt;p&gt;{company}&lt;/p&gt;
+      {isRemote &amp;&amp; &lt;span className="badge"&gt;🏠 Remoto&lt;/span&gt;}
+
+      {/* Tu código acá — botón que llama a onFavorite con job.id */}
+    &lt;/article&gt;
+  )
+}
+
+// App.jsx — recibí la notificación y hacé console.log
+function App() {
+  const handleFavorite = (jobId) =&gt; {
+    // Tu código acá
+  }
+
+  return (
+    &lt;JobCard
+      job={{ id: 1, title: 'Frontend Dev', company: 'TechCorp' }}
+      isRemote={true}
+      onFavorite={handleFavorite}
+    /&gt;
+  )
+}</code></pre>
+
+      <hr />
+
+      <h3>✅ Resumen de la Clase</h3>
+      <pre><code>🔄 Callback        — función pasada como prop para notificar al padre
+⬆️ Hijo → Padre    — el hijo llama al callback, el padre reacciona
+📛 on / handle     — onEvento para props, handleEvento para funciones
+⚡ Ref vs Ejecución — handleClick ✅  vs  handleClick() ❌
+🛡️ Default vacío   — onPageChange = () => {} evita romper si no se pasa
+📦 Con argumentos  — () => handleClick(id) para pasar datos al callback</code></pre>
+
+      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+        <strong>💡 Próxima clase:</strong> Estado en el componente padre con <code>useState</code> — para que
+        los cambios notificados por los callbacks se reflejen visualmente en la interfaz.
+      </p>
+
+    </div>
+  </article>
+
+  <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-left: 4px solid #007bff; border-radius: 4px;">
+    <p><strong>📚 Recursos Adicionales:</strong></p>
+    <p>
+      Para profundizar en callbacks y comunicación entre componentes,
+      consultá <a href="https://www.jscamp.dev/introduccion-a-react/props-comunicacion-componentes" target="_blank" style="color: #007bff; text-decoration: none;">JSCamp — Props: Comunicación entre Componentes</a>.
+    </p>
+  </div>
+
+</section>

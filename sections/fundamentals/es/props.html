@@ -1,0 +1,431 @@
+<section class="box">
+  <h1>Props — Comunicación entre Componentes</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">Conceptos</button>
+    <button class="tab-button" data-tab="code-examples">Ejemplos de Código</button>
+    <button class="tab-button" data-tab="exercises">Ejercicio Práctico</button>
+  </div>
+
+  <!-- ===================== CONCEPTS ===================== -->
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+
+      <h3>🎁 ¿Qué son las Props?</h3>
+      <p>
+        <strong>Props</strong> (abreviatura de <em>properties</em>) son argumentos que pasás a un componente React,
+        de la misma forma que pasás argumentos a una función.
+      </p>
+
+      <pre><code>// Función normal
+function saludar(nombre) {
+  return `Hola ${nombre}`
+}
+saludar('Miguel')  // "Hola Miguel"
+
+// Componente React — misma idea
+function Saludo({ nombre }) {
+  return &lt;h1&gt;Hola {nombre}&lt;/h1&gt;
+}
+&lt;Saludo nombre="Miguel" /&gt;  // &lt;h1&gt;Hola Miguel&lt;/h1&gt;</code></pre>
+
+      <p>Las props tienen 4 características clave:</p>
+      <pre><code>📦 Son objetos con los datos que le pasás al componente
+⬇️ Fluyen de padre a hijo (nunca al revés)
+🔒 Son inmutables (no se modifican dentro del componente)
+🔄 Hacen que los componentes sean reutilizables</code></pre>
+
+      <hr />
+
+      <h3>⬇️ Flujo Unidireccional</h3>
+      <p>Las props siempre van de padre a hijo. El flujo es unidireccional:</p>
+
+      <pre><code>App (padre)
+  │
+  ├─ pasa: title="Frontend Developer"
+  ├─ pasa: company="TechCorp"
+  │
+  ▼
+JobCard (hijo)
+  └─ usa: {title} y {company} para renderizar</code></pre>
+
+      <p style="padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;">
+        <strong>⚠️ Regla fundamental:</strong> Un hijo <strong>nunca</strong> puede pasar props a su padre directamente.
+        Para eso se usan callbacks, que veremos más adelante.
+      </p>
+
+      <hr />
+
+      <h3>🔓 Desestructuración de Props</h3>
+      <p>Hay dos formas de recibir props. La segunda es la recomendada:</p>
+
+      <pre><code class="language-jsx">// ❌ Sin desestructuración — repetitivo y verboso
+function JobCard(props) {
+  return (
+    &lt;article&gt;
+      &lt;h3&gt;{props.title}&lt;/h3&gt;
+      &lt;p&gt;{props.company}&lt;/p&gt;
+    &lt;/article&gt;
+  )
+}
+
+// ✅ Con desestructuración — limpio y legible
+function JobCard({ title, company }) {
+  return (
+    &lt;article&gt;
+      &lt;h3&gt;{title}&lt;/h3&gt;
+      &lt;p&gt;{company}&lt;/p&gt;
+    &lt;/article&gt;
+  )
+}</code></pre>
+
+      <p>Ventajas de desestructurar:</p>
+      <pre><code>✅ Código más limpio y legible
+✅ Ves inmediatamente qué props usa el componente
+✅ Menos repetición de código</code></pre>
+
+      <hr />
+
+      <h3>🎯 Props por Defecto</h3>
+      <p>Podés asignar un valor por defecto si la prop no se proporciona:</p>
+
+      <pre><code class="language-jsx">function JobCard({ title, company, location = 'Remoto' }) {
+  return (
+    &lt;article&gt;
+      &lt;h3&gt;{title}&lt;/h3&gt;
+      &lt;p&gt;{company}&lt;/p&gt;
+      &lt;p&gt;{location}&lt;/p&gt;  {/* "Remoto" si no se pasa */}
+    &lt;/article&gt;
+  )
+}
+
+// Sin location → usa "Remoto"
+&lt;JobCard title="Frontend Dev" company="TechCorp" /&gt;
+
+// Con location → usa ese valor
+&lt;JobCard title="Frontend Dev" company="TechCorp" location="Madrid" /&gt;</code></pre>
+
+      <hr />
+
+      <h3>❓ Renderizado Condicional</h3>
+      <p>Podés usar props para mostrar u ocultar contenido. Hay dos formas:</p>
+
+      <p><strong>Operador <code>&&</code></strong> — muestra si es <code>true</code>, no muestra nada si es <code>false</code>:</p>
+      <pre><code class="language-jsx">{isRemote &amp;&amp; &lt;span&gt;🏠 Remoto&lt;/span&gt;}
+{isFeatured &amp;&amp; &lt;span&gt;⭐ Destacado&lt;/span&gt;}</code></pre>
+
+      <p style="padding: 15px; background: #fce4ec; border-left: 4px solid #e53935; border-radius: 4px;">
+        <strong>⚠️ Trampa clásica con <code>&&</code>:</strong> si el valor no es booleano sino un número,
+        React renderiza el número <code>0</code> en pantalla.<br/><br/>
+        <code>{results.length &amp;&amp; &lt;span&gt;Resultados&lt;/span&gt;}</code><br/>
+        Si <code>results.length</code> es <code>0</code>, React renderiza el número <code>0</code> en la UI.
+      </p>
+
+      <p><strong>Ternaria</strong> — la opción más segura y expresiva:</p>
+      <pre><code class="language-jsx">{isRemote ? &lt;span&gt;🏠 Remoto&lt;/span&gt; : null}
+{results.length &gt; 0 ? &lt;span&gt;Resultados&lt;/span&gt; : null}</code></pre>
+
+      <p>La ternaria funciona siempre correctamente porque el resultado es explícito.</p>
+
+      <hr />
+
+      <h3>🧩 Fragments — Agrupar sin contaminar el DOM</h3>
+      <p>
+        React tiene una regla: un componente solo puede retornar <strong>un único elemento raíz</strong>.
+        La solución tradicional es envolver en un <code>&lt;div&gt;</code>, pero eso agrega nodos innecesarios al DOM.
+      </p>
+
+      <pre><code class="language-jsx">// ❌ Error — múltiples elementos sin wrapper
+function JobActions() {
+  return (
+    &lt;button&gt;Aplicar&lt;/button&gt;
+    &lt;button&gt;Guardar&lt;/button&gt;
+  )
+}
+
+// ⚠️ Funciona, pero agrega un &lt;div&gt; innecesario
+function JobActions() {
+  return (
+    &lt;div&gt;
+      &lt;button&gt;Aplicar&lt;/button&gt;
+      &lt;button&gt;Guardar&lt;/button&gt;
+    &lt;/div&gt;
+  )
+}
+
+// ✅ Fragment — agrupa sin agregar nodos al DOM
+function JobActions() {
+  return (
+    &lt;&gt;
+      &lt;button&gt;Aplicar&lt;/button&gt;
+      &lt;button&gt;Guardar&lt;/button&gt;
+    &lt;/&gt;
+  )
+}</code></pre>
+
+      <p>Regla simple para elegir:</p>
+      <pre><code>Necesitás estilos o event handler en el wrapper  → &lt;div&gt;
+Solo agrupás elementos sin necesitar el wrapper  → &lt;&gt;&lt;/&gt;</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== CODE EXAMPLES ===================== -->
+  <article id="code-examples" class="tab-content">
+    <div class="description">
+
+      <h3>📦 Tipos de Valores que se Pueden Pasar como Props</h3>
+
+      <pre><code class="language-jsx">// String
+&lt;JobCard title="Frontend Developer" location="Madrid" /&gt;
+
+// Number — siempre entre llaves, nunca entre comillas
+&lt;JobCard salary={45000} experience={3} /&gt;
+
+// Boolean
+&lt;JobCard isRemote={true} isFeatured={false} /&gt;
+&lt;JobCard isRemote /&gt;          {/* shorthand para true */}
+
+// Array
+&lt;JobCard tags={['React', 'TypeScript', 'CSS']} /&gt;
+
+// Object
+&lt;JobCard
+  job={{
+    title: 'Frontend Developer',
+    company: 'TechCorp',
+    salary: 45000,
+  }}
+/&gt;
+
+// Function (callback)
+&lt;JobCard onApply={() =&gt; console.log('Aplicando...')} /&gt;</code></pre>
+
+      <hr />
+
+      <h3>🏗️ Desestructuración Anidada</h3>
+      <p>Cuando pasás un objeto como prop, podés desestructurar su contenido de dos formas:</p>
+
+      <pre><code class="language-jsx">// Opción 1: desestructurar dentro del componente (más legible)
+function JobCard({ job }) {
+  const { title, company, location } = job
+
+  return (
+    &lt;article&gt;
+      &lt;h3&gt;{title}&lt;/h3&gt;
+      &lt;p&gt;{company}&lt;/p&gt;
+      &lt;p&gt;{location}&lt;/p&gt;
+    &lt;/article&gt;
+  )
+}
+
+// Opción 2: desestructurar en los parámetros (más compacto)
+function JobCard({ job: { title, company, location } }) {
+  return (
+    &lt;article&gt;
+      &lt;h3&gt;{title}&lt;/h3&gt;
+      &lt;p&gt;{company}&lt;/p&gt;
+      &lt;p&gt;{location}&lt;/p&gt;
+    &lt;/article&gt;
+  )
+}</code></pre>
+
+      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+        <strong>💡 Recomendación:</strong> La opción 1 es más legible, especialmente cuando el objeto tiene muchas propiedades.
+      </p>
+
+      <hr />
+
+      <h3>🧩 Composición de Componentes</h3>
+      <p>
+        Las props permiten construir componentes más complejos a partir de componentes simples.
+        Es uno de los patrones más poderosos de React:
+      </p>
+
+      <pre><code class="language-jsx">// Componente simple y reutilizable
+function Badge({ children, type = 'default' }) {
+  return &lt;span className={`badge badge-${type}`}&gt;{children}&lt;/span&gt;
+}
+
+// Componente que compone Badge
+function JobCard({ title, isRemote, isFeatured }) {
+  return (
+    &lt;article&gt;
+      &lt;h3&gt;{title}&lt;/h3&gt;
+      {isRemote &amp;&amp; &lt;Badge type="info"&gt;🏠 Remoto&lt;/Badge&gt;}
+      {isFeatured &amp;&amp; &lt;Badge type="success"&gt;⭐ Destacado&lt;/Badge&gt;}
+    &lt;/article&gt;
+  )
+}</code></pre>
+
+      <pre><code>Ventajas de la composición:
+
+♻️ Badge es reutilizable en cualquier parte de la app
+🧩 Fácil de mantener — cambiar Badge actualiza todo
+📖 Código más legible y declarativo</code></pre>
+
+      <hr />
+
+      <h3>❓ Renderizado Condicional con Fragments</h3>
+
+      <pre><code class="language-jsx">function JobCard({ job, showDetails }) {
+  return (
+    &lt;article&gt;
+      &lt;h3&gt;{job.title}&lt;/h3&gt;
+
+      {showDetails &amp;&amp; (
+        &lt;&gt;
+          &lt;p&gt;{job.description}&lt;/p&gt;
+          &lt;p&gt;{job.requirements}&lt;/p&gt;
+          &lt;p&gt;{job.benefits}&lt;/p&gt;
+        &lt;/&gt;
+      )}
+    &lt;/article&gt;
+  )
+}</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== EXERCISES ===================== -->
+  <article id="exercises" class="tab-content">
+    <div class="description">
+
+      <h3>💪 Ejercicio: JobCard Completa con Props</h3>
+      <p>
+        Ahora integramos todo lo visto. Vas a construir un componente <code>JobCard</code> que recibe
+        props de diferentes tipos y renderiza condicionalmente badges y detalles.
+      </p>
+
+      <h4>JobCard.jsx</h4>
+      <pre><code class="language-jsx">function JobCard({ job, isRemote, isFeatured, isNew }) {
+  const { title, company, location, salary, description, tags } = job
+
+  return (
+    &lt;article className={`job-card ${isFeatured ? 'featured' : ''}`}&gt;
+
+      &lt;header className="job-card-header"&gt;
+        &lt;h3 className="job-title"&gt;{title}&lt;/h3&gt;
+        &lt;p className="job-company"&gt;{company}&lt;/p&gt;
+
+        &lt;div className="badges"&gt;
+          {isNew &amp;&amp; &lt;span className="badge new"&gt;🆕 Nuevo&lt;/span&gt;}
+          {isFeatured &amp;&amp; &lt;span className="badge featured"&gt;⭐ Destacado&lt;/span&gt;}
+          {isRemote &amp;&amp; &lt;span className="badge remote"&gt;🏠 Remoto&lt;/span&gt;}
+        &lt;/div&gt;
+      &lt;/header&gt;
+
+      &lt;div className="job-card-body"&gt;
+        &lt;p className="job-location"&gt;📍 {location}&lt;/p&gt;
+        &lt;p className="job-salary"&gt;💰 {salary}&lt;/p&gt;
+        &lt;p className="job-description"&gt;{description}&lt;/p&gt;
+      &lt;/div&gt;
+
+      &lt;footer className="job-card-footer"&gt;
+        &lt;span className="job-tags"&gt;{tags.join(', ')}&lt;/span&gt;
+        &lt;button className="btn-apply"&gt;Aplicar&lt;/button&gt;
+      &lt;/footer&gt;
+
+    &lt;/article&gt;
+  )
+}
+
+export default JobCard</code></pre>
+
+      <h4>App.jsx — uso con datos reales</h4>
+      <pre><code class="language-jsx">function App() {
+  return (
+    &lt;main&gt;
+      &lt;h2&gt;Trabajos Disponibles&lt;/h2&gt;
+
+      &lt;div className="jobs-grid"&gt;
+
+        &lt;JobCard
+          job={{
+            title: 'Frontend Developer',
+            company: 'TechCorp',
+            location: 'Madrid, España',
+            salary: '€45,000 — €60,000',
+            description: 'Buscamos developer con experiencia en React.',
+            tags: ['React', 'TypeScript', 'CSS'],
+          }}
+          isFeatured={true}
+          isNew={true}
+          isRemote={false}
+        /&gt;
+
+        &lt;JobCard
+          job={{
+            title: 'Backend Developer',
+            company: 'DataStack',
+            location: 'Barcelona, España',
+            salary: '€50,000 — €70,000',
+            description: 'Desarrollador backend para Node.js y bases de datos.',
+            tags: ['Node.js', 'PostgreSQL', 'API'],
+          }}
+          isFeatured={false}
+          isNew={false}
+          isRemote={true}
+        /&gt;
+
+        &lt;JobCard
+          job={{
+            title: 'Full Stack Developer',
+            company: 'StartupX',
+            location: 'Remoto',
+            salary: '€40,000 — €55,000',
+            description: 'Developer full stack para startup en crecimiento.',
+            tags: ['React', 'Node.js', 'MongoDB'],
+          }}
+          isFeatured={false}
+          isNew={true}
+          isRemote={true}
+        /&gt;
+
+      &lt;/div&gt;
+    &lt;/main&gt;
+  )
+}</code></pre>
+
+      <hr />
+
+      <h3>🎯 Qué Practicar</h3>
+      <pre><code>1. Agregá una prop "applyUrl" (string) y hacé que el botón
+   "Aplicar" abra ese link en una nueva pestaña.
+
+2. Agregá una prop "salary" con valor por defecto "A convenir"
+   cuando no se proporciona.
+
+3. Cambiá los badges para usar un componente &lt;Badge&gt; separado
+   que reciba children y type como props.
+
+4. Usá Fragment (&lt;&gt;&lt;/&gt;) donde tengas divs innecesarios.</code></pre>
+
+      <hr />
+
+      <h3>✅ Resumen de la Clase</h3>
+      <pre><code>🎁 Props         — argumentos que pasás a los componentes
+⬇️ Flujo         — siempre de padre a hijo, nunca al revés
+🔓 Desestructurar — { title, company } en los parámetros
+🎯 Defaults      — location = 'Remoto' si no se pasa
+❓ Condicional   — ternaria es más segura que &&
+🧩 Fragments     — &lt;&gt;&lt;/&gt; para agrupar sin contaminar el DOM</code></pre>
+
+      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+        <strong>💡 Próxima clase:</strong> Renderizado de listas con <code>.map()</code> e importar datos
+        desde un archivo JSON para crear múltiples JobCards automáticamente.
+      </p>
+
+    </div>
+  </article>
+
+
+  <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-left: 4px solid #007bff; border-radius: 4px;">
+    <p><strong>📚 Recursos Adicionales:</strong></p>
+    <p>
+      Para profundizar en Props y comunicación entre componentes,
+      consultá <a href="https://www.jscamp.dev/introduccion-a-react/props-comunicacion-componentes" target="_blank" style="color: #007bff; text-decoration: none;">JSCamp — Props: Comunicación entre Componentes</a>.
+    </p>
+  </div>
+
+</section>
