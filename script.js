@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function loadContent(section) {
     const lang = currentLanguage === "es" ? "es" : "en";
     const hooks = ["useState", "useEffect", "useContext", "useRef", "useReducer", "globalSwitch"];
-    const fundamentals = ["componentes", "componentesVsFunciones", "jobCard", "props", "modulos", "paginacion", "callbacks", "eventos", "renderizado", "vite-bundlers", "vite-install", "fast-refresh", "bareBonesMethod", "lifeCicle"];
+    const fundamentals = ["componentes", "componentesVsFunciones", "jobCard", "props", "modulos", "paginacion", "callbacks", "listas", "paginacion-final", "eventos", "renderizado", "vite-bundlers", "vite-install", "fast-refresh", "bareBonesMethod", "lifeCicle"];
     const interview = ["interviewQuestions", "react-hooks-rules-and-order", "react-hooks-masterclass"];
 
     let folder = "";
@@ -118,6 +118,8 @@ document.addEventListener("DOMContentLoaded", () => {
       modulos: { en: "JS Modules", es: "Módulos JS" },
       paginacion: { en: "Pagination", es: "Paginación" },
       callbacks: { en: "Callbacks", es: "Callbacks" },
+      listas: { en: "Keys & Lists", es: "Keys y Listas" },
+      "paginacion-final": { en: "Finishing Pagination", es: "Terminando la Paginación" },
       "vite-bundlers": { en: "Vite & Bundlers", es: "Vite y Bundlers" },
       "vite-install": { en: "Installing Vite", es: "Instalación de Vite" },
       "fast-refresh": { en: "Fast Refresh & State Updates", es: "Fast Refresh y Actualizaciones de Estado" },

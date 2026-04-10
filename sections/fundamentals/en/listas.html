@@ -1,0 +1,373 @@
+<section class="box">
+  <h1>Keys and List Rendering</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">Concepts</button>
+    <button class="tab-button" data-tab="code-examples">Code Examples</button>
+    <button class="tab-button" data-tab="exercises">Practical Exercise</button>
+  </div>
+
+  <!-- ===================== CONCEPTS ===================== -->
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+
+      <h3>😱 The Problem: Manually Repeated Components</h3>
+      <p>When data is dynamic, repeating JSX manually doesn't scale:</p>
+
+      <pre><code class="language-jsx">// ❌ Repetitive, doesn't scale, data mixed with UI
+function App() {
+  return (
+    &lt;div&gt;
+      &lt;article&gt;&lt;h3&gt;Frontend Developer&lt;/h3&gt;&lt;p&gt;TechCorp&lt;/p&gt;&lt;/article&gt;
+      &lt;article&gt;&lt;h3&gt;Backend Developer&lt;/h3&gt;&lt;p&gt;DataStack&lt;/p&gt;&lt;/article&gt;
+      &lt;article&gt;&lt;h3&gt;Full Stack Developer&lt;/h3&gt;&lt;p&gt;StartupX&lt;/p&gt;&lt;/article&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+      <pre><code>📝 Repetitive        — copy-pasting the same HTML
+🔢 Doesn't scale     — what if you have 100 jobs?
+📊 Hardcoded data    — UI and data are mixed together
+🔄 Hard to update    — changing something touches multiple places</code></pre>
+
+      <p>The solution: separate data into a JSON file and render with <code>.map()</code>.</p>
+
+      <hr />
+
+      <h3>🔄 What does <code>.map()</code> do?</h3>
+      <p>
+        <code>.map()</code> iterates over an array and returns a new transformed array.
+        In React, we transform data into JSX elements:
+      </p>
+
+      <pre><code class="language-javascript">const jobs = [
+  { id: 1, title: 'Frontend Developer' },
+  { id: 2, title: 'Backend Developer' },
+  { id: 3, title: 'Full Stack Developer' },
+]
+
+// Data → Components
+jobs.map((job) => &lt;JobCard key={job.id} job={job} /&gt;)
+
+// Result: array of React components
+// [
+//   &lt;JobCard key={1} job={{...}} /&gt;,
+//   &lt;JobCard key={2} job={{...}} /&gt;,
+//   &lt;JobCard key={3} job={{...}} /&gt;
+// ]</code></pre>
+
+      <hr />
+
+      <h3>🔑 Why is the <code>key</code> Required?</h3>
+      <p>
+        The <code>key</code> is a unique identifier that lets React know
+        which elements <strong>changed, were added, or were removed</strong>
+        when the list updates.
+      </p>
+
+      <h4>Without keys — React doesn't know what changed</h4>
+      <pre><code>// You add an element at the start
+Before:  [Frontend, Backend, FullStack]
+After:   [DevOps, Frontend, Backend, FullStack]
+
+// Without keys, React compares position by position
+// position 0: Frontend → DevOps   ← "changed"
+// position 1: Backend  → Frontend ← "changed"
+// position 2: FullStack → Backend  ← "changed"
+// position 3: (none)   → FullStack ← "new"
+// React re-renders EVERYTHING 🐌</code></pre>
+
+      <h4>With keys — React knows exactly what happened</h4>
+      <pre><code>// With key={id}, React compares by identity
+Before:  [key=1 Frontend, key=2 Backend, key=3 FullStack]
+After:   [key=4 DevOps, key=1 Frontend, key=2 Backend, key=3 FullStack]
+
+// key=4 is new → only renders that one ⚡
+// key=1, 2, 3 didn't change → React reuses them</code></pre>
+
+      <hr />
+
+      <h3>📋 Rules for Keys</h3>
+
+      <h4>1. Must be unique among siblings</h4>
+      <pre><code class="language-jsx">// ✅ Unique IDs
+{jobs.map((job) =&gt; &lt;JobCard key={job.id} job={job} /&gt;)}
+
+// ❌ All the same — React can't tell them apart
+{jobs.map((job) =&gt; &lt;JobCard key="job" job={job} /&gt;)}</code></pre>
+
+      <h4>2. Must be stable (not change between renders)</h4>
+      <pre><code class="language-jsx">// ❌ Math.random() generates a different key every render
+{jobs.map((job) =&gt; &lt;JobCard key={Math.random()} job={job} /&gt;)}
+
+// ✅ The ID doesn't change between renders
+{jobs.map((job) =&gt; &lt;JobCard key={job.id} job={job} /&gt;)}</code></pre>
+
+      <h4>3. Indexes: only for static lists</h4>
+      <pre><code class="language-jsx">// ✅ OK — static list that never changes
+const DAYS = ['Monday', 'Tuesday', 'Wednesday']
+{DAYS.map((day, index) =&gt; &lt;li key={index}&gt;{day}&lt;/li&gt;)}
+
+// ❌ Dangerous — dynamic list with reorder/delete operations
+{tasks.map((task, index) =&gt; &lt;Task key={index} task={task} /&gt;)}
+
+// ✅ Correct — dynamic list with unique ID
+{tasks.map((task) =&gt; &lt;Task key={task.id} task={task} /&gt;)}</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== CODE EXAMPLES ===================== -->
+  <article id="code-examples" class="tab-content">
+    <div class="description">
+
+      <h3>🗂️ Data in a JSON File</h3>
+
+      <pre><code class="language-json">// src/data/jobs.json
+[
+  {
+    "id": "7a4d1d8b-1e45-4d8c-9f1a-8c2f9a9121a4",
+    "titulo": "Senior Software Developer",
+    "empresa": "Tech Solutions Inc.",
+    "ubicacion": "Remote",
+    "descripcion": "Looking for a software engineer with React and Node.js experience.",
+    "data": {
+      "technology": ["react", "node", "javascript"],
+      "modalidad": "remoto",
+      "nivel": "senior"
+    }
+  },
+  {
+    "id": "d35b2c89-5d60-4f26-b19a-6cfb2f1a0f57",
+    "titulo": "Data Analyst",
+    "empresa": "Data Driven Co.",
+    "ubicacion": "Mexico City",
+    "descripcion": "Analyst with experience in SQL, Python and R.",
+    "data": {
+      "technology": "python",
+      "modalidad": "cdmx",
+      "nivel": "junior"
+    }
+  }
+]</code></pre>
+
+      <hr />
+
+      <h3>🧩 JobCard Component</h3>
+
+      <pre><code class="language-jsx">// src/components/JobCard.jsx
+export function JobCard({ job }) {
+  return (
+    &lt;article
+      className="job-listing-card"
+      data-modalidad={job.data.modalidad}
+      data-nivel={job.data.nivel}
+    &gt;
+      &lt;div&gt;
+        &lt;h3&gt;{job.titulo}&lt;/h3&gt;
+        &lt;small&gt;{job.empresa} | {job.ubicacion}&lt;/small&gt;
+        &lt;p&gt;{job.descripcion}&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;button&gt;Apply&lt;/button&gt;
+    &lt;/article&gt;
+  )
+}</code></pre>
+
+      <hr />
+
+      <h3>📋 JobListings Component with <code>.map()</code></h3>
+
+      <pre><code class="language-jsx">// src/components/JobListings.jsx
+import { JobCard } from './JobCard'
+import jobsData from '../data/jobs.json'
+
+export function JobListings() {
+  return (
+    &lt;div className="jobs-grid"&gt;
+      {jobsData.map((job) =&gt; (
+        &lt;JobCard key={job.id} job={job} /&gt;
+      ))}
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+      <pre><code>Data flow:
+
+jobs.json
+  │
+  ▼
+jobsData (array of objects)
+  │
+  .map((job) => &lt;JobCard key={job.id} job={job} /&gt;)
+  │
+  ▼
+Array of rendered React components</code></pre>
+
+      <hr />
+
+      <h3>🎭 Empty List: Conditional Rendering</h3>
+
+      <pre><code class="language-jsx">// With early return
+export function JobListings({ jobs }) {
+  if (jobs.length === 0) {
+    return (
+      &lt;div className="no-jobs"&gt;
+        &lt;p&gt;No jobs available at the moment.&lt;/p&gt;
+      &lt;/div&gt;
+    )
+  }
+
+  return (
+    &lt;div className="jobs-grid"&gt;
+      {jobs.map((job) =&gt; (
+        &lt;JobCard key={job.id} job={job} /&gt;
+      ))}
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+      <pre><code class="language-jsx">// With inline ternary
+export function JobListings({ jobs }) {
+  return jobs.length === 0 ? (
+    &lt;p&gt;No jobs available.&lt;/p&gt;
+  ) : (
+    &lt;div className="jobs-grid"&gt;
+      {jobs.map((job) =&gt; (
+        &lt;JobCard key={job.id} job={job} /&gt;
+      ))}
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+      <hr />
+
+      <h3>⚠️ The Index Bug: Visual Example</h3>
+      <p>Why using <code>index</code> as a key can cause bugs in dynamic lists:</p>
+
+      <pre><code class="language-jsx">// Initial state
+&lt;Task key={0} text="Task A" completed={false} /&gt;
+&lt;Task key={1} text="Task B" completed={true}  /&gt;
+&lt;Task key={2} text="Task C" completed={false} /&gt;
+
+// User deletes "Task A"
+
+// With index as key:
+&lt;Task key={0} text="Task B" completed={true}  /&gt;  // ← key reassigned
+&lt;Task key={1} text="Task C" completed={false} /&gt;  // ← key reassigned
+// React: "key=0 is now Task B" → may mix up state ❌
+
+// With ID as key:
+&lt;Task key="b" text="Task B" completed={true}  /&gt;  // ← stable key
+&lt;Task key="c" text="Task C" completed={false} /&gt;  // ← stable key
+// React: "key='a' was removed, the rest are unchanged" ✅</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== EXERCISES ===================== -->
+  <article id="exercises" class="tab-content">
+    <div class="description">
+
+      <h3>💪 Exercise: Connect Everything</h3>
+      <p>
+        Build the full flow: JSON data → list of components.
+        Follow the steps in order.
+      </p>
+
+      <h4>Step 1 — Create the data</h4>
+      <pre><code class="language-json">// src/data/jobs.json
+[
+  { "id": "1", "titulo": "Frontend Developer", "empresa": "TechCorp",  "ubicacion": "Madrid" },
+  { "id": "2", "titulo": "Backend Developer",  "empresa": "DataStack", "ubicacion": "Barcelona" },
+  { "id": "3", "titulo": "Full Stack Dev",     "empresa": "StartupX",  "ubicacion": "Remote" }
+]</code></pre>
+
+      <h4>Step 2 — Create JobCard</h4>
+      <pre><code class="language-jsx">// src/components/JobCard.jsx
+export function JobCard({ job }) {
+  return (
+    &lt;article className="job-listing-card"&gt;
+      &lt;h3&gt;{job.titulo}&lt;/h3&gt;
+      &lt;small&gt;{job.empresa} | {job.ubicacion}&lt;/small&gt;
+      &lt;button&gt;Apply&lt;/button&gt;
+    &lt;/article&gt;
+  )
+}</code></pre>
+
+      <h4>Step 3 — Create JobListings</h4>
+      <pre><code class="language-jsx">// src/components/JobListings.jsx
+import { JobCard } from './JobCard'
+import jobsData from '../data/jobs.json'
+
+export function JobListings() {
+  return (
+    &lt;div className="jobs-grid"&gt;
+      {jobsData.map((job) =&gt; (
+        &lt;JobCard key={job.id} job={job} /&gt;
+      ))}
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+      <h4>Step 4 — Use in App</h4>
+      <pre><code class="language-jsx">// src/App.jsx
+import { JobListings } from './components/JobListings'
+
+function App() {
+  return (
+    &lt;main&gt;
+      &lt;h2&gt;Available Jobs&lt;/h2&gt;
+      &lt;JobListings /&gt;
+    &lt;/main&gt;
+  )
+}</code></pre>
+
+      <hr />
+
+      <h3>🧪 Extra Challenge</h3>
+      <pre><code>1. Add a "No jobs available" message
+   when the array is empty.
+
+2. Modify JobCard to show the technology tags
+   as individual badges using a nested .map().
+
+3. Try using Math.random() as the key — open the browser
+   console and observe what warnings appear.</code></pre>
+
+      <hr />
+
+      <h3>✅ Class Summary</h3>
+      <pre><code>🗂️ External JSON      — separate data from the UI
+🧩 JobCard            — component that displays one job
+📋 JobListings        — component that renders the list
+🔄 .map()             — array of data → array of JSX components
+🔑 Required key       — React needs it to identify elements
+🎯 Unique/stable keys — use IDs, not Math.random() or index
+⚠️ Dangerous indexes  — only safe in completely static lists
+🎭 Empty list         — always handle the empty array case</code></pre>
+
+      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+        <strong>💡 Next class:</strong> We'll finish wiring up pagination by connecting
+        the parent's state to the list of displayed jobs.
+      </p>
+
+    </div>
+  </article>
+
+  <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; text-align: center;">
+    <strong style="color: white; font-size: 1.1em; display: block; margin-bottom: 15px;">📚 Want to dive deeper?</strong>
+    <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+      <a href="https://www.jscamp.dev/introduccion-a-react/keys-renderizado-listas"
+         target="_blank"
+         style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+        📖 Read about Keys &amp; Lists on JSCamp →
+      </a>
+      <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/69d907e6-2c08-8386-993d-c834d22d8e70"
+         target="_blank"
+         style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+        💬 Ask ChatGPT about List Rendering →
+      </a>
+    </div>
+  </div>
+
+</section>

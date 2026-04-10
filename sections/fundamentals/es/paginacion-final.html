@@ -1,0 +1,356 @@
+<section class="box">
+  <h1>Terminando la Paginación</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">Conceptos</button>
+    <button class="tab-button" data-tab="code-examples">Ejemplos de Código</button>
+    <button class="tab-button" data-tab="exercises">Errores y Ejercicio</button>
+  </div>
+
+  <!-- ===================== CONCEPTS ===================== -->
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+
+      <h3>🏗️ Arquitectura: ¿Dónde Viven los Datos?</h3>
+      <p>
+        Si los datos están dentro de <code>JobListings</code>, solo <code>JobListings</code>
+        puede usarlos. Para paginar y filtrar desde <code>App</code>, los datos deben vivir en <code>App</code>.
+      </p>
+
+      <pre><code>Antes — datos atrapados en el hijo:
+
+  App
+   └─→ JobListings (tiene los datos)
+           └─→ JobCard
+   ❌ No podemos paginar desde App
+   ❌ No podemos filtrar desde App
+
+Ahora — datos en el padre:
+
+  App (tiene los datos)
+   ├─→ calcula totalPages
+   ├─→ calcula pagedResults
+   ├─→ JobListings (solo renderiza)
+   └─→ Pagination (navega)</code></pre>
+
+      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+        <strong>💡 Principio de React:</strong> Los datos deben vivir en el componente padre que
+        necesita manipularlos. Los hijos solo muestran lo que reciben.
+      </p>
+
+      <hr />
+
+      <h3>🔢 Math.floor() vs Math.round() vs Math.ceil()</h3>
+      <p>Las tres funciones redondean números, pero de formas distintas:</p>
+
+      <pre><code>Número  floor()  round()  ceil()
+  4.1      4        4        5
+  4.4      4        4        5
+  4.5      4        5        5   ← round sube en .5
+  4.6      4        5        5
+  4.9      4        5        5
+  5.0      5        5        5</code></pre>
+
+      <pre><code>floor()  →  siempre hacia ABAJO   ↓  4.9 → 4
+round()  →  al MÁS CERCANO       ↔  4.4 → 4,  4.6 → 5
+ceil()   →  siempre hacia ARRIBA ↑  4.1 → 5</code></pre>
+
+      <h4>¿Cuál usar para páginas totales?</h4>
+      <pre><code class="language-javascript">// 23 trabajos, 5 por página → 4.6 páginas
+
+Math.floor(23 / 5)  // ❌ 4 — perdemos los últimos 3 trabajos
+Math.round(23 / 5)  // ❌ 5 — funciona aquí, pero por casualidad
+Math.ceil(23 / 5)   // ✅ 5 — siempre correcto: necesitamos 5 páginas</code></pre>
+
+      <p>
+        Usamos <code>Math.ceil()</code> porque la última página puede estar incompleta
+        — pero <strong>igual existe y hay que mostrarla</strong>.
+      </p>
+
+      <hr />
+
+      <h3>✂️ Array.slice() — Extraer sin Mutar</h3>
+      <p>
+        <code>slice(inicio, fin)</code> extrae una porción del array
+        <strong>sin modificar el original</strong>:
+      </p>
+
+      <pre><code class="language-javascript">const arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+arr.slice(0, 5)   // [0, 1, 2, 3, 4]
+arr.slice(5, 10)  // [5, 6, 7, 8, 9]
+arr.slice(2, 4)   // [2, 3]
+
+console.log(arr)  // [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] ← no cambió</code></pre>
+
+      <p style="padding: 15px; background: #fce4ec; border-left: 4px solid #e53935; border-radius: 4px;">
+        <strong>⚠️ Trampa clásica — <code>splice()</code> muta el original:</strong><br/><br/>
+        <code>slice()</code> → crea copia, no toca el original ✅<br/>
+        <code>splice()</code> → modifica el original ❌ nunca en React
+      </p>
+
+      <hr />
+
+      <h3>🧮 La Fórmula de Paginación</h3>
+      <p>Para obtener los ítems de la página <code>N</code> con <code>SIZE</code> elementos por página:</p>
+
+      <pre><code>inicio = (N - 1) * SIZE
+fin    =  N      * SIZE
+
+Página 1:  slice(0,  5)   → ítems 0-4
+Página 2:  slice(5,  10)  → ítems 5-9
+Página 3:  slice(10, 15)  → ítems 10-14
+Página 5:  slice(20, 25)  → ítems 20-22  (sin problema si fin > length)</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== CODE EXAMPLES ===================== -->
+  <article id="code-examples" class="tab-content">
+    <div class="description">
+
+      <h3>🏗️ Mover los Datos a App.jsx</h3>
+
+      <pre><code class="language-jsx">// src/components/JobListings.jsx — antes
+import jobsData from '../data/jobs.json'  // ❌ datos hardcodeados aquí
+
+export function JobListings() {
+  return (
+    &lt;div className="jobs-grid"&gt;
+      {jobsData.map((job) =&gt; &lt;JobCard key={job.id} job={job} /&gt;)}
+    &lt;/div&gt;
+  )
+}
+
+// src/components/JobListings.jsx — ahora
+export function JobListings({ jobs }) {  // ✅ recibe datos como prop
+  return (
+    &lt;div className="jobs-grid"&gt;
+      {jobs.map((job) =&gt; &lt;JobCard key={job.id} job={job} /&gt;)}
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+      <hr />
+
+      <h3>🧩 App.jsx — Paginación Completa</h3>
+
+      <pre><code class="language-jsx">// src/App.jsx
+import { useState } from 'react'
+import { JobListings } from './components/JobListings'
+import Pagination from './components/Pagination'
+import jobsData from './data/jobs.json'
+
+const RESULTS_PER_PAGE = 5  // constante en MAYÚSCULAS — valor de configuración
+
+function App() {
+  const [currentPage, setCurrentPage] = useState(1)
+
+  // Cuántas páginas en total
+  const totalPages = Math.ceil(jobsData.length / RESULTS_PER_PAGE)
+
+  // Solo los trabajos de la página actual
+  const pagedResults = jobsData.slice(
+    (currentPage - 1) * RESULTS_PER_PAGE,
+    currentPage * RESULTS_PER_PAGE
+  )
+
+  const handlePageChange = (page) =&gt; {
+    setCurrentPage(page)
+  }
+
+  return (
+    &lt;&gt;
+      &lt;header&gt;...&lt;/header&gt;
+      &lt;main&gt;
+        &lt;JobListings jobs={pagedResults} /&gt;
+        &lt;Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        /&gt;
+      &lt;/main&gt;
+      &lt;footer&gt;...&lt;/footer&gt;
+    &lt;/&gt;
+  )
+}
+
+export default App</code></pre>
+
+      <hr />
+
+      <h3>📊 Tabla Visual: Fórmula por Página</h3>
+
+      <pre><code>RESULTS_PER_PAGE = 5, total = 23 trabajos
+
+Página  inicio=(N-1)*5  fin=N*5   slice()      Trabajos
+  1         0             5       (0, 5)        0-4  → 5 items
+  2         5            10       (5, 10)       5-9  → 5 items
+  3        10            15       (10, 15)     10-14 → 5 items
+  4        15            20       (15, 20)     15-19 → 5 items
+  5        20            25       (20, 25)     20-22 → 3 items ✅</code></pre>
+
+      <hr />
+
+      <h3>🔄 Flujo Completo: Click → Re-render</h3>
+
+      <pre><code class="language-jsx">// Estado inicial — página 1
+currentPage = 1
+pagedResults = jobsData.slice(0, 5)   // trabajos 1-5
+&lt;Pagination currentPage={1} /&gt;        // botón "1" activo
+
+// Usuario hace click en "3"
+handlePageChange(3)
+setCurrentPage(3)
+
+// React re-renderiza
+currentPage = 3
+pagedResults = jobsData.slice(10, 15) // trabajos 11-15
+&lt;Pagination currentPage={3} /&gt;        // botón "3" activo</code></pre>
+
+      <hr />
+
+      <h3>✨ Mejora: Scroll al Inicio al Cambiar Página</h3>
+
+      <pre><code class="language-jsx">const handlePageChange = (page) =&gt; {
+  setCurrentPage(page)
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}</code></pre>
+
+      <hr />
+
+      <h3>📍 Mejora: Mostrar Rango de Resultados</h3>
+
+      <pre><code class="language-jsx">const from = (currentPage - 1) * RESULTS_PER_PAGE + 1
+const to   = Math.min(currentPage * RESULTS_PER_PAGE, jobsData.length)
+
+// Página 2 con 23 trabajos:
+// from = (2-1)*5 + 1 = 6
+// to   = min(2*5, 23) = 10
+
+&lt;p&gt;Mostrando {from} - {to} de {jobsData.length} trabajos&lt;/p&gt;
+// → "Mostrando 6 - 10 de 23 trabajos"</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== EXERCISES ===================== -->
+  <article id="exercises" class="tab-content">
+    <div class="description">
+
+      <h3>🐛 Errores Comunes</h3>
+
+      <h4>1. Olvidar restar 1 en el inicio</h4>
+      <pre><code class="language-jsx">// ❌ Página 1 empieza en índice 5 en vez de 0
+const pagedResults = jobsData.slice(
+  currentPage * RESULTS_PER_PAGE,         // página 1 → índice 5 ❌
+  (currentPage + 1) * RESULTS_PER_PAGE
+)
+
+// ✅ Correcto
+const pagedResults = jobsData.slice(
+  (currentPage - 1) * RESULTS_PER_PAGE,   // página 1 → índice 0 ✅
+  currentPage * RESULTS_PER_PAGE
+)</code></pre>
+
+      <h4>2. Usar Math.floor() para las páginas totales</h4>
+      <pre><code class="language-javascript">// 23 trabajos, 5 por página
+Math.floor(23 / 5)  // ❌ 4 — perdemos los últimos 3 trabajos
+Math.ceil(23 / 5)   // ✅ 5 — correcto</code></pre>
+
+      <h4>3. Confundir slice() con splice()</h4>
+      <pre><code class="language-javascript">const original = [1, 2, 3, 4, 5]
+
+// ✅ slice() — no muta, retorna copia
+const copia = original.slice(1, 3)
+console.log(original) // [1, 2, 3, 4, 5] ← intacto
+
+// ❌ splice() — MUTA el original
+const eliminados = original.splice(1, 2)
+console.log(original) // [1, 4, 5] ← dañado</code></pre>
+
+      <hr />
+
+      <h3>💪 Ejercicio: Implementar la Paginación Completa</h3>
+
+      <pre><code class="language-jsx">// App.jsx — completá los huecos
+
+import { useState } from 'react'
+import { JobListings } from './components/JobListings'
+import Pagination from './components/Pagination'
+import jobsData from './data/jobs.json'
+
+const RESULTS_PER_PAGE = ___  // ← cuántos por página?
+
+function App() {
+  const [currentPage, setCurrentPage] = useState(___)  // ← valor inicial?
+
+  const totalPages = Math.___(jobsData.length / RESULTS_PER_PAGE)  // ← qué función?
+
+  const pagedResults = jobsData.slice(
+    (___ - 1) * RESULTS_PER_PAGE,  // ← inicio
+    ___ * RESULTS_PER_PAGE          // ← fin
+  )
+
+  const handlePageChange = (page) =&gt; {
+    ___  // ← qué hacemos aquí?
+  }
+
+  return (
+    &lt;&gt;
+      &lt;JobListings jobs={___} /&gt;
+      &lt;Pagination
+        currentPage={___}
+        totalPages={___}
+        onPageChange={___}
+      /&gt;
+    &lt;/&gt;
+  )
+}</code></pre>
+
+      <hr />
+
+      <h3>🧪 Desafío Extra</h3>
+      <pre><code>1. Agregá el texto "Mostrando X - Y de Z trabajos"
+   encima de la lista usando la fórmula vista.
+
+2. Agregá scroll suave al inicio cuando cambie la página.
+
+3. Cambiá RESULTS_PER_PAGE a 3 y verificá que el
+   número de páginas se recalcula automáticamente.</code></pre>
+
+      <hr />
+
+      <h3>✅ Resumen de la Clase</h3>
+      <pre><code>🏗️ Datos en App       — el padre controla, los hijos renderizan
+🔢 Math.ceil()        — redondear hacia arriba para páginas totales
+✂️ Array.slice()      — extraer porción sin mutar el original
+🧮 Fórmula paginación — inicio=(N-1)*SIZE, fin=N*SIZE
+🔄 Flujo completo     — click → setCurrentPage → re-render → nuevo slice
+⚡ Optimización       — solo renderizamos los ítems necesarios</code></pre>
+
+      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+        <strong>💡 Próxima clase:</strong> Conceptos más avanzados de React para construir
+        aplicaciones más complejas.
+      </p>
+
+    </div>
+  </article>
+
+  <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; text-align: center;">
+    <strong style="color: white; font-size: 1.1em; display: block; margin-bottom: 15px;">📚 ¿Querés profundizar más?</strong>
+    <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+      <a href="https://www.jscamp.dev/introduccion-a-react/props-comunicacion-componentes"
+         target="_blank"
+         style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+        📖 Lee sobre Props en JSCamp →
+      </a>
+      <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend"
+         target="_blank"
+         style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+        💬 Preguntale a ChatGPT sobre Paginación →
+      </a>
+    </div>
+  </div>
+
+</section>
