@@ -1,0 +1,411 @@
+<section class="box">
+  <h1>useId() Hook</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">What and Why</button>
+    <button class="tab-button" data-tab="code-examples">How to Use It</button>
+    <button class="tab-button" data-tab="exercises">Rules and Exercise</button>
+  </div>
+
+  <!-- ===================== CONCEPTS ===================== -->
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+
+      <h3>🆔 The Problem: Duplicate IDs in HTML</h3>
+      <p>
+        In HTML, IDs must be <strong>unique across the entire page</strong>.
+        They're how a <code>&lt;label&gt;</code> knows which field it belongs to,
+        and how screen readers associate elements with each other.
+      </p>
+      <p>
+        When you write IDs manually in a React component, everything seems fine...
+        until you use that component twice on the same page.
+      </p>
+
+      <pre><code>First SearchForm:
+  &lt;label for="filter-location"&gt;Location&lt;/label&gt;
+  &lt;select id="filter-location"&gt;
+
+Second SearchForm:
+  &lt;label for="filter-location"&gt;Location&lt;/label&gt;
+  &lt;select id="filter-location"&gt;   ← duplicate ID ❌</code></pre>
+
+      <p>The consequences are subtle but real:</p>
+      <pre><code>❌ Technically invalid HTML
+❌ Clicking a label may focus the wrong element
+❌ Screen readers get confused (broken accessibility)
+❌ Testing tools report errors</code></pre>
+
+      <hr />
+
+      <h3>💡 The Solution: Let React Generate the IDs</h3>
+      <p>
+        <code>useId()</code> is a React 18 hook that automatically generates a unique ID
+        every time a new instance of the component is created.
+      </p>
+      <p>
+        You don't need to think about names, you don't need to worry about duplicates.
+        React ensures that every call to <code>useId()</code> returns
+        a value that's unique across the entire application.
+      </p>
+
+      <pre><code>First SearchForm:
+  label for=":r0:"  →  select id=":r0:"   ✅
+
+Second SearchForm:
+  label for=":r2:"  →  select id=":r2:"   ✅ different and unique</code></pre>
+
+      <hr />
+
+      <h3>📋 What Does useId() Generate?</h3>
+      <p>
+        The format React generates is <code>:r0:</code>, <code>:r1:</code>, <code>:r2:</code>, etc.
+        The colons are valid in HTML5 and the number increments automatically
+        with each new instance.
+      </p>
+
+      <pre><code>Characteristics of the generated ID:
+
+  🔢 Incremental    — :r0:, :r1:, :r2:...
+  🔒 Unique         — never repeated on the same page
+  📌 Stable         — doesn't change if the component re-renders
+  🌐 Works with SSR — compatible with Server-Side Rendering
+  📏 Short          — doesn't bloat the HTML</code></pre>
+
+      <hr />
+
+      <h3>📝 The Submit Event and preventDefault()</h3>
+      <p>
+        Before focusing only on IDs, there's something equally important in forms:
+        the <strong>submit event</strong>.
+      </p>
+      <p>
+        When an HTML form is submitted, the browser reloads the page by default.
+        That destroys React's state. With <code>e.preventDefault()</code> we cancel
+        that behavior and handle the submission entirely with JavaScript.
+      </p>
+
+      <pre><code>Without preventDefault():
+  1. User clicks "Search"
+  2. The browser reloads the page ❌
+  3. All React state is lost
+
+With preventDefault():
+  1. User clicks "Search"
+  2. handleSubmit runs ✅
+  3. React keeps its state</code></pre>
+
+      <hr />
+
+      <h3>🔘 Button Types in Forms</h3>
+      <p>
+        A detail that often surprises people: inside a <code>&lt;form&gt;</code>,
+        a <code>&lt;button&gt;</code> without a <code>type</code> is automatically
+        <code>type="submit"</code>.
+      </p>
+
+      <pre><code>&lt;button type="submit"&gt;  →  submits the form (triggers onSubmit)
+&lt;button type="button"&gt;  →  does not submit (only runs onClick)
+&lt;button type="reset"&gt;   →  resets fields to their initial values
+&lt;button&gt;               →  ⚠️ equivalent to type="submit" inside a form</code></pre>
+
+      <p>
+        It's always good practice to declare <code>type</code> explicitly
+        so the behavior is predictable.
+      </p>
+
+    </div>
+  </article>
+
+  <!-- ===================== CODE EXAMPLES ===================== -->
+  <article id="code-examples" class="tab-content">
+    <div class="description">
+
+      <h3>📋 Form Without useId() — The Problem</h3>
+
+      <pre><code class="language-jsx">// ❌ Hardcoded IDs — if used twice, they duplicate
+export function SearchForm() {
+  return (
+    &lt;form className="search-form"&gt;
+      &lt;label htmlFor="filter-location"&gt;Location&lt;/label&gt;
+      &lt;select id="filter-location" name="location"&gt;
+        &lt;option value=""&gt;Location&lt;/option&gt;
+        &lt;option value="remote"&gt;Remote&lt;/option&gt;
+        &lt;option value="cdmx"&gt;Mexico City&lt;/option&gt;
+      &lt;/select&gt;
+
+      &lt;label htmlFor="filter-experience-level"&gt;Level&lt;/label&gt;
+      &lt;select id="filter-experience-level" name="experience-level"&gt;
+        &lt;option value=""&gt;Experience level&lt;/option&gt;
+        &lt;option value="junior"&gt;Junior&lt;/option&gt;
+        &lt;option value="senior"&gt;Senior&lt;/option&gt;
+      &lt;/select&gt;
+    &lt;/form&gt;
+  )
+}</code></pre>
+
+      <hr />
+
+      <h3>✅ Form with useId() + handleSubmit</h3>
+
+      <pre><code class="language-jsx">import { useId } from 'react'
+
+export function SearchForm() {
+  // useId() generates a unique ID per component instance
+  const locationId = useId()
+  const experienceId = useId()
+
+  const handleSubmit = (e) => {
+    e.preventDefault()        // cancels page reload
+    console.log('Form submitted')
+  }
+
+  return (
+    &lt;form className="search-form" onSubmit={handleSubmit}&gt;
+
+      &lt;div className="form-group"&gt;
+        &lt;label htmlFor={locationId}&gt;Location&lt;/label&gt;
+        &lt;select id={locationId} name={locationId}&gt;
+          &lt;option value=""&gt;Location&lt;/option&gt;
+          &lt;option value="remote"&gt;Remote&lt;/option&gt;
+          &lt;option value="cdmx"&gt;Mexico City&lt;/option&gt;
+          &lt;option value="barcelona"&gt;Barcelona&lt;/option&gt;
+        &lt;/select&gt;
+      &lt;/div&gt;
+
+      &lt;div className="form-group"&gt;
+        &lt;label htmlFor={experienceId}&gt;Experience level&lt;/label&gt;
+        &lt;select id={experienceId} name={experienceId}&gt;
+          &lt;option value=""&gt;Experience level&lt;/option&gt;
+          &lt;option value="junior"&gt;Junior&lt;/option&gt;
+          &lt;option value="mid"&gt;Mid-level&lt;/option&gt;
+          &lt;option value="senior"&gt;Senior&lt;/option&gt;
+        &lt;/select&gt;
+      &lt;/div&gt;
+
+      &lt;button type="submit"&gt;Search&lt;/button&gt;
+
+    &lt;/form&gt;
+  )
+}</code></pre>
+
+      <hr />
+
+      <h3>🔍 What React Generates in the DOM</h3>
+
+      <pre><code class="language-jsx">// Using the component twice:
+function App() {
+  return (
+    &lt;&gt;
+      &lt;SearchForm /&gt;
+      &lt;SearchForm /&gt;
+    &lt;/&gt;
+  )
+}</code></pre>
+
+      <pre><code>&lt;!-- First SearchForm --&gt;
+&lt;label for=":r0:"&gt;Location&lt;/label&gt;
+&lt;select id=":r0:"&gt;&lt;/select&gt;
+
+&lt;label for=":r1:"&gt;Experience level&lt;/label&gt;
+&lt;select id=":r1:"&gt;&lt;/select&gt;
+
+&lt;!-- Second SearchForm --&gt;
+&lt;label for=":r2:"&gt;Location&lt;/label&gt;
+&lt;select id=":r2:"&gt;&lt;/select&gt;   ← different ✅
+
+&lt;label for=":r3:"&gt;Experience level&lt;/label&gt;
+&lt;select id=":r3:"&gt;&lt;/select&gt;   ← different ✅</code></pre>
+
+      <hr />
+
+      <h3>🎯 Use Cases for useId()</h3>
+
+      <h4>Labels and inputs</h4>
+      <pre><code class="language-jsx">function TextField({ label }) {
+  const id = useId()
+  return (
+    &lt;&gt;
+      &lt;label htmlFor={id}&gt;{label}&lt;/label&gt;
+      &lt;input id={id} type="text" /&gt;
+    &lt;/&gt;
+  )
+}</code></pre>
+
+      <h4>ARIA attributes</h4>
+      <pre><code class="language-jsx">function Tooltip({ children, tip }) {
+  const id = useId()
+  return (
+    &lt;&gt;
+      &lt;div aria-describedby={id}&gt;{children}&lt;/div&gt;
+      &lt;div role="tooltip" id={id}&gt;{tip}&lt;/div&gt;
+    &lt;/&gt;
+  )
+}</code></pre>
+
+      <h4>Related IDs with suffixes</h4>
+      <pre><code class="language-jsx">function FormField({ label }) {
+  const baseId = useId()              // ":r0:"
+
+  const inputId = `${baseId}-input`  // ":r0:-input"
+  const helpId  = `${baseId}-help`   // ":r0:-help"
+
+  return (
+    &lt;&gt;
+      &lt;label htmlFor={inputId}&gt;{label}&lt;/label&gt;
+      &lt;input id={inputId} aria-describedby={helpId} /&gt;
+      &lt;small id={helpId}&gt;Help text&lt;/small&gt;
+    &lt;/&gt;
+  )
+}</code></pre>
+
+      <hr />
+
+      <h3>⚖️ useId() vs Alternatives</h3>
+
+      <pre><code class="language-javascript">// ❌ Math.random() — changes every render, guaranteed bugs
+const id = `input-${Math.random()}`
+
+// ❌ useState with a string — unnecessarily complex
+const [id] = useState('my-static-id')  // still duplicable
+
+// ✅ useId() — simple, unique, stable
+const id = useId()</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== EXERCISES ===================== -->
+  <article id="exercises" class="tab-content">
+    <div class="description">
+
+      <h3>📏 Rules for useId() — Like All Hooks</h3>
+      <p>
+        <code>useId()</code> follows the same rules as all React hooks:
+        it must be called at the <strong>top level of the component</strong>.
+      </p>
+
+      <pre><code class="language-jsx">// ✅ Top level — correct
+function MyComponent() {
+  const id1 = useId()
+  const id2 = useId()
+  const id3 = useId()
+  return &lt;div id={id1}&gt;...&lt;/div&gt;
+}
+
+// ✅ Concatenating to the ID — correct
+const base = useId()
+const inputId = `${base}-input`
+const errorId = `${base}-error`</code></pre>
+
+      <pre><code class="language-jsx">// ❌ Inside a condition
+if (isVisible) {
+  const id = useId()  // Error — violates hook rules
+}
+
+// ❌ Inside a loop
+for (let i = 0; i &lt; 3; i++) {
+  const id = useId()  // Error
+}
+
+// ❌ Inside a callback
+const handleClick = () => {
+  const id = useId()  // Error
+}
+
+// ❌ As a key in .map() — not what it's for
+items.map((item) =&gt; &lt;div key={useId()}&gt;{item}&lt;/div&gt;)
+// ✅ For keys, use item.id</code></pre>
+
+      <hr />
+
+      <h3>💪 Exercise: Refactor the SearchForm</h3>
+      <p>
+        Take this form with hardcoded IDs and refactor it to use
+        <code>useId()</code> and <code>handleSubmit</code>.
+      </p>
+
+      <pre><code class="language-jsx">// Before — to refactor ❌
+export function SearchForm() {
+  return (
+    &lt;form&gt;
+      &lt;label htmlFor="location"&gt;Location&lt;/label&gt;
+      &lt;select id="location" name="location"&gt;
+        &lt;option value=""&gt;All&lt;/option&gt;
+        &lt;option value="remote"&gt;Remote&lt;/option&gt;
+        &lt;option value="cdmx"&gt;CDMX&lt;/option&gt;
+      &lt;/select&gt;
+
+      &lt;label htmlFor="level"&gt;Level&lt;/label&gt;
+      &lt;select id="level" name="level"&gt;
+        &lt;option value=""&gt;All&lt;/option&gt;
+        &lt;option value="junior"&gt;Junior&lt;/option&gt;
+        &lt;option value="senior"&gt;Senior&lt;/option&gt;
+      &lt;/select&gt;
+
+      &lt;button&gt;Search&lt;/button&gt;
+    &lt;/form&gt;
+  )
+}</code></pre>
+
+      <pre><code class="language-jsx">// After — your solution ✅
+import { ___ } from 'react'   // ← what do you import?
+
+export function SearchForm() {
+  const locationId   = ___()  // ← what hook?
+  const experienceId = ___()
+
+  const handleSubmit = (___) =&gt; {
+    ___             // ← what do you do first?
+    console.log('Submitted')
+  }
+
+  return (
+    &lt;form onSubmit={___}&gt;   {/* ← what do you pass? */}
+
+      &lt;label htmlFor={___}&gt;Location&lt;/label&gt;
+      &lt;select id={___} name={___}&gt;
+        ...
+      &lt;/select&gt;
+
+      &lt;button type="___"&gt;Search&lt;/button&gt;  {/* ← what type? */}
+    &lt;/form&gt;
+  )
+}</code></pre>
+
+      <hr />
+
+      <h3>✅ Class Summary</h3>
+      <pre><code>🆔 useId()            — generates unique IDs per component instance
+⛔ e.preventDefault()  — cancels page reload on submit
+🔘 type="submit"       — always declare the button type
+🔒 Stable IDs          — don't change between re-renders
+🌐 SSR compatible      — works with Server-Side Rendering
+🎯 For labels/ARIA     — correct accessibility without effort
+📏 Hook rules          — top level of the component only</code></pre>
+
+      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+        <strong>💡 Next class:</strong> We'll learn how to capture the selected values
+        in the form and use them to filter the job list.
+      </p>
+
+    </div>
+  </article>
+
+  <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; text-align: center;">
+    <strong style="color: white; font-size: 1.1em; display: block; margin-bottom: 15px;">📚 Want to dive deeper?</strong>
+    <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+      <a href="https://www.jscamp.dev/introduccion-a-react/hook-use-id"
+         target="_blank"
+         style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+        📖 Read about useId on JSCamp →
+      </a>
+      <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/69dbac8e-ca50-8392-884e-59639c64509c"
+         target="_blank"
+         style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+        💬 Ask ChatGPT about useId →
+      </a>
+    </div>
+  </div>
+
+</section>

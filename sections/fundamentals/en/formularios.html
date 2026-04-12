@@ -1,0 +1,407 @@
+<section class="box">
+  <h1>Form Management &amp; Filters</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">What and Why?</button>
+    <button class="tab-button" data-tab="code-examples">How to Use It</button>
+    <button class="tab-button" data-tab="exercises">Errors and Exercise</button>
+  </div>
+
+  <!-- ===================== CONCEPTS ===================== -->
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+
+      <h3>😰 The problem: where do form values live?</h3>
+      <p>
+        When App renders <code>JobList</code> and <code>SearchForm</code> as sibling components,
+        <code>SearchForm</code> can't directly communicate its values to <code>JobList</code>
+        — they simply don't know each other.
+      </p>
+      <p>
+        The solution: <strong>lift state to the common parent</strong> (App). The parent holds
+        the filters and passes them down as props to whichever child needs them.
+      </p>
+
+      <pre><code>                    App
+                   /   \
+          SearchForm   JobList
+          (produces)   (consumes)
+
+Data flows up via callbacks → App stores it → App passes it down as props</code></pre>
+
+      <hr />
+
+      <h3>📋 FormData: read a form all at once</h3>
+      <p>
+        Instead of creating a <code>useState</code> for every field (location, level, etc.),
+        the native <strong>FormData</strong> API lets you read <em>all</em> fields at once
+        when the form is submitted.
+      </p>
+      <p>
+        The key is the <code>name</code> attribute on each <code>&lt;select&gt;</code> or
+        <code>&lt;input&gt;</code>: that's exactly the key FormData uses to identify each field.
+      </p>
+
+      <pre><code>&lt;select name="location"&gt;   ← the name is the key
+&lt;select name="level"&gt;      ← the name is the key
+
+const data = new FormData(e.target)
+data.get("location")  → "remote"
+data.get("level")     → "senior"</code></pre>
+
+      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+        <strong>Why avoid a useState per field?</strong> With FormData you don't need to sync
+        state on every keystroke. You only read the values when the user hits submit.
+        Fewer re-renders, cleaner code.
+      </p>
+
+      <hr />
+
+      <h3>🔗 Callback: the bridge between child and parent</h3>
+      <p>
+        The pattern is always the same: the parent <strong>creates</strong> the function
+        (<code>handleSearch</code>) and passes it as a prop to the child. The child
+        <strong>calls</strong> it with the data when the form is submitted. The parent
+        updates its state, and React re-renders with the new props.
+      </p>
+
+      <pre><code>// App.jsx
+const handleSearch = (filters) =&gt; setFilters(filters)
+&lt;SearchForm onSearch={handleSearch} /&gt;
+
+// SearchForm.jsx
+props.onSearch({ location: "remote", level: "senior" })
+// ↑ sends the data up to the parent</code></pre>
+
+      <p>
+        The child never stores filter state: it only <em>notifies</em>. The parent is the
+        single source of truth.
+      </p>
+
+      <hr />
+
+      <h3>🔍 Cascading filters: order matters</h3>
+      <p>
+        The key insight: we don't filter the original array multiple times independently.
+        We filter <strong>in sequence</strong>: first by dropdowns, then by text search on
+        that result, then paginate that result.
+      </p>
+
+      <pre><code>jobs (original list)
+  ↓ filter by selects (location, level)
+jobsFilteredByDropdowns
+  ↓ filter by text search
+jobsWithTextFilter
+  ↓ paginate
+paginatedResults   ← this goes to JobList</code></pre>
+
+      <p>
+        If you filter in parallel over the original array, the filters ignore each other.
+        In cascade, each filter works on the previous result — and that's exactly how
+        the user expects it to behave.
+      </p>
+
+      <hr />
+
+      <h3>⌨️ Real-time text filter (onChange)</h3>
+      <p>
+        Unlike the form submit (which fires once), the text search uses <code>onChange</code>
+        and fires on <strong>every keystroke</strong>. It updates the <code>textToFilter</code>
+        state in App, which immediately re-filters and re-renders JobList.
+      </p>
+      <p>
+        Why reset <code>currentPage</code> to 1? If you're on page 3 and filter down to
+        5 total results, page 3 no longer exists. Without the reset, the pagination component
+        would end up in an inconsistent state.
+      </p>
+
+    </div>
+  </article>
+
+  <!-- ===================== CODE EXAMPLES ===================== -->
+  <article id="code-examples" class="tab-content">
+    <div class="description">
+
+      <h3>🔧 SearchForm with FormData and useId</h3>
+      <p>
+        The SearchForm component uses <code>useId</code> to generate accessible IDs and
+        <code>FormData</code> to read all fields on submit.
+      </p>
+
+      <pre><code class="language-jsx">import { useId } from 'react'
+
+export function SearchForm({ onSearch }) {
+  const locationId = useId()
+  const experienceId = useId()
+
+  const handleSubmit = (e) =&gt; {
+    e.preventDefault()
+    const data = new FormData(e.target)
+    const filters = {
+      location: data.get('location'),
+      experienceLevel: data.get('experience-level'),
+    }
+    onSearch(filters)
+  }
+
+  return (
+    &lt;form className="search-form" onSubmit={handleSubmit}&gt;
+      &lt;div className="form-group"&gt;
+        &lt;label htmlFor={locationId}&gt;Location&lt;/label&gt;
+        &lt;select id={locationId} name="location"&gt;
+          &lt;option value=""&gt;All&lt;/option&gt;
+          &lt;option value="remote"&gt;Remote&lt;/option&gt;
+          &lt;option value="cdmx"&gt;CDMX&lt;/option&gt;
+          &lt;option value="barcelona"&gt;Barcelona&lt;/option&gt;
+        &lt;/select&gt;
+      &lt;/div&gt;
+
+      &lt;div className="form-group"&gt;
+        &lt;label htmlFor={experienceId}&gt;Experience level&lt;/label&gt;
+        &lt;select id={experienceId} name="experience-level"&gt;
+          &lt;option value=""&gt;All&lt;/option&gt;
+          &lt;option value="junior"&gt;Junior&lt;/option&gt;
+          &lt;option value="mid"&gt;Mid-level&lt;/option&gt;
+          &lt;option value="senior"&gt;Senior&lt;/option&gt;
+        &lt;/select&gt;
+      &lt;/div&gt;
+
+      &lt;button type="submit"&gt;Search&lt;/button&gt;
+    &lt;/form&gt;
+  )
+}</code></pre>
+
+      <hr />
+
+      <h3>🏠 App.jsx: centralized state</h3>
+      <p>
+        App is the single owner of state. It centralizes the three states and applies the
+        filters in cascade before passing the results to JobList.
+      </p>
+
+      <pre><code class="language-jsx">import { useState } from 'react'
+import { JobList } from './components/JobList'
+import { SearchForm } from './components/SearchForm'
+import { Pagination } from './components/Pagination'
+import { JOBS } from './data/jobs'
+
+const JOBS_PER_PAGE = 5
+
+export function App() {
+  const [filters, setFilters] = useState({
+    location: '',
+    experienceLevel: '',
+  })
+  const [textToFilter, setTextToFilter] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
+
+  const handleSearch = (newFilters) =&gt; {
+    setFilters(newFilters)
+    setCurrentPage(1)
+  }
+
+  const handleTextFilter = (e) =&gt; {
+    setTextToFilter(e.target.value)
+    setCurrentPage(1)
+  }
+
+  // 1️⃣ Filter by dropdowns
+  const jobsFilteredByDropdowns = JOBS.filter((job) =&gt; {
+    if (filters.location &amp;&amp; job.location !== filters.location) return false
+    if (filters.experienceLevel &amp;&amp; job.experienceLevel !== filters.experienceLevel) return false
+    return true
+  })
+
+  // 2️⃣ Filter by free text
+  const jobsWithTextFilter = jobsFilteredByDropdowns.filter((job) =&gt; {
+    if (!textToFilter) return true
+    const search = textToFilter.toLowerCase()
+    return (
+      job.title.toLowerCase().includes(search) ||
+      job.company.toLowerCase().includes(search)
+    )
+  })
+
+  // 3️⃣ Paginate
+  const totalPages = Math.ceil(jobsWithTextFilter.length / JOBS_PER_PAGE)
+  const paginatedResults = jobsWithTextFilter.slice(
+    (currentPage - 1) * JOBS_PER_PAGE,
+    currentPage * JOBS_PER_PAGE
+  )
+
+  return (
+    &lt;main&gt;
+      &lt;SearchForm onSearch={handleSearch} /&gt;
+
+      &lt;input
+        type="search"
+        placeholder="Search by title or company..."
+        value={textToFilter}
+        onChange={handleTextFilter}
+      /&gt;
+
+      &lt;JobList jobs={paginatedResults} /&gt;
+
+      &lt;Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      /&gt;
+    &lt;/main&gt;
+  )
+}</code></pre>
+
+      <hr />
+
+      <h3>🗺️ Full data flow diagram</h3>
+
+      <pre><code>App.jsx
+├── state: filters       { location: '', experienceLevel: '' }
+├── state: textToFilter  ''
+├── state: currentPage   1
+│
+├── SearchForm
+│   └── onSearch={handleSearch}  ← callback that updates filters
+│
+├── &lt;input onChange={handleTextFilter}&gt;  ← updates textToFilter
+│
+├── cascading filters:
+│   jobs → [dropdown filters] → [text filter] → [pagination]
+│
+├── JobList
+│   └── jobs={paginatedResults}
+│
+└── Pagination
+    ├── currentPage={currentPage}
+    ├── totalPages={totalPages}
+    └── onPageChange={setCurrentPage}</code></pre>
+
+      <hr />
+
+      <h3>🔎 How the text filter works</h3>
+
+      <pre><code class="language-jsx">const jobsWithTextFilter = jobsFilteredByDropdowns.filter((job) =&gt; {
+  if (!textToFilter) return true   // no text → everything passes
+  const search = textToFilter.toLowerCase()
+  return (
+    job.title.toLowerCase().includes(search) ||
+    job.company.toLowerCase().includes(search)
+  )
+})</code></pre>
+
+      <p>
+        <code>.toLowerCase()</code> on <strong>both sides</strong> so "REACT" matches "React".
+        <code>.includes()</code> is a partial match — "rea" already matches "React Developer".
+      </p>
+
+    </div>
+  </article>
+
+  <!-- ===================== EXERCISES ===================== -->
+  <article id="exercises" class="tab-content">
+    <div class="description">
+
+      <h3>🐛 Common mistakes</h3>
+
+      <p><strong>Mistake 1: Forgetting the <code>name</code> attribute on selects</strong></p>
+
+      <pre><code>// ❌ FormData can't read this
+&lt;select id={locationId}&gt;
+
+// ✅ With name, FormData reads it correctly
+&lt;select id={locationId} name="location"&gt;</code></pre>
+
+      <p>
+        Without the <code>name</code> attribute, <code>data.get('location')</code> returns
+        <code>null</code>. The <code>id</code> is for accessibility (links the label),
+        the <code>name</code> is for FormData.
+      </p>
+
+      <hr />
+
+      <p><strong>Mistake 2: Always filtering from <code>jobs</code> instead of cascading</strong></p>
+
+      <pre><code class="language-jsx">// ❌ Each filter works on the original — they ignore each other
+const filterByLocation = jobs.filter(...)
+const filterByText = jobs.filter(...)  // ← ignores filterByLocation
+
+// ✅ Each filter works on the previous result
+const filterByLocation = jobs.filter(...)
+const filterByText = filterByLocation.filter(...)  // ← correct cascade</code></pre>
+
+      <hr />
+
+      <p><strong>Mistake 3: Not resetting <code>currentPage</code> when filtering</strong></p>
+
+      <pre><code class="language-jsx">// ❌ If you're on page 3 and filter to 5 results → page 3 doesn't exist
+const handleSearch = (filters) =&gt; {
+  setFilters(filters)
+  // setCurrentPage(1)  ← forgotten
+}
+
+// ✅ Always go back to page 1 when filters change
+const handleSearch = (filters) =&gt; {
+  setFilters(filters)
+  setCurrentPage(1)  // ✅
+}</code></pre>
+
+      <hr />
+
+      <h3>💪 Exercise</h3>
+
+      <pre><code>Implement the full search system:
+
+1. In SearchForm.jsx:
+   - Add useId() for the ids
+   - Read values with FormData in the handleSubmit
+   - Call props.onSearch(filters) with the data
+
+2. In App.jsx:
+   - Create the states: filters, textToFilter, currentPage
+   - Implement handleSearch and handleTextFilter
+   - Implement the 3 cascading filter steps
+   - Pass the paginated results to JobList
+
+3. Checklist:
+   □ Do the selects have a name attribute?
+   □ Are the filters cascading (not parallel)?
+   □ Is currentPage reset when filtering?
+   □ Does the text search both title and company?</code></pre>
+
+      <hr />
+
+      <h3>✅ Class summary</h3>
+
+      <pre><code>📋 FormData          — reads all form fields at once with data.get('name')
+🔗 Lifting state     — parent stores, child notifies via callbacks
+🎯 onSearch prop     — callback that sends filters up to the parent
+🔍 Cascading filters — dropdowns → text → pagination (order matters)
+⌨️ onChange          — real-time text, fires on every keystroke
+🔄 Reset page        — always go back to page 1 when filters change
+🆔 useId + name      — useId for accessibility, name for FormData</code></pre>
+
+      <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; text-align: center;">
+        <strong style="color: white; font-size: 1.1em; display: block; margin-bottom: 15px;">📚 Want to go deeper?</strong>
+        <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+          <a href="https://www.jscamp.dev/introduccion-a-react/gestion-formularios-filtros"
+             target="_blank"
+             style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+            📖 Read about Form Management on JSCamp →
+          </a>
+          <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/69dbadd8-5658-8387-9edc-699bfbbd699e"
+             target="_blank"
+             style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+            💬 Ask ChatGPT about Forms →
+          </a>
+          <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/69dbb165-b26c-8396-af31-f63c60f0b4b7"
+             target="_blank"
+             style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+            💬 Ask ChatGPT →
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </article>
+
+</section>

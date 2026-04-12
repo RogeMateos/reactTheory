@@ -54,8 +54,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function loadContent(section) {
     const lang = currentLanguage === "es" ? "es" : "en";
-    const hooks = ["useState", "useEffect", "useContext", "useRef", "useReducer", "globalSwitch"];
-    const fundamentals = ["componentes", "componentesVsFunciones", "jobCard", "props", "modulos", "paginacion", "callbacks", "listas", "paginacion-final", "eventos", "renderizado", "vite-bundlers", "vite-install", "fast-refresh", "bareBonesMethod", "lifeCicle"];
+    const hooks = ["useState", "useEffect", "useContext", "useRef", "useReducer", "globalSwitch", "useId"];
+    const fundamentals = ["componentes", "componentesVsFunciones", "jobCard", "props", "modulos", "paginacion", "callbacks", "listas", "paginacion-final", "css-modules", "eventos", "renderizado", "vite-bundlers", "vite-install", "fast-refresh", "bareBonesMethod", "lifeCicle", "formularios"];
     const interview = ["interviewQuestions", "react-hooks-rules-and-order", "react-hooks-masterclass"];
 
     let folder = "";
@@ -120,6 +120,8 @@ document.addEventListener("DOMContentLoaded", () => {
       callbacks: { en: "Callbacks", es: "Callbacks" },
       listas: { en: "Keys & Lists", es: "Keys y Listas" },
       "paginacion-final": { en: "Finishing Pagination", es: "Terminando la Paginación" },
+      "css-modules": { en: "CSS Modules", es: "CSS Modules" },
+      formularios: { en: "Form Management & Filters", es: "Gestión de Formularios y Filtros" },
       "vite-bundlers": { en: "Vite & Bundlers", es: "Vite y Bundlers" },
       "vite-install": { en: "Installing Vite", es: "Instalación de Vite" },
       "fast-refresh": { en: "Fast Refresh & State Updates", es: "Fast Refresh y Actualizaciones de Estado" },
@@ -137,6 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
       hooks: { en: "Hooks", es: "Hooks" },
       routing: { en: "Routing", es: "Enrutamiento" },
       globalSwitch: { en: "Global Switch (useContext)", es: "Global Switch (useContext)" },
+      useId: { en: "useId", es: "useId" },
       virtualDOM: { en: "Virtual DOM", es: "DOM Virtual" },
       interviewQuestions: {
         en: "Accessing Previous State/Props",

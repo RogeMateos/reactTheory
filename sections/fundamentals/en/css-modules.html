@@ -1,0 +1,393 @@
+<section class="box">
+  <h1>CSS Modules</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">What and Why</button>
+    <button class="tab-button" data-tab="code-examples">How to Use It</button>
+    <button class="tab-button" data-tab="exercises">Errors and Exercise</button>
+  </div>
+
+  <!-- ===================== CONCEPTS ===================== -->
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+
+      <h3>😰 The Problem: Global CSS Breaks on Its Own</h3>
+      <p>
+        When you write CSS globally, all styles share the same space.
+        That means if two different files use the same class name, one will override the other.
+      </p>
+      <p>
+        It's not that someone made a mistake — it's that as the app grows, names repeat.
+        <code>.button</code>, <code>.card</code>, <code>.active</code>, <code>.title</code>...
+        are names any component would want to use.
+      </p>
+
+      <pre><code>/* styles.css */
+.button { background: blue; }
+
+/* another-component.css */
+.button { background: red; }  ← overrides the first one ❌</code></pre>
+
+      <p>The result is unpredictable CSS: you change one style and something breaks elsewhere.</p>
+
+      <hr />
+
+      <h3>💡 The Solution: Locally Scoped Styles</h3>
+      <p>
+        CSS Modules solves this elegantly: each styles file has its own
+        <strong>local scope</strong>. The classes you write only exist inside the component
+        that uses them — they don't leak into the rest of the application.
+      </p>
+      <p>
+        The idea is simple: instead of naming the file <code>Pagination.css</code>,
+        you name it <code>Pagination.module.css</code>.
+        With that small change, React (via Vite or Webpack) transforms class names
+        to make them <strong>globally unique</strong>.
+      </p>
+
+      <pre><code>Pagination.css        → global CSS (anyone can use it)
+Pagination.module.css → CSS Module (only Pagination sees it)</code></pre>
+
+      <hr />
+
+      <h3>🔒 Encapsulation: Each Component is an Island</h3>
+      <p>
+        With CSS Modules you can use the same class name in different components
+        without them interfering with each other:
+      </p>
+
+      <pre><code>Button.module.css   → .button  (the blue button)
+Card.module.css     → .button  (the red button inside Card)
+Modal.module.css    → .button  (the green button inside Modal)</code></pre>
+
+      <p>
+        All three use <code>.button</code>, but since each lives in its own module,
+        they don't clash. React transforms them internally to unique names like
+        <code>Button_button__a1b2c</code>.
+      </p>
+
+      <hr />
+
+      <h3>🗂️ Convention: One Module per Component</h3>
+      <p>
+        CSS Module files go <strong>next to the component</strong> that uses them,
+        with the same name:
+      </p>
+
+      <pre><code>src/components/
+  Pagination.jsx
+  Pagination.module.css   ← same name, same folder
+
+  JobCard.jsx
+  JobCard.module.css
+
+  Button.jsx
+  Button.module.css</code></pre>
+
+      <p>
+        This has a practical benefit: if you delete the component, you know exactly
+        which CSS to delete with it.
+      </p>
+
+      <hr />
+
+      <h3>⚖️ CSS Modules vs Global CSS — When to Use Each</h3>
+
+      <pre><code>Use CSS Modules for:
+  ✅ Component-specific styles
+  ✅ Reusable components (Button, Card, Modal)
+  ✅ Medium or large projects
+
+Use global CSS for:
+  ✅ Reset / Normalize
+  ✅ CSS variables (:root)
+  ✅ body and html styles
+  ✅ Generic utilities (.container, .text-center)
+  ✅ Base fonts and typography</code></pre>
+
+      <p>It's not an either/or choice — they can coexist in the same project.</p>
+
+    </div>
+  </article>
+
+  <!-- ===================== CODE EXAMPLES ===================== -->
+  <article id="code-examples" class="tab-content">
+    <div class="description">
+
+      <h3>📁 Create the .module.css File</h3>
+
+      <pre><code class="language-css">/* src/components/Pagination.module.css */
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-block: 2rem;
+
+  a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    text-decoration: none;
+    color: var(--text-muted);
+    border-radius: 0.375rem;
+    transition: all 0.3s;
+
+    &:hover,
+    &:focus {
+      background-color: #fff;
+    }
+
+    &:active {
+      transform: scale(0.9);
+    }
+  }
+}
+
+.isActive {
+  background-color: var(--primary-light);
+  color: white;
+  pointer-events: none;
+}</code></pre>
+
+      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+        <strong>💡 Note:</strong> CSS nesting (<code>a</code> inside <code>.pagination</code>)
+        and <code>&amp;:hover</code> work with Vite and modern tools.
+        Use <strong>camelCase</strong> for class names: <code>.isActive</code> instead of <code>.is-active</code>.
+      </p>
+
+      <hr />
+
+      <h3>📥 Import and Use in the Component</h3>
+
+      <pre><code class="language-jsx">// src/components/Pagination.jsx
+import styles from './Pagination.module.css'
+//      ↑
+//  "styles" is an object with the file's class names
+
+function Pagination({ currentPage = 1, totalPages = 5, onPageChange = () => {} }) {
+  const pages = Array.from({ length: totalPages }, (_, i) => i + 1)
+
+  // ...handlers...
+
+  return (
+    &lt;nav className={styles.pagination}&gt;
+    {/*            ↑ styles.pagination → "Pagination_pagination__a1b2c" */}
+
+      {pages.map((page) =&gt; (
+        &lt;a
+          key={page}
+          className={currentPage === page ? styles.isActive : ''}
+          {/*                               ↑ only applied to the active page */}
+          href="#"
+          onClick={(e) =&gt; handlePageClick(e, page)}
+        &gt;
+          {page}
+        &lt;/a&gt;
+      ))}
+
+    &lt;/nav&gt;
+  )
+}</code></pre>
+
+      <hr />
+
+      <h3>🔍 What Happens Under the Hood</h3>
+      <p>
+        When you import a CSS Module, you receive a JavaScript object where each key
+        is your class name and the value is the generated unique name:
+      </p>
+
+      <pre><code class="language-javascript">// What you get when importing
+styles = {
+  pagination: 'Pagination_pagination__a1b2c',
+  isActive:   'Pagination_isActive__d3e4f',
+}
+
+// What React renders in the DOM
+&lt;nav class="Pagination_pagination__a1b2c"&gt;
+  &lt;a class="Pagination_isActive__d3e4f"&gt;1&lt;/a&gt;
+&lt;/nav&gt;</code></pre>
+
+      <pre><code>Generated name pattern:
+
+[Component]_[class]__[hash]
+
+.pagination → Pagination_pagination__a1b2c
+.isActive   → Pagination_isActive__d3e4f</code></pre>
+
+      <p>That hash is what guarantees they never clash with other classes.</p>
+
+      <hr />
+
+      <h3>🎨 Multiple Classes</h3>
+
+      <pre><code class="language-jsx">// Template literal — most common way
+&lt;a className={`${styles.link} ${styles.active}`}&gt;Link&lt;/a&gt;
+
+// Conditional
+&lt;a className={currentPage === page ? styles.isActive : ''}&gt;{page}&lt;/a&gt;
+
+// Mix module + global class
+&lt;nav className={`${styles.pagination} container`}&gt;
+{/*             ↑ CSS Module           ↑ global CSS */}
+&lt;/nav&gt;
+
+// Array + filter — cleaner with many conditions
+&lt;a className={[styles.link, isActive &amp;&amp; styles.active].filter(Boolean).join(' ')}&gt;
+  Link
+&lt;/a&gt;</code></pre>
+
+      <hr />
+
+      <h3>🌐 Escaping to Global Scope: <code>:global()</code></h3>
+      <p>
+        Inside a CSS Module you can mark a class as global when you need to style elements
+        from external libraries that inject their own HTML:
+      </p>
+
+      <pre><code class="language-css">/* Pagination.module.css */
+
+.pagination {
+  display: flex;  /* local ✅ */
+}
+
+:global(.container) {
+  max-width: 1200px;  /* global — affects the whole app */
+}
+
+/* Style classes from an external library */
+:global(.external-tooltip) {
+  background: #333;
+  color: #fff;
+}</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== EXERCISES ===================== -->
+  <article id="exercises" class="tab-content">
+    <div class="description">
+
+      <h3>🐛 Common Errors</h3>
+
+      <h4>1. Forgetting .module in the filename</h4>
+      <pre><code>Pagination.css        ❌ global CSS — no local scope
+Pagination.module.css ✅ CSS Module — local scope guaranteed</code></pre>
+
+      <h4>2. Using hyphens in class names</h4>
+      <pre><code class="language-jsx">/* ❌ With hyphens — awkward to access */
+.is-active { color: white; }
+
+// In the component you need brackets
+&lt;a className={styles['is-active']}&gt;Link&lt;/a&gt;
+
+/* ✅ With camelCase — clean access */
+.isActive { color: white; }
+
+&lt;a className={styles.isActive}&gt;Link&lt;/a&gt;</code></pre>
+
+      <h4>3. Trying to use the class as a plain string</h4>
+      <pre><code class="language-jsx">// ❌ The real class is "Pagination_pagination__a1b2c", not "pagination"
+&lt;nav className="pagination"&gt;
+
+// ✅ Always through the styles object
+&lt;nav className={styles.pagination}&gt;</code></pre>
+
+      <hr />
+
+      <h3>💪 Exercise: Add Styles to JobCard</h3>
+      <p>Create a CSS Module for the <code>JobCard</code> component.</p>
+
+      <h4>Step 1 — Create the file</h4>
+      <pre><code>src/components/
+  JobCard.jsx
+  JobCard.module.css   ← create this file</code></pre>
+
+      <h4>Step 2 — Write the styles</h4>
+      <pre><code class="language-css">/* JobCard.module.css */
+.card {
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1a202c;
+}
+
+.company {
+  color: #718096;
+  font-size: 0.875rem;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background-color: #ebf8ff;
+  color: #2b6cb0;
+}
+
+.featured {
+  border-left: 4px solid #667eea;
+}</code></pre>
+
+      <h4>Step 3 — Apply in the component</h4>
+      <pre><code class="language-jsx">import styles from './JobCard.module.css'
+
+export function JobCard({ job, isRemote, isFeatured }) {
+  return (
+    &lt;article className={`${styles.card} ${isFeatured ? styles.featured : ''}`}&gt;
+      &lt;h3 className={styles.title}&gt;{job.titulo}&lt;/h3&gt;
+      &lt;p className={styles.company}&gt;{job.empresa}&lt;/p&gt;
+      {isRemote &amp;&amp; &lt;span className={styles.badge}&gt;🏠 Remote&lt;/span&gt;}
+    &lt;/article&gt;
+  )
+}</code></pre>
+
+      <hr />
+
+      <h3>✅ Class Summary</h3>
+      <pre><code>📦 CSS Modules     — locally scoped CSS, no collisions
+🏷️ .module.css     — the extension that activates local scope
+🔒 Encapsulation   — styles don't leak to other components
+📥 import styles   — you get an object with unique class names
+🎨 styles.class    — how you apply classes in JSX
+⚠️ camelCase       — .isActive instead of .is-active
+🌐 :global()       — to escape when you need global styles</code></pre>
+
+      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+        <strong>💡 Next class:</strong> We'll keep exploring more React concepts
+        to build more robust and maintainable applications.
+      </p>
+
+    </div>
+  </article>
+
+  <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; text-align: center;">
+    <strong style="color: white; font-size: 1.1em; display: block; margin-bottom: 15px;">📚 Want to dive deeper?</strong>
+    <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+      <a href="https://www.jscamp.dev/introduccion-a-react/css-modules"
+         target="_blank"
+         style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+        📖 Read about CSS Modules on JSCamp →
+      </a>
+      <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend"
+         target="_blank"
+         style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+        💬 Ask ChatGPT about CSS Modules →
+      </a>
+    </div>
+  </div>
+
+</section>
