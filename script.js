@@ -54,8 +54,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function loadContent(section) {
     const lang = currentLanguage === "es" ? "es" : "en";
-    const hooks = ["useState", "useEffect", "useContext", "useRef", "useReducer", "globalSwitch", "useId"];
-    const fundamentals = ["componentes", "componentesVsFunciones", "jobCard", "props", "modulos", "paginacion", "callbacks", "listas", "paginacion-final", "css-modules", "eventos", "renderizado", "vite-bundlers", "vite-install", "fast-refresh", "bareBonesMethod", "lifeCicle", "formularios"];
+    const hooks = ["useState", "useEffect", "useEffect2midu", "useEffect3midu", "useContext", "useRef", "useReducer", "globalSwitch", "useId"];
+    const fundamentals = ["componentes", "componentesVsFunciones", "jobCard", "props", "modulos", "paginacion", "callbacks", "listas", "paginacion-final", "css-modules", "eventos", "renderizado", "vite-bundlers", "vite-install", "fast-refresh", "bareBonesMethod", "lifeCicle", "formularios", "filtros-routing"];
     const interview = ["interviewQuestions", "react-hooks-rules-and-order", "react-hooks-masterclass"];
 
     let folder = "";
@@ -122,6 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
       "paginacion-final": { en: "Finishing Pagination", es: "Terminando la Paginación" },
       "css-modules": { en: "CSS Modules", es: "CSS Modules" },
       formularios: { en: "Form Management & Filters", es: "Gestión de Formularios y Filtros" },
+      "filtros-routing": { en: 'Automatic Filters & Routing', es: 'Filtros Automáticos y Routing' },
       "vite-bundlers": { en: "Vite & Bundlers", es: "Vite y Bundlers" },
       "vite-install": { en: "Installing Vite", es: "Instalación de Vite" },
       "fast-refresh": { en: "Fast Refresh & State Updates", es: "Fast Refresh y Actualizaciones de Estado" },
@@ -140,6 +141,8 @@ document.addEventListener("DOMContentLoaded", () => {
       routing: { en: "Routing", es: "Enrutamiento" },
       globalSwitch: { en: "Global Switch (useContext)", es: "Global Switch (useContext)" },
       useId: { en: "useId", es: "useId" },
+      useEffect2midu: { en: 'useEffect II', es: 'useEffect II' },
+      useEffect3midu: { en: 'useEffect III', es: 'useEffect III' },
       virtualDOM: { en: "Virtual DOM", es: "DOM Virtual" },
       interviewQuestions: {
         en: "Accessing Previous State/Props",

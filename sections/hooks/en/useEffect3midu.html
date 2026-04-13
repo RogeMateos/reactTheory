@@ -1,0 +1,490 @@
+<section class="box">
+  <h1>useEffect() Hook — Part III</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">What and Why?</button>
+    <button class="tab-button" data-tab="code-examples">How to Use It</button>
+    <button class="tab-button" data-tab="exercises">Errors and Exercise</button>
+  </div>
+
+  <!-- ===================== CONCEPTS ===================== -->
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+
+      <h3>🚫 When NOT to use useEffect</h3>
+      <p>
+        The core rule: if the operation doesn't touch anything <strong>outside</strong> the component,
+        don't use <code>useEffect</code>. Three very common anti-patterns:
+      </p>
+
+      <pre><code>Do I need useEffect?  Ask yourself:
+  Am I transforming data I already have?    → NO, do it directly
+  Am I calculating a derived value?         → NO, calculate it in the render
+  Do I just want to initialize some state?  → NO, use the initial value of useState
+  Do I need to communicate with something external? → YES, useEffect is correct</code></pre>
+
+      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+        <strong>💡 The golden rule:</strong> if you can do it without useEffect, don't use useEffect.
+        Every unnecessary useEffect adds complexity and potential bugs.
+      </p>
+
+      <hr />
+
+      <h3>✅ When you SHOULD use useEffect</h3>
+
+      <pre><code>useEffect is correct when:
+  🌐 You're fetching from external APIs
+  📝 You're directly modifying the DOM (document.title, focus)
+  🔔 You're subscribing to browser events (resize, scroll, click)
+  ⏱️ You're creating timers (setInterval, setTimeout)
+  📡 You're opening persistent connections (WebSockets)</code></pre>
+
+      <hr />
+
+      <h3>🧹 The cleanup function</h3>
+      <p>
+        The problem: if a component <strong>subscribes</strong> to an event or starts a timer, and then the
+        component unmounts (disappears from the screen), the subscription or timer <em>keeps running</em>
+        in the background. That's a <strong>memory leak</strong> — resources wasting memory doing nothing useful.
+      </p>
+      <p>
+        The cleanup function (<code>return () =&gt; { ... }</code> inside useEffect) runs at two moments:
+      </p>
+      <ol>
+        <li>When the component unmounts</li>
+        <li>Before running the effect again (when dependencies change)</li>
+      </ol>
+
+      <pre><code>Mount component
+  → useEffect runs → addEventListener / setInterval / WebSocket
+
+Unmount component (or dep changes)
+  → cleanup runs → removeEventListener / clearInterval / ws.close()
+  → (if dep changed) → useEffect runs with new values</code></pre>
+
+      <p style="padding: 15px; background: #fff3cd; border-left: 4px solid #ff9800; border-radius: 4px;">
+        <strong>⚠️ Warning:</strong> if you create an event listener, interval, or WebSocket inside
+        useEffect and do NOT clean up, you're creating a memory leak. The browser keeps running code
+        for a component that no longer exists.
+      </p>
+
+      <hr />
+
+      <h3>📦 One effect, one responsibility</h3>
+      <p>
+        Don't put everything in one giant useEffect. Each effect should do <strong>one thing</strong>. Why?
+      </p>
+      <ul>
+        <li>Easier to read and understand</li>
+        <li>Each effect has its own dependencies — no weird interactions</li>
+        <li>Cleanups don't get mixed up</li>
+        <li>You can enable or disable effects independently</li>
+      </ul>
+
+      <pre><code>// A component can have multiple useEffect calls:
+useEffect(() => { /* load user data */ }, [userId])
+useEffect(() => { /* subscribe to resize */ }, [])
+useEffect(() => { /* update the title */ }, [user])</code></pre>
+
+      <hr />
+
+      <h3>🔮 Modern alternatives to fetching with useEffect</h3>
+      <p>A brief overview of the alternatives available in real-world projects:</p>
+      <ul>
+        <li><strong>React Server Components</strong> (Next.js 13+): fetch data directly in the component, no useEffect needed.</li>
+        <li><strong>React 19 <code>use</code> hook</strong>: reads promises directly during render.</li>
+        <li><strong>TanStack Query / SWR</strong>: handle cache, loading states, error handling, and refetch — you barely need useEffect for data fetching.</li>
+      </ul>
+
+      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+        <strong>💡 Pro tip:</strong> for data fetching in real apps, TanStack Query or SWR are the
+        professional choice. useEffect for fetching is educational — it teaches you the fundamentals,
+        but in production there are better tools.
+      </p>
+
+    </div>
+  </article>
+
+  <!-- ===================== CODE EXAMPLES ===================== -->
+  <article id="code-examples" class="tab-content">
+    <div class="description">
+
+      <h3>❌ Anti-pattern: transforming data with useEffect</h3>
+
+      <pre><code class="language-jsx">// ❌ BAD: unnecessary useEffect to transform data
+function ProductList({ products }) {
+  const [expensiveProducts, setExpensiveProducts] = useState([])
+
+  useEffect(() =&gt; {
+    const filtered = products.filter((p) =&gt; p.price &gt; 100)
+    setExpensiveProducts(filtered)
+  }, [products])
+
+  return &lt;div&gt;{expensiveProducts.map((p) =&gt; p.name)}&lt;/div&gt;
+}
+
+// ✅ GOOD: direct calculation in the render
+function ProductList({ products }) {
+  const expensiveProducts = products.filter((p) =&gt; p.price &gt; 100)
+
+  return &lt;div&gt;{expensiveProducts.map((p) =&gt; p.name)}&lt;/div&gt;
+}</code></pre>
+
+      <p>
+        The first version does 2 renders (initial + after the effect). The second does 1. Simpler
+        <em>and</em> faster.
+      </p>
+
+      <hr />
+
+      <h3>✅ Case 1: Data fetching</h3>
+
+      <pre><code class="language-jsx">import { useState, useEffect } from 'react'
+
+function UserProfile({ userId }) {
+  const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() =&gt; {
+    setLoading(true)
+    setError(null)
+
+    fetch(`https://api.example.com/users/${userId}`)
+      .then((res) =&gt; {
+        if (!res.ok) throw new Error('Failed to load user')
+        return res.json()
+      })
+      .then((data) =&gt; {
+        setUser(data)
+        setLoading(false)
+      })
+      .catch((err) =&gt; {
+        setError(err.message)
+        setLoading(false)
+      })
+  }, [userId])
+
+  if (loading) return &lt;div&gt;Loading...&lt;/div&gt;
+  if (error) return &lt;div&gt;Error: {error}&lt;/div&gt;
+
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;{user?.name}&lt;/h2&gt;
+      &lt;p&gt;{user?.email}&lt;/p&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+      <hr />
+
+      <h3>✅ Case 2: Subscribing to events with cleanup</h3>
+
+      <pre><code class="language-jsx">import { useState, useEffect } from 'react'
+
+function WindowSize() {
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth)
+
+  useEffect(() =&gt; {
+    const handleResize = () =&gt; {
+      setWindowWidth(window.innerWidth)
+    }
+
+    // Subscribe
+    window.addEventListener('resize', handleResize)
+
+    // Cleanup: unsubscribe on unmount
+    return () =&gt; {
+      window.removeEventListener('resize', handleResize)
+    }
+  }, []) // [] = only on mount / unmount
+
+  return &lt;div&gt;Width: {windowWidth}px&lt;/div&gt;
+}</code></pre>
+
+      <hr />
+
+      <h3>✅ Case 3: Timer with cleanup</h3>
+
+      <pre><code class="language-jsx">function LiveCounter() {
+  const [count, setCount] = useState(0)
+
+  useEffect(() =&gt; {
+    const interval = setInterval(() =&gt; {
+      setCount((prev) =&gt; prev + 1)
+    }, 1000)
+
+    // Cleanup: stop the interval on unmount
+    return () =&gt; clearInterval(interval)
+  }, [])
+
+  return &lt;div&gt;Counter: {count}&lt;/div&gt;
+}</code></pre>
+
+      <hr />
+
+      <h3>✅ Case 4: Cleanup when dependencies change</h3>
+
+      <pre><code class="language-jsx">function Timer({ delay }) {
+  const [count, setCount] = useState(0)
+
+  useEffect(() =&gt; {
+    console.log(`Setting up timer: ${delay}ms`)
+    const interval = setInterval(() =&gt; {
+      setCount((prev) =&gt; prev + 1)
+    }, delay)
+
+    return () =&gt; {
+      console.log(`Cleaning up timer: ${delay}ms`)
+      clearInterval(interval) // cleans up the old one before creating a new one
+    }
+  }, [delay]) // when delay changes: cleanup → new effect
+
+  return &lt;div&gt;Counter every {delay}ms: {count}&lt;/div&gt;
+}</code></pre>
+
+      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+        <strong>💡 Tip:</strong> when <code>delay</code> changes: (1) the previous effect's cleanup runs
+        → (2) the new effect runs. The component never has two intervals at the same time.
+      </p>
+
+      <hr />
+
+      <h3>✅ Case 5: Multiple effects — one effect, one responsibility</h3>
+
+      <pre><code class="language-jsx">function UserDashboard({ userId }) {
+  const [user, setUser] = useState(null)
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth)
+
+  // Effect 1: load user data
+  useEffect(() =&gt; {
+    fetch(`/api/users/${userId}`)
+      .then((res) =&gt; res.json())
+      .then(setUser)
+  }, [userId])
+
+  // Effect 2: subscribe to resize
+  useEffect(() =&gt; {
+    const handleResize = () =&gt; setWindowWidth(window.innerWidth)
+    window.addEventListener('resize', handleResize)
+    return () =&gt; window.removeEventListener('resize', handleResize)
+  }, [])
+
+  // Effect 3: update the title
+  useEffect(() =&gt; {
+    if (user) document.title = `${user.name}'s Dashboard`
+  }, [user])
+
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;{user?.name}&lt;/h1&gt;
+      &lt;p&gt;Width: {windowWidth}px&lt;/p&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+      <hr />
+
+      <h3>✅ Case 6: Debounce with cleanup</h3>
+
+      <pre><code class="language-jsx">function SearchWithDebounce() {
+  const [query, setQuery] = useState('')
+  const [results, setResults] = useState([])
+
+  useEffect(() =&gt; {
+    if (query === '') {
+      setResults([])
+      return
+    }
+
+    // Wait 300ms before fetching
+    const timeoutId = setTimeout(() =&gt; {
+      fetch(`/api/search?q=${query}`)
+        .then((res) =&gt; res.json())
+        .then(setResults)
+    }, 300)
+
+    // If the user keeps typing, cancel the previous timeout
+    return () =&gt; clearTimeout(timeoutId)
+  }, [query])
+
+  return (
+    &lt;div&gt;
+      &lt;input
+        value={query}
+        onChange={(e) =&gt; setQuery(e.target.value)}
+        placeholder="Search..."
+      /&gt;
+      &lt;ul&gt;
+        {results.map((r) =&gt; (
+          &lt;li key={r.id}&gt;{r.title}&lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+      <p>
+        Every keystroke cancels the previous timeout and starts a new 300ms countdown. Only when the user
+        <strong>stops typing</strong> for 300ms does the fetch actually fire. That's debounce.
+      </p>
+
+      <hr />
+
+      <h3>📊 Summary table</h3>
+
+      <pre><code>Use case                       useEffect?   Cleanup needed?
+──────────────────────────────────────────────────────────────────
+Transforming data              ❌ No        —
+Calculating derived values     ❌ No        —
+Initializing state             ❌ No        —
+Data fetching                  ✅ Yes       No (except abort)
+Modifying document.title       ✅ Yes       No
+Event listeners (resize, etc.) ✅ Yes       ✅ Yes — removeEventListener
+setInterval / setTimeout       ✅ Yes       ✅ Yes — clearInterval/clearTimeout
+WebSocket / connection         ✅ Yes       ✅ Yes — ws.close()</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== EXERCISES ===================== -->
+  <article id="exercises" class="tab-content">
+    <div class="description">
+
+      <h3>🐛 Error 1: useEffect for derived data (double render)</h3>
+
+      <pre><code class="language-jsx">// ❌ Two renders, more code, same result
+function Cart({ items }) {
+  const [total, setTotal] = useState(0)
+
+  useEffect(() =&gt; {
+    setTotal(items.reduce((sum, i) =&gt; sum + i.price, 0))
+  }, [items])
+
+  return &lt;div&gt;Total: ${total}&lt;/div&gt;
+}
+
+// ✅ One render, less code, same result
+function Cart({ items }) {
+  const total = items.reduce((sum, i) =&gt; sum + i.price, 0)
+  return &lt;div&gt;Total: ${total}&lt;/div&gt;
+}</code></pre>
+
+      <hr />
+
+      <h3>🐛 Error 2: memory leak from missing cleanup</h3>
+
+      <pre><code class="language-jsx">// ❌ Memory leak: the interval keeps running after unmount
+function Ticker() {
+  const [count, setCount] = useState(0)
+
+  useEffect(() =&gt; {
+    setInterval(() =&gt; {
+      setCount((prev) =&gt; prev + 1)
+    }, 1000)
+    // ← no return → no cleanup → memory leak
+  }, [])
+
+  return &lt;div&gt;{count}&lt;/div&gt;
+}
+
+// ✅ No memory leak
+function Ticker() {
+  const [count, setCount] = useState(0)
+
+  useEffect(() =&gt; {
+    const id = setInterval(() =&gt; {
+      setCount((prev) =&gt; prev + 1)
+    }, 1000)
+    return () =&gt; clearInterval(id) // ✅
+  }, [])
+
+  return &lt;div&gt;{count}&lt;/div&gt;
+}</code></pre>
+
+      <hr />
+
+      <h3>💪 Exercise</h3>
+
+      <pre><code>Given this component, identify the problems and fix them:
+
+function BuggyComponent({ userId, title }) {
+  const [user, setUser] = useState(null)
+  const [clicks, setClicks] = useState(0)
+  const [fullName, setFullName] = useState('')
+
+  // Is this effect correct?
+  useEffect(() => {
+    setFullName(`${user?.firstName} ${user?.lastName}`)
+  }, [user])
+
+  // What about this one?
+  useEffect(() => {
+    fetch(`/api/users/${userId}`)
+      .then(res => res.json())
+      .then(setUser)
+  }, [userId])
+
+  // And this one?
+  useEffect(() => {
+    document.addEventListener('click', () => setClicks(c => c + 1))
+  }, [])
+
+  // And this one?
+  useEffect(() => {
+    document.title = title
+  }, [])
+
+  return &lt;div&gt;{fullName} - Clicks: {clicks}&lt;/div&gt;
+}
+
+Problems to find:
+  □ Is there an unnecessary useEffect?
+  □ Is there a memory leak?
+  □ Is there a missing dependency?</code></pre>
+
+      <hr />
+
+      <h3>✅ Summary</h3>
+
+      <pre><code>You DON'T need useEffect for:
+  → Transforming data              (calculate it in the render)
+  → Derived values from state      (calculate it in the render)
+  → Initializing state             (use useState(initialValue))
+
+You DO need useEffect for:
+  → Fetching from external APIs
+  → document.title, focus, direct DOM manipulation
+  → addEventListener / removeEventListener
+  → setInterval / clearInterval
+  → WebSockets / persistent connections
+
+Cleanup (return () => ...):
+  → Whenever you create subscriptions, timers, or connections
+  → Runs on unmount and before re-running the effect
+
+Best practices:
+  → One effect, one responsibility
+  → If you can do it without useEffect, don't use useEffect
+  → In production: TanStack Query or SWR for fetching</code></pre>
+
+    </div>
+  </article>
+
+  <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; text-align: center;">
+    <strong style="color: white; font-size: 1.1em; display: block; margin-bottom: 15px;">📚 Want to go deeper?</strong>
+    <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+      <a href="https://www.jscamp.dev/introduccion-a-react/cuando-usar-useeffect"
+         target="_blank"
+         style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+        📖 Read about when to use useEffect on JSCamp →
+      </a>
+      <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/69dc1965-af64-838c-993e-3b23e63ce30f"
+         target="_blank"
+         style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+        💬 Ask ChatGPT →
+      </a>
+    </div>
+  </div>
+
+</section>

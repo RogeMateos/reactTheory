@@ -1,0 +1,385 @@
+<section class="box">
+  <h1>Hook useEffect() — Parte II</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">¿Qué es y por qué?</button>
+    <button class="tab-button" data-tab="code-examples">Cómo se usa</button>
+    <button class="tab-button" data-tab="exercises">Errores y Ejercicio</button>
+  </div>
+
+  <!-- ===================== CONCEPTS ===================== -->
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+
+      <h3>🌊 ¿Qué es un efecto secundario?</h3>
+      <p>
+        El render de un componente debe ser una función pura: misma entrada → misma salida, sin sorpresas.
+        Pero las apps <strong>necesitan</strong> interactuar con el mundo exterior.
+        <code>useEffect</code> es la vía de escape para esas operaciones.
+      </p>
+
+      <pre><code>Efectos secundarios comunes:
+  🌐 Llamadas a APIs
+  📝 Cambiar document.title o localStorage
+  🔔 Suscribirse a eventos del navegador
+  ⏱️ Timers e intervals
+  📡 WebSockets</code></pre>
+
+      <hr />
+
+      <h3>⏰ ¿Cuándo se ejecuta useEffect?</h3>
+      <p>
+        La clave está en el segundo parámetro: el array de dependencias. Hay tres escenarios:
+      </p>
+
+      <pre><code>Sin segundo parámetro  →  en CADA render
+[], array vacío        →  solo una vez (al montar)
+[dep1, dep2]           →  al montar + cada vez que dep1 o dep2 cambien</code></pre>
+
+      <p>
+        Importante: el efecto <strong>siempre</strong> corre al menos una vez en el primer render,
+        sin importar las dependencias.
+      </p>
+
+      <hr />
+
+      <h3>🔗 El array de dependencias</h3>
+      <p>
+        Pensá en el array de dependencias como una "lista de vigilancia".
+        React observa esos valores, y si alguno cambia entre renders, vuelve a ejecutar el efecto.
+      </p>
+      <p>
+        Si la lista está vacía <code>[]</code>, React no vigila nada → el efecto corre solo una vez.<br />
+        Si no hay lista, React lo corre en cada render.
+      </p>
+
+      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+        <strong>💡 La regla de oro:</strong> si usás una variable dentro del efecto, tiene que estar en el array de dependencias.
+        ESLint (con el plugin de React) te avisa si te olvidás alguna.
+      </p>
+
+      <hr />
+
+      <h3>♾️ El bucle infinito: el error más común</h3>
+      <p>
+        ¿Cuándo ocurre? Cuando el efecto <strong>modifica una de sus propias dependencias</strong>. Esto crea un ciclo:
+      </p>
+
+      <pre><code>1. componente monta → useEffect corre
+2. setCount() → estado cambia
+3. count cambió → useEffect corre
+4. setCount() → estado cambia
+5. ... ♾️ infinito</code></pre>
+
+      <p>La solución: nunca modificar una dependencia <em>dentro</em> del efecto que la tiene como dependencia.</p>
+
+      <hr />
+
+      <h3>⚠️ Objetos y arrays como dependencias</h3>
+      <p>
+        Los objetos y arrays se recrean en cada render. React usa <code>===</code> para comparar dependencias:
+        un objeto nuevo <strong>nunca</strong> es igual al anterior, aunque tenga el mismo contenido:
+      </p>
+
+      <pre><code>// En cada render:
+const filters = { tech: 'react' }   ← nuevo objeto, nueva referencia
+
+// React compara: filters anterior === filters nuevo?
+// {} === {} → false ❌ → el efecto corre en cada render
+
+// Solución: usar las propiedades primitivas como dependencias
+[filters.tech, filters.location]   ← strings, se comparan por valor ✅</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== CODE EXAMPLES ===================== -->
+  <article id="code-examples" class="tab-content">
+    <div class="description">
+
+      <h3>1️⃣ Sin dependencias: en cada render</h3>
+
+      <pre><code class="language-jsx">function App() {
+  const [count, setCount] = useState(0)
+
+  useEffect(() =&gt; {
+    console.log('El componente se renderizó')
+    // ⚠️ Cuidado: corre en CADA render
+  })
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Contador: {count}&lt;/p&gt;
+      &lt;button onClick={() =&gt; setCount(count + 1)}&gt;Incrementar&lt;/button&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+      <hr />
+
+      <h3>2️⃣ Array vacío: solo al montar</h3>
+
+      <pre><code class="language-jsx">function App() {
+  const [count, setCount] = useState(0)
+
+  useEffect(() =&gt; {
+    console.log('Solo se ejecuta una vez al montar')
+    // Útil para: fetch inicial, suscripciones, etc.
+  }, [])
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Contador: {count}&lt;/p&gt;
+      &lt;button onClick={() =&gt; setCount(count + 1)}&gt;Incrementar&lt;/button&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+      <p>Ahora aunque hagas clic 100 veces, el efecto solo corre una vez.</p>
+
+      <hr />
+
+      <h3>3️⃣ Con dependencias: cuando cambia algo específico</h3>
+
+      <pre><code class="language-jsx">function App() {
+  const [count, setCount] = useState(0)
+  const [name, setName] = useState('Midu')
+
+  useEffect(() =&gt; {
+    console.log('El contador cambió:', count)
+    // Solo corre cuando `count` cambia
+    // NO corre cuando `name` cambia
+  }, [count])
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Contador: {count}&lt;/p&gt;
+      &lt;button onClick={() =&gt; setCount(count + 1)}&gt;Incrementar&lt;/button&gt;
+      &lt;input value={name} onChange={(e) =&gt; setName(e.target.value)} /&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+      <hr />
+
+      <h3>4️⃣ Ejemplo real: actualizar el título del documento</h3>
+
+      <pre><code class="language-jsx">function App() {
+  const [currentPage, setCurrentPage] = useState(1)
+  const [textToFilter, setTextToFilter] = useState('')
+  const [jobsData] = useState([
+    { id: 1, title: 'React Developer' },
+    { id: 2, title: 'Vue Developer' },
+    { id: 3, title: 'Angular Developer' },
+  ])
+
+  const jobsFiltered =
+    textToFilter === ''
+      ? jobsData
+      : jobsData.filter((job) =&gt;
+          job.title.toLowerCase().includes(textToFilter.toLowerCase())
+        )
+
+  useEffect(() =&gt; {
+    const jobCount = jobsFiltered.length
+
+    if (textToFilter === '') {
+      document.title = `DevJobs - Página ${currentPage}`
+    } else {
+      document.title = `${jobCount} trabajos de "${textToFilter}" - Pág. ${currentPage}`
+    }
+  }, [jobsFiltered.length, currentPage, textToFilter])
+
+  return (
+    &lt;div&gt;
+      &lt;input
+        value={textToFilter}
+        onChange={(e) =&gt; setTextToFilter(e.target.value)}
+        placeholder="Filtrar trabajos..."
+      /&gt;
+
+      &lt;ul&gt;
+        {jobsFiltered.map((job) =&gt; (
+          &lt;li key={job.id}&gt;{job.title}&lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+
+      &lt;button
+        onClick={() =&gt; setCurrentPage(currentPage - 1)}
+        disabled={currentPage === 1}
+      &gt;
+        Anterior
+      &lt;/button&gt;
+      &lt;span&gt; Página {currentPage} &lt;/span&gt;
+      &lt;button onClick={() =&gt; setCurrentPage(currentPage + 1)}&gt;
+        Siguiente
+      &lt;/button&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+      <p>
+        <em><code>document.title</code> es un efecto secundario: está fuera del componente.
+        Caso de uso perfecto para useEffect.</em>
+      </p>
+
+      <hr />
+
+      <h3>5️⃣ Múltiples dependencias</h3>
+
+      <pre><code class="language-jsx">function JobListings() {
+  const [currentPage, setCurrentPage] = useState(1)
+  const [textToFilter, setTextToFilter] = useState('')
+
+  useEffect(() =&gt; {
+    console.log('Página o filtro cambiaron')
+    console.log('Página:', currentPage, '| Filtro:', textToFilter)
+    // Corre si CUALQUIERA de las dos dependencias cambia
+  }, [currentPage, textToFilter])
+
+  return (
+    &lt;div&gt;
+      &lt;input
+        value={textToFilter}
+        onChange={(e) =&gt; setTextToFilter(e.target.value)}
+        placeholder="Filtrar..."
+      /&gt;
+      &lt;button onClick={() =&gt; setCurrentPage(currentPage + 1)}&gt;
+        Siguiente página
+      &lt;/button&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+      <hr />
+
+      <h3>📊 Tabla resumen de dependencias</h3>
+
+      <pre><code>Dependencias            ¿Cuándo corre el efecto?
+──────────────────────────────────────────────────────
+Sin segundo parámetro   En cada render
+[]                      Solo una vez (al montar)
+[dep1]                  Al montar + cuando dep1 cambie
+[dep1, dep2]            Al montar + cuando dep1 o dep2 cambien</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== EXERCISES ===================== -->
+  <article id="exercises" class="tab-content">
+    <div class="description">
+
+      <h3>🐛 Error 1: bucle infinito</h3>
+
+      <pre><code class="language-jsx">// ❌ BUCLE INFINITO — el efecto modifica su propia dependencia
+function App() {
+  const [count, setCount] = useState(0)
+
+  useEffect(() =&gt; {
+    setCount(count + 1)  // ← modifica count
+  }, [count])             // ← count es dependencia → loop ♾️
+
+  return &lt;div&gt;{count}&lt;/div&gt;
+}
+
+// ✅ Solución 1: array vacío si no necesitás que reaccione al cambio
+useEffect(() =&gt; {
+  setCount(1)
+}, [])
+
+// ✅ Solución 2: forma funcional de setState (no necesita count como dep)
+useEffect(() =&gt; {
+  setCount((prev) =&gt; prev + 1)
+}, [])
+
+// ✅ Solución 3: solo leer, no modificar
+useEffect(() =&gt; {
+  document.title = `Contador: ${count}`
+}, [count])</code></pre>
+
+      <hr />
+
+      <h3>🐛 Error 2: dependencia faltante</h3>
+
+      <pre><code class="language-jsx">// ❌ textToFilter se usa pero no está en las dependencias
+useEffect(() =&gt; {
+  console.log('Filtro:', textToFilter)  // usa textToFilter...
+}, [])                                  // ...pero no está aquí ❌
+// Bug: el efecto solo corre al montar, usa el valor inicial de textToFilter para siempre
+
+// ✅ Incluir todas las variables que se usan
+useEffect(() =&gt; {
+  console.log('Filtro:', textToFilter)
+}, [textToFilter])  // ✅</code></pre>
+
+      <hr />
+
+      <h3>🐛 Error 3: objeto como dependencia</h3>
+
+      <pre><code class="language-jsx">// ❌ El objeto se recrea en cada render → el efecto corre en cada render
+const filters = { technology: 'react', location: 'remote' }
+
+useEffect(() =&gt; {
+  console.log('Filtros:', filters)
+}, [filters])  // filters nuevo en cada render → siempre diferente ❌
+
+// ✅ Usar propiedades primitivas como dependencias
+useEffect(() =&gt; {
+  console.log('Filtros:', filters.technology, filters.location)
+}, [filters.technology, filters.location])  // strings se comparan por valor ✅</code></pre>
+
+      <hr />
+
+      <h3>💪 Ejercicio</h3>
+
+      <pre><code>Implementá los siguientes efectos en un componente de búsqueda:
+
+1. Al montar el componente:
+   □ Mostrá en consola "Componente montado"
+   □ Cargá datos iniciales (fetch o datos de prueba)
+
+2. Cuando cambie el filtro de texto:
+   □ Actualizá document.title con el número de resultados
+   □ Reseteá currentPage a 1
+
+3. Cuando cambie la página:
+   □ Actualizá document.title con la página actual
+
+4. Verificación:
+   □ ¿Hay algún bucle infinito?
+   □ ¿Las dependencias incluyen todo lo que se usa?
+   □ ¿El título del documento cambia correctamente?
+   □ ¿El efecto del mount corre solo una vez?</code></pre>
+
+      <hr />
+
+      <h3>✅ Resumen</h3>
+
+      <pre><code>Sin deps         →  corre en cada render (cuidado con rendimiento)
+[]               →  corre una vez al montar
+[dep1, dep2]     →  corre al montar + cuando dep1 o dep2 cambian
+Bucle infinito   →  ocurre cuando el efecto modifica su propia dependencia
+Objetos/arrays   →  nunca como dependencias directas, usar sus propiedades
+Deps faltantes   →  causan bugs de valores "congelados"
+Regla de oro     →  todo lo que usás dentro del efecto va en las dependencias</code></pre>
+
+    </div>
+  </article>
+
+  <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; text-align: center;">
+    <strong style="color: white; font-size: 1.1em; display: block; margin-bottom: 15px;">📚 ¿Querés profundizar más?</strong>
+    <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+      <a href="https://www.jscamp.dev/introduccion-a-react/hook-use-effect"
+         target="_blank"
+         style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+        📖 Leer sobre useEffect en JSCamp →
+      </a>
+      <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/69dc1463-bfe4-838c-8f1e-049f940a2f42"
+         target="_blank"
+         style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+        💬 Preguntarle a ChatGPT →
+      </a>
+    </div>
+  </div>
+
+</section>

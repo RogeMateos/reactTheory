@@ -1,0 +1,385 @@
+<section class="box">
+  <h1>Hook useEffect() — Part II</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">What and Why?</button>
+    <button class="tab-button" data-tab="code-examples">How to Use It</button>
+    <button class="tab-button" data-tab="exercises">Errors and Exercise</button>
+  </div>
+
+  <!-- ===================== CONCEPTS ===================== -->
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+
+      <h3>🌊 What is a side effect?</h3>
+      <p>
+        A component's render must be a pure function: same input → same output, no surprises.
+        But apps <strong>need</strong> to interact with the outside world.
+        <code>useEffect</code> is the escape hatch for those operations.
+      </p>
+
+      <pre><code>Common side effects:
+  🌐 API calls
+  📝 Changing document.title or localStorage
+  🔔 Subscribing to browser events
+  ⏱️ Timers and intervals
+  📡 WebSockets</code></pre>
+
+      <hr />
+
+      <h3>⏰ When does useEffect run?</h3>
+      <p>
+        The key is the second parameter — the dependency array. Three scenarios:
+      </p>
+
+      <pre><code>No second parameter    →  on EVERY render
+[], empty array        →  only once (on mount)
+[dep1, dep2]           →  on mount + every time dep1 or dep2 change</code></pre>
+
+      <p>
+        Important: the effect <strong>always</strong> runs at least once on the first render,
+        regardless of dependencies.
+      </p>
+
+      <hr />
+
+      <h3>🔗 The dependency array</h3>
+      <p>
+        Think of the dependency array as a "watch list".
+        React watches those values, and if any of them changes between renders, React runs the effect again.
+      </p>
+      <p>
+        If the list is empty <code>[]</code>, React watches nothing → effect runs only once.<br />
+        If there's no list at all, React runs it on every render.
+      </p>
+
+      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+        <strong>💡 The golden rule:</strong> if you use a variable inside the effect, it must be in the dependency array.
+        ESLint (with the React plugin) will warn you if you forget one.
+      </p>
+
+      <hr />
+
+      <h3>♾️ The infinite loop: the most common mistake</h3>
+      <p>
+        When does it happen? When the effect <strong>modifies one of its own dependencies</strong>. This creates a cycle:
+      </p>
+
+      <pre><code>1. component mounts → useEffect runs
+2. setCount() → state changes
+3. count changed → useEffect runs
+4. setCount() → state changes
+5. ... ♾️ infinite</code></pre>
+
+      <p>The fix: never modify a dependency <em>inside</em> the effect that has it as a dependency.</p>
+
+      <hr />
+
+      <h3>⚠️ Objects and arrays as dependencies</h3>
+      <p>
+        Objects and arrays are recreated on every render. React uses <code>===</code> to compare dependencies:
+        a new object is <strong>never</strong> equal to the previous one, even if the contents are the same:
+      </p>
+
+      <pre><code>// On every render:
+const filters = { tech: 'react' }   ← new object, new reference
+
+// React compares: previous filters === new filters?
+// {} === {} → false ❌ → the effect runs on every render
+
+// Solution: use the primitive properties as dependencies
+[filters.tech, filters.location]   ← strings, compared by value ✅</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== CODE EXAMPLES ===================== -->
+  <article id="code-examples" class="tab-content">
+    <div class="description">
+
+      <h3>1️⃣ No dependencies: on every render</h3>
+
+      <pre><code class="language-jsx">function App() {
+  const [count, setCount] = useState(0)
+
+  useEffect(() =&gt; {
+    console.log('The component rendered')
+    // ⚠️ Warning: runs on EVERY render
+  })
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Counter: {count}&lt;/p&gt;
+      &lt;button onClick={() =&gt; setCount(count + 1)}&gt;Increment&lt;/button&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+      <hr />
+
+      <h3>2️⃣ Empty array: only on mount</h3>
+
+      <pre><code class="language-jsx">function App() {
+  const [count, setCount] = useState(0)
+
+  useEffect(() =&gt; {
+    console.log('Only runs once on mount')
+    // Useful for: initial fetch, subscriptions, etc.
+  }, [])
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Counter: {count}&lt;/p&gt;
+      &lt;button onClick={() =&gt; setCount(count + 1)}&gt;Increment&lt;/button&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+      <p>Now even if you click 100 times, the effect only runs once.</p>
+
+      <hr />
+
+      <h3>3️⃣ With dependencies: when something specific changes</h3>
+
+      <pre><code class="language-jsx">function App() {
+  const [count, setCount] = useState(0)
+  const [name, setName] = useState('Midu')
+
+  useEffect(() =&gt; {
+    console.log('The counter changed:', count)
+    // Only runs when `count` changes
+    // Does NOT run when `name` changes
+  }, [count])
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Counter: {count}&lt;/p&gt;
+      &lt;button onClick={() =&gt; setCount(count + 1)}&gt;Increment&lt;/button&gt;
+      &lt;input value={name} onChange={(e) =&gt; setName(e.target.value)} /&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+      <hr />
+
+      <h3>4️⃣ Real example: updating the document title</h3>
+
+      <pre><code class="language-jsx">function App() {
+  const [currentPage, setCurrentPage] = useState(1)
+  const [textToFilter, setTextToFilter] = useState('')
+  const [jobsData] = useState([
+    { id: 1, title: 'React Developer' },
+    { id: 2, title: 'Vue Developer' },
+    { id: 3, title: 'Angular Developer' },
+  ])
+
+  const jobsFiltered =
+    textToFilter === ''
+      ? jobsData
+      : jobsData.filter((job) =&gt;
+          job.title.toLowerCase().includes(textToFilter.toLowerCase())
+        )
+
+  useEffect(() =&gt; {
+    const jobCount = jobsFiltered.length
+
+    if (textToFilter === '') {
+      document.title = `DevJobs - Page ${currentPage}`
+    } else {
+      document.title = `${jobCount} jobs for "${textToFilter}" - Page ${currentPage}`
+    }
+  }, [jobsFiltered.length, currentPage, textToFilter])
+
+  return (
+    &lt;div&gt;
+      &lt;input
+        value={textToFilter}
+        onChange={(e) =&gt; setTextToFilter(e.target.value)}
+        placeholder="Filter jobs..."
+      /&gt;
+
+      &lt;ul&gt;
+        {jobsFiltered.map((job) =&gt; (
+          &lt;li key={job.id}&gt;{job.title}&lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+
+      &lt;button
+        onClick={() =&gt; setCurrentPage(currentPage - 1)}
+        disabled={currentPage === 1}
+      &gt;
+        Previous
+      &lt;/button&gt;
+      &lt;span&gt; Page {currentPage} &lt;/span&gt;
+      &lt;button onClick={() =&gt; setCurrentPage(currentPage + 1)}&gt;
+        Next
+      &lt;/button&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+      <p>
+        <em><code>document.title</code> is a side effect — it lives outside the component.
+        Perfect use case for useEffect.</em>
+      </p>
+
+      <hr />
+
+      <h3>5️⃣ Multiple dependencies</h3>
+
+      <pre><code class="language-jsx">function JobListings() {
+  const [currentPage, setCurrentPage] = useState(1)
+  const [textToFilter, setTextToFilter] = useState('')
+
+  useEffect(() =&gt; {
+    console.log('Page or filter changed')
+    console.log('Page:', currentPage, '| Filter:', textToFilter)
+    // Runs if EITHER dependency changes
+  }, [currentPage, textToFilter])
+
+  return (
+    &lt;div&gt;
+      &lt;input
+        value={textToFilter}
+        onChange={(e) =&gt; setTextToFilter(e.target.value)}
+        placeholder="Filter..."
+      /&gt;
+      &lt;button onClick={() =&gt; setCurrentPage(currentPage + 1)}&gt;
+        Next page
+      &lt;/button&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+      <hr />
+
+      <h3>📊 Dependency summary table</h3>
+
+      <pre><code>Dependencies            When does the effect run?
+──────────────────────────────────────────────────────
+No second parameter     On every render
+[]                      Only once (on mount)
+[dep1]                  On mount + when dep1 changes
+[dep1, dep2]            On mount + when dep1 or dep2 change</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== EXERCISES ===================== -->
+  <article id="exercises" class="tab-content">
+    <div class="description">
+
+      <h3>🐛 Bug 1: infinite loop</h3>
+
+      <pre><code class="language-jsx">// ❌ INFINITE LOOP — the effect modifies its own dependency
+function App() {
+  const [count, setCount] = useState(0)
+
+  useEffect(() =&gt; {
+    setCount(count + 1)  // ← modifies count
+  }, [count])             // ← count is a dependency → loop ♾️
+
+  return &lt;div&gt;{count}&lt;/div&gt;
+}
+
+// ✅ Fix 1: empty array if you don't need it to react to the change
+useEffect(() =&gt; {
+  setCount(1)
+}, [])
+
+// ✅ Fix 2: functional form of setState (doesn't need count as dep)
+useEffect(() =&gt; {
+  setCount((prev) =&gt; prev + 1)
+}, [])
+
+// ✅ Fix 3: only read, don't modify
+useEffect(() =&gt; {
+  document.title = `Counter: ${count}`
+}, [count])</code></pre>
+
+      <hr />
+
+      <h3>🐛 Bug 2: missing dependency</h3>
+
+      <pre><code class="language-jsx">// ❌ textToFilter is used but not in the dependencies
+useEffect(() =&gt; {
+  console.log('Filter:', textToFilter)  // uses textToFilter...
+}, [])                                  // ...but it's not here ❌
+// Bug: the effect only runs on mount, uses the initial value of textToFilter forever
+
+// ✅ Include every variable that is used
+useEffect(() =&gt; {
+  console.log('Filter:', textToFilter)
+}, [textToFilter])  // ✅</code></pre>
+
+      <hr />
+
+      <h3>🐛 Bug 3: object as dependency</h3>
+
+      <pre><code class="language-jsx">// ❌ The object is recreated on every render → effect runs on every render
+const filters = { technology: 'react', location: 'remote' }
+
+useEffect(() =&gt; {
+  console.log('Filters:', filters)
+}, [filters])  // filters is new on every render → always different ❌
+
+// ✅ Use primitive properties as dependencies
+useEffect(() =&gt; {
+  console.log('Filters:', filters.technology, filters.location)
+}, [filters.technology, filters.location])  // strings compared by value ✅</code></pre>
+
+      <hr />
+
+      <h3>💪 Exercise</h3>
+
+      <pre><code>Implement the following effects in a search component:
+
+1. When the component mounts:
+   □ Log "Component mounted" to the console
+   □ Load initial data (fetch or mock data)
+
+2. When the text filter changes:
+   □ Update document.title with the number of results
+   □ Reset currentPage to 1
+
+3. When the page changes:
+   □ Update document.title with the current page number
+
+4. Verification:
+   □ Is there any infinite loop?
+   □ Do the dependencies include everything that is used?
+   □ Does the document title update correctly?
+   □ Does the mount effect run only once?</code></pre>
+
+      <hr />
+
+      <h3>✅ Summary</h3>
+
+      <pre><code>No deps          →  runs on every render (watch out for performance)
+[]               →  runs once on mount
+[dep1, dep2]     →  runs on mount + when dep1 or dep2 change
+Infinite loop    →  happens when the effect modifies its own dependency
+Objects/arrays   →  never use directly as dependencies, use their properties
+Missing deps     →  cause "frozen value" bugs
+Golden rule      →  everything you use inside the effect goes in the dependencies</code></pre>
+
+    </div>
+  </article>
+
+  <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; text-align: center;">
+    <strong style="color: white; font-size: 1.1em; display: block; margin-bottom: 15px;">📚 Want to go deeper?</strong>
+    <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+      <a href="https://www.jscamp.dev/introduccion-a-react/hook-use-effect"
+         target="_blank"
+         style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+        📖 Read about useEffect on JSCamp →
+      </a>
+      <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/69dc1463-bfe4-838c-8f1e-049f940a2f42"
+         target="_blank"
+         style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+        💬 Ask ChatGPT →
+      </a>
+    </div>
+  </div>
+
+</section>

@@ -1,0 +1,390 @@
+<section class="box">
+  <h1>Filtros Automáticos y Routing</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">¿Qué es y por qué?</button>
+    <button class="tab-button" data-tab="code-examples">Cómo se usa</button>
+    <button class="tab-button" data-tab="exercises">Errores y Ejercicio</button>
+  </div>
+
+  <!-- ===================== CONCEPTS ===================== -->
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+
+      <h3>😤 El problema: filtros que no filtran solos</h3>
+      <p>
+        Pensá en la experiencia de usuario típica: el usuario cambia un select → nada pasa.
+        Cambia otro select → nada pasa. Escribe en el input → nada pasa. Finalmente hace clic
+        en "Buscar" → <em>recién ahí</em> se aplican los filtros. Mala UX.
+      </p>
+      <p>
+        La solución es eliminar el botón de submit y hacer que el formulario dispare
+        automáticamente en cada cambio de campo, usando <code>onChange</code> en el elemento
+        <code>&lt;form&gt;</code> mismo, no en cada campo individual.
+      </p>
+
+      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+        <strong>Tip:</strong> Cuando ponés <code>onChange</code> en el <code>&lt;form&gt;</code>
+        (no en cada campo), React captura los cambios de TODOS los campos hijo con un solo handler.
+      </p>
+
+      <hr />
+
+      <h3>🎯 event.target vs event.currentTarget — la diferencia que importa</h3>
+
+      <pre><code>&lt;form onChange={handleChange}&gt;   ← tiene el listener
+  &lt;input name="search" /&gt;        ← puede lanzar el evento
+  &lt;select name="location"&gt;       ← puede lanzar el evento
+&lt;/form&gt;
+
+event.target       = el campo que CAMBIÓ (input o select)
+event.currentTarget = el elemento que TIENE el listener (siempre el form)</code></pre>
+
+      <p>
+        ¿Por qué importa esta diferencia? Porque <strong>FormData necesita el formulario completo</strong>,
+        no solo el campo que cambió. Si le pasás <code>event.target</code> (el select que cambió),
+        FormData solo puede leer ESE elemento, no todos los campos.
+      </p>
+
+      <p style="padding: 15px; background: #fff3e0; border-left: 4px solid #ff9800; border-radius: 4px;">
+        <strong>⚠️ Error muy común:</strong> Este es uno de los errores más comunes con formularios
+        en React. Siempre usá <code>event.currentTarget</code> cuando el handler está en el
+        <code>&lt;form&gt;</code> y necesitás leer todos los campos.
+      </p>
+
+      <hr />
+
+      <h3>🗂️ Routing manual: páginas sin React Router</h3>
+      <p>
+        Una app real necesita múltiples páginas: Home (<code>/</code>), Search (<code>/search</code>),
+        404. Sin React Router, podemos usar <code>window.location.pathname</code>, una propiedad
+        nativa del navegador que devuelve la ruta actual de la URL.
+      </p>
+
+      <pre><code>// navegás a: http://localhost:5173/
+window.location.pathname  →  "/"
+
+// navegás a: http://localhost:5173/search
+window.location.pathname  →  "/search"
+
+// navegás a: http://localhost:5173/cualquier-cosa
+window.location.pathname  →  "/cualquier-cosa"</code></pre>
+
+      <p>
+        La idea: leer este valor en <code>App.jsx</code> y renderizar distintos componentes de
+        página según corresponda. Es como un gran <code>if/else</code> que decide qué mostrar.
+      </p>
+
+      <hr />
+
+      <h3>📁 Separar páginas de componentes</h3>
+      <p>
+        La diferencia arquitectónica es importante:
+      </p>
+      <ul>
+        <li><strong>Componentes</strong> (<code>src/components/</code>) = piezas reutilizables: Header, SearchForm, JobCard</li>
+        <li><strong>Páginas</strong> (<code>src/pages/</code>) = vistas completas que el router muestra: Home, Search, NotFound</li>
+      </ul>
+
+      <pre><code>src/
+├── components/    ← piezas reutilizables
+│   ├── Header.jsx
+│   ├── SearchForm.jsx
+│   └── JobListings.jsx
+└── pages/         ← vistas completas
+    ├── Home.jsx
+    ├── Search.jsx
+    └── NotFound.jsx</code></pre>
+
+      <p>
+        <code>App.jsx</code> se convierte en <em>únicamente</em> el shell de layout más la
+        decisión de routing. Toda la lógica de búsqueda se mueve a <code>Search.jsx</code>.
+      </p>
+
+      <hr />
+
+      <h3>⚠️ La limitación del router manual</h3>
+      <p>
+        Seamos honestos: los links con <code>&lt;a href="..."&gt;</code> causan una recarga
+        completa de la página. Esto:
+      </p>
+      <ul>
+        <li>Pierde el estado de React</li>
+        <li>Es lento</li>
+        <li>No se siente como una SPA real</li>
+      </ul>
+      <p>
+        Esto es educativo — para entender CÓMO funciona el routing internamente. En producción,
+        siempre usá React Router (próximo tema).
+      </p>
+
+      <pre><code>Característica       Router manual    React Router
+─────────────────────────────────────────────────
+Recarga la página    ❌ Sí            ✅ No
+Mantiene el estado   ❌ No            ✅ Sí
+Rutas dinámicas      ❌ Difícil       ✅ Fácil
+Producción           ❌ No            ✅ Recomendado</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== CODE EXAMPLES ===================== -->
+  <article id="code-examples" class="tab-content">
+    <div class="description">
+
+      <h3>🔧 SearchForm sin botón: onChange en el form</h3>
+
+      <pre><code class="language-jsx">import { useId } from 'react'
+
+export function SearchForm({ onSearch }) {
+  const idText = useId()
+  const idLocation = useId()
+
+  const handleChange = (event) => {
+    // currentTarget = el &lt;form&gt;, no el campo que cambió
+    const formData = new FormData(event.currentTarget)
+    const filters = {
+      search: formData.get(idText),
+      location: formData.get(idLocation),
+    }
+    onSearch(filters)
+  }
+
+  return (
+    &lt;form className="search-form" onChange={handleChange}&gt;
+      &lt;input
+        type="text"
+        name={idText}
+        id={idText}
+        placeholder="Buscar..."
+      /&gt;
+
+      &lt;select name={idLocation} id={idLocation}&gt;
+        &lt;option value=""&gt;Todas las ubicaciones&lt;/option&gt;
+        &lt;option value="remoto"&gt;Remoto&lt;/option&gt;
+        &lt;option value="presencial"&gt;Presencial&lt;/option&gt;
+      &lt;/select&gt;
+      {/* Sin botón de submit — el onChange del form lo hace automático */}
+    &lt;/form&gt;
+  )
+}</code></pre>
+
+      <p>
+        No hay <code>&lt;button type="submit"&gt;</code>. El formulario dispara en cada cambio
+        de campo, automáticamente.
+      </p>
+
+      <hr />
+
+      <h3>🔍 target vs currentTarget en acción</h3>
+
+      <pre><code class="language-jsx">// ❌ INCORRECTO — target es el &lt;select&gt; que cambió
+const handleChange = (event) => {
+  const formData = new FormData(event.target)
+  console.log(formData.get('search'))    // null ❌
+  console.log(formData.get('location'))  // null ❌
+}
+
+// ✅ CORRECTO — currentTarget es siempre el &lt;form&gt;
+const handleChange = (event) => {
+  const formData = new FormData(event.currentTarget)
+  console.log(formData.get('search'))    // "react" ✅
+  console.log(formData.get('location'))  // "remoto" ✅
+}</code></pre>
+
+      <hr />
+
+      <h3>🏠 Router manual en App.jsx</h3>
+
+      <pre><code class="language-jsx">import { Header } from './components/Header'
+import { Footer } from './components/Footer'
+import { Home } from './pages/Home'
+import { Search } from './pages/Search'
+import { NotFound } from './pages/NotFound'
+
+function App() {
+  const { pathname } = window.location
+
+  let Page
+  if (pathname === '/') {
+    Page = Home
+  } else if (pathname === '/search') {
+    Page = Search
+  } else {
+    Page = NotFound
+  }
+
+  return (
+    &lt;&gt;
+      &lt;Header /&gt;
+      &lt;Page /&gt;
+      &lt;Footer /&gt;
+    &lt;/&gt;
+  )
+}
+
+export default App</code></pre>
+
+      <hr />
+
+      <h3>🔄 Versión alternativa con &amp;&amp;</h3>
+
+      <pre><code class="language-jsx">function App() {
+  const { pathname } = window.location
+
+  return (
+    &lt;&gt;
+      &lt;Header /&gt;
+      {pathname === '/' &amp;&amp; &lt;Home /&gt;}
+      {pathname === '/search' &amp;&amp; &lt;Search /&gt;}
+      {pathname !== '/' &amp;&amp; pathname !== '/search' &amp;&amp; &lt;NotFound /&gt;}
+      &lt;Footer /&gt;
+    &lt;/&gt;
+  )
+}</code></pre>
+
+      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+        <strong>Tip:</strong> Ambas versiones hacen lo mismo. La primera (if/else) es más legible
+        cuando hay muchas rutas. La segunda (&amp;&amp;) es más compacta pero se vuelve difícil
+        de leer con muchas condiciones.
+      </p>
+
+      <hr />
+
+      <h3>🚫 Página 404</h3>
+
+      <pre><code class="language-jsx">// src/pages/NotFound.jsx
+export function NotFound() {
+  return (
+    &lt;main className="not-found"&gt;
+      &lt;h1&gt;404&lt;/h1&gt;
+      &lt;h2&gt;Página no encontrada&lt;/h2&gt;
+      &lt;p&gt;La página que buscás no existe.&lt;/p&gt;
+      &lt;a href="/"&gt;Volver al inicio&lt;/a&gt;
+    &lt;/main&gt;
+  )
+}</code></pre>
+
+      <hr />
+
+      <h3>⚠️ Errores frecuentes: HTML → JSX</h3>
+
+      <pre><code>// 1. Inputs sin cerrar
+❌  &lt;input type="text"&gt;
+✅  &lt;input type="text" /&gt;
+
+// 2. class → className
+❌  &lt;div class="container"&gt;
+✅  &lt;div className="container"&gt;
+
+// 3. for → htmlFor
+❌  &lt;label for="search"&gt;
+✅  &lt;label htmlFor="search"&gt;
+
+// 4. Eventos en camelCase
+❌  &lt;button onclick={fn}&gt;
+✅  &lt;button onClick={fn}&gt;
+
+// 5. Comentarios
+❌  &lt;!-- comentario --&gt;
+✅  {/* comentario */}</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== EXERCISES ===================== -->
+  <article id="exercises" class="tab-content">
+    <div class="description">
+
+      <h3>🐛 El error del target</h3>
+
+      <pre><code class="language-jsx">// ❌ Problema: FormData del campo, no del form
+&lt;form onChange={handleChange}&gt;
+  &lt;input name="search" /&gt;
+  &lt;select name="location"&gt;...&lt;/select&gt;
+&lt;/form&gt;
+
+const handleChange = (event) => {
+  const formData = new FormData(event.target) // ← BUG
+  // Si cambias el select:
+  // formData.get('search') → null ❌
+}
+
+// ✅ Solución: usar currentTarget
+const handleChange = (event) => {
+  const formData = new FormData(event.currentTarget) // ← CORRECTO
+  // formData.get('search') → "react" ✅
+  // formData.get('location') → "remoto" ✅
+}</code></pre>
+
+      <hr />
+
+      <h3>🐛 Botón submit que queda por accidente</h3>
+
+      <pre><code class="language-jsx">// ❌ Si dejás el botón, el form hace submit y recarga la página
+&lt;form onChange={handleChange}&gt;
+  &lt;input name="search" /&gt;
+  &lt;button type="submit"&gt;Buscar&lt;/button&gt; {/* ← SACAR */}
+&lt;/form&gt;
+
+// ✅ Sin botón, solo onChange en el form
+&lt;form onChange={handleChange}&gt;
+  &lt;input name="search" /&gt;
+  {/* Sin botón — automático */}
+&lt;/form&gt;</code></pre>
+
+      <hr />
+
+      <h3>💪 Ejercicio</h3>
+
+      <pre><code>1. Transformá el SearchForm:
+   □ Quitá el botón de "Buscar"
+   □ Mové el handler al onChange del &lt;form&gt;
+   □ Cambiá event.target por event.currentTarget en el FormData
+   □ Verificá que filtra en tiempo real al cambiar cada campo
+
+2. Implementá el router manual:
+   □ Creá src/pages/Home.jsx con contenido básico
+   □ Creá src/pages/Search.jsx moviendo la lógica desde App.jsx
+   □ Creá src/pages/NotFound.jsx con un mensaje 404
+   □ En App.jsx, leé window.location.pathname y renderizá la página correcta
+
+3. Verificación:
+   □ / → muestra Home
+   □ /search → muestra Search con filtros funcionando
+   □ /cualquier-cosa → muestra NotFound
+   □ Los filtros responden sin hacer clic en ningún botón</code></pre>
+
+      <hr />
+
+      <h3>✅ Resumen</h3>
+
+      <pre><code>onChange en &lt;form&gt;      — captura cambios de todos los campos hijo
+event.currentTarget     — siempre el elemento con el listener (el form)
+event.target            — el elemento que lanzó el evento (el campo)
+FormData(currentTarget) — lee TODOS los campos del form ✅
+window.location.pathname — ruta actual del navegador
+src/pages/              — carpeta para vistas completas
+src/components/         — carpeta para piezas reutilizables
+Router manual           — educativo, en producción usar React Router</code></pre>
+
+      <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; text-align: center;">
+        <strong style="color: white; font-size: 1.1em; display: block; margin-bottom: 15px;">📚 ¿Querés profundizar más?</strong>
+        <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+          <a href="https://www.jscamp.dev/introduccion-a-react/filtros-automaticos-y-routing"
+             target="_blank"
+             style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+            📖 Leer sobre Filtros y Routing en JSCamp →
+          </a>
+          <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/69dc00ce-3f98-8397-908b-091f45a7d4b2"
+             target="_blank"
+             style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+            💬 Preguntarle a ChatGPT →
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </article>
+
+</section>
