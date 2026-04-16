@@ -1,0 +1,1089 @@
+<section class="box">
+  <h1>Custom Hooks: Reutilizar lógica en React</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">
+      Conceptos
+    </button>
+    <button class="tab-button" data-tab="code-examples">
+      Ejemplos de Código
+    </button>
+    <button class="tab-button" data-tab="exercises">
+      Ejercicios
+    </button>
+  </div>
+
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+      <h3>¿Qué es un custom hook?</h3>
+      <p>
+        Los custom hooks son una de las características más poderosas de React. Te permiten extraer lógica de componentes
+        y reutilizarla en múltiples lugares de tu aplicación, mejorando la organización, mantenibilidad y composición del código.
+      </p>
+
+      <p>Un custom hook es una función de JavaScript que:</p>
+      <ul>
+        <li>Su nombre empieza con <code>use</code> (convención obligatoria)</li>
+        <li>Puede usar otros hooks de React dentro</li>
+        <li>Encapsula lógica que quieres reutilizar</li>
+        <li>Retorna valores que otros componentes pueden usar</li>
+      </ul>
+
+      <pre><code class="language-jsx">// Ejemplo básico de un custom hook
+function useWindowWidth() {
+  const [width, setWidth] = useState(window.innerWidth)
+
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  return width
+}</code></pre>
+
+      <h3>¿Por qué crear custom hooks?</h3>
+
+      <h4>Problema: Lógica duplicada</h4>
+      <p>Imagina que tienes varios componentes que necesitan detectar el ancho de la ventana:</p>
+
+      <pre><code class="language-jsx">function Header() {
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth)
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  return &lt;header&gt;{windowWidth &lt; 768 ? 'Móvil' : 'Escritorio'}&lt;/header&gt;
+}
+
+function Sidebar() {
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth)
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  return windowWidth &lt; 768 ? null : &lt;aside&gt;Sidebar&lt;/aside&gt;
+}</code></pre>
+
+      <p><strong>❌ Problemas:</strong></p>
+      <ul>
+        <li>Código duplicado en múltiples componentes</li>
+        <li>Si necesitas cambiar la lógica, debes actualizarla en todos lados</li>
+        <li>Los componentes mezclan UI y lógica de estado</li>
+        <li>Difícil de testear la lógica de forma aislada</li>
+      </ul>
+
+      <h4>Solución: Custom hook</h4>
+
+      <pre><code class="language-jsx">// hooks/useWindowWidth.js
+function useWindowWidth() {
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth)
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  return windowWidth
+}
+
+// Componentes
+function Header() {
+  const windowWidth = useWindowWidth()
+  return &lt;header&gt;{windowWidth &lt; 768 ? 'Móvil' : 'Escritorio'}&lt;/header&gt;
+}
+
+function Sidebar() {
+  const windowWidth = useWindowWidth()
+  return windowWidth &lt; 768 ? null : &lt;aside&gt;Sidebar&lt;/aside&gt;
+}</code></pre>
+
+      <p><strong>✅ Ventajas:</strong></p>
+      <ul>
+        <li>✨ <strong>Reutilización:</strong> La lógica está en un solo lugar</li>
+        <li>🧹 <strong>Separación de responsabilidades:</strong> Componentes se enfocan en UI</li>
+        <li>🔧 <strong>Mantenibilidad:</strong> Cambios en un solo lugar</li>
+        <li>🧪 <strong>Testing:</strong> Puedes testear el hook de forma aislada</li>
+        <li>🔄 <strong>Composición:</strong> Un hook puede usar otros hooks</li>
+      </ul>
+
+      <h3>Ejemplo práctico: Creando useRouter</h3>
+      <p>Vamos a transformar la lógica de un router casero en un custom hook reutilizable.</p>
+
+      <h4>Antes: Componente con lógica mezclada</h4>
+
+      <pre><code class="language-jsx">function App() {
+  const [currentPath, setCurrentPath] = useState(window.location.pathname)
+
+  useEffect(() => {
+    const handleLocationChange = () => {
+      setCurrentPath(window.location.pathname)
+    }
+
+    window.addEventListener('popstate', handleLocationChange)
+
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange)
+    }
+  }, [])
+
+  const navigateTo = (path) => {
+    window.history.pushState({}, '', path)
+    setCurrentPath(path)
+  }
+
+  return (
+    &lt;div&gt;
+      &lt;nav&gt;
+        &lt;button onClick={() => navigateTo('/')}&gt;Home&lt;/button&gt;
+        &lt;button onClick={() => navigateTo('/about')}&gt;About&lt;/button&gt;
+        &lt;button onClick={() => navigateTo('/contact')}&gt;Contact&lt;/button&gt;
+      &lt;/nav&gt;
+
+      &lt;main&gt;
+        {currentPath === '/' && &lt;Home /&gt;}
+        {currentPath === '/about' && &lt;About /&gt;}
+        {currentPath === '/contact' && &lt;Contact /&gt;}
+      &lt;/main&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+      <p><strong>Problemas:</strong></p>
+      <ul>
+        <li>El componente App mezcla lógica de routing con UI</li>
+        <li>No podemos reutilizar esta lógica en otros componentes</li>
+        <li>Difícil de mantener y testear</li>
+      </ul>
+
+      <h4>Paso 1: Extraer la lógica a un custom hook</h4>
+
+      <pre><code class="language-jsx">// hooks/useRouter.js
+import { useState, useEffect } from 'react'
+
+export function useRouter() {
+  // Estado para la ruta actual
+  const [currentPath, setCurrentPath] = useState(window.location.pathname)
+
+  // Efecto para detectar cambios de navegación
+  useEffect(() => {
+    const handleLocationChange = () => {
+      setCurrentPath(window.location.pathname)
+    }
+
+    // Escuchar cambios en el historial (botón atrás/adelante)
+    window.addEventListener('popstate', handleLocationChange)
+
+    // Cleanup: remover el listener al desmontar
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange)
+    }
+  }, [])
+
+  // Función para navegar programáticamente
+  const navigateTo = (path) => {
+    window.history.pushState({}, '', path)
+    setCurrentPath(path)
+  }
+
+  // Retornar la API del hook
+  return {
+    currentPath,
+    navigateTo,
+  }
+}</code></pre>
+
+      <h4>Paso 2: Usar el hook en el componente</h4>
+
+      <pre><code class="language-jsx">import { useRouter } from './hooks/useRouter'
+
+function App() {
+  const { currentPath, navigateTo } = useRouter()
+
+  return (
+    &lt;div&gt;
+      &lt;nav&gt;
+        &lt;button onClick={() => navigateTo('/')}&gt;Home&lt;/button&gt;
+        &lt;button onClick={() => navigateTo('/about')}&gt;About&lt;/button&gt;
+        &lt;button onClick={() => navigateTo('/contact')}&gt;Contact&lt;/button&gt;
+      &lt;/nav&gt;
+
+      &lt;main&gt;
+        {currentPath === '/' && &lt;Home /&gt;}
+        {currentPath === '/about' && &lt;About /&gt;}
+        {currentPath === '/contact' && &lt;Contact /&gt;}
+      &lt;/main&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+        <strong>✅ ¡Mucho mejor!</strong> El componente ahora solo se preocupa de la UI.
+      </p>
+
+      <h4>Paso 3: Reutilizar el hook en otros componentes</h4>
+
+      <pre><code class="language-jsx">function Navigation() {
+  const { currentPath, navigateTo } = useRouter()
+
+  return (
+    &lt;nav&gt;
+      &lt;button
+        className={currentPath === '/' ? 'active' : ''}
+        onClick={() => navigateTo('/')}
+      &gt;
+        Home
+      &lt;/button&gt;
+      &lt;button
+        className={currentPath === '/about' ? 'active' : ''}
+        onClick={() => navigateTo('/about')}
+      &gt;
+        About
+      &lt;/button&gt;
+    &lt;/nav&gt;
+  )
+}
+
+function Breadcrumbs() {
+  const { currentPath } = useRouter()
+
+  return (
+    &lt;div&gt;
+      Estás en: &lt;strong&gt;{currentPath}&lt;/strong&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+      <h3>Anatomía de un custom hook</h3>
+      <p>Un custom hook típico tiene esta estructura:</p>
+
+      <pre><code class="language-jsx">import { useState, useEffect } from 'react'
+
+export function useMyCustomHook(parameters) {
+  // 1. Estado interno del hook
+  const [state, setState] = useState(initialValue)
+
+  // 2. Efectos secundarios
+  useEffect(() => {
+    // Lógica del efecto
+    return () => {
+      // Cleanup
+    }
+  }, [dependencies])
+
+  // 3. Funciones auxiliares
+  const helperFunction = () => {
+    // Lógica
+  }
+
+  // 4. Retornar la API del hook
+  return {
+    state,
+    helperFunction,
+  }
+}</code></pre>
+
+      <h3>Composición de hooks</h3>
+      <p>Una de las mayores ventajas de los custom hooks es que pueden usar otros hooks, incluidos otros custom hooks:</p>
+
+      <pre><code class="language-jsx">// Hook base: useLocalStorage
+function useLocalStorage(key, initialValue) {
+  const [value, setValue] = useState(() => {
+    const item = window.localStorage.getItem(key)
+    return item ? JSON.parse(item) : initialValue
+  })
+
+  useEffect(() => {
+    window.localStorage.setItem(key, JSON.stringify(value))
+  }, [key, value])
+
+  return [value, setValue]
+}
+
+// Hook compuesto: useDarkMode (usa useLocalStorage)
+function useDarkMode() {
+  const [isDark, setIsDark] = useLocalStorage('darkMode', false)
+
+  useEffect(() => {
+    if (isDark) {
+      document.body.classList.add('dark')
+    } else {
+      document.body.classList.remove('dark')
+    }
+  }, [isDark])
+
+  const toggle = () => setIsDark((prev) => !prev)
+
+  return { isDark, toggle }
+}</code></pre>
+
+      <h3>Reglas de los custom hooks</h3>
+
+      <h4>1. El nombre DEBE empezar con "use"</h4>
+
+      <pre><code class="language-jsx">// ✅ Bien
+function useCounter() {}
+function useAuth() {}
+function useApi() {}
+
+// ❌ Mal
+function counter() {}
+function getAuth() {}
+function apiHook() {}</code></pre>
+
+      <p><strong>¿Por qué?</strong> React necesita identificar los hooks para aplicar sus reglas internas.</p>
+
+      <h4>2. Solo llamar hooks en el nivel superior</h4>
+      <p>No puedes llamar hooks dentro de condiciones, loops o funciones anidadas:</p>
+
+      <pre><code class="language-jsx">// ❌ Mal
+function MyComponent() {
+  if (condition) {
+    const value = useMyHook() // ¡Error!
+  }
+
+  for (let i = 0; i &lt; 10; i++) {
+    useEffect(() => {}) // ¡Error!
+  }
+}
+
+// ✅ Bien
+function MyComponent() {
+  const value = useMyHook()
+
+  useEffect(() => {
+    if (condition) {
+      // Lógica condicional dentro del efecto
+    }
+  }, [condition])
+}</code></pre>
+
+      <h4>3. Solo llamar hooks desde componentes o custom hooks</h4>
+
+      <pre><code class="language-jsx">// ✅ Bien: Desde un componente
+function MyComponent() {
+  const value = useMyHook()
+}
+
+// ✅ Bien: Desde otro custom hook
+function useCustomHook() {
+  const value = useMyHook()
+}
+
+// ❌ Mal: Desde una función normal
+function helperFunction() {
+  const value = useMyHook() // ¡Error!
+}</code></pre>
+
+      <h3>Cuándo crear un custom hook</h3>
+
+      <p><strong>Crea un custom hook cuando:</strong></p>
+      <ul>
+        <li>✅ Tienes lógica duplicada en múltiples componentes</li>
+        <li>✅ La lógica usa hooks de React</li>
+        <li>✅ Quieres separar lógica de UI para mejor organización</li>
+        <li>✅ Necesitas testear la lógica de forma aislada</li>
+        <li>✅ Quieres compartir lógica entre componentes</li>
+      </ul>
+
+      <p><strong>NO crees un custom hook si:</strong></p>
+      <ul>
+        <li>❌ Solo usas la lógica en un componente</li>
+        <li>❌ La lógica es muy simple (una línea)</li>
+        <li>❌ No usa ningún hook de React</li>
+        <li>❌ Es solo una función helper normal</li>
+      </ul>
+
+      <h3>Estructura de carpetas recomendada</h3>
+
+      <pre><code>src/
+├── components/
+│   ├── Header.jsx
+│   ├── Sidebar.jsx
+│   └── Navigation.jsx
+├── hooks/
+│   ├── useRouter.js
+│   ├── useLocalStorage.js
+│   ├── useFetch.js
+│   ├── useDebounce.js
+│   └── useToggle.js
+├── pages/
+│   ├── Home.jsx
+│   ├── About.jsx
+│   └── Contact.jsx
+└── App.jsx</code></pre>
+
+      <h3>Ventajas de los custom hooks</h3>
+
+      <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+        <thead>
+          <tr style="background: #f0f0f0;">
+            <th style="border: 1px solid #ddd; padding: 10px; text-align: left;">Ventaja</th>
+            <th style="border: 1px solid #ddd; padding: 10px; text-align: left;">Descripción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 10px;">🔄 Reutilización</td>
+            <td style="border: 1px solid #ddd; padding: 10px;">Usa la misma lógica en múltiples componentes</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 10px;">🧹 Separación</td>
+            <td style="border: 1px solid #ddd; padding: 10px;">Separa lógica de UI para mejor organización</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 10px;">🔧 Mantenibilidad</td>
+            <td style="border: 1px solid #ddd; padding: 10px;">Cambios en un solo lugar</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 10px;">🧪 Testing</td>
+            <td style="border: 1px solid #ddd; padding: 10px;">Testea la lógica de forma aislada</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 10px;">🎯 Composición</td>
+            <td style="border: 1px solid #ddd; padding: 10px;">Combina múltiples hooks para crear funcionalidad compleja</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 10px;">📖 Legibilidad</td>
+            <td style="border: 1px solid #ddd; padding: 10px;">Código más limpio y fácil de entender</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Conclusión</h3>
+      <p>Los custom hooks son una herramienta fundamental en React moderno:</p>
+
+      <ul>
+        <li>🎯 Extraen lógica reutilizable de los componentes</li>
+        <li>🧩 Mejoran la composición del código</li>
+        <li>🧹 Separan responsabilidades entre UI y lógica</li>
+        <li>🔧 Facilitan el mantenimiento al centralizar la lógica</li>
+        <li>🧪 Permiten testing de forma aislada</li>
+      </ul>
+
+      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+        <strong>💡 Consejo:</strong> Empieza identificando patrones repetidos en tu código y extráelos a custom hooks.
+        Con el tiempo, construirás una librería de hooks reutilizables que acelerarán tu desarrollo.
+      </p>
+    </div>
+  </article>
+
+  <article id="code-examples" class="tab-content">
+    <h2>Ejemplos de Código Completos</h2>
+
+    <h3>Ejemplo 1: useLocalStorage</h3>
+    <p>Un hook para sincronizar estado con localStorage:</p>
+
+    <pre><code class="language-jsx">import { useState, useEffect } from 'react'
+
+export function useLocalStorage(key, initialValue) {
+  // Obtener valor inicial del localStorage
+  const [value, setValue] = useState(() => {
+    try {
+      const item = window.localStorage.getItem(key)
+      return item ? JSON.parse(item) : initialValue
+    } catch (error) {
+      console.error(error)
+      return initialValue
+    }
+  })
+
+  // Actualizar localStorage cuando cambia el valor
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(key, JSON.stringify(value))
+    } catch (error) {
+      console.error(error)
+    }
+  }, [key, value])
+
+  return [value, setValue]
+}
+
+// Uso:
+function App() {
+  const [name, setName] = useLocalStorage('userName', 'Anónimo')
+
+  return (
+    &lt;div&gt;
+      &lt;input value={name} onChange={(e) => setName(e.target.value)} /&gt;
+      &lt;p&gt;Hola, {name}!&lt;/p&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+    <h3>Ejemplo 2: useFetch</h3>
+    <p>Un hook para hacer peticiones HTTP:</p>
+
+    <pre><code class="language-jsx">import { useState, useEffect } from 'react'
+
+export function useFetch(url) {
+  const [data, setData] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    setLoading(true)
+    setError(null)
+
+    fetch(url)
+      .then((response) => {
+        if (!response.ok) throw new Error('Error en la petición')
+        return response.json()
+      })
+      .then((data) => {
+        setData(data)
+        setLoading(false)
+      })
+      .catch((error) => {
+        setError(error.message)
+        setLoading(false)
+      })
+  }, [url])
+
+  return { data, loading, error }
+}
+
+// Uso:
+function UserProfile({ userId }) {
+  const { data: user, loading, error } = useFetch(`/api/users/${userId}`)
+
+  if (loading) return &lt;div&gt;Cargando...&lt;/div&gt;
+  if (error) return &lt;div&gt;Error: {error}&lt;/div&gt;
+
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;{user.name}&lt;/h2&gt;
+      &lt;p&gt;{user.email}&lt;/p&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+    <h3>Ejemplo 3: useToggle</h3>
+    <p>Un hook simple para manejar valores booleanos:</p>
+
+    <pre><code class="language-jsx">import { useState } from 'react'
+
+export function useToggle(initialValue = false) {
+  const [value, setValue] = useState(initialValue)
+
+  const toggle = () => setValue((prev) => !prev)
+  const setTrue = () => setValue(true)
+  const setFalse = () => setValue(false)
+
+  return {
+    value,
+    toggle,
+    setTrue,
+    setFalse,
+  }
+}
+
+// Uso:
+function Modal() {
+  const { value: isOpen, toggle, setFalse } = useToggle(false)
+
+  return (
+    &lt;div&gt;
+      &lt;button onClick={toggle}&gt;Abrir Modal&lt;/button&gt;
+
+      {isOpen && (
+        &lt;div className="modal"&gt;
+          &lt;h2&gt;Modal abierto&lt;/h2&gt;
+          &lt;button onClick={setFalse}&gt;Cerrar&lt;/button&gt;
+        &lt;/div&gt;
+      )}
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+    <h3>Ejemplo 4: useDarkMode</h3>
+    <p>Un hook compuesto que usa useLocalStorage:</p>
+
+    <pre><code class="language-jsx">import { useEffect } from 'react'
+import { useLocalStorage } from './useLocalStorage'
+
+export function useDarkMode() {
+  const [isDark, setIsDark] = useLocalStorage('darkMode', false)
+
+  useEffect(() => {
+    if (isDark) {
+      document.body.classList.add('dark')
+    } else {
+      document.body.classList.remove('dark')
+    }
+  }, [isDark])
+
+  const toggle = () => setIsDark((prev) => !prev)
+
+  return { isDark, toggle }
+}
+
+// Uso:
+function App() {
+  const { isDark, toggle } = useDarkMode()
+
+  return (
+    &lt;div&gt;
+      &lt;button onClick={toggle}&gt;
+        {isDark ? '☀️ Modo claro' : '🌙 Modo oscuro'}
+      &lt;/button&gt;
+      &lt;p&gt;El tema actual es: {isDark ? 'oscuro' : 'claro'}&lt;/p&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+    <h3>Ejemplo 5: useRouter Mejorado</h3>
+    <p>Un hook de routing con funcionalidades adicionales:</p>
+
+    <pre><code class="language-jsx">import { useState, useEffect } from 'react'
+
+export function useRouter() {
+  const [currentPath, setCurrentPath] = useState(window.location.pathname)
+
+  useEffect(() => {
+    const handleLocationChange = () => {
+      setCurrentPath(window.location.pathname)
+    }
+
+    window.addEventListener('popstate', handleLocationChange)
+    return () => window.removeEventListener('popstate', handleLocationChange)
+  }, [])
+
+  const navigateTo = (path) => {
+    window.history.pushState({}, '', path)
+    setCurrentPath(path)
+  }
+
+  const goBack = () => {
+    window.history.back()
+  }
+
+  const goForward = () => {
+    window.history.forward()
+  }
+
+  // Helper para verificar si estamos en una ruta específica
+  const isActive = (path) => currentPath === path
+
+  // Helper para obtener parámetros de query string
+  const getQueryParams = () => {
+    const params = new URLSearchParams(window.location.search)
+    return Object.fromEntries(params.entries())
+  }
+
+  return {
+    currentPath,
+    navigateTo,
+    goBack,
+    goForward,
+    isActive,
+    queryParams: getQueryParams(),
+  }
+}
+
+// Uso:
+function Navigation() {
+  const { navigateTo, isActive } = useRouter()
+
+  return (
+    &lt;nav&gt;
+      &lt;button
+        className={isActive('/') ? 'active' : ''}
+        onClick={() => navigateTo('/')}
+      &gt;
+        Home
+      &lt;/button&gt;
+      &lt;button
+        className={isActive('/about') ? 'active' : ''}
+        onClick={() => navigateTo('/about')}
+      &gt;
+        About
+      &lt;/button&gt;
+    &lt;/nav&gt;
+  )
+}
+
+function SearchPage() {
+  const { queryParams } = useRouter()
+
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;Resultados de búsqueda&lt;/h2&gt;
+      &lt;p&gt;Buscando: {queryParams.q || 'nada'}&lt;/p&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+    <h3>Ejemplo 6: useDebounce</h3>
+    <p>Un hook para retrasar la actualización de un valor:</p>
+
+    <pre><code class="language-jsx">import { useState, useEffect } from 'react'
+
+export function useDebounce(value, delay = 500) {
+  const [debouncedValue, setDebouncedValue] = useState(value)
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedValue(value)
+    }, delay)
+
+    return () => {
+      clearTimeout(timer)
+    }
+  }, [value, delay])
+
+  return debouncedValue
+}
+
+// Uso:
+function SearchBar() {
+  const [searchTerm, setSearchTerm] = useState('')
+  const debouncedSearchTerm = useDebounce(searchTerm, 500)
+
+  useEffect(() => {
+    if (debouncedSearchTerm) {
+      // Hacer búsqueda en API
+      console.log('Buscando:', debouncedSearchTerm)
+    }
+  }, [debouncedSearchTerm])
+
+  return (
+    &lt;input
+      type="text"
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+      placeholder="Buscar..."
+    /&gt;
+  )
+}</code></pre>
+  </article>
+
+  <article id="exercises" class="tab-content">
+    <h2>Ejercicios Prácticos</h2>
+
+    <h3>Ejercicio 1: Crear useCounter</h3>
+    <p><strong>Desafío:</strong> Crea un hook para manejar un contador con increment, decrement y reset.</p>
+
+    <p><strong>Pistas:</strong></p>
+    <ul>
+      <li>Usa useState para el valor del contador</li>
+      <li>Crea funciones para incrementar, decrementar y resetear</li>
+      <li>Retorna el valor y las funciones</li>
+    </ul>
+
+    <p><strong>Solución:</strong></p>
+    <pre><code class="language-jsx">import { useState } from 'react'
+
+export function useCounter(initialValue = 0) {
+  const [count, setCount] = useState(initialValue)
+
+  const increment = () => setCount((prev) => prev + 1)
+  const decrement = () => setCount((prev) => prev - 1)
+  const reset = () => setCount(initialValue)
+
+  return {
+    count,
+    increment,
+    decrement,
+    reset,
+  }
+}
+
+// Uso:
+function Counter() {
+  const { count, increment, decrement, reset } = useCounter(0)
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Count: {count}&lt;/p&gt;
+      &lt;button onClick={increment}&gt;+&lt;/button&gt;
+      &lt;button onClick={decrement}&gt;-&lt;/button&gt;
+      &lt;button onClick={reset}&gt;Reset&lt;/button&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+    <h3>Ejercicio 2: Crear useOnlineStatus</h3>
+    <p><strong>Desafío:</strong> Crea un hook que detecte si el usuario está online u offline.</p>
+
+    <p><strong>Solución:</strong></p>
+    <pre><code class="language-jsx">import { useState, useEffect } from 'react'
+
+export function useOnlineStatus() {
+  const [isOnline, setIsOnline] = useState(navigator.onLine)
+
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true)
+    const handleOffline = () => setIsOnline(false)
+
+    window.addEventListener('online', handleOnline)
+    window.addEventListener('offline', handleOffline)
+
+    return () => {
+      window.removeEventListener('online', handleOnline)
+      window.removeEventListener('offline', handleOffline)
+    }
+  }, [])
+
+  return isOnline
+}
+
+// Uso:
+function App() {
+  const isOnline = useOnlineStatus()
+
+  return (
+    &lt;div&gt;
+      {isOnline ? '✅ Conectado' : '❌ Sin conexión'}
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+    <h3>Ejercicio 3: Crear useForm</h3>
+    <p><strong>Desafío:</strong> Crea un hook para manejar formularios con múltiples campos.</p>
+
+    <p><strong>Solución:</strong></p>
+    <pre><code class="language-jsx">import { useState } from 'react'
+
+export function useForm(initialValues) {
+  const [values, setValues] = useState(initialValues)
+
+  const handleChange = (event) => {
+    const { name, value } = event.target
+    setValues((prev) => ({
+      ...prev,
+      [name]: value,
+    }))
+  }
+
+  const reset = () => setValues(initialValues)
+
+  return {
+    values,
+    handleChange,
+    reset,
+  }
+}
+
+// Uso:
+function LoginForm() {
+  const { values, handleChange, reset } = useForm({
+    email: '',
+    password: '',
+  })
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    console.log('Submitted:', values)
+  }
+
+  return (
+    &lt;form onSubmit={handleSubmit}&gt;
+      &lt;input
+        name="email"
+        value={values.email}
+        onChange={handleChange}
+        placeholder="Email"
+      /&gt;
+      &lt;input
+        name="password"
+        type="password"
+        value={values.password}
+        onChange={handleChange}
+        placeholder="Password"
+      /&gt;
+      &lt;button type="submit"&gt;Login&lt;/button&gt;
+      &lt;button type="button" onClick={reset}&gt;Reset&lt;/button&gt;
+    &lt;/form&gt;
+  )
+}</code></pre>
+
+    <h3>Ejercicio 4: Crear usePrevious</h3>
+    <p><strong>Desafío:</strong> Crea un hook que retorne el valor anterior de una variable.</p>
+
+    <p><strong>Solución:</strong></p>
+    <pre><code class="language-jsx">import { useRef, useEffect } from 'react'
+
+export function usePrevious(value) {
+  const ref = useRef()
+
+  useEffect(() => {
+    ref.current = value
+  }, [value])
+
+  return ref.current
+}
+
+// Uso:
+function Counter() {
+  const [count, setCount] = useState(0)
+  const previousCount = usePrevious(count)
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Actual: {count}&lt;/p&gt;
+      &lt;p&gt;Anterior: {previousCount}&lt;/p&gt;
+      &lt;button onClick={() => setCount(count + 1)}&gt;
+        Incrementar
+      &lt;/button&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+    <h3>Ejercicio 5: Crear useClickOutside</h3>
+    <p><strong>Desafío:</strong> Crea un hook que detecte clicks fuera de un elemento.</p>
+
+    <p><strong>Solución:</strong></p>
+    <pre><code class="language-jsx">import { useEffect, useRef } from 'react'
+
+export function useClickOutside(callback) {
+  const ref = useRef(null)
+
+  useEffect(() => {
+    const handleClick = (event) => {
+      if (ref.current && !ref.current.contains(event.target)) {
+        callback()
+      }
+    }
+
+    document.addEventListener('mousedown', handleClick)
+
+    return () => {
+      document.removeEventListener('mousedown', handleClick)
+    }
+  }, [callback])
+
+  return ref
+}
+
+// Uso:
+function Dropdown() {
+  const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useClickOutside(() => setIsOpen(false))
+
+  return (
+    &lt;div ref={dropdownRef}&gt;
+      &lt;button onClick={() => setIsOpen(!isOpen)}&gt;
+        Toggle
+      &lt;/button&gt;
+
+      {isOpen && (
+        &lt;div className="dropdown-menu"&gt;
+          &lt;p&gt;Contenido del dropdown&lt;/p&gt;
+        &lt;/div&gt;
+      )}
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+    <h3>Ejercicio Bonus: Combinar Hooks</h3>
+    <p><strong>Desafío:</strong> Crea un hook useTodos que combine useLocalStorage y useToggle.</p>
+
+    <p><strong>Solución:</strong></p>
+    <pre><code class="language-jsx">import { useLocalStorage } from './useLocalStorage'
+
+export function useTodos() {
+  const [todos, setTodos] = useLocalStorage('todos', [])
+
+  const addTodo = (text) => {
+    const newTodo = {
+      id: Date.now(),
+      text,
+      completed: false,
+    }
+    setTodos([...todos, newTodo])
+  }
+
+  const toggleTodo = (id) => {
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      )
+    )
+  }
+
+  const removeTodo = (id) => {
+    setTodos(todos.filter((todo) => todo.id !== id))
+  }
+
+  return {
+    todos,
+    addTodo,
+    toggleTodo,
+    removeTodo,
+  }
+}
+
+// Uso:
+function TodoApp() {
+  const { todos, addTodo, toggleTodo, removeTodo } = useTodos()
+  const [input, setInput] = useState('')
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    if (input.trim()) {
+      addTodo(input)
+      setInput('')
+    }
+  }
+
+  return (
+    &lt;div&gt;
+      &lt;form onSubmit={handleSubmit}&gt;
+        &lt;input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Nueva tarea"
+        /&gt;
+        &lt;button type="submit"&gt;Agregar&lt;/button&gt;
+      &lt;/form&gt;
+
+      &lt;ul&gt;
+        {todos.map((todo) => (
+          &lt;li key={todo.id}&gt;
+            &lt;input
+              type="checkbox"
+              checked={todo.completed}
+              onChange={() => toggleTodo(todo.id)}
+            /&gt;
+            &lt;span
+              style={{
+                textDecoration: todo.completed ? 'line-through' : 'none',
+              }}
+            &gt;
+              {todo.text}
+            &lt;/span&gt;
+            &lt;button onClick={() => removeTodo(todo.id)}&gt;
+              Eliminar
+            &lt;/button&gt;
+          &lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+  </article>
+
+  <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-left: 4px solid #007bff; border-radius: 4px;">
+    <p><strong>📚 Recursos Adicionales:</strong></p>
+    <p>
+      Para más discusiones en profundidad y ejemplos interactivos sobre Custom Hooks en React,
+      consulta estos recursos:
+    </p>
+    <ul style="margin-top: 10px;">
+      <li><a href="https://chatgpt.com/g/g-p-696fbea2755481919c8258fb23e8f822-react" target="_blank" style="color: #007bff; text-decoration: none;">Guía React GPT</a></li>
+      <li><a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/69dd6e64-10e8-8384-a7cb-6981173e3872" target="_blank" style="color: #007bff; text-decoration: none;">MiduFrontend GPT - Custom Hooks</a></li>
+      <li><a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/69dd64a9-b9e8-838d-8faa-0147d37b026c" target="_blank" style="color: #007bff; text-decoration: none;">MiduFrontend GPT - Creando una SPA</a></li>
+      <li><a href="https://react.dev/learn/reusing-logic-with-custom-hooks" target="_blank" style="color: #007bff; text-decoration: none;">React Docs - Reusing Logic with Custom Hooks</a></li>
+      <li><a href="https://usehooks.com/" target="_blank" style="color: #007bff; text-decoration: none;">useHooks - Collection of React Hooks</a></li>
+    </ul>
+  </div>
+</section>

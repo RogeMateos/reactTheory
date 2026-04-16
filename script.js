@@ -54,8 +54,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function loadContent(section) {
     const lang = currentLanguage === "es" ? "es" : "en";
-    const hooks = ["useState", "useEffect", "useEffect2midu", "useEffect3midu", "useContext", "useRef", "useReducer", "globalSwitch", "useId"];
-    const fundamentals = ["componentes", "componentesVsFunciones", "jobCard", "props", "modulos", "paginacion", "callbacks", "listas", "paginacion-final", "css-modules", "eventos", "renderizado", "vite-bundlers", "vite-install", "fast-refresh", "bareBonesMethod", "lifeCicle", "formularios", "filtros-routing"];
+    const hooks = ["useState", "useEffect", "useEffect2midu", "useEffect3midu", "useContext", "useRef", "useReducer", "globalSwitch", "useId", "customHooks"];
+    const fundamentals = ["componentes", "componentesVsFunciones", "jobCard", "props", "modulos", "paginacion", "callbacks", "listas", "paginacion-final", "css-modules", "eventos", "renderizado", "spa", "vite-bundlers", "vite-install", "fast-refresh", "bareBonesMethod", "lifeCicle", "formularios", "filtros-routing"];
     const interview = ["interviewQuestions", "react-hooks-rules-and-order", "react-hooks-masterclass"];
 
     let folder = "";
@@ -114,6 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
       jobCard: { en: "Creating JobCard", es: "Creando JobCard" },
       eventos: { en: "Events", es: "Eventos" },
       renderizado: { en: "Rendering & Virtual DOM", es: "Renderizado y Virtual DOM" },
+      spa: { en: "Single Page Application (SPA)", es: "Single Page Application (SPA)" },
       props: { en: "Props", es: "Props" },
       modulos: { en: "JS Modules", es: "Módulos JS" },
       paginacion: { en: "Pagination", es: "Paginación" },
@@ -141,6 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
       routing: { en: "Routing", es: "Enrutamiento" },
       globalSwitch: { en: "Global Switch (useContext)", es: "Global Switch (useContext)" },
       useId: { en: "useId", es: "useId" },
+      customHooks: { en: "Custom Hooks", es: "Custom Hooks" },
       useEffect2midu: { en: 'useEffect II', es: 'useEffect II' },
       useEffect3midu: { en: 'useEffect III', es: 'useEffect III' },
       virtualDOM: { en: "Virtual DOM", es: "DOM Virtual" },

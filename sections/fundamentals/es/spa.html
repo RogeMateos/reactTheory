@@ -1,0 +1,844 @@
+<section class="box">
+  <h1>Creando una Single Page Application (SPA) desde cero con React</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">
+      Conceptos
+    </button>
+    <button class="tab-button" data-tab="code-examples">
+      Ejemplos de Código
+    </button>
+    <button class="tab-button" data-tab="exercises">
+      Ejercicios
+    </button>
+  </div>
+
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+      <h3>¿Qué es una Single Page Application (SPA)?</h3>
+      <p>
+        Una Single Page Application (SPA) es una aplicación web que <strong>no recarga la página al navegar entre diferentes rutas</strong>.
+        En lugar de solicitar nuevas páginas al servidor, la SPA carga todo el código necesario al inicio y luego renderiza contenido dinámicamente según la URL.
+      </p>
+
+      <p>
+        En esta clase aprenderás a crear tu propia SPA sin usar React Router ni otras librerías, implementando todo el sistema de navegación desde cero.
+        Esto te ayudará a entender cómo funcionan las SPAs por dentro antes de usar herramientas más avanzadas.
+      </p>
+
+      <h3>¿Por qué crear una SPA?</h3>
+
+      <h4>Navegación tradicional (Multi-Page Application)</h4>
+      <p>En una web tradicional, cada vez que haces clic en un enlace:</p>
+
+      <pre><code>1. Se hace una petición al servidor
+2. El servidor devuelve un HTML completo
+3. El navegador descarga de nuevo CSS, JavaScript, imágenes, fuentes...
+4. Se pierde el estado de la aplicación
+5. Hay un "parpadeo" mientras carga la nueva página</code></pre>
+
+      <h4>Navegación SPA</h4>
+      <p>En una SPA, cuando haces clic:</p>
+
+      <pre><code>1. Se previene la recarga de la página
+2. Se cambia la URL del navegador
+3. React re-renderiza el contenido correspondiente
+4. NO se vuelven a descargar recursos
+5. Navegación instantánea y fluida</code></pre>
+
+      <h4>Ventajas:</h4>
+      <ul>
+        <li>⚡ <strong>Navegación instantánea:</strong> no se recargan recursos</li>
+        <li>💾 <strong>Mantiene el estado:</strong> las variables y datos persisten</li>
+        <li>🎨 <strong>Mejor UX:</strong> transiciones suaves, sin parpadeos</li>
+        <li>📦 <strong>Menos datos:</strong> solo se descarga contenido nuevo</li>
+      </ul>
+
+      <h3>El problema: Los enlaces recargan la página</h3>
+      <p>Por defecto, cuando haces clic en un <code>&lt;a&gt;</code>:</p>
+
+      <pre><code class="language-jsx">function Header() {
+  return (
+    &lt;header&gt;
+      &lt;a href="/"&gt;Inicio&lt;/a&gt;
+      &lt;a href="/about"&gt;Acerca de&lt;/a&gt;
+      &lt;a href="/contact"&gt;Contacto&lt;/a&gt;
+    &lt;/header&gt;
+  )
+}</code></pre>
+
+      <p>Cada clic recarga toda la página → descarga de nuevo HTML, CSS, JS, imágenes…</p>
+
+      <h3>Solución: Crear un componente Link personalizado</h3>
+      <p>Vamos a crear nuestro propio componente <code>&lt;Link&gt;</code> que intercepta los clics y evita la recarga:</p>
+
+      <pre><code class="language-jsx">function Link({ href, children, ...props }) {
+  const handleClick = (event) => {
+    // 1. Prevenir el comportamiento por defecto (no recargar)
+    event.preventDefault()
+
+    // 2. Cambiar la URL sin recargar la página
+    window.history.pushState({}, '', href)
+
+    // 3. Emitir un evento para notificar el cambio
+    const navigationEvent = new PopStateEvent('popstate')
+    window.dispatchEvent(navigationEvent)
+  }
+
+  return (
+    &lt;a href={href} onClick={handleClick} {...props}&gt;
+      {children}
+    &lt;/a&gt;
+  )
+}</code></pre>
+
+      <h4>¿Qué hace cada parte?</h4>
+
+      <p><strong>1. preventDefault()</strong></p>
+      <p>Evita que el navegador haga el comportamiento por defecto, que es navegar al enlace.</p>
+
+      <pre><code class="language-javascript">event.preventDefault()</code></pre>
+
+      <p>Sin esto, el navegador seguiría el enlace de forma tradicional.</p>
+
+      <p><strong>2. pushState()</strong></p>
+      <p>Cambia la URL del navegador sin recargar la página:</p>
+
+      <pre><code class="language-javascript">window.history.pushState({}, '', href)</code></pre>
+
+      <ul>
+        <li>Primer parámetro: objeto de estado (lo dejamos vacío)</li>
+        <li>Segundo parámetro: título (obsoleto, lo dejamos vacío)</li>
+        <li>Tercer parámetro: la nueva URL</li>
+      </ul>
+
+      <p>Después de esto, la barra de direcciones muestra la nueva URL, pero la página no se recarga.</p>
+
+      <p><strong>3. Emitir evento popstate</strong></p>
+      <p>Para que React se entere del cambio de URL, emitimos manualmente un evento <code>popstate</code>:</p>
+
+      <pre><code class="language-javascript">const navigationEvent = new PopStateEvent('popstate')
+window.dispatchEvent(navigationEvent)</code></pre>
+
+      <p>
+        Este evento se dispara automáticamente cuando el usuario usa los botones de atrás/adelante del navegador,
+        pero como nosotros estamos cambiando la URL manualmente con <code>pushState</code>, debemos emitirlo nosotros.
+      </p>
+
+      <h3>Reemplazar los enlaces tradicionales</h3>
+      <p>Ahora sustituimos todos los <code>&lt;a&gt;</code> por nuestro componente <code>&lt;Link&gt;</code>:</p>
+
+      <pre><code class="language-jsx">function Header() {
+  return (
+    &lt;header&gt;
+      &lt;Link href="/"&gt;Inicio&lt;/Link&gt;
+      &lt;Link href="/about"&gt;Acerca de&lt;/Link&gt;
+      &lt;Link href="/contact"&gt;Contacto&lt;/Link&gt;
+    &lt;/header&gt;
+  )
+}</code></pre>
+
+      <p>¡Genial! Ahora al hacer clic:</p>
+      <ul>
+        <li>✅ La URL cambia</li>
+        <li>✅ No se recarga la página</li>
+        <li>❌ Pero… el contenido no cambia</li>
+      </ul>
+
+      <h3>El problema: React no reacciona al cambio de URL</h3>
+      <p>
+        Aunque la URL cambia, ningún componente se está re-renderizando porque React no sabe que la URL ha cambiado.
+      </p>
+
+      <p>Necesitamos:</p>
+      <ol>
+        <li>Escuchar cambios en la URL</li>
+        <li>Actualizar un estado de React con la nueva ruta</li>
+        <li>Renderizar el contenido correspondiente según esa ruta</li>
+      </ol>
+
+      <h3>Solución: Mantener la ruta en el estado</h3>
+      <p>Vamos a crear un estado que contenga la ruta actual:</p>
+
+      <pre><code class="language-jsx">import { useState, useEffect } from 'react'
+
+function App() {
+  const [currentPath, setCurrentPath] = useState(window.location.pathname)
+
+  return (
+    &lt;div&gt;
+      &lt;Header /&gt;
+      &lt;main&gt;
+        &lt;h1&gt;Ruta actual: {currentPath}&lt;/h1&gt;
+      &lt;/main&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+      <p>Ahora tenemos la ruta en el estado, pero todavía no se actualiza cuando navegamos.</p>
+
+      <h3>Escuchar cambios de URL con useEffect</h3>
+      <p>Necesitamos escuchar el evento <code>popstate</code> para detectar cuando la URL cambia:</p>
+
+      <pre><code class="language-jsx">import { useState, useEffect } from 'react'
+
+function App() {
+  const [currentPath, setCurrentPath] = useState(window.location.pathname)
+
+  useEffect(() => {
+    // Función que actualiza el estado con la nueva ruta
+    const handleLocationChange = () => {
+      setCurrentPath(window.location.pathname)
+    }
+
+    // Escuchar el evento popstate
+    window.addEventListener('popstate', handleLocationChange)
+
+    // Limpiar el event listener al desmontar
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange)
+    }
+  }, [])
+
+  return (
+    &lt;div&gt;
+      &lt;Header /&gt;
+      &lt;main&gt;
+        &lt;h1&gt;Ruta actual: {currentPath}&lt;/h1&gt;
+      &lt;/main&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+        <strong>Importante:</strong> Usamos la misma referencia de función (<code>handleLocationChange</code>) para añadir y eliminar el listener.
+        Si usáramos funciones anónimas diferentes, no se limpiaría correctamente.
+      </p>
+
+      <h4>¿Por qué el array vacío []?</h4>
+
+      <pre><code class="language-jsx">useEffect(() => {
+  // ...
+}, [])</code></pre>
+
+      <p>
+        Queremos que el listener se añada solo una vez cuando el componente se monta, no en cada render.
+        Por eso usamos un array vacío como dependencia.
+      </p>
+
+      <h3>Renderizar contenido según la ruta</h3>
+      <p>Ahora que tenemos <code>currentPath</code> actualizado, podemos renderizar contenido diferente según la ruta:</p>
+
+      <pre><code class="language-jsx">function App() {
+  const [currentPath, setCurrentPath] = useState(window.location.pathname)
+
+  useEffect(() => {
+    const handleLocationChange = () => {
+      setCurrentPath(window.location.pathname)
+    }
+
+    window.addEventListener('popstate', handleLocationChange)
+
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange)
+    }
+  }, [])
+
+  return (
+    &lt;div&gt;
+      &lt;Header /&gt;
+      &lt;main&gt;
+        {currentPath === '/' && &lt;HomePage /&gt;}
+        {currentPath === '/search' && &lt;SearchPage /&gt;}
+      &lt;/main&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+      <p><strong>¡Ya tenemos una SPA funcional!</strong></p>
+
+      <h3>El flujo completo</h3>
+      <p>Cuando el usuario hace clic en un <code>&lt;Link&gt;</code>:</p>
+
+      <pre><code>1. Link captura el clic → event.preventDefault()
+2. Cambia la URL → window.history.pushState({}, '', href)
+3. Emite el evento → window.dispatchEvent(new PopStateEvent('popstate'))
+4. useEffect detecta el evento → handleLocationChange()
+5. Actualiza el estado → setCurrentPath(window.location.pathname)
+6. React re-renderiza → muestra el componente correspondiente</code></pre>
+
+      <h3>¡Ya es una SPA! Comprobación con DevTools</h3>
+      <p>Abre las DevTools del navegador → pestaña Network (Red):</p>
+
+      <h4>Navegación tradicional (sin SPA)</h4>
+      <p>Al hacer clic en un enlace <code>&lt;a&gt;</code> normal:</p>
+
+      <pre><code>✅ index.html        200 OK  1.2 KB
+✅ styles.css        200 OK  450 B
+✅ bundle.js         200 OK  234 KB
+✅ logo.png          200 OK  45 KB
+✅ font.woff2        200 OK  78 KB
+---------------------------------
+    Total: 357 KB descargados</code></pre>
+
+      <h4>Navegación SPA (con nuestro Link)</h4>
+      <p>Al hacer clic en nuestro <code>&lt;Link&gt;</code>:</p>
+
+      <pre><code>(vacío, no se descarga nada)</code></pre>
+
+      <p><strong>¡Navegación instantánea!</strong> No se recargan recursos porque la página nunca se recarga.</p>
+
+      <h4>Comparación con red lenta</h4>
+      <p>Para ver la diferencia más claramente, simula una conexión lenta:</p>
+      <ol>
+        <li>Abre DevTools → Network</li>
+        <li>Cambia "No throttling" a "Slow 3G"</li>
+        <li>Haz clic en un enlace tradicional → tarda varios segundos</li>
+        <li>Haz clic en un <code>&lt;Link&gt;</code> de tu SPA → instantáneo</li>
+      </ol>
+
+      <p>Esta es la gran ventaja de las SPAs: experiencia de usuario mucho más rápida y fluida.</p>
+
+      <h3>Soportar botones Atrás/Adelante del navegador</h3>
+      <p>Nuestra SPA ya soporta los botones de navegación del navegador sin código adicional porque:</p>
+
+      <pre><code>Cuando el usuario hace clic en "Atrás" o "Adelante"
+      ↓
+El navegador emite automáticamente el evento popstate
+      ↓
+Nuestro useEffect lo detecta y actualiza el estado
+      ↓
+React re-renderiza el contenido correspondiente</code></pre>
+
+      <p><strong>¡Todo funciona! 🎉</strong></p>
+
+      <h3>¿Y React Router?</h3>
+      <p>
+        Ahora que entiendes cómo funciona una SPA por dentro, en las próximas clases usaremos React Router,
+        que es una librería profesional que:
+      </p>
+
+      <ul>
+        <li>✅ Maneja rutas dinámicas (<code>/user/:id</code>)</li>
+        <li>✅ Permite rutas anidadas</li>
+        <li>✅ Facilita la navegación programática</li>
+        <li>✅ Soporta lazy loading de componentes</li>
+        <li>✅ Incluye hooks como useNavigate, useParams, etc.</li>
+      </ul>
+
+      <p>Pero es importante entender qué hace React Router por dentro antes de usarlo. ¡Ahora ya lo sabes!</p>
+
+      <h3>Resumen</h3>
+      <p>En esta clase aprendiste a crear una SPA desde cero:</p>
+
+      <ul>
+        <li>🔗 Crear un componente Link que intercepta clics</li>
+        <li>🚫 Usar preventDefault() para evitar recargas</li>
+        <li>🌐 Cambiar la URL con window.history.pushState</li>
+        <li>📢 Emitir eventos popstate para notificar cambios</li>
+        <li>👂 Escuchar cambios con useEffect y event listeners</li>
+        <li>🔄 Mantener la ruta en estado para re-renderizar componentes</li>
+        <li>⚡ Navegación instantánea sin descargar recursos de nuevo</li>
+      </ul>
+
+      <h3>Ventajas de las SPAs</h3>
+      <ul>
+        <li>⚡ <strong>Rendimiento:</strong> navegación instantánea</li>
+        <li>💾 <strong>Estado persistente:</strong> no se pierde información al navegar</li>
+        <li>🎨 <strong>Mejores transiciones:</strong> animaciones fluidas entre páginas</li>
+        <li>📦 <strong>Menos datos:</strong> solo se descarga contenido nuevo</li>
+        <li>🚀 <strong>Experiencia de usuario:</strong> se siente como una app nativa</li>
+      </ul>
+
+      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+        <strong>💡 Tip:</strong> Abre las DevTools → Network y compara la navegación tradicional vs SPA.
+        Verás que con SPA no se descarga nada al navegar.
+      </p>
+
+      <p style="padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;">
+        <strong>Recuerda:</strong> React Router hace todo esto (y más) por ti, pero ahora entiendes cómo funciona por dentro.
+        ¡En la próxima clase veremos React Router!
+      </p>
+    </div>
+  </article>
+
+  <article id="code-examples" class="tab-content">
+    <h2>Ejemplos de Código Completos</h2>
+
+    <h3>Ejemplo 1: Componente Link Completo</h3>
+    <pre><code class="language-jsx">function Link({ href, children, ...props }) {
+  const handleClick = (event) => {
+    event.preventDefault()
+    window.history.pushState({}, '', href)
+
+    const navigationEvent = new PopStateEvent('popstate')
+    window.dispatchEvent(navigationEvent)
+  }
+
+  return (
+    &lt;a href={href} onClick={handleClick} {...props}&gt;
+      {children}
+    &lt;/a&gt;
+  )
+}
+
+// Uso:
+&lt;Link href="/about"&gt;Acerca de&lt;/Link&gt;
+&lt;Link href="/contact"&gt;Contacto&lt;/Link&gt;</code></pre>
+
+    <h3>Ejemplo 2: App Completa con Navegación</h3>
+    <pre><code class="language-jsx">import { useState, useEffect } from 'react'
+
+function App() {
+  const [currentPath, setCurrentPath] = useState(window.location.pathname)
+
+  useEffect(() => {
+    const handleLocationChange = () => {
+      setCurrentPath(window.location.pathname)
+    }
+
+    window.addEventListener('popstate', handleLocationChange)
+
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange)
+    }
+  }, [])
+
+  return (
+    &lt;div&gt;
+      &lt;Header /&gt;
+      &lt;main&gt;
+        {currentPath === '/' && &lt;HomePage /&gt;}
+        {currentPath === '/about' && &lt;AboutPage /&gt;}
+        {currentPath === '/contact' && &lt;ContactPage /&gt;}
+      &lt;/main&gt;
+    &lt;/div&gt;
+  )
+}
+
+function Header() {
+  return (
+    &lt;header&gt;
+      &lt;nav&gt;
+        &lt;Link href="/"&gt;Inicio&lt;/Link&gt;
+        &lt;Link href="/about"&gt;Acerca de&lt;/Link&gt;
+        &lt;Link href="/contact"&gt;Contacto&lt;/Link&gt;
+      &lt;/nav&gt;
+    &lt;/header&gt;
+  )
+}
+
+function HomePage() {
+  return &lt;h1&gt;Página de Inicio&lt;/h1&gt;
+}
+
+function AboutPage() {
+  return &lt;h1&gt;Acerca de Nosotros&lt;/h1&gt;
+}
+
+function ContactPage() {
+  return &lt;h1&gt;Contacto&lt;/h1&gt;
+}</code></pre>
+
+    <h3>Ejemplo 3: Router Mejorado con Componente Route</h3>
+    <pre><code class="language-jsx">function Router({ routes, currentPath }) {
+  const route = routes.find(r => r.path === currentPath)
+
+  if (!route) {
+    return &lt;NotFoundPage /&gt;
+  }
+
+  return route.component
+}
+
+function App() {
+  const [currentPath, setCurrentPath] = useState(window.location.pathname)
+
+  useEffect(() => {
+    const handleLocationChange = () => {
+      setCurrentPath(window.location.pathname)
+    }
+
+    window.addEventListener('popstate', handleLocationChange)
+
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange)
+    }
+  }, [])
+
+  const routes = [
+    { path: '/', component: &lt;HomePage /&gt; },
+    { path: '/about', component: &lt;AboutPage /&gt; },
+    { path: '/contact', component: &lt;ContactPage /&gt; }
+  ]
+
+  return (
+    &lt;div&gt;
+      &lt;Header /&gt;
+      &lt;main&gt;
+        &lt;Router routes={routes} currentPath={currentPath} /&gt;
+      &lt;/main&gt;
+    &lt;/div&gt;
+  )
+}
+
+function NotFoundPage() {
+  return &lt;h1&gt;404 - Página no encontrada&lt;/h1&gt;
+}</code></pre>
+
+    <h3>Ejemplo 4: Link Activo (Con Clase CSS)</h3>
+    <pre><code class="language-jsx">function Link({ href, children, activeClassName = 'active', ...props }) {
+  const isActive = window.location.pathname === href
+
+  const handleClick = (event) => {
+    event.preventDefault()
+    window.history.pushState({}, '', href)
+
+    const navigationEvent = new PopStateEvent('popstate')
+    window.dispatchEvent(navigationEvent)
+  }
+
+  return (
+    &lt;a
+      href={href}
+      onClick={handleClick}
+      className={isActive ? activeClassName : ''}
+      {...props}
+    &gt;
+      {children}
+    &lt;/a&gt;
+  )
+}
+
+// CSS:
+// .active {
+//   font-weight: bold;
+//   color: blue;
+//   border-bottom: 2px solid blue;
+// }</code></pre>
+
+    <h3>Ejemplo 5: Navegación Programática</h3>
+    <pre><code class="language-jsx">function useNavigate() {
+  return (path) => {
+    window.history.pushState({}, '', path)
+    const navigationEvent = new PopStateEvent('popstate')
+    window.dispatchEvent(navigationEvent)
+  }
+}
+
+function LoginPage() {
+  const navigate = useNavigate()
+
+  const handleLogin = (event) => {
+    event.preventDefault()
+
+    // Simular login
+    console.log('Logged in!')
+
+    // Navegar programáticamente
+    navigate('/dashboard')
+  }
+
+  return (
+    &lt;form onSubmit={handleLogin}&gt;
+      &lt;input type="email" placeholder="Email" /&gt;
+      &lt;input type="password" placeholder="Password" /&gt;
+      &lt;button type="submit"&gt;Login&lt;/button&gt;
+    &lt;/form&gt;
+  )
+}</code></pre>
+
+    <h3>Ejemplo 6: Router con Rutas Dinámicas</h3>
+    <pre><code class="language-jsx">function Router({ routes, currentPath }) {
+  for (const route of routes) {
+    // Convertir /user/:id a expresión regular
+    const pattern = route.path.replace(/:(\w+)/g, '([^/]+)')
+    const regex = new RegExp(`^${pattern}$`)
+    const match = currentPath.match(regex)
+
+    if (match) {
+      // Extraer parámetros
+      const paramNames = [...route.path.matchAll(/:(\w+)/g)].map(m => m[1])
+      const params = {}
+
+      paramNames.forEach((name, index) => {
+        params[name] = match[index + 1]
+      })
+
+      // Renderizar con params
+      return &lt;route.component params={params} /&gt;
+    }
+  }
+
+  return &lt;NotFoundPage /&gt;
+}
+
+// Uso:
+const routes = [
+  { path: '/', component: HomePage },
+  { path: '/user/:id', component: UserPage },
+  { path: '/post/:slug', component: PostPage }
+]
+
+function UserPage({ params }) {
+  return &lt;h1&gt;Usuario: {params.id}&lt;/h1&gt;
+}</code></pre>
+  </article>
+
+  <article id="exercises" class="tab-content">
+    <h2>Ejercicios Prácticos</h2>
+
+    <h3>Ejercicio 1: Crear tu Primer Link</h3>
+    <p><strong>Desafío:</strong> Implementa el componente Link básico.</p>
+
+    <p><strong>Pistas:</strong></p>
+    <ul>
+      <li>Usa event.preventDefault() para evitar recarga</li>
+      <li>Usa window.history.pushState para cambiar la URL</li>
+      <li>Emite un evento popstate</li>
+    </ul>
+
+    <p><strong>Solución:</strong></p>
+    <pre><code class="language-jsx">function Link({ href, children }) {
+  const handleClick = (event) => {
+    event.preventDefault()
+    window.history.pushState({}, '', href)
+    window.dispatchEvent(new PopStateEvent('popstate'))
+  }
+
+  return (
+    &lt;a href={href} onClick={handleClick}&gt;
+      {children}
+    &lt;/a&gt;
+  )
+}</code></pre>
+
+    <h3>Ejercicio 2: Escuchar Cambios de Ruta</h3>
+    <p><strong>Desafío:</strong> Crea un hook personalizado que escuche cambios de ruta.</p>
+
+    <p><strong>Solución:</strong></p>
+    <pre><code class="language-jsx">function useCurrentPath() {
+  const [currentPath, setCurrentPath] = useState(window.location.pathname)
+
+  useEffect(() => {
+    const handleLocationChange = () => {
+      setCurrentPath(window.location.pathname)
+    }
+
+    window.addEventListener('popstate', handleLocationChange)
+
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange)
+    }
+  }, [])
+
+  return currentPath
+}
+
+// Uso:
+function App() {
+  const currentPath = useCurrentPath()
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Ruta actual: {currentPath}&lt;/p&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+    <h3>Ejercicio 3: Renderizar Rutas</h3>
+    <p><strong>Desafío:</strong> Renderiza diferentes componentes según la ruta actual.</p>
+
+    <p><strong>Solución:</strong></p>
+    <pre><code class="language-jsx">function App() {
+  const currentPath = useCurrentPath()
+
+  return (
+    &lt;div&gt;
+      &lt;Header /&gt;
+      &lt;main&gt;
+        {currentPath === '/' && &lt;HomePage /&gt;}
+        {currentPath === '/about' && &lt;AboutPage /&gt;}
+        {currentPath === '/contact' && &lt;ContactPage /&gt;}
+        {!['/', '/about', '/contact'].includes(currentPath) && &lt;NotFoundPage /&gt;}
+      &lt;/main&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+    <h3>Ejercicio 4: Link Activo</h3>
+    <p><strong>Desafío:</strong> Agrega una clase CSS al link de la página actual.</p>
+
+    <p><strong>Solución:</strong></p>
+    <pre><code class="language-jsx">function Link({ href, children, activeClassName = 'active' }) {
+  const currentPath = useCurrentPath()
+  const isActive = currentPath === href
+
+  const handleClick = (event) => {
+    event.preventDefault()
+    window.history.pushState({}, '', href)
+    window.dispatchEvent(new PopStateEvent('popstate'))
+  }
+
+  return (
+    &lt;a
+      href={href}
+      onClick={handleClick}
+      className={isActive ? activeClassName : ''}
+    &gt;
+      {children}
+    &lt;/a&gt;
+  )
+}</code></pre>
+
+    <h3>Ejercicio 5: Navegación Programática</h3>
+    <p><strong>Desafío:</strong> Crea un hook useNavigate para navegar desde JavaScript.</p>
+
+    <p><strong>Solución:</strong></p>
+    <pre><code class="language-jsx">function useNavigate() {
+  return (path) => {
+    window.history.pushState({}, '', path)
+    window.dispatchEvent(new PopStateEvent('popstate'))
+  }
+}
+
+// Uso:
+function LoginButton() {
+  const navigate = useNavigate()
+
+  const handleClick = () => {
+    // Hacer algo...
+    navigate('/dashboard')
+  }
+
+  return &lt;button onClick={handleClick}&gt;Login&lt;/button&gt;
+}</code></pre>
+
+    <h3>Ejercicio 6: Página 404</h3>
+    <p><strong>Desafío:</strong> Muestra una página 404 para rutas que no existen.</p>
+
+    <p><strong>Solución:</strong></p>
+    <pre><code class="language-jsx">function Router({ routes, currentPath }) {
+  const route = routes.find(r => r.path === currentPath)
+
+  if (!route) {
+    return &lt;NotFoundPage /&gt;
+  }
+
+  return route.component
+}
+
+function NotFoundPage() {
+  const navigate = useNavigate()
+
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;404 - Página no encontrada&lt;/h1&gt;
+      &lt;button onClick={() => navigate('/')}&gt;
+        Volver al inicio
+      &lt;/button&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+    <h3>Ejercicio Bonus: Router Completo</h3>
+    <p><strong>Desafío:</strong> Combina todo en un sistema de routing completo.</p>
+
+    <p><strong>Solución:</strong></p>
+    <pre><code class="language-jsx">// Custom hooks
+function useCurrentPath() {
+  const [currentPath, setCurrentPath] = useState(window.location.pathname)
+
+  useEffect(() => {
+    const handleLocationChange = () => {
+      setCurrentPath(window.location.pathname)
+    }
+
+    window.addEventListener('popstate', handleLocationChange)
+
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange)
+    }
+  }, [])
+
+  return currentPath
+}
+
+function useNavigate() {
+  return (path) => {
+    window.history.pushState({}, '', path)
+    window.dispatchEvent(new PopStateEvent('popstate'))
+  }
+}
+
+// Componentes
+function Link({ href, children, activeClassName = 'active' }) {
+  const currentPath = useCurrentPath()
+  const isActive = currentPath === href
+
+  const handleClick = (event) => {
+    event.preventDefault()
+    window.history.pushState({}, '', href)
+    window.dispatchEvent(new PopStateEvent('popstate'))
+  }
+
+  return (
+    &lt;a
+      href={href}
+      onClick={handleClick}
+      className={isActive ? activeClassName : ''}
+    &gt;
+      {children}
+    &lt;/a&gt;
+  )
+}
+
+function Router({ routes, currentPath }) {
+  const route = routes.find(r => r.path === currentPath)
+
+  if (!route) {
+    return &lt;NotFoundPage /&gt;
+  }
+
+  return route.component
+}
+
+// App principal
+function App() {
+  const currentPath = useCurrentPath()
+
+  const routes = [
+    { path: '/', component: &lt;HomePage /&gt; },
+    { path: '/about', component: &lt;AboutPage /&gt; },
+    { path: '/contact', component: &lt;ContactPage /&gt; }
+  ]
+
+  return (
+    &lt;div&gt;
+      &lt;nav&gt;
+        &lt;Link href="/"&gt;Inicio&lt;/Link&gt;
+        &lt;Link href="/about"&gt;Acerca de&lt;/Link&gt;
+        &lt;Link href="/contact"&gt;Contacto&lt;/Link&gt;
+      &lt;/nav&gt;
+
+      &lt;main&gt;
+        &lt;Router routes={routes} currentPath={currentPath} /&gt;
+      &lt;/main&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+  </article>
+
+  <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-left: 4px solid #007bff; border-radius: 4px;">
+    <p><strong>📚 Recursos Adicionales:</strong></p>
+    <p>
+      Para más discusiones en profundidad y ejemplos interactivos sobre Single Page Applications en React,
+      consulta estos recursos:
+    </p>
+    <ul style="margin-top: 10px;">
+      <li><a href="https://chatgpt.com/g/g-p-696fbea2755481919c8258fb23e8f822-react" target="_blank" style="color: #007bff; text-decoration: none;">Guía React GPT</a></li>
+      <li><a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/69dd64a9-b9e8-838d-8faa-0147d37b026c" target="_blank" style="color: #007bff; text-decoration: none;">MiduFrontend GPT - Creando una SPA</a></li>
+      <li><a href="https://www.jscamp.dev/introduccion-a-react/creando-una-spa-desde-cero" target="_blank" style="color: #007bff; text-decoration: none;">JSCamp.dev - Creando una SPA desde cero</a></li>
+    </ul>
+  </div>
+</section>

@@ -1,0 +1,844 @@
+<section class="box">
+  <h1>Building a Single Page Application (SPA) from Scratch with React</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">
+      Concepts
+    </button>
+    <button class="tab-button" data-tab="code-examples">
+      Code Examples
+    </button>
+    <button class="tab-button" data-tab="exercises">
+      Exercises
+    </button>
+  </div>
+
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+      <h3>What is a Single Page Application (SPA)?</h3>
+      <p>
+        A Single Page Application (SPA) is a web application that <strong>doesn't reload the page when navigating between different routes</strong>.
+        Instead of requesting new pages from the server, the SPA loads all necessary code at startup and then dynamically renders content based on the URL.
+      </p>
+
+      <p>
+        In this lesson, you'll learn to create your own SPA without using React Router or other libraries, implementing the entire navigation system from scratch.
+        This will help you understand how SPAs work internally before using more advanced tools.
+      </p>
+
+      <h3>Why Build an SPA?</h3>
+
+      <h4>Traditional Navigation (Multi-Page Application)</h4>
+      <p>In a traditional web app, every time you click a link:</p>
+
+      <pre><code>1. A request is made to the server
+2. The server returns a complete HTML page
+3. The browser downloads CSS, JavaScript, images, fonts again...
+4. Application state is lost
+5. There's a "flicker" while the new page loads</code></pre>
+
+      <h4>SPA Navigation</h4>
+      <p>In an SPA, when you click:</p>
+
+      <pre><code>1. Page reload is prevented
+2. Browser URL changes
+3. React re-renders the corresponding content
+4. Resources are NOT downloaded again
+5. Instant and smooth navigation</code></pre>
+
+      <h4>Advantages:</h4>
+      <ul>
+        <li>⚡ <strong>Instant navigation:</strong> no resource reloading</li>
+        <li>💾 <strong>State preservation:</strong> variables and data persist</li>
+        <li>🎨 <strong>Better UX:</strong> smooth transitions, no flickers</li>
+        <li>📦 <strong>Less data:</strong> only new content is downloaded</li>
+      </ul>
+
+      <h3>The Problem: Links Reload the Page</h3>
+      <p>By default, when you click an <code>&lt;a&gt;</code> tag:</p>
+
+      <pre><code class="language-jsx">function Header() {
+  return (
+    &lt;header&gt;
+      &lt;a href="/"&gt;Home&lt;/a&gt;
+      &lt;a href="/about"&gt;About&lt;/a&gt;
+      &lt;a href="/contact"&gt;Contact&lt;/a&gt;
+    &lt;/header&gt;
+  )
+}</code></pre>
+
+      <p>Each click reloads the entire page → downloads HTML, CSS, JS, images again…</p>
+
+      <h3>Solution: Create a Custom Link Component</h3>
+      <p>We'll create our own <code>&lt;Link&gt;</code> component that intercepts clicks and prevents reloading:</p>
+
+      <pre><code class="language-jsx">function Link({ href, children, ...props }) {
+  const handleClick = (event) => {
+    // 1. Prevent default behavior (no reload)
+    event.preventDefault()
+
+    // 2. Change URL without reloading the page
+    window.history.pushState({}, '', href)
+
+    // 3. Emit an event to notify the change
+    const navigationEvent = new PopStateEvent('popstate')
+    window.dispatchEvent(navigationEvent)
+  }
+
+  return (
+    &lt;a href={href} onClick={handleClick} {...props}&gt;
+      {children}
+    &lt;/a&gt;
+  )
+}</code></pre>
+
+      <h4>What Does Each Part Do?</h4>
+
+      <p><strong>1. preventDefault()</strong></p>
+      <p>Prevents the browser from doing its default behavior, which is navigating to the link.</p>
+
+      <pre><code class="language-javascript">event.preventDefault()</code></pre>
+
+      <p>Without this, the browser would follow the link traditionally.</p>
+
+      <p><strong>2. pushState()</strong></p>
+      <p>Changes the browser's URL without reloading the page:</p>
+
+      <pre><code class="language-javascript">window.history.pushState({}, '', href)</code></pre>
+
+      <ul>
+        <li>First parameter: state object (we leave it empty)</li>
+        <li>Second parameter: title (obsolete, we leave it empty)</li>
+        <li>Third parameter: the new URL</li>
+      </ul>
+
+      <p>After this, the address bar shows the new URL, but the page doesn't reload.</p>
+
+      <p><strong>3. Emit popstate Event</strong></p>
+      <p>For React to notice the URL change, we manually emit a <code>popstate</code> event:</p>
+
+      <pre><code class="language-javascript">const navigationEvent = new PopStateEvent('popstate')
+window.dispatchEvent(navigationEvent)</code></pre>
+
+      <p>
+        This event fires automatically when the user uses the browser's back/forward buttons,
+        but since we're changing the URL manually with <code>pushState</code>, we must emit it ourselves.
+      </p>
+
+      <h3>Replace Traditional Links</h3>
+      <p>Now we replace all <code>&lt;a&gt;</code> tags with our <code>&lt;Link&gt;</code> component:</p>
+
+      <pre><code class="language-jsx">function Header() {
+  return (
+    &lt;header&gt;
+      &lt;Link href="/"&gt;Home&lt;/Link&gt;
+      &lt;Link href="/about"&gt;About&lt;/Link&gt;
+      &lt;Link href="/contact"&gt;Contact&lt;/Link&gt;
+    &lt;/header&gt;
+  )
+}</code></pre>
+
+      <p>Great! Now when clicking:</p>
+      <ul>
+        <li>✅ The URL changes</li>
+        <li>✅ The page doesn't reload</li>
+        <li>❌ But… the content doesn't change</li>
+      </ul>
+
+      <h3>The Problem: React Doesn't React to URL Changes</h3>
+      <p>
+        Although the URL changes, no component is re-rendering because React doesn't know the URL has changed.
+      </p>
+
+      <p>We need to:</p>
+      <ol>
+        <li>Listen for URL changes</li>
+        <li>Update React state with the new route</li>
+        <li>Render the corresponding content based on that route</li>
+      </ol>
+
+      <h3>Solution: Keep the Route in State</h3>
+      <p>We'll create a state that contains the current route:</p>
+
+      <pre><code class="language-jsx">import { useState, useEffect } from 'react'
+
+function App() {
+  const [currentPath, setCurrentPath] = useState(window.location.pathname)
+
+  return (
+    &lt;div&gt;
+      &lt;Header /&gt;
+      &lt;main&gt;
+        &lt;h1&gt;Current route: {currentPath}&lt;/h1&gt;
+      &lt;/main&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+      <p>Now we have the route in state, but it still doesn't update when we navigate.</p>
+
+      <h3>Listen for URL Changes with useEffect</h3>
+      <p>We need to listen for the <code>popstate</code> event to detect when the URL changes:</p>
+
+      <pre><code class="language-jsx">import { useState, useEffect } from 'react'
+
+function App() {
+  const [currentPath, setCurrentPath] = useState(window.location.pathname)
+
+  useEffect(() => {
+    // Function that updates state with the new route
+    const handleLocationChange = () => {
+      setCurrentPath(window.location.pathname)
+    }
+
+    // Listen for the popstate event
+    window.addEventListener('popstate', handleLocationChange)
+
+    // Clean up the event listener on unmount
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange)
+    }
+  }, [])
+
+  return (
+    &lt;div&gt;
+      &lt;Header /&gt;
+      &lt;main&gt;
+        &lt;h1&gt;Current route: {currentPath}&lt;/h1&gt;
+      &lt;/main&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+        <strong>Important:</strong> We use the same function reference (<code>handleLocationChange</code>) to add and remove the listener.
+        If we used different anonymous functions, it wouldn't clean up correctly.
+      </p>
+
+      <h4>Why the Empty Array []?</h4>
+
+      <pre><code class="language-jsx">useEffect(() => {
+  // ...
+}, [])</code></pre>
+
+      <p>
+        We want the listener to be added only once when the component mounts, not on every render.
+        That's why we use an empty array as a dependency.
+      </p>
+
+      <h3>Render Content Based on Route</h3>
+      <p>Now that we have <code>currentPath</code> updated, we can render different content based on the route:</p>
+
+      <pre><code class="language-jsx">function App() {
+  const [currentPath, setCurrentPath] = useState(window.location.pathname)
+
+  useEffect(() => {
+    const handleLocationChange = () => {
+      setCurrentPath(window.location.pathname)
+    }
+
+    window.addEventListener('popstate', handleLocationChange)
+
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange)
+    }
+  }, [])
+
+  return (
+    &lt;div&gt;
+      &lt;Header /&gt;
+      &lt;main&gt;
+        {currentPath === '/' && &lt;HomePage /&gt;}
+        {currentPath === '/search' && &lt;SearchPage /&gt;}
+      &lt;/main&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+      <p><strong>We now have a functional SPA!</strong></p>
+
+      <h3>The Complete Flow</h3>
+      <p>When the user clicks a <code>&lt;Link&gt;</code>:</p>
+
+      <pre><code>1. Link captures the click → event.preventDefault()
+2. Changes the URL → window.history.pushState({}, '', href)
+3. Emits the event → window.dispatchEvent(new PopStateEvent('popstate'))
+4. useEffect detects the event → handleLocationChange()
+5. Updates state → setCurrentPath(window.location.pathname)
+6. React re-renders → displays the corresponding component</code></pre>
+
+      <h3>It's an SPA! Verification with DevTools</h3>
+      <p>Open browser DevTools → Network tab:</p>
+
+      <h4>Traditional Navigation (without SPA)</h4>
+      <p>When clicking a normal <code>&lt;a&gt;</code> link:</p>
+
+      <pre><code>✅ index.html        200 OK  1.2 KB
+✅ styles.css        200 OK  450 B
+✅ bundle.js         200 OK  234 KB
+✅ logo.png          200 OK  45 KB
+✅ font.woff2        200 OK  78 KB
+---------------------------------
+    Total: 357 KB downloaded</code></pre>
+
+      <h4>SPA Navigation (with our Link)</h4>
+      <p>When clicking our <code>&lt;Link&gt;</code>:</p>
+
+      <pre><code>(empty, nothing downloaded)</code></pre>
+
+      <p><strong>Instant navigation!</strong> Resources aren't reloaded because the page never reloads.</p>
+
+      <h4>Comparison with Slow Network</h4>
+      <p>To see the difference more clearly, simulate a slow connection:</p>
+      <ol>
+        <li>Open DevTools → Network</li>
+        <li>Change "No throttling" to "Slow 3G"</li>
+        <li>Click a traditional link → takes several seconds</li>
+        <li>Click a <code>&lt;Link&gt;</code> in your SPA → instant</li>
+      </ol>
+
+      <p>This is the big advantage of SPAs: much faster and smoother user experience.</p>
+
+      <h3>Support Browser Back/Forward Buttons</h3>
+      <p>Our SPA already supports browser navigation buttons without additional code because:</p>
+
+      <pre><code>When the user clicks "Back" or "Forward"
+      ↓
+The browser automatically emits the popstate event
+      ↓
+Our useEffect detects it and updates state
+      ↓
+React re-renders the corresponding content</code></pre>
+
+      <p><strong>Everything works! 🎉</strong></p>
+
+      <h3>What About React Router?</h3>
+      <p>
+        Now that you understand how an SPA works internally, in the next lessons we'll use React Router,
+        which is a professional library that:
+      </p>
+
+      <ul>
+        <li>✅ Handles dynamic routes (<code>/user/:id</code>)</li>
+        <li>✅ Allows nested routes</li>
+        <li>✅ Facilitates programmatic navigation</li>
+        <li>✅ Supports lazy loading of components</li>
+        <li>✅ Includes hooks like useNavigate, useParams, etc.</li>
+      </ul>
+
+      <p>But it's important to understand what React Router does internally before using it. Now you know!</p>
+
+      <h3>Summary</h3>
+      <p>In this lesson, you learned to create an SPA from scratch:</p>
+
+      <ul>
+        <li>🔗 Create a Link component that intercepts clicks</li>
+        <li>🚫 Use preventDefault() to prevent reloads</li>
+        <li>🌐 Change URL with window.history.pushState</li>
+        <li>📢 Emit popstate events to notify changes</li>
+        <li>👂 Listen for changes with useEffect and event listeners</li>
+        <li>🔄 Keep route in state to re-render components</li>
+        <li>⚡ Instant navigation without downloading resources again</li>
+      </ul>
+
+      <h3>SPA Advantages</h3>
+      <ul>
+        <li>⚡ <strong>Performance:</strong> instant navigation</li>
+        <li>💾 <strong>Persistent state:</strong> information isn't lost when navigating</li>
+        <li>🎨 <strong>Better transitions:</strong> smooth animations between pages</li>
+        <li>📦 <strong>Less data:</strong> only new content is downloaded</li>
+        <li>🚀 <strong>User experience:</strong> feels like a native app</li>
+      </ul>
+
+      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+        <strong>💡 Tip:</strong> Open DevTools → Network and compare traditional navigation vs SPA.
+        You'll see that with SPA nothing is downloaded when navigating.
+      </p>
+
+      <p style="padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;">
+        <strong>Remember:</strong> React Router does all this (and more) for you, but now you understand how it works internally.
+        In the next lesson, we'll explore React Router!
+      </p>
+    </div>
+  </article>
+
+  <article id="code-examples" class="tab-content">
+    <h2>Complete Code Examples</h2>
+
+    <h3>Example 1: Complete Link Component</h3>
+    <pre><code class="language-jsx">function Link({ href, children, ...props }) {
+  const handleClick = (event) => {
+    event.preventDefault()
+    window.history.pushState({}, '', href)
+
+    const navigationEvent = new PopStateEvent('popstate')
+    window.dispatchEvent(navigationEvent)
+  }
+
+  return (
+    &lt;a href={href} onClick={handleClick} {...props}&gt;
+      {children}
+    &lt;/a&gt;
+  )
+}
+
+// Usage:
+&lt;Link href="/about"&gt;About&lt;/Link&gt;
+&lt;Link href="/contact"&gt;Contact&lt;/Link&gt;</code></pre>
+
+    <h3>Example 2: Complete App with Navigation</h3>
+    <pre><code class="language-jsx">import { useState, useEffect } from 'react'
+
+function App() {
+  const [currentPath, setCurrentPath] = useState(window.location.pathname)
+
+  useEffect(() => {
+    const handleLocationChange = () => {
+      setCurrentPath(window.location.pathname)
+    }
+
+    window.addEventListener('popstate', handleLocationChange)
+
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange)
+    }
+  }, [])
+
+  return (
+    &lt;div&gt;
+      &lt;Header /&gt;
+      &lt;main&gt;
+        {currentPath === '/' && &lt;HomePage /&gt;}
+        {currentPath === '/about' && &lt;AboutPage /&gt;}
+        {currentPath === '/contact' && &lt;ContactPage /&gt;}
+      &lt;/main&gt;
+    &lt;/div&gt;
+  )
+}
+
+function Header() {
+  return (
+    &lt;header&gt;
+      &lt;nav&gt;
+        &lt;Link href="/"&gt;Home&lt;/Link&gt;
+        &lt;Link href="/about"&gt;About&lt;/Link&gt;
+        &lt;Link href="/contact"&gt;Contact&lt;/Link&gt;
+      &lt;/nav&gt;
+    &lt;/header&gt;
+  )
+}
+
+function HomePage() {
+  return &lt;h1&gt;Home Page&lt;/h1&gt;
+}
+
+function AboutPage() {
+  return &lt;h1&gt;About Us&lt;/h1&gt;
+}
+
+function ContactPage() {
+  return &lt;h1&gt;Contact&lt;/h1&gt;
+}</code></pre>
+
+    <h3>Example 3: Improved Router with Route Component</h3>
+    <pre><code class="language-jsx">function Router({ routes, currentPath }) {
+  const route = routes.find(r => r.path === currentPath)
+
+  if (!route) {
+    return &lt;NotFoundPage /&gt;
+  }
+
+  return route.component
+}
+
+function App() {
+  const [currentPath, setCurrentPath] = useState(window.location.pathname)
+
+  useEffect(() => {
+    const handleLocationChange = () => {
+      setCurrentPath(window.location.pathname)
+    }
+
+    window.addEventListener('popstate', handleLocationChange)
+
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange)
+    }
+  }, [])
+
+  const routes = [
+    { path: '/', component: &lt;HomePage /&gt; },
+    { path: '/about', component: &lt;AboutPage /&gt; },
+    { path: '/contact', component: &lt;ContactPage /&gt; }
+  ]
+
+  return (
+    &lt;div&gt;
+      &lt;Header /&gt;
+      &lt;main&gt;
+        &lt;Router routes={routes} currentPath={currentPath} /&gt;
+      &lt;/main&gt;
+    &lt;/div&gt;
+  )
+}
+
+function NotFoundPage() {
+  return &lt;h1&gt;404 - Page Not Found&lt;/h1&gt;
+}</code></pre>
+
+    <h3>Example 4: Active Link (With CSS Class)</h3>
+    <pre><code class="language-jsx">function Link({ href, children, activeClassName = 'active', ...props }) {
+  const isActive = window.location.pathname === href
+
+  const handleClick = (event) => {
+    event.preventDefault()
+    window.history.pushState({}, '', href)
+
+    const navigationEvent = new PopStateEvent('popstate')
+    window.dispatchEvent(navigationEvent)
+  }
+
+  return (
+    &lt;a
+      href={href}
+      onClick={handleClick}
+      className={isActive ? activeClassName : ''}
+      {...props}
+    &gt;
+      {children}
+    &lt;/a&gt;
+  )
+}
+
+// CSS:
+// .active {
+//   font-weight: bold;
+//   color: blue;
+//   border-bottom: 2px solid blue;
+// }</code></pre>
+
+    <h3>Example 5: Programmatic Navigation</h3>
+    <pre><code class="language-jsx">function useNavigate() {
+  return (path) => {
+    window.history.pushState({}, '', path)
+    const navigationEvent = new PopStateEvent('popstate')
+    window.dispatchEvent(navigationEvent)
+  }
+}
+
+function LoginPage() {
+  const navigate = useNavigate()
+
+  const handleLogin = (event) => {
+    event.preventDefault()
+
+    // Simulate login
+    console.log('Logged in!')
+
+    // Navigate programmatically
+    navigate('/dashboard')
+  }
+
+  return (
+    &lt;form onSubmit={handleLogin}&gt;
+      &lt;input type="email" placeholder="Email" /&gt;
+      &lt;input type="password" placeholder="Password" /&gt;
+      &lt;button type="submit"&gt;Login&lt;/button&gt;
+    &lt;/form&gt;
+  )
+}</code></pre>
+
+    <h3>Example 6: Router with Dynamic Routes</h3>
+    <pre><code class="language-jsx">function Router({ routes, currentPath }) {
+  for (const route of routes) {
+    // Convert /user/:id to regular expression
+    const pattern = route.path.replace(/:(\w+)/g, '([^/]+)')
+    const regex = new RegExp(`^${pattern}$`)
+    const match = currentPath.match(regex)
+
+    if (match) {
+      // Extract parameters
+      const paramNames = [...route.path.matchAll(/:(\w+)/g)].map(m => m[1])
+      const params = {}
+
+      paramNames.forEach((name, index) => {
+        params[name] = match[index + 1]
+      })
+
+      // Render with params
+      return &lt;route.component params={params} /&gt;
+    }
+  }
+
+  return &lt;NotFoundPage /&gt;
+}
+
+// Usage:
+const routes = [
+  { path: '/', component: HomePage },
+  { path: '/user/:id', component: UserPage },
+  { path: '/post/:slug', component: PostPage }
+]
+
+function UserPage({ params }) {
+  return &lt;h1&gt;User: {params.id}&lt;/h1&gt;
+}</code></pre>
+  </article>
+
+  <article id="exercises" class="tab-content">
+    <h2>Practical Exercises</h2>
+
+    <h3>Exercise 1: Create Your First Link</h3>
+    <p><strong>Challenge:</strong> Implement the basic Link component.</p>
+
+    <p><strong>Hints:</strong></p>
+    <ul>
+      <li>Use event.preventDefault() to prevent reload</li>
+      <li>Use window.history.pushState to change the URL</li>
+      <li>Emit a popstate event</li>
+    </ul>
+
+    <p><strong>Solution:</strong></p>
+    <pre><code class="language-jsx">function Link({ href, children }) {
+  const handleClick = (event) => {
+    event.preventDefault()
+    window.history.pushState({}, '', href)
+    window.dispatchEvent(new PopStateEvent('popstate'))
+  }
+
+  return (
+    &lt;a href={href} onClick={handleClick}&gt;
+      {children}
+    &lt;/a&gt;
+  )
+}</code></pre>
+
+    <h3>Exercise 2: Listen for Route Changes</h3>
+    <p><strong>Challenge:</strong> Create a custom hook that listens for route changes.</p>
+
+    <p><strong>Solution:</strong></p>
+    <pre><code class="language-jsx">function useCurrentPath() {
+  const [currentPath, setCurrentPath] = useState(window.location.pathname)
+
+  useEffect(() => {
+    const handleLocationChange = () => {
+      setCurrentPath(window.location.pathname)
+    }
+
+    window.addEventListener('popstate', handleLocationChange)
+
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange)
+    }
+  }, [])
+
+  return currentPath
+}
+
+// Usage:
+function App() {
+  const currentPath = useCurrentPath()
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Current route: {currentPath}&lt;/p&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+    <h3>Exercise 3: Render Routes</h3>
+    <p><strong>Challenge:</strong> Render different components based on the current route.</p>
+
+    <p><strong>Solution:</strong></p>
+    <pre><code class="language-jsx">function App() {
+  const currentPath = useCurrentPath()
+
+  return (
+    &lt;div&gt;
+      &lt;Header /&gt;
+      &lt;main&gt;
+        {currentPath === '/' && &lt;HomePage /&gt;}
+        {currentPath === '/about' && &lt;AboutPage /&gt;}
+        {currentPath === '/contact' && &lt;ContactPage /&gt;}
+        {!['/', '/about', '/contact'].includes(currentPath) && &lt;NotFoundPage /&gt;}
+      &lt;/main&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+    <h3>Exercise 4: Active Link</h3>
+    <p><strong>Challenge:</strong> Add a CSS class to the link of the current page.</p>
+
+    <p><strong>Solution:</strong></p>
+    <pre><code class="language-jsx">function Link({ href, children, activeClassName = 'active' }) {
+  const currentPath = useCurrentPath()
+  const isActive = currentPath === href
+
+  const handleClick = (event) => {
+    event.preventDefault()
+    window.history.pushState({}, '', href)
+    window.dispatchEvent(new PopStateEvent('popstate'))
+  }
+
+  return (
+    &lt;a
+      href={href}
+      onClick={handleClick}
+      className={isActive ? activeClassName : ''}
+    &gt;
+      {children}
+    &lt;/a&gt;
+  )
+}</code></pre>
+
+    <h3>Exercise 5: Programmatic Navigation</h3>
+    <p><strong>Challenge:</strong> Create a useNavigate hook to navigate from JavaScript.</p>
+
+    <p><strong>Solution:</strong></p>
+    <pre><code class="language-jsx">function useNavigate() {
+  return (path) => {
+    window.history.pushState({}, '', path)
+    window.dispatchEvent(new PopStateEvent('popstate'))
+  }
+}
+
+// Usage:
+function LoginButton() {
+  const navigate = useNavigate()
+
+  const handleClick = () => {
+    // Do something...
+    navigate('/dashboard')
+  }
+
+  return &lt;button onClick={handleClick}&gt;Login&lt;/button&gt;
+}</code></pre>
+
+    <h3>Exercise 6: 404 Page</h3>
+    <p><strong>Challenge:</strong> Show a 404 page for routes that don't exist.</p>
+
+    <p><strong>Solution:</strong></p>
+    <pre><code class="language-jsx">function Router({ routes, currentPath }) {
+  const route = routes.find(r => r.path === currentPath)
+
+  if (!route) {
+    return &lt;NotFoundPage /&gt;
+  }
+
+  return route.component
+}
+
+function NotFoundPage() {
+  const navigate = useNavigate()
+
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;404 - Page Not Found&lt;/h1&gt;
+      &lt;button onClick={() => navigate('/')}&gt;
+        Back to Home
+      &lt;/button&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+    <h3>Bonus Exercise: Complete Router</h3>
+    <p><strong>Challenge:</strong> Combine everything into a complete routing system.</p>
+
+    <p><strong>Solution:</strong></p>
+    <pre><code class="language-jsx">// Custom hooks
+function useCurrentPath() {
+  const [currentPath, setCurrentPath] = useState(window.location.pathname)
+
+  useEffect(() => {
+    const handleLocationChange = () => {
+      setCurrentPath(window.location.pathname)
+    }
+
+    window.addEventListener('popstate', handleLocationChange)
+
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange)
+    }
+  }, [])
+
+  return currentPath
+}
+
+function useNavigate() {
+  return (path) => {
+    window.history.pushState({}, '', path)
+    window.dispatchEvent(new PopStateEvent('popstate'))
+  }
+}
+
+// Components
+function Link({ href, children, activeClassName = 'active' }) {
+  const currentPath = useCurrentPath()
+  const isActive = currentPath === href
+
+  const handleClick = (event) => {
+    event.preventDefault()
+    window.history.pushState({}, '', href)
+    window.dispatchEvent(new PopStateEvent('popstate'))
+  }
+
+  return (
+    &lt;a
+      href={href}
+      onClick={handleClick}
+      className={isActive ? activeClassName : ''}
+    &gt;
+      {children}
+    &lt;/a&gt;
+  )
+}
+
+function Router({ routes, currentPath }) {
+  const route = routes.find(r => r.path === currentPath)
+
+  if (!route) {
+    return &lt;NotFoundPage /&gt;
+  }
+
+  return route.component
+}
+
+// Main app
+function App() {
+  const currentPath = useCurrentPath()
+
+  const routes = [
+    { path: '/', component: &lt;HomePage /&gt; },
+    { path: '/about', component: &lt;AboutPage /&gt; },
+    { path: '/contact', component: &lt;ContactPage /&gt; }
+  ]
+
+  return (
+    &lt;div&gt;
+      &lt;nav&gt;
+        &lt;Link href="/"&gt;Home&lt;/Link&gt;
+        &lt;Link href="/about"&gt;About&lt;/Link&gt;
+        &lt;Link href="/contact"&gt;Contact&lt;/Link&gt;
+      &lt;/nav&gt;
+
+      &lt;main&gt;
+        &lt;Router routes={routes} currentPath={currentPath} /&gt;
+      &lt;/main&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+  </article>
+
+  <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-left: 4px solid #007bff; border-radius: 4px;">
+    <p><strong>📚 Additional Resources:</strong></p>
+    <p>
+      For more in-depth discussions and interactive examples about Single Page Applications in React,
+      check out these resources:
+    </p>
+    <ul style="margin-top: 10px;">
+      <li><a href="https://chatgpt.com/g/g-p-696fbea2755481919c8258fb23e8f822-react" target="_blank" style="color: #007bff; text-decoration: none;">React GPT Guide</a></li>
+      <li><a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/69dd64a9-b9e8-838d-8faa-0147d37b026c" target="_blank" style="color: #007bff; text-decoration: none;">MiduFrontend GPT - Building an SPA</a></li>
+      <li><a href="https://www.jscamp.dev/introduccion-a-react/creando-una-spa-desde-cero" target="_blank" style="color: #007bff; text-decoration: none;">JSCamp.dev - Building an SPA from Scratch</a></li>
+    </ul>
+  </div>
+</section>
