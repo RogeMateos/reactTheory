@@ -1,0 +1,286 @@
+<section class="box">
+  <h1>Custom Hooks II: Creando un hook para un formulario</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">Conceptos</button>
+    <button class="tab-button" data-tab="code-examples">Implementación</button>
+    <button class="tab-button" data-tab="exercises">Reglas y Ejercicios</button>
+  </div>
+
+  <!-- ===================== CONCEPTS ===================== -->
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+
+      <h3>😤 El problema: un componente con demasiadas responsabilidades</h3>
+      <p>
+        Tenemos un componente principal que gestiona <strong>toda</strong> la lógica de búsqueda, y
+        eso lo hace demasiado complejo. El componente tiene mezclado:
+      </p>
+      <ul>
+        <li><code>handleSubmit</code></li>
+        <li><code>handleChange</code> / <code>handleTextChange</code></li>
+        <li>La lógica de búsqueda (<code>search</code>)</li>
+        <li>IDs como <code>technology</code>, <code>location</code>, <code>experience</code>, etc.</li>
+      </ul>
+      <p>
+        Todo junto hace que el componente sea difícil de leer y mantener. Vamos a
+        <strong>separar responsabilidades</strong> usando un custom hook.
+      </p>
+
+      <p style="padding: 15px; background: #fff3e0; border-left: 4px solid #ff9800; border-radius: 4px;">
+        <strong>Señal de alerta:</strong> cuando un componente tiene demasiadas responsabilidades,
+        es señal de que necesitamos refactorizar.
+      </p>
+
+      <hr />
+
+      <h3>✨ La solución: <code>useSearchForm</code></h3>
+      <p>
+        Vamos a crear un custom hook llamado <code>useSearchForm</code> que encapsule toda la lógica
+        del formulario. A diferencia de hooks como <code>useRouter</code> (visto antes), los custom
+        hooks <strong>pueden recibir parámetros</strong> igual que funciones normales.
+      </p>
+
+      <h4>Parámetros que necesita el hook</h4>
+      <ul>
+        <li><code>onSearch</code>: función que se ejecuta al buscar</li>
+        <li><code>onTextFilter</code>: función para filtrar por texto</li>
+        <li>IDs necesarios para los filtros:
+          <ul>
+            <li><code>IDTechnology</code></li>
+            <li><code>IDLocation</code></li>
+            <li><code>IDExperienceLevel</code></li>
+          </ul>
+        </li>
+      </ul>
+
+      <hr />
+
+      <h3>🎯 Ventajas de la refactorización</h3>
+      <ul>
+        <li>✅ <strong>Código más limpio:</strong> el componente se enfoca en renderizar</li>
+        <li>✅ <strong>Lógica reutilizable:</strong> el hook puede usarse en otros componentes</li>
+        <li>✅ <strong>Más fácil de testear:</strong> podemos probar el hook independientemente</li>
+        <li>✅ <strong>Mejor organización:</strong> separación clara de responsabilidades</li>
+      </ul>
+
+    </div>
+  </article>
+
+  <!-- ===================== CODE EXAMPLES ===================== -->
+  <article id="code-examples" class="tab-content">
+    <div class="description">
+
+      <h3>Paso 1 — Esqueleto del hook con parámetros</h3>
+      <pre><code class="language-jsx">function useSearchForm({
+  onSearch,
+  onTextFilter,
+  IDTechnology,
+  IDLocation,
+  IDExperienceLevel
+}) {
+  // Lógica del hook aquí
+}</code></pre>
+
+      <hr />
+
+      <h3>Paso 2 — Añadir estado interno</h3>
+      <p>El texto de búsqueda vive dentro del hook:</p>
+      <pre><code class="language-jsx">function useSearchForm({ onSearch, onTextFilter, IDTechnology, IDLocation, IDExperienceLevel }) {
+  const [searchText, setSearchText] = useState('')
+
+  // Este estado:
+  // - guarda el texto introducido por el usuario
+  // - se actualiza en handleChange
+  // - se devuelve al componente para mostrarlo en el input
+}</code></pre>
+
+      <hr />
+
+      <h3>Paso 3 — Implementar los handlers</h3>
+      <pre><code class="language-jsx">function useSearchForm({ onSearch, onTextFilter, IDTechnology, IDLocation, IDExperienceLevel }) {
+  const [searchText, setSearchText] = useState('')
+
+  const handleSubmit = (event) =&gt; {
+    event.preventDefault()
+
+    const formData = new FormData(event.target)
+
+    const filters = {
+      text: formData.get('search'),
+      technology: formData.get('technology'),
+      location: formData.get('location'),
+      experience: formData.get('experience'),
+    }
+
+    onSearch(filters)
+  }
+
+  const handleChange = (event) =&gt; {
+    const text = event.target.value
+    setSearchText(text)
+    onTextFilter(text)
+  }
+
+  // Devolvemos lo que el componente necesita
+  return {
+    searchText,
+    handleSubmit,
+    handleChange,
+  }
+}</code></pre>
+
+      <hr />
+
+      <h3>Paso 4 — Usar el hook en el componente</h3>
+      <p>El componente queda muchísimo más simple:</p>
+      <pre><code class="language-jsx">function SearchComponent() {
+  const { searchText, handleSubmit, handleChange } = useSearchForm({
+    onSearch: performSearch,
+    onTextFilter: filterByText,
+    IDTechnology: 'tech',
+    IDLocation: 'loc',
+    IDExperienceLevel: 'exp',
+  })
+
+  return (
+    &lt;form onSubmit={handleSubmit}&gt;
+      &lt;input value={searchText} onChange={handleChange} name="search" /&gt;
+      {/* Resto del formulario */}
+    &lt;/form&gt;
+  )
+}</code></pre>
+
+      <p style="padding: 15px; background: #e8f5e9; border-left: 4px solid #4caf50; border-radius: 4px;">
+        <strong>Resultado:</strong> el componente ya no implementa la lógica, solo
+        <em>consume</em> las funciones y valores del hook.
+      </p>
+
+    </div>
+  </article>
+
+  <!-- ===================== EXERCISES ===================== -->
+  <article id="exercises" class="tab-content">
+    <div class="description">
+
+      <h3>📏 Reglas importantes de los custom hooks</h3>
+
+      <h4>1. Llamar solo en el nivel superior</h4>
+      <p>Los custom hooks deben llamarse solo en el nivel superior del componente o de otro custom hook.</p>
+      <p><strong>❌ NO</strong> dentro de:</p>
+      <ul>
+        <li>Callbacks (<code>handleClick</code>, <code>handleSubmit</code>, etc.)</li>
+        <li>Condicionales (<code>if</code>)</li>
+        <li>Loops (<code>for</code>, <code>while</code>)</li>
+        <li><code>useEffect</code> ni otros hooks</li>
+      </ul>
+
+      <pre><code class="language-jsx">// ❌ MAL - dentro de un callback
+function Component() {
+  const handleClick = () =&gt; {
+    const { data } = useSearchForm() // ERROR
+  }
+}
+
+// ❌ MAL - dentro de un condicional
+function Component() {
+  if (condition) {
+    const { data } = useSearchForm() // ERROR
+  }
+}
+
+// ✅ BIEN - nivel superior
+function Component() {
+  const { searchText, handleSubmit } = useSearchForm()
+
+  const handleClick = () =&gt; {
+    // Usar los valores del hook aquí está bien
+    console.log(searchText)
+  }
+}</code></pre>
+
+      <hr />
+
+      <h4>2. Deben empezar con el prefijo <code>use</code></h4>
+      <p>
+        Como <code>useState</code>, <code>useEffect</code>, etc. No es solo convención: React
+        <strong>confía en ese nombre</strong> para validar reglas internas.
+      </p>
+      <pre><code class="language-jsx">// ✅ BIEN
+function useSearchForm() {}
+function useUserData() {}
+function useAuthentication() {}
+
+// ❌ MAL
+function searchFormHook() {}  // No empieza con "use"
+function getSearchForm() {}   // No es un hook</code></pre>
+
+      <hr />
+
+      <h4>3. Solo se pueden usar en componentes o custom hooks</h4>
+      <pre><code class="language-jsx">// ❌ MAL - función normal
+function calculateTotal() {
+  const { data } = useData() // ERROR
+  return data.total
+}
+
+// ✅ BIEN - componente
+function Component() {
+  const { data } = useData()
+  return &lt;div&gt;{data.total}&lt;/div&gt;
+}
+
+// ✅ BIEN - otro custom hook
+function useCalculateTotal() {
+  const { data } = useData()
+  return data.total
+}</code></pre>
+
+      <hr />
+
+      <h3>🧪 Ejercicios</h3>
+
+      <h4>Ejercicio 1</h4>
+      <p>
+        Agregá al hook un <code>handleReset</code> que limpie <code>searchText</code> y llame
+        a <code>onTextFilter('')</code>. Exponelo en el return.
+      </p>
+
+      <h4>Ejercicio 2</h4>
+      <p>
+        Creá otro hook <code>useDebouncedText(value, delay)</code> que devuelva el valor
+        retrasado. Luego usalo dentro de <code>useSearchForm</code> para disparar
+        <code>onTextFilter</code> solo cuando el usuario deja de tipear por 300ms.
+      </p>
+
+      <h4>Ejercicio 3 — Desafío</h4>
+      <p>
+        Refactorizá <code>useSearchForm</code> para que no dependa de callbacks
+        (<code>onSearch</code>, <code>onTextFilter</code>). En su lugar, que exponga
+        <code>filters</code> y <code>text</code> y que sea el componente quien decida qué hacer.
+        ¿Qué ventajas e inconvenientes tiene cada enfoque?
+      </p>
+
+      <hr />
+
+      <h3>🔑 Conclusión</h3>
+      <p>Extraer la lógica a custom hooks es una práctica esencial en React moderno:</p>
+      <ul>
+        <li>El componente se enfoca en <strong>renderizar</strong></li>
+        <li>La lógica vive en un sitio <strong>reutilizable</strong></li>
+        <li>El desarrollo se vuelve <strong>más escalable</strong></li>
+      </ul>
+      <p>Esta técnica mantiene tu código ✅ limpio, ✅ modular, ✅ fácil de testear y ✅ mantenible a largo plazo.</p>
+
+    </div>
+  </article>
+
+  <footer style="margin-top: 30px; padding: 15px; border-top: 1px solid #ddd; font-size: 0.9em; color: #666;">
+    <p style="margin: 5px 0;">
+      💬 ChatGPT:
+      <a href="https://chatgpt.com/c/69e52d41-b648-83eb-84fc-a9212be2a8e9" target="_blank" rel="noopener noreferrer">
+        Conversación de apoyo
+      </a>
+    </p>
+  </footer>
+</section>

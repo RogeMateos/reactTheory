@@ -1,0 +1,330 @@
+<section class="box">
+  <h1>Creando un componente &lt;Route&gt; declarativo</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">Conceptos</button>
+    <button class="tab-button" data-tab="code-examples">Implementación</button>
+    <button class="tab-button" data-tab="exercises">Comparación y Ejercicios</button>
+  </div>
+
+  <!-- ===================== CONCEPTS ===================== -->
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+
+      <h3>🎯 El objetivo</h3>
+      <p>
+        Transformar un router con lógica <strong>imperativa</strong> (basado en <code>if</code> y
+        <code>switch</code>) en un sistema <strong>declarativo</strong> usando un componente
+        <code>&lt;Route&gt;</code>. Esto mejora drásticamente la legibilidad, escalabilidad y
+        mantenibilidad.
+      </p>
+
+      <hr />
+
+      <h3>😤 El problema: lógica imperativa en App</h3>
+      <p>Actualmente el router funciona con condicionales en el componente principal:</p>
+
+      <pre><code class="language-jsx">// App.jsx — versión con if
+import { useRouter } from './hooks/useRouter'
+import { Home } from './pages/Home'
+import { Search } from './pages/Search'
+import { About } from './pages/About'
+
+function App() {
+  const { currentPath } = useRouter()
+
+  // ❌ Lógica imperativa
+  if (currentPath === '/') return &lt;Home /&gt;
+  if (currentPath === '/search') return &lt;Search /&gt;
+  if (currentPath === '/about') return &lt;About /&gt;
+
+  return &lt;NotFound /&gt;
+}</code></pre>
+
+      <h4>Alternativa con <code>switch</code> (tampoco es ideal)</h4>
+      <pre><code class="language-jsx">switch (currentPath) {
+  case '/': return &lt;Home /&gt;
+  case '/search': return &lt;Search /&gt;
+  case '/about': return &lt;About /&gt;
+  default: return &lt;NotFound /&gt;
+}</code></pre>
+
+      <p>Aunque <code>switch</code> está mejor que múltiples <code>if</code>, ambos tienen problemas:</p>
+      <ul>
+        <li>❌ <strong>Imperativo:</strong> describís <em>cómo</em> funciona el routing, no <em>qué</em> debe hacer</li>
+        <li>❌ <strong>No escala bien:</strong> añadir rutas = modificar lógica del componente</li>
+        <li>❌ <strong>Difícil de leer:</strong> no es evidente qué rutas existen de un vistazo</li>
+        <li>❌ <strong>Lógica acoplada:</strong> App conoce los detalles del routing</li>
+      </ul>
+
+      <hr />
+
+      <h3>✨ La solución: componente <code>&lt;Route&gt;</code> declarativo</h3>
+      <p>
+        En lugar de condicionales, creamos un componente que encapsule la lógica de matching.
+        Cada <code>&lt;Route&gt;</code> decide <strong>por sí mismo</strong> si debe renderizarse.
+      </p>
+
+      <p style="padding: 15px; background: #e8f5e9; border-left: 4px solid #4caf50; border-radius: 4px;">
+        <strong>Declarativo vs Imperativo:</strong> declarativo dice "qué quiero"; imperativo dice
+        "cómo lograrlo paso a paso". React favorece lo declarativo.
+      </p>
+
+      <h4>Ventajas del enfoque declarativo</h4>
+      <ul>
+        <li>✅ <strong>Expresa intención:</strong> cada ruta es clara y autoexplicativa</li>
+        <li>✅ <strong>Fácil de leer:</strong> ves todas las rutas de un vistazo</li>
+        <li>✅ <strong>Escalable:</strong> añadir rutas es solo añadir más <code>&lt;Route&gt;</code></li>
+        <li>✅ <strong>Separación de responsabilidades:</strong> cada ruta gestiona su propia lógica</li>
+        <li>✅ <strong>Sin condicionales</strong> en el componente principal</li>
+      </ul>
+
+      <hr />
+
+      <h3>🧩 Patrón de renderizado con <code>null</code></h3>
+      <p>
+        Retornar <code>null</code> es un patrón muy común en React para indicar "no renderizar nada":
+      </p>
+      <ul>
+        <li>✅ <strong>Limpio:</strong> no ensucia el DOM con elementos vacíos</li>
+        <li>✅ <strong>Performante:</strong> React optimiza el renderizado de <code>null</code></li>
+        <li>✅ <strong>Idiomático:</strong> es el estándar en React</li>
+      </ul>
+
+      <hr />
+
+      <h3>🎨 Props con renaming (<code>component: Component</code>)</h3>
+      <p>
+        En JSX los componentes deben empezar con <strong>mayúscula</strong>. Por eso al recibir
+        una prop llamada <code>component</code>, la renombramos:
+      </p>
+
+      <pre><code class="language-jsx">export function Route({ path, component: Component }) {
+  // 'component' se renombra a 'Component' (con mayúscula)
+  return &lt;Component /&gt;
+}</code></pre>
+
+      <p>
+        Sin el rename, JSX interpretaría <code>&lt;component /&gt;</code> como un tag HTML nativo.
+      </p>
+
+    </div>
+  </article>
+
+  <!-- ===================== CODE EXAMPLES ===================== -->
+  <article id="code-examples" class="tab-content">
+    <div class="description">
+
+      <h3>Paso 1 — Crear el componente Route</h3>
+      <pre><code class="language-jsx">// components/Route.jsx
+import { useRouter } from '../hooks/useRouter'
+
+export function Route({ path, component: Component }) {
+  // Ruta actual del router
+  const { currentPath } = useRouter()
+
+  // Si no coincide, no renderiza nada
+  if (currentPath !== path) {
+    return null
+  }
+
+  // Si coincide, renderiza el componente
+  return &lt;Component /&gt;
+}</code></pre>
+
+      <h4>Desglose</h4>
+      <ul>
+        <li><code>useRouter()</code> reutiliza el hook de la clase anterior</li>
+        <li><code>if (currentPath !== path) return null</code> es renderizado condicional</li>
+        <li><code>component: Component</code> renombra la prop para que JSX la acepte</li>
+      </ul>
+
+      <hr />
+
+      <h3>Paso 2 — Usar Route en App (versión declarativa)</h3>
+      <pre><code class="language-jsx">// App.jsx — DESPUÉS
+import { Route } from './components/Route'
+import { Home } from './pages/Home'
+import { Search } from './pages/Search'
+import { About } from './pages/About'
+import { NotFound } from './pages/NotFound'
+
+function App() {
+  return (
+    &lt;&gt;
+      &lt;Route path="/" component={Home} /&gt;
+      &lt;Route path="/search" component={Search} /&gt;
+      &lt;Route path="/about" component={About} /&gt;
+      &lt;Route path="/404" component={NotFound} /&gt;
+    &lt;/&gt;
+  )
+}
+
+export default App</code></pre>
+
+      <hr />
+
+      <h3>🔍 Cómo funciona internamente</h3>
+
+      <h4>Si estamos en <code>/</code></h4>
+      <pre><code>&lt;Route path="/" component={Home}/&gt;       → "/" === "/"       ✅ renderiza &lt;Home /&gt;
+&lt;Route path="/search" component={Search}/&gt; → "/" !== "/search" ❌ null
+&lt;Route path="/about" component={About}/&gt;   → "/" !== "/about"  ❌ null
+
+Resultado: solo se renderiza &lt;Home /&gt;</code></pre>
+
+      <h4>Si estamos en <code>/search</code></h4>
+      <pre><code>&lt;Route path="/" component={Home}/&gt;       → "/search" !== "/"       ❌ null
+&lt;Route path="/search" component={Search}/&gt; → "/search" === "/search" ✅ renderiza &lt;Search /&gt;
+&lt;Route path="/about" component={About}/&gt;   → "/search" !== "/about"  ❌ null
+
+Resultado: solo se renderiza &lt;Search /&gt;</code></pre>
+
+      <hr />
+
+      <h3>Paso 3 — Añadiendo layout compartido</h3>
+      <p>
+        Una vez declarativo, es trivial añadir elementos comunes que deben aparecer en todas las rutas:
+      </p>
+
+      <pre><code class="language-jsx">function App() {
+  return (
+    &lt;&gt;
+      &lt;Header /&gt;
+
+      &lt;main&gt;
+        &lt;Route path="/" component={Home} /&gt;
+        &lt;Route path="/search" component={Search} /&gt;
+        &lt;Route path="/about" component={About} /&gt;
+        &lt;Route path="/contact" component={Contact} /&gt;
+      &lt;/main&gt;
+
+      &lt;Footer /&gt;
+    &lt;/&gt;
+  )
+}</code></pre>
+
+      <p>Lo que pasa:</p>
+      <ul>
+        <li><code>&lt;Header /&gt;</code> siempre se renderiza</li>
+        <li>Solo <strong>una</strong> de las rutas se renderiza (la que coincide)</li>
+        <li><code>&lt;Footer /&gt;</code> siempre se renderiza</li>
+      </ul>
+
+    </div>
+  </article>
+
+  <!-- ===================== EXERCISES ===================== -->
+  <article id="exercises" class="tab-content">
+    <div class="description">
+
+      <h3>⚖️ Imperativo vs Declarativo</h3>
+
+      <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+        <thead style="background: #f5f5f5;">
+          <tr>
+            <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Imperativo (<code>if/switch</code>)</th>
+            <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Declarativo (<code>&lt;Route&gt;</code>)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 10px; border: 1px solid #ddd;">Describe CÓMO decidir</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">Declara QUÉ debe pasar</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px; border: 1px solid #ddd;">App conoce todos los detalles</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">Cada ruta es autónoma</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px; border: 1px solid #ddd;">Difícil añadir/quitar rutas</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">Trivial añadir/quitar rutas</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px; border: 1px solid #ddd;">Difícil testear rutas aisladas</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">Fácil testear cada ruta</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <hr />
+
+      <h3>🧪 Ejercicios</h3>
+
+      <h4>Ejercicio 1 — Refactorizar a declarativo</h4>
+      <p>Dado este router imperativo, refactorizalo a la versión declarativa con <code>&lt;Route&gt;</code>:</p>
+      <pre><code class="language-jsx">function App() {
+  const { currentPath } = useRouter()
+  if (currentPath === '/') return &lt;Home /&gt;
+  if (currentPath === '/products') return &lt;Products /&gt;
+  if (currentPath === '/cart') return &lt;Cart /&gt;
+  return &lt;NotFound /&gt;
+}</code></pre>
+
+      <h4>Ejercicio 2 — Agregar layout</h4>
+      <p>Al router del ejercicio 1, añadile un <code>&lt;Navbar /&gt;</code> que aparezca en todas las rutas y un <code>&lt;Footer /&gt;</code> al final.</p>
+
+      <h4>Ejercicio 3 — Desafío</h4>
+      <p>
+        Modificá el componente <code>&lt;Route&gt;</code> para que acepte <code>children</code>
+        en lugar de la prop <code>component</code>. Así podrías usarlo:
+      </p>
+      <pre><code class="language-jsx">&lt;Route path="/"&gt;
+  &lt;Home /&gt;
+&lt;/Route&gt;</code></pre>
+
+      <hr />
+
+      <h3>🔑 Conceptos clave</h3>
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead style="background: #f5f5f5;">
+          <tr>
+            <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Concepto</th>
+            <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Descripción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="padding: 10px; border: 1px solid #ddd;">Declarativo</td><td style="padding: 10px; border: 1px solid #ddd;">Expresar QUÉ queremos, no CÓMO lograrlo</td></tr>
+          <tr><td style="padding: 10px; border: 1px solid #ddd;">Imperativo</td><td style="padding: 10px; border: 1px solid #ddd;">Describir paso a paso cómo hacer algo</td></tr>
+          <tr><td style="padding: 10px; border: 1px solid #ddd;">Renderizado condicional</td><td style="padding: 10px; border: 1px solid #ddd;">Componentes que deciden si renderizar o no</td></tr>
+          <tr><td style="padding: 10px; border: 1px solid #ddd;">Retornar <code>null</code></td><td style="padding: 10px; border: 1px solid #ddd;">Patrón para "no renderizar nada"</td></tr>
+          <tr><td style="padding: 10px; border: 1px solid #ddd;">Composición</td><td style="padding: 10px; border: 1px solid #ddd;">Crear componentes que usan otros componentes</td></tr>
+          <tr><td style="padding: 10px; border: 1px solid #ddd;">Props con renaming</td><td style="padding: 10px; border: 1px solid #ddd;"><code>component: Component</code> para usar mayúsculas</td></tr>
+          <tr><td style="padding: 10px; border: 1px solid #ddd;">Reutilización de hooks</td><td style="padding: 10px; border: 1px solid #ddd;"><code>useRouter()</code> usado en múltiples componentes</td></tr>
+        </tbody>
+      </table>
+
+      <hr />
+
+      <h3>🚀 Próximos pasos</h3>
+      <ul>
+        <li><strong>Rutas dinámicas:</strong> <code>/users/:id</code></li>
+        <li><strong>Rutas anidadas:</strong> rutas dentro de rutas</li>
+        <li><strong>Protección de rutas:</strong> rutas privadas que requieren autenticación</li>
+        <li><strong>Navegación programática:</strong> navegar desde eventos</li>
+        <li><strong>React Router:</strong> migrar a la librería oficial</li>
+      </ul>
+
+      <p style="padding: 15px; background: #fff3e0; border-left: 4px solid #ff9800; border-radius: 4px; margin-top: 15px;">
+        💡 <strong>Recordá:</strong> en producción siempre usá React Router o una librería similar.
+        Pero entender cómo funciona internamente te hace mejor desarrollador.
+      </p>
+
+    </div>
+  </article>
+
+  <footer style="margin-top: 30px; padding: 15px; border-top: 1px solid #ddd; font-size: 0.9em; color: #666;">
+    <p style="margin: 5px 0;">
+      📚 Fuente:
+      <a href="https://www.jscamp.dev/introduccion-a-react/componente-route-declarativo" target="_blank" rel="noopener noreferrer">
+        jscamp.dev — Componente Route Declarativo
+      </a>
+    </p>
+    <p style="margin: 5px 0;">
+      💬 ChatGPT:
+      <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/69e529c3-2a4c-83eb-9a01-ff245214ef2c" target="_blank" rel="noopener noreferrer">
+        miduFrontend — Conversación de apoyo
+      </a>
+    </p>
+  </footer>
+</section>

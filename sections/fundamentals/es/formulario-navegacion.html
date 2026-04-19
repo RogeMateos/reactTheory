@@ -1,0 +1,406 @@
+<section class="box">
+  <h1>Integrando Navegación con Formulario de Búsqueda</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">Conceptos</button>
+    <button class="tab-button" data-tab="code-examples">Implementación</button>
+    <button class="tab-button" data-tab="exercises">Ejercicios</button>
+  </div>
+
+  <!-- ===================== CONCEPTS ===================== -->
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+
+      <h3>🎯 El objetivo</h3>
+      <p>
+        Conectar un formulario de búsqueda con el router de una SPA. Cuando el usuario envía el formulario,
+        la app debe navegar a <code>/search</code> con el texto introducido como query param —
+        <em>sin recargar la página</em>.
+      </p>
+
+      <hr />
+
+      <h3>😤 El problema inicial</h3>
+      <p>
+        Tenemos un formulario con input y botón de búsqueda en la Home, pero no hace nada. Necesitamos:
+      </p>
+      <ul>
+        <li>Capturar el evento <code>submit</code></li>
+        <li>Extraer el valor del input</li>
+        <li>Construir la URL con query params</li>
+        <li>Navegar usando nuestro router, sin recargar</li>
+      </ul>
+
+      <pre><code class="language-jsx">// Estado actual (no funcional)
+function Home() {
+  return (
+    &lt;form&gt;
+      &lt;input type="text" placeholder="Buscar..." /&gt;
+      &lt;button disabled&gt;🔍&lt;/button&gt;
+    &lt;/form&gt;
+  )
+}</code></pre>
+
+      <hr />
+
+      <h3>⚠️ Atributos SVG en JSX — camelCase</h3>
+      <p>
+        En HTML los atributos SVG usan kebab-case, pero en JSX tienen que ir en camelCase:
+      </p>
+
+      <pre><code class="language-jsx">// ❌ Incorrecto (HTML)
+&lt;path stroke-width="2" stroke-linecap="round" /&gt;
+
+// ✅ Correcto (JSX)
+&lt;path strokeWidth="2" strokeLinecap="round" /&gt;</code></pre>
+
+      <p>Cambios a aplicar:</p>
+      <ul>
+        <li><code>stroke-width</code> → <code>strokeWidth</code></li>
+        <li><code>stroke-linecap</code> → <code>strokeLinecap</code></li>
+        <li><code>stroke-linejoin</code> → <code>strokeLinejoin</code></li>
+        <li>Quitar el atributo <code>disabled</code> del botón</li>
+      </ul>
+
+      <hr />
+
+      <h3>🛑 ¿Por qué <code>event.preventDefault()</code>?</h3>
+      <p>
+        En una web tradicional, al enviar un formulario el navegador:
+      </p>
+      <ul>
+        <li>Recarga la página completa</li>
+        <li>Pierde todo el estado de JavaScript</li>
+        <li>Hace una petición al servidor</li>
+      </ul>
+
+      <p>En una SPA queremos lo contrario:</p>
+      <ul>
+        <li>✅ Mantener la página sin recargar</li>
+        <li>✅ Conservar el estado</li>
+        <li>✅ Manejar la navegación con JavaScript</li>
+      </ul>
+
+      <pre><code class="language-jsx">const handleSearch = (event) =&gt; {
+  event.preventDefault() // ← Evita el reload
+  // Ahora controlamos la navegación nosotros
+}</code></pre>
+
+      <hr />
+
+      <h3>📦 FormData — extraer valores sin estado controlado</h3>
+      <p>
+        La API <code>FormData</code> permite leer los valores de un formulario directamente,
+        sin necesidad de <code>useState</code> para cada campo.
+      </p>
+
+      <pre><code class="language-jsx">const handleSearch = (event) =&gt; {
+  event.preventDefault()
+
+  const formData = new FormData(event.target)
+  const searchTerm = formData.get('search')
+
+  console.log('Buscando:', searchTerm)
+}</code></pre>
+
+      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+        <strong>Importante:</strong> el input necesita un atributo <code>name</code> para que
+        FormData pueda identificarlo: <code>&lt;input name="search" /&gt;</code>
+      </p>
+
+      <hr />
+
+      <h3>⚖️ FormData vs useState — ¿cuándo cada uno?</h3>
+
+      <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+        <thead style="background: #f5f5f5;">
+          <tr>
+            <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Usar <code>FormData</code></th>
+            <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Usar <code>useState</code></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 10px; border: 1px solid #ddd;">Solo necesitás el valor al enviar</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">Necesitás validación en tiempo real</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px; border: 1px solid #ddd;">No hace falta validación mientras escribe</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">Querés mostrar el valor en otros componentes</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px; border: 1px solid #ddd;">Múltiples campos y querés menos código</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">Necesitás deshabilitar el botón según el input</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <hr />
+
+      <h3>🔗 <code>encodeURIComponent</code> — caracteres seguros en la URL</h3>
+      <p>
+        Si el usuario escribe <em>"React de Dev"</em>, la URL quedaría rota:
+      </p>
+      <pre><code>/search?text=React de Dev  ← ¡inválida! los espacios no son válidos</code></pre>
+
+      <p>Hay que codificar:</p>
+      <pre><code class="language-jsx">const encodedTerm = encodeURIComponent(searchTerm)
+targetUrl += `?text=${encodedTerm}`</code></pre>
+
+      <p>Ejemplos:</p>
+      <ul>
+        <li>"React de Dev" → <code>/search?text=React%20de%20Dev</code> ✅</li>
+        <li>"C++" → <code>/search?text=C%2B%2B</code> ✅</li>
+        <li>"¿Qué es React?" → <code>/search?text=%C2%BFQu%C3%A9%20es%20React%3F</code> ✅</li>
+      </ul>
+
+      <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+        <thead style="background: #f5f5f5;">
+          <tr>
+            <th style="padding: 8px; border: 1px solid #ddd;">Carácter</th>
+            <th style="padding: 8px; border: 1px solid #ddd;">Codificado</th>
+            <th style="padding: 8px; border: 1px solid #ddd;">Razón</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="padding: 8px; border: 1px solid #ddd;">espacio</td><td style="padding: 8px; border: 1px solid #ddd;"><code>%20</code></td><td style="padding: 8px; border: 1px solid #ddd;">No válido en URL</td></tr>
+          <tr><td style="padding: 8px; border: 1px solid #ddd;"><code>+</code></td><td style="padding: 8px; border: 1px solid #ddd;"><code>%2B</code></td><td style="padding: 8px; border: 1px solid #ddd;">Significado especial</td></tr>
+          <tr><td style="padding: 8px; border: 1px solid #ddd;"><code>?</code></td><td style="padding: 8px; border: 1px solid #ddd;"><code>%3F</code></td><td style="padding: 8px; border: 1px solid #ddd;">Delimita query params</td></tr>
+          <tr><td style="padding: 8px; border: 1px solid #ddd;"><code>&amp;</code></td><td style="padding: 8px; border: 1px solid #ddd;"><code>%26</code></td><td style="padding: 8px; border: 1px solid #ddd;">Separa query params</td></tr>
+          <tr><td style="padding: 8px; border: 1px solid #ddd;"><code>=</code></td><td style="padding: 8px; border: 1px solid #ddd;"><code>%3D</code></td><td style="padding: 8px; border: 1px solid #ddd;">Asigna valores</td></tr>
+          <tr><td style="padding: 8px; border: 1px solid #ddd;"><code>#</code></td><td style="padding: 8px; border: 1px solid #ddd;"><code>%23</code></td><td style="padding: 8px; border: 1px solid #ddd;">Indica fragmento</td></tr>
+        </tbody>
+      </table>
+
+      <hr />
+
+      <h3>🧩 Reutilizar <code>navigateTo</code> del custom hook <code>useRouter</code></h3>
+
+      <p>Si usáramos <code>window.history.pushState</code> directamente:</p>
+      <pre><code class="language-jsx">// ❌ Problema: solo cambia la URL, no renderiza la vista
+window.history.pushState({}, '', targetUrl)</code></pre>
+
+      <p>Problemas:</p>
+      <ul>
+        <li>❌ La URL cambia, pero la vista no se actualiza</li>
+        <li>❌ Los listeners del router no se disparan</li>
+        <li>❌ El estado del componente no cambia</li>
+        <li>❌ Duplicás lógica del router</li>
+      </ul>
+
+      <p>
+        La solución: usar el custom hook <code>useRouter</code> que ya tiene <code>navigateTo</code>.
+        El hook se encarga de actualizar la URL <strong>y</strong> el estado → re-render automático.
+      </p>
+
+      <p style="padding: 15px; background: #e8f5e9; border-left: 4px solid #4caf50; border-radius: 4px;">
+        <strong>Ventaja:</strong> separación de responsabilidades. El componente solo se preocupa por
+        su UI; la lógica del router vive en un solo lugar.
+      </p>
+
+    </div>
+  </article>
+
+  <!-- ===================== CODE EXAMPLES ===================== -->
+  <article id="code-examples" class="tab-content">
+    <div class="description">
+
+      <h3>Paso 1 — Manejador inicial del submit</h3>
+      <pre><code class="language-jsx">function Home() {
+  const handleSearch = (event) =&gt; {
+    event.preventDefault()
+    // Lógica acá
+  }
+
+  return (
+    &lt;form onSubmit={handleSearch}&gt;
+      &lt;input type="text" name="search" placeholder="Buscar cursos..." /&gt;
+      &lt;button type="submit"&gt;🔍&lt;/button&gt;
+    &lt;/form&gt;
+  )
+}</code></pre>
+
+      <hr />
+
+      <h3>Paso 2 — Extraer valor con FormData</h3>
+      <pre><code class="language-jsx">const handleSearch = (event) =&gt; {
+  event.preventDefault()
+
+  const formData = new FormData(event.target)
+  const searchTerm = formData.get('search')
+
+  console.log('Buscando:', searchTerm)
+}</code></pre>
+
+      <hr />
+
+      <h3>Paso 3 — Construir la URL con encodeURIComponent</h3>
+      <pre><code class="language-jsx">const handleSearch = (event) =&gt; {
+  event.preventDefault()
+
+  const formData = new FormData(event.target)
+  const searchTerm = formData.get('search')
+
+  let targetUrl = '/search'
+
+  if (searchTerm) {
+    const encodedTerm = encodeURIComponent(searchTerm)
+    targetUrl += `?text=${encodedTerm}`
+  }
+
+  console.log('Navegar a:', targetUrl)
+}</code></pre>
+
+      <hr />
+
+      <h3>Paso 4 — El custom hook useRouter</h3>
+      <pre><code class="language-jsx">// hooks/useRouter.js
+import { useState, useEffect } from 'react'
+
+export function useRouter() {
+  const [currentPath, setCurrentPath] = useState(window.location.pathname)
+
+  useEffect(() =&gt; {
+    const handleLocationChange = () =&gt; {
+      setCurrentPath(window.location.pathname)
+    }
+
+    window.addEventListener('popstate', handleLocationChange)
+    return () =&gt; window.removeEventListener('popstate', handleLocationChange)
+  }, [])
+
+  const navigateTo = (path) =&gt; {
+    window.history.pushState({}, '', path)
+    setCurrentPath(path)
+  }
+
+  return { currentPath, navigateTo }
+}</code></pre>
+
+      <hr />
+
+      <h3>Paso 5 — Integración completa en Home</h3>
+      <pre><code class="language-jsx">import { useRouter } from './hooks/useRouter'
+
+function Home() {
+  const { navigateTo } = useRouter()
+
+  const handleSearch = (event) =&gt; {
+    event.preventDefault()
+
+    const formData = new FormData(event.target)
+    const searchTerm = formData.get('search')
+
+    let targetUrl = '/search'
+
+    if (searchTerm) {
+      const encodedTerm = encodeURIComponent(searchTerm)
+      targetUrl += `?text=${encodedTerm}`
+    }
+
+    navigateTo(targetUrl)
+  }
+
+  return (
+    &lt;div className="home"&gt;
+      &lt;h1&gt;Encuentra el mejor curso para ti&lt;/h1&gt;
+
+      &lt;form onSubmit={handleSearch}&gt;
+        &lt;input
+          type="text"
+          name="search"
+          placeholder="Buscar cursos..."
+          className="search-input"
+        /&gt;
+        &lt;button type="submit" className="search-button"&gt;
+          &lt;svg&gt;...&lt;/svg&gt;
+        &lt;/button&gt;
+      &lt;/form&gt;
+    &lt;/div&gt;
+  )
+}
+
+export default Home</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== EXERCISES ===================== -->
+  <article id="exercises" class="tab-content">
+    <div class="description">
+
+      <h3>🧪 Casos de prueba</h3>
+
+      <h4>Caso 1 — Búsqueda con texto</h4>
+      <ol>
+        <li>Escribir "programador" en el input</li>
+        <li>Presionar Enter o clic en "Buscar"</li>
+        <li>✅ Debe navegar a <code>/search?text=programador</code></li>
+        <li>✅ La URL se actualiza sin recargar</li>
+      </ol>
+
+      <h4>Caso 2 — Búsqueda vacía</h4>
+      <ol>
+        <li>Dejar el input vacío</li>
+        <li>Presionar "Buscar"</li>
+        <li>✅ Debe navegar a <code>/search</code> (sin query params)</li>
+      </ol>
+
+      <h4>Caso 3 — Búsqueda con espacios / caracteres especiales</h4>
+      <ol>
+        <li>Escribir "React de Dev"</li>
+        <li>Presionar "Buscar"</li>
+        <li>✅ Debe navegar a <code>/search?text=React%20de%20Dev</code></li>
+      </ol>
+
+      <h4>Caso 4 — Botón "Atrás" del navegador</h4>
+      <ol>
+        <li>Hacer una búsqueda</li>
+        <li>Presionar el botón "Atrás"</li>
+        <li>✅ El evento <code>popstate</code> se dispara</li>
+        <li>✅ La vista vuelve a la Home</li>
+      </ol>
+
+      <hr />
+
+      <h3>🔑 Conceptos clave</h3>
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead style="background: #f5f5f5;">
+          <tr>
+            <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Concepto</th>
+            <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Descripción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="padding: 10px; border: 1px solid #ddd;"><code>event.preventDefault()</code></td><td style="padding: 10px; border: 1px solid #ddd;">Evita el reload por defecto del form</td></tr>
+          <tr><td style="padding: 10px; border: 1px solid #ddd;"><code>FormData</code></td><td style="padding: 10px; border: 1px solid #ddd;">API para extraer valores del form fácilmente</td></tr>
+          <tr><td style="padding: 10px; border: 1px solid #ddd;"><code>encodeURIComponent</code></td><td style="padding: 10px; border: 1px solid #ddd;">Codifica texto para que sea seguro en URL</td></tr>
+          <tr><td style="padding: 10px; border: 1px solid #ddd;">Query params</td><td style="padding: 10px; border: 1px solid #ddd;"><code>?text=valor&amp;filtro=otro</code></td></tr>
+          <tr><td style="padding: 10px; border: 1px solid #ddd;"><code>navigateTo</code></td><td style="padding: 10px; border: 1px solid #ddd;">Reutilizar la lógica del router</td></tr>
+          <tr><td style="padding: 10px; border: 1px solid #ddd;">Atributo <code>name</code></td><td style="padding: 10px; border: 1px solid #ddd;">Identifica inputs para FormData</td></tr>
+          <tr><td style="padding: 10px; border: 1px solid #ddd;">JSX attributes</td><td style="padding: 10px; border: 1px solid #ddd;">camelCase en SVG/HTML (strokeWidth, no stroke-width)</td></tr>
+        </tbody>
+      </table>
+
+      <hr />
+
+      <h3>🚀 Próximos pasos</h3>
+      <ul>
+        <li>Sincronizar filtros de búsqueda con la URL</li>
+        <li>Leer los query params para mostrar resultados filtrados</li>
+        <li>Filtrado dinámico de los cursos</li>
+        <li>Mantener el estado en la URL (compartir búsquedas)</li>
+      </ul>
+
+    </div>
+  </article>
+
+  <footer style="margin-top: 30px; padding: 15px; border-top: 1px solid #ddd; font-size: 0.9em; color: #666;">
+    <p style="margin: 5px 0;">
+      💬 ChatGPT:
+      <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/69e52a55-ba7c-83eb-9cbf-95ef295664bc" target="_blank" rel="noopener noreferrer">
+        miduFrontend — Conversación de apoyo
+      </a>
+    </p>
+  </footer>
+</section>

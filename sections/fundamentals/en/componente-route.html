@@ -1,0 +1,330 @@
+<section class="box">
+  <h1>Creating a Declarative &lt;Route&gt; Component</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">Concepts</button>
+    <button class="tab-button" data-tab="code-examples">Implementation</button>
+    <button class="tab-button" data-tab="exercises">Comparison & Exercises</button>
+  </div>
+
+  <!-- ===================== CONCEPTS ===================== -->
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+
+      <h3>🎯 The goal</h3>
+      <p>
+        Transform a router with <strong>imperative</strong> logic (based on <code>if</code> and
+        <code>switch</code>) into a <strong>declarative</strong> system using a
+        <code>&lt;Route&gt;</code> component. This drastically improves readability, scalability,
+        and maintainability.
+      </p>
+
+      <hr />
+
+      <h3>😤 The problem: imperative logic in App</h3>
+      <p>Currently the router works with conditionals in the main component:</p>
+
+      <pre><code class="language-jsx">// App.jsx — with if
+import { useRouter } from './hooks/useRouter'
+import { Home } from './pages/Home'
+import { Search } from './pages/Search'
+import { About } from './pages/About'
+
+function App() {
+  const { currentPath } = useRouter()
+
+  // ❌ Imperative logic
+  if (currentPath === '/') return &lt;Home /&gt;
+  if (currentPath === '/search') return &lt;Search /&gt;
+  if (currentPath === '/about') return &lt;About /&gt;
+
+  return &lt;NotFound /&gt;
+}</code></pre>
+
+      <h4>Alternative with <code>switch</code> (still not ideal)</h4>
+      <pre><code class="language-jsx">switch (currentPath) {
+  case '/': return &lt;Home /&gt;
+  case '/search': return &lt;Search /&gt;
+  case '/about': return &lt;About /&gt;
+  default: return &lt;NotFound /&gt;
+}</code></pre>
+
+      <p>Even though <code>switch</code> is cleaner than multiple <code>if</code>s, both have issues:</p>
+      <ul>
+        <li>❌ <strong>Imperative:</strong> you describe <em>how</em> routing works, not <em>what</em> it should do</li>
+        <li>❌ <strong>Doesn't scale:</strong> adding routes means modifying component logic</li>
+        <li>❌ <strong>Hard to read:</strong> not obvious at a glance which routes exist</li>
+        <li>❌ <strong>Coupled logic:</strong> App knows the routing details</li>
+      </ul>
+
+      <hr />
+
+      <h3>✨ The solution: declarative <code>&lt;Route&gt;</code> component</h3>
+      <p>
+        Instead of conditionals, we create a component that encapsulates the matching logic.
+        Each <code>&lt;Route&gt;</code> decides <strong>by itself</strong> whether to render.
+      </p>
+
+      <p style="padding: 15px; background: #e8f5e9; border-left: 4px solid #4caf50; border-radius: 4px;">
+        <strong>Declarative vs Imperative:</strong> declarative says "what I want"; imperative says
+        "how to achieve it step by step". React favors declarative.
+      </p>
+
+      <h4>Advantages of the declarative approach</h4>
+      <ul>
+        <li>✅ <strong>Expresses intent:</strong> each route is clear and self-explanatory</li>
+        <li>✅ <strong>Easy to read:</strong> you see all routes at a glance</li>
+        <li>✅ <strong>Scalable:</strong> adding routes is just adding more <code>&lt;Route&gt;</code></li>
+        <li>✅ <strong>Separation of concerns:</strong> each route handles its own logic</li>
+        <li>✅ <strong>No conditionals</strong> in the main component</li>
+      </ul>
+
+      <hr />
+
+      <h3>🧩 Rendering pattern with <code>null</code></h3>
+      <p>
+        Returning <code>null</code> is a very common pattern in React to mean "don't render anything":
+      </p>
+      <ul>
+        <li>✅ <strong>Clean:</strong> doesn't pollute the DOM with empty elements</li>
+        <li>✅ <strong>Performant:</strong> React optimizes <code>null</code> rendering</li>
+        <li>✅ <strong>Idiomatic:</strong> the standard in React</li>
+      </ul>
+
+      <hr />
+
+      <h3>🎨 Props with renaming (<code>component: Component</code>)</h3>
+      <p>
+        In JSX, components must start with <strong>uppercase</strong>. That's why when receiving a
+        prop called <code>component</code>, we rename it:
+      </p>
+
+      <pre><code class="language-jsx">export function Route({ path, component: Component }) {
+  // 'component' is renamed to 'Component' (uppercase)
+  return &lt;Component /&gt;
+}</code></pre>
+
+      <p>
+        Without the rename, JSX would interpret <code>&lt;component /&gt;</code> as a native HTML tag.
+      </p>
+
+    </div>
+  </article>
+
+  <!-- ===================== CODE EXAMPLES ===================== -->
+  <article id="code-examples" class="tab-content">
+    <div class="description">
+
+      <h3>Step 1 — Create the Route component</h3>
+      <pre><code class="language-jsx">// components/Route.jsx
+import { useRouter } from '../hooks/useRouter'
+
+export function Route({ path, component: Component }) {
+  // Current path from the router
+  const { currentPath } = useRouter()
+
+  // If it doesn't match, render nothing
+  if (currentPath !== path) {
+    return null
+  }
+
+  // If it matches, render the component
+  return &lt;Component /&gt;
+}</code></pre>
+
+      <h4>Breakdown</h4>
+      <ul>
+        <li><code>useRouter()</code> reuses the hook from the previous class</li>
+        <li><code>if (currentPath !== path) return null</code> is conditional rendering</li>
+        <li><code>component: Component</code> renames the prop so JSX accepts it</li>
+      </ul>
+
+      <hr />
+
+      <h3>Step 2 — Use Route in App (declarative version)</h3>
+      <pre><code class="language-jsx">// App.jsx — AFTER
+import { Route } from './components/Route'
+import { Home } from './pages/Home'
+import { Search } from './pages/Search'
+import { About } from './pages/About'
+import { NotFound } from './pages/NotFound'
+
+function App() {
+  return (
+    &lt;&gt;
+      &lt;Route path="/" component={Home} /&gt;
+      &lt;Route path="/search" component={Search} /&gt;
+      &lt;Route path="/about" component={About} /&gt;
+      &lt;Route path="/404" component={NotFound} /&gt;
+    &lt;/&gt;
+  )
+}
+
+export default App</code></pre>
+
+      <hr />
+
+      <h3>🔍 How it works internally</h3>
+
+      <h4>If we are on <code>/</code></h4>
+      <pre><code>&lt;Route path="/" component={Home}/&gt;       → "/" === "/"       ✅ renders &lt;Home /&gt;
+&lt;Route path="/search" component={Search}/&gt; → "/" !== "/search" ❌ null
+&lt;Route path="/about" component={About}/&gt;   → "/" !== "/about"  ❌ null
+
+Result: only &lt;Home /&gt; is rendered</code></pre>
+
+      <h4>If we are on <code>/search</code></h4>
+      <pre><code>&lt;Route path="/" component={Home}/&gt;       → "/search" !== "/"       ❌ null
+&lt;Route path="/search" component={Search}/&gt; → "/search" === "/search" ✅ renders &lt;Search /&gt;
+&lt;Route path="/about" component={About}/&gt;   → "/search" !== "/about"  ❌ null
+
+Result: only &lt;Search /&gt; is rendered</code></pre>
+
+      <hr />
+
+      <h3>Step 3 — Adding a shared layout</h3>
+      <p>
+        Once it's declarative, it's trivial to add common elements that appear on every route:
+      </p>
+
+      <pre><code class="language-jsx">function App() {
+  return (
+    &lt;&gt;
+      &lt;Header /&gt;
+
+      &lt;main&gt;
+        &lt;Route path="/" component={Home} /&gt;
+        &lt;Route path="/search" component={Search} /&gt;
+        &lt;Route path="/about" component={About} /&gt;
+        &lt;Route path="/contact" component={Contact} /&gt;
+      &lt;/main&gt;
+
+      &lt;Footer /&gt;
+    &lt;/&gt;
+  )
+}</code></pre>
+
+      <p>What happens:</p>
+      <ul>
+        <li><code>&lt;Header /&gt;</code> always renders</li>
+        <li>Only <strong>one</strong> of the routes renders (the matching one)</li>
+        <li><code>&lt;Footer /&gt;</code> always renders</li>
+      </ul>
+
+    </div>
+  </article>
+
+  <!-- ===================== EXERCISES ===================== -->
+  <article id="exercises" class="tab-content">
+    <div class="description">
+
+      <h3>⚖️ Imperative vs Declarative</h3>
+
+      <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+        <thead style="background: #f5f5f5;">
+          <tr>
+            <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Imperative (<code>if/switch</code>)</th>
+            <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Declarative (<code>&lt;Route&gt;</code>)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 10px; border: 1px solid #ddd;">Describes HOW to decide</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">Declares WHAT should happen</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px; border: 1px solid #ddd;">App knows all the details</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">Each route is autonomous</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px; border: 1px solid #ddd;">Hard to add/remove routes</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">Trivial to add/remove routes</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px; border: 1px solid #ddd;">Hard to test routes in isolation</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">Easy to test each route</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <hr />
+
+      <h3>🧪 Exercises</h3>
+
+      <h4>Exercise 1 — Refactor to declarative</h4>
+      <p>Given this imperative router, refactor it to the declarative version with <code>&lt;Route&gt;</code>:</p>
+      <pre><code class="language-jsx">function App() {
+  const { currentPath } = useRouter()
+  if (currentPath === '/') return &lt;Home /&gt;
+  if (currentPath === '/products') return &lt;Products /&gt;
+  if (currentPath === '/cart') return &lt;Cart /&gt;
+  return &lt;NotFound /&gt;
+}</code></pre>
+
+      <h4>Exercise 2 — Add layout</h4>
+      <p>To the router from exercise 1, add a <code>&lt;Navbar /&gt;</code> that appears on all routes and a <code>&lt;Footer /&gt;</code> at the end.</p>
+
+      <h4>Exercise 3 — Challenge</h4>
+      <p>
+        Modify the <code>&lt;Route&gt;</code> component so it accepts <code>children</code>
+        instead of the <code>component</code> prop. So you could use it like this:
+      </p>
+      <pre><code class="language-jsx">&lt;Route path="/"&gt;
+  &lt;Home /&gt;
+&lt;/Route&gt;</code></pre>
+
+      <hr />
+
+      <h3>🔑 Key concepts</h3>
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead style="background: #f5f5f5;">
+          <tr>
+            <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Concept</th>
+            <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="padding: 10px; border: 1px solid #ddd;">Declarative</td><td style="padding: 10px; border: 1px solid #ddd;">Express WHAT we want, not HOW</td></tr>
+          <tr><td style="padding: 10px; border: 1px solid #ddd;">Imperative</td><td style="padding: 10px; border: 1px solid #ddd;">Describe step by step how to do something</td></tr>
+          <tr><td style="padding: 10px; border: 1px solid #ddd;">Conditional rendering</td><td style="padding: 10px; border: 1px solid #ddd;">Components that decide whether to render</td></tr>
+          <tr><td style="padding: 10px; border: 1px solid #ddd;">Return <code>null</code></td><td style="padding: 10px; border: 1px solid #ddd;">Pattern for "don't render anything"</td></tr>
+          <tr><td style="padding: 10px; border: 1px solid #ddd;">Composition</td><td style="padding: 10px; border: 1px solid #ddd;">Building components that use other components</td></tr>
+          <tr><td style="padding: 10px; border: 1px solid #ddd;">Props with renaming</td><td style="padding: 10px; border: 1px solid #ddd;"><code>component: Component</code> for uppercase</td></tr>
+          <tr><td style="padding: 10px; border: 1px solid #ddd;">Hook reuse</td><td style="padding: 10px; border: 1px solid #ddd;"><code>useRouter()</code> used in multiple components</td></tr>
+        </tbody>
+      </table>
+
+      <hr />
+
+      <h3>🚀 Next steps</h3>
+      <ul>
+        <li><strong>Dynamic routes:</strong> <code>/users/:id</code></li>
+        <li><strong>Nested routes:</strong> routes within routes</li>
+        <li><strong>Route protection:</strong> private routes requiring auth</li>
+        <li><strong>Programmatic navigation:</strong> navigating from events</li>
+        <li><strong>React Router:</strong> migrate to the official library</li>
+      </ul>
+
+      <p style="padding: 15px; background: #fff3e0; border-left: 4px solid #ff9800; border-radius: 4px; margin-top: 15px;">
+        💡 <strong>Remember:</strong> in production always use React Router or a similar library.
+        But understanding how it works internally makes you a better developer.
+      </p>
+
+    </div>
+  </article>
+
+  <footer style="margin-top: 30px; padding: 15px; border-top: 1px solid #ddd; font-size: 0.9em; color: #666;">
+    <p style="margin: 5px 0;">
+      📚 Source:
+      <a href="https://www.jscamp.dev/introduccion-a-react/componente-route-declarativo" target="_blank" rel="noopener noreferrer">
+        jscamp.dev — Declarative Route Component
+      </a>
+    </p>
+    <p style="margin: 5px 0;">
+      💬 ChatGPT:
+      <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/69e529c3-2a4c-83eb-9a01-ff245214ef2c" target="_blank" rel="noopener noreferrer">
+        miduFrontend — Support conversation
+      </a>
+    </p>
+  </footer>
+</section>
