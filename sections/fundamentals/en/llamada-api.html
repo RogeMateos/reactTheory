@@ -1,0 +1,461 @@
+<section class="box">
+  <h1>API Call: Consuming Real Data with fetch</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">What & Why</button>
+    <button class="tab-button" data-tab="code-examples">How to Use It</button>
+    <button class="tab-button" data-tab="exercises">Errors & Best Practices</button>
+  </div>
+
+  <!-- ===================== CONCEPTS ===================== -->
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+
+      <h3>📦 The problem: static data vs dynamic data</h3>
+      <p>
+        Until now, data came from a local <code>.json</code> file that never changes.
+        In real applications, data lives on a server: it gets updated, filtered in the
+        backend, paginated. Using static data doesn't scale and doesn't represent how
+        professional apps actually work.
+      </p>
+
+      <pre><code>// ❌ Static data — never changes
+import jobsData from './data/jobs.json'
+
+function App() {
+  const [jobs] = useState(jobsData)
+  // ... data frozen in time
+}</code></pre>
+
+      <pre><code>// ✅ Dynamic data from an API
+function App() {
+  const [jobs, setJobs] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetch('/api/jobs')
+      .then((res) => res.json())
+      .then((data) => {
+        setJobs(data)
+        setLoading(false)
+      })
+  }, [])
+
+  if (loading) return &lt;div&gt;Loading jobs...&lt;/div&gt;
+
+  return jobs.map((job) => &lt;JobCard key={job.id} job={job} /&gt;)
+}</code></pre>
+
+      <hr />
+
+      <h3>🚫 Why can't you fetch directly in the render?</h3>
+      <p>
+        React runs the component body on every render. If you put <code>fetch()</code>
+        directly there, you cause an <strong>infinite loop</strong>:
+      </p>
+
+      <pre><code>// ❌ NEVER do this — infinite loop guaranteed
+function JobSearch() {
+  const [jobs, setJobs] = useState([])
+
+  fetch('/api/jobs')
+    .then((res) => res.json())
+    .then((data) => setJobs(data)) // ← re-render → fetch() → re-render → ...
+
+  return &lt;JobListing jobs={jobs} /&gt;
+}</code></pre>
+
+      <pre><code>// The problem in detail:
+// 1. Component renders
+// 2. fetch() executes
+// 3. Response arrives → setJobs()
+// 4. setJobs() triggers a re-render
+// 5. Back to step 1 → Infinite loop! 💥</code></pre>
+
+      <hr />
+
+      <h3>✅ The solution: useEffect with empty dependencies</h3>
+      <p>
+        <code>useEffect</code> with an empty dependency array <code>[]</code>
+        runs only <strong>once</strong>, when the component mounts.
+        It's the right place for side effects like API calls.
+      </p>
+
+      <pre><code>function JobSearch() {
+  const [jobs, setJobs] = useState([])
+
+  useEffect(() => {
+    fetch('https://jscamp-api.vercel.app/api/jobs')
+      .then((res) => res.json())
+      .then((data) => setJobs(data))
+  }, []) // ← [] = only on component mount
+
+  return &lt;JobListing jobs={jobs} /&gt;
+}</code></pre>
+
+      <hr />
+
+      <h3>🧠 Preparing the required states</h3>
+      <p>
+        To handle an API call properly, you need at least three states:
+      </p>
+
+      <pre><code>function JobSearch() {
+  // 1. Array with jobs (starts empty)
+  const [jobs, setJobs] = useState([])
+
+  // 2. Boolean to show loading feedback
+  const [loading, setLoading] = useState(true)
+
+  // 3. Total results for pagination
+  const [total, setTotal] = useState(0)
+}</code></pre>
+
+      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+        <strong>Why does <code>loading</code> start as <code>true</code>?</strong>
+        Because before the component mounts, we already know we're going to load data.
+        Starting at <code>true</code> avoids showing an unexplained blank screen to the user.
+      </p>
+
+      <hr />
+
+      <h3>🔎 The API we'll use</h3>
+      <p>
+        In this module we consume a real jobs API:
+        <code>GET https://jscamp-api.vercel.app/api/jobs</code>
+      </p>
+
+      <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+        <thead>
+          <tr style="background: #f5f5f5;">
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Parameter</th>
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Type</th>
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>limit</code></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">number</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Results per page</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>offset</code></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">number</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Starting position (0, 10, 20…)</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>text</code></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">string</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Free text search</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>technology</code></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">string</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Filter by technology ("react", "node"…)</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>type</code></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">string</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Filter by modality ("remote", "madrid"…)</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>level</code></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">string</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Experience level ("junior", "senior"…)</td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </article>
+
+  <!-- ===================== CODE EXAMPLES ===================== -->
+  <article id="code-examples" class="tab-content">
+    <div class="description">
+
+      <h3>🏗️ Complete fetch implementation</h3>
+      <p>
+        Here's the API call implemented correctly with <code>async/await</code>,
+        error handling, and loading state:
+      </p>
+
+      <pre><code class="language-jsx">function JobSearch() {
+  const [jobs, setJobs] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [total, setTotal] = useState(0)
+
+  useEffect(() => {
+    // async function INSIDE the effect (not the callback directly)
+    async function fetchJobs() {
+      try {
+        setLoading(true)
+
+        const response = await fetch('https://jscamp-api.vercel.app/api/jobs')
+        const json = await response.json()
+
+        setJobs(json.data)   // only the array, not the full object
+        setTotal(json.total) // total results for pagination
+      } catch (error) {
+        console.error('Error loading jobs:', error)
+      } finally {
+        setLoading(false) // always runs, whether there's an error or not
+      }
+    }
+
+    fetchJobs()
+  }, []) // empty deps = only on mount
+
+  if (loading) return &lt;div&gt;Loading jobs...&lt;/div&gt;
+
+  return &lt;JobListing jobs={jobs} total={total} /&gt;
+}</code></pre>
+
+      <p style="padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;">
+        <strong>Why not make the useEffect callback async directly?</strong><br />
+        Because useEffect expects its callback to return either <em>undefined</em> or a cleanup function.
+        An <code>async</code> function returns a Promise, which breaks the useEffect contract.
+        That's why we declare the async function inside and call it.
+      </p>
+
+      <hr />
+
+      <h3>📦 API response structure</h3>
+      <pre><code class="language-jsx">// The API returns THIS:
+{
+  "total": 34,      // total available jobs
+  "limit": 10,      // how many per page
+  "offset": 0,      // starting position
+  "results": 10,    // how many in this response
+  "data": [         // ← the array we care about
+    {
+      "id": "7a4d1d8b-...",
+      "titulo": "Senior Software Developer",
+      "empresa": "Tech Solutions Inc.",
+      "ubicacion": "Remote",
+      "descripcion": "...",
+      "data": {
+        "technology": ["react", "node", "javascript"],
+        "modalidad": "remote",
+        "nivel": "senior"
+      }
+    }
+  ]
+}</code></pre>
+
+      <pre><code class="language-jsx">// That's why we do this:
+setJobs(json.data)   // ✅ array of jobs
+setTotal(json.total) // ✅ total count
+
+// And NOT this:
+setJobs(json) // ❌ storing the full object → jobs.map() will fail</code></pre>
+
+      <hr />
+
+      <h3>🔄 The complete loading cycle</h3>
+      <pre><code>// Step by step flow:
+
+1. Component mounts
+   ├─ loading = true
+   └─ jobs = []
+
+2. useEffect runs
+   └─ Calls fetchJobs()
+
+3. fetchJobs() makes the request
+   └─ User sees: "Loading jobs..."
+   └─ Waiting for server response...
+
+4. API responds
+   ├─ setJobs(json.data)
+   ├─ setTotal(json.total)
+   └─ setLoading(false)  ← in the finally block
+
+5. React re-renders
+   ├─ loading = false
+   └─ JobListing renders with real jobs</code></pre>
+
+      <hr />
+
+      <h3>⏱️ Simulating a slow connection (dev only)</h3>
+      <p>
+        Add an artificial delay to properly see the loading state.
+        Remember to remove it before going to production.
+      </p>
+
+      <pre><code class="language-jsx">useEffect(() => {
+  async function fetchJobs() {
+    try {
+      setLoading(true)
+
+      // 5 second delay — for visual testing only
+      await new Promise((resolve) => setTimeout(resolve, 5000))
+
+      const response = await fetch('https://jscamp-api.vercel.app/api/jobs')
+      const json = await response.json()
+
+      setJobs(json.data)
+      setTotal(json.total)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  fetchJobs()
+}, [])</code></pre>
+
+      <hr />
+
+      <h3>💅 UX: showing a real loading indicator</h3>
+      <pre><code class="language-jsx">if (loading) {
+  return (
+    &lt;div className="loading"&gt;
+      &lt;p&gt;Loading jobs...&lt;/p&gt;
+      &lt;div className="spinner" /&gt;
+    &lt;/div&gt;
+  )
+}
+
+return &lt;JobListing jobs={jobs} total={total} /&gt;</code></pre>
+
+      <p>
+        Without this indicator the user sees a blank screen and doesn't know what's happening.
+        With <code>loading</code>, the feedback is immediate.
+      </p>
+
+    </div>
+  </article>
+
+  <!-- ===================== EXERCISES ===================== -->
+  <article id="exercises" class="tab-content">
+    <div class="description">
+
+      <h3>🐛 Classic error: <code>jobs.map is not a function</code></h3>
+      <p>
+        This is the most common error when consuming an API for the first time. It appears
+        when you store the full response object instead of the array.
+      </p>
+
+      <pre><code class="language-jsx">// ❌ Cause of the error
+const response = await fetch('/api/jobs')
+const json = await response.json()
+
+setJobs(json) // ← storing the OBJECT, not the array
+
+// Later in render:
+jobs.map(job => ...) // TypeError: jobs.map is not a function</code></pre>
+
+      <pre><code class="language-jsx">// ✅ Solution
+setJobs(json.data)   // only the array
+setTotal(json.total) // the total separately</code></pre>
+
+      <p style="padding: 15px; background: #fdecea; border-left: 4px solid #f44336; border-radius: 4px;">
+        <strong>Golden rule:</strong> Before doing <code>setJobs(x)</code>, ask yourself:
+        "Is <code>x</code> an array?" If it's not, navigate to the array inside the object first.
+      </p>
+
+      <hr />
+
+      <h3>🔍 Verifying with DevTools</h3>
+      <p>To confirm data is coming from the API correctly:</p>
+      <ul>
+        <li>Open DevTools → <strong>Network</strong> tab</li>
+        <li>Reload the page</li>
+        <li>Find the request to <code>/api/jobs</code></li>
+        <li>Verify the Status Code is <strong>200 OK</strong></li>
+        <li>In <strong>Response</strong> you should see the JSON with <code>total</code>, <code>data</code>, etc.</li>
+      </ul>
+      <p>
+        You can also throttle the network to <strong>Slow 3G</strong> in DevTools to see the
+        loading state without an artificial delay.
+      </p>
+
+      <hr />
+
+      <h3>🧠 Reflection: what logic goes in which custom hook?</h3>
+      <p>
+        A hook should represent something <strong>concrete and cohesive</strong>.
+        Don't mix unrelated logic:
+      </p>
+
+      <pre><code class="language-jsx">// ✅ Good: each hook has a single responsibility
+function useFilters() {
+  const [filters, setFilters] = useState({ text: '', type: '', location: '' })
+  const [page, setPage] = useState(1)
+
+  const updateFilter = (name, value) =>
+    setFilters((prev) => ({ ...prev, [name]: value }))
+
+  const nextPage = () => setPage((prev) => prev + 1)
+  const prevPage = () => setPage((prev) => Math.max(1, prev - 1))
+
+  return { filters, updateFilter, page, nextPage, prevPage }
+}
+
+function useDocumentTitle(title) {
+  useEffect(() => {
+    document.title = title
+  }, [title])
+}</code></pre>
+
+      <pre><code class="language-jsx">// ❌ Bad: mixed responsibilities
+function useFilters() {
+  const [filters, setFilters] = useState({})
+
+  // This does NOT belong here — the title has nothing to do with filters
+  useEffect(() => {
+    document.title = `Jobs - Filters applied`
+  }, [filters])
+
+  return { filters, setFilters }
+}</code></pre>
+
+      <hr />
+
+      <h3>✅ Best practices and ❌ what to avoid</h3>
+
+      <p><strong>✅ Always do:</strong></p>
+      <ul>
+        <li>Use <code>try-catch-finally</code> in all async calls</li>
+        <li>Manage <code>loading</code> state to give feedback to the user</li>
+        <li>Separate the data array from the full response object</li>
+        <li>Define the <code>async</code> function inside the effect, not the callback directly</li>
+        <li>Separate responsibilities into distinct custom hooks</li>
+      </ul>
+
+      <p><strong>❌ Never do:</strong></p>
+      <ul>
+        <li>Call <code>fetch()</code> directly in the component body</li>
+        <li>Store the full API object in state when you need an array</li>
+        <li>Mix unrelated logic in the same hook</li>
+        <li>Ignore errors from requests</li>
+        <li>Leave artificial delays in production code</li>
+      </ul>
+
+      <hr />
+
+      <h3>🚀 Next steps</h3>
+      <p>With the API call working, what comes next is:</p>
+      <ul>
+        <li><strong>Dynamic filters:</strong> send parameters to the API based on what the user selected</li>
+        <li><strong>Real pagination:</strong> use <code>limit</code> and <code>offset</code> to navigate pages</li>
+        <li><strong>Debouncing:</strong> avoid requests on every keystroke when typing in the search box</li>
+      </ul>
+
+      <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; text-align: center;">
+        <strong style="color: white; font-size: 1.1em; display: block; margin-bottom: 15px;">📚 Want to go deeper?</strong>
+        <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+          <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/69f13615-5c5c-83eb-9a9e-22e07cac381c"
+             target="_blank"
+             style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+            💬 Ask ChatGPT about API Calls →
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </article>
+
+</section>

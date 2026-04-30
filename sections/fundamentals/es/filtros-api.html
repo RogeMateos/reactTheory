@@ -1,0 +1,388 @@
+<section class="box">
+  <h1>Integrando Filtros con la API</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">El problema y la solución</button>
+    <button class="tab-button" data-tab="code-examples">Implementación completa</button>
+    <button class="tab-button" data-tab="exercises">Errores y Buenas Prácticas</button>
+  </div>
+
+  <!-- ===================== CONCEPTS ===================== -->
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+
+      <h3>🔎 El problema inicial</h3>
+      <p>
+        La app ya hace una llamada HTTP a la API y los filtros se actualizan en el estado correctamente.
+        Pero hay un problema crítico: <strong>la petición no envía esos filtros</strong>.
+      </p>
+      <p>
+        Los filtros se pasan al formulario, se actualizan cuando el usuario interactúa, pero esa
+        información nunca llega a la URL de la petición. La API recibe siempre la misma consulta sin filtros.
+      </p>
+
+      <pre><code>// ❌ La petición ignora completamente los filtros del usuario
+useEffect(() => {
+  fetch('https://jscamp-api.vercel.app/api/jobs')
+    .then((res) => res.json())
+    .then((data) => setJobs(data.data))
+}, []) // ← nunca se re-ejecuta, nunca envía filtros</code></pre>
+
+      <hr />
+
+      <h3>🎯 Objetivo</h3>
+      <p>
+        Cuando el usuario escribe "JavaScript" o cambia cualquier filtro (tecnología, tipo,
+        nivel de experiencia), la app debe <strong>volver a consultar la API</strong> enviando
+        esos filtros como query params.
+      </p>
+
+      <hr />
+
+      <h3>🔧 Cómo enviar filtros a la API</h3>
+      <p>
+        La API acepta filtros en la URL mediante query params:
+      </p>
+
+      <pre><code>GET https://jscamp-api.vercel.app/api/jobs?text=react&limit=10&offset=0</code></pre>
+
+      <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+        <thead>
+          <tr style="background: #f5f5f5;">
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Parámetro</th>
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Descripción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>text</code></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Búsqueda libre de texto</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>technology</code></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Filtro por tecnología (javascript, python…)</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>type</code></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Filtro por modalidad (remote, onsite, hybrid)</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>level</code></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Nivel de experiencia (junior, mid, senior)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <hr />
+
+      <h3>🛠️ URLSearchParams — el estándar de la plataforma web</h3>
+      <p>
+        Para construir los parámetros dinámicamente, usamos <code>URLSearchParams</code>,
+        una API nativa del browser. No hace falta instalar nada.
+      </p>
+
+      <pre><code>const params = new URLSearchParams()
+
+// Solo se agregan si tienen valor
+if (textToFilter)          params.append('text',       textToFilter)
+if (filters.technology)    params.append('technology', filters.technology)
+if (filters.location)      params.append('type',       filters.location)
+if (filters.experienceLevel) params.append('level',    filters.experienceLevel)
+
+const url = `https://jscamp-api.vercel.app/api/jobs?${params.toString()}`</code></pre>
+
+      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+        <strong>Ventaja clave:</strong> si no hay ningún filtro activo, <code>params.toString()</code>
+        devuelve una cadena vacía y la URL queda con un <code>?</code> al final, lo cual funciona perfectamente.
+      </p>
+
+      <hr />
+
+      <h3>🐛 Primer intento — por qué no funciona</h3>
+      <p>
+        Construís la URL con los filtros pero al seleccionar tecnología → JavaScript, no pasa nada.
+        ¿Por qué? Porque el <code>useEffect</code> tiene el array de dependencias vacío:
+      </p>
+
+      <pre><code>useEffect(() => {
+  // Incluso si construís la URL con filtros acá...
+  fetch(url)
+    .then(...)
+}, []) // ❌ Solo se ejecuta UNA VEZ al montar — nunca más</code></pre>
+
+      <p>
+        El linter también te va a advertir: <em>"React Hook useEffect has missing dependencies"</em>.
+        No lo ignorés — esa advertencia te está diciendo exactamente el problema.
+      </p>
+
+      <hr />
+
+      <h3>✅ La solución: dependencias correctas</h3>
+      <p>
+        El efecto debe re-ejecutarse cada vez que cambia un filtro. Para eso, hay que
+        listar cada filtro como dependencia:
+      </p>
+
+      <pre><code>useEffect(() => {
+  // ...lógica del fetch
+}, [textToFilter, filters.technology, filters.location, filters.experienceLevel])
+//  ↑ Ahora el efecto se re-ejecuta cuando cambia cualquiera de estos</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== CODE EXAMPLES ===================== -->
+  <article id="code-examples" class="tab-content">
+    <div class="description">
+
+      <h3>🏗️ Implementación completa con filtros</h3>
+      <p>
+        El <code>useEffect</code> construye la URL dinámicamente con los filtros activos
+        y se re-ejecuta cada vez que cambia alguno:
+      </p>
+
+      <pre><code class="language-jsx">useEffect(() => {
+  const params = new URLSearchParams()
+
+  if (textToFilter) {
+    params.append('text', textToFilter)
+  }
+  if (filters.technology) {
+    params.append('technology', filters.technology)
+  }
+  if (filters.location) {
+    params.append('type', filters.location)
+  }
+  if (filters.experienceLevel) {
+    params.append('level', filters.experienceLevel)
+  }
+
+  const queryParams = params.toString()
+
+  fetch(`https://jscamp-api.vercel.app/api/jobs?${queryParams}`)
+    .then((res) => res.json())
+    .then((data) => setJobs(data.data))
+}, [textToFilter, filters.technology, filters.location, filters.experienceLevel])</code></pre>
+
+      <hr />
+
+      <h3>🔄 ¿Qué pasa cuando el usuario cambia un filtro?</h3>
+
+      <pre><code>// Flujo con filtros activos:
+
+1. Usuario selecciona tecnología: "JavaScript"
+   └─ filters.technology cambia → "javascript"
+
+2. React detecta el cambio de dependencia
+   └─ useEffect se re-ejecuta
+
+3. URLSearchParams construye la URL:
+   └─ ?technology=javascript
+
+4. fetch() hace la nueva petición
+   └─ https://jscamp-api.vercel.app/api/jobs?technology=javascript
+
+5. API devuelve empleos filtrados
+   └─ setJobs(data.data) → re-render con nuevos resultados
+
+// Con múltiples filtros activos:
+// ?text=javascript&type=remote&level=junior</code></pre>
+
+      <hr />
+
+      <h3>🚫 Manejo del caso sin resultados</h3>
+      <p>
+        Cuando la combinación de filtros no encuentra nada, necesitás dar feedback al usuario.
+        Sin esto, la pantalla queda vacía sin explicación:
+      </p>
+
+      <pre><code class="language-jsx">// En el JSX del componente:
+{jobs.length === 0 ? (
+  &lt;p
+    style={{
+      padding: '2rem',
+      textWrap: 'balance',
+    }}
+  &gt;
+    No se han encontrado empleos que coincidan con los criterios de búsqueda.
+  &lt;/p&gt;
+) : (
+  &lt;JobsList jobs={jobs} /&gt;
+)}</code></pre>
+
+      <hr />
+
+      <h3>📋 Comprobación en acción</h3>
+
+      <pre><code>// Pruebas que deberían funcionar:
+
+✅ Texto: "Python"      → API recibe ?text=python
+✅ Texto: "JavaScript"  → API recibe ?text=javascript
+✅ Tecnología: React    → API recibe ?technology=react
+✅ Tipo: Remoto         → API recibe ?type=remote
+
+// Combinaciones:
+✅ JavaScript + Remoto  → ?technology=javascript&type=remote
+✅ JS + Remoto + Junior → ?technology=javascript&type=remote&level=junior</code></pre>
+
+      <hr />
+
+      <h3>📦 Componente completo con todo integrado</h3>
+
+      <pre><code class="language-jsx">function JobSearch({ filters, textToFilter }) {
+  const [jobs, setJobs] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [total, setTotal] = useState(0)
+
+  useEffect(() => {
+    async function fetchJobs() {
+      try {
+        setLoading(true)
+
+        const params = new URLSearchParams()
+        if (textToFilter)              params.append('text',       textToFilter)
+        if (filters.technology)        params.append('technology', filters.technology)
+        if (filters.location)          params.append('type',       filters.location)
+        if (filters.experienceLevel)   params.append('level',      filters.experienceLevel)
+
+        const res = await fetch(
+          `https://jscamp-api.vercel.app/api/jobs?${params.toString()}`
+        )
+        const json = await res.json()
+
+        setJobs(json.data)
+        setTotal(json.total)
+      } catch (error) {
+        console.error('Error al cargar empleos:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchJobs()
+  }, [textToFilter, filters.technology, filters.location, filters.experienceLevel])
+
+  if (loading) return &lt;div&gt;Cargando empleos...&lt;/div&gt;
+
+  return (
+    &lt;&gt;
+      {jobs.length === 0 ? (
+        &lt;p style={{ padding: '2rem', textWrap: 'balance' }}&gt;
+          No se han encontrado empleos que coincidan con los criterios de búsqueda.
+        &lt;/p&gt;
+      ) : (
+        &lt;JobsList jobs={jobs} /&gt;
+      )}
+    &lt;/&gt;
+  )
+}</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== EXERCISES ===================== -->
+  <article id="exercises" class="tab-content">
+    <div class="description">
+
+      <h3>🐛 Error clásico: filtro seleccionado pero nada cambia</h3>
+      <p>
+        El síntoma: el usuario selecciona un filtro y la lista no se actualiza.
+        La causa casi siempre es el array de dependencias vacío o incompleto.
+      </p>
+
+      <pre><code class="language-jsx">// ❌ Causa
+useEffect(() => {
+  fetch(`...?technology=${filters.technology}`)  // lee el filtro
+    .then(...)
+}, []) // pero nunca se re-ejecuta cuando cambia
+
+// ✅ Solución
+useEffect(() => {
+  fetch(`...?technology=${filters.technology}`)
+    .then(...)
+}, [filters.technology]) // ahora sí se re-ejecuta al cambiar</code></pre>
+
+      <hr />
+
+      <h3>🐛 Error: advertencia del linter sobre dependencias faltantes</h3>
+      <p>
+        Si ves <em>"React Hook useEffect has missing dependencies: 'filters.technology'"</em>,
+        no lo ignorés con un <code>// eslint-disable-next-line</code>. El linter tiene razón —
+        esa variable debería estar en las dependencias.
+      </p>
+
+      <p style="padding: 15px; background: #fdecea; border-left: 4px solid #f44336; border-radius: 4px;">
+        <strong>Regla:</strong> Si una variable se usa dentro del <code>useEffect</code>,
+        tiene que estar en el array de dependencias. Sin excepciones.
+      </p>
+
+      <hr />
+
+      <h3>🐛 Error: loop infinito al agregar objeto como dependencia</h3>
+      <p>
+        Si ponés el objeto <code>filters</code> completo como dependencia en lugar de sus propiedades,
+        podés generar un loop infinito:
+      </p>
+
+      <pre><code class="language-jsx">// ❌ Peligroso — si filters se recrea en cada render, loop infinito
+useEffect(() => {
+  // ...
+}, [filters]) // ← objeto completo
+
+// ✅ Seguro — valores primitivos
+useEffect(() => {
+  // ...
+}, [filters.technology, filters.location, filters.experienceLevel])</code></pre>
+
+      <p>
+        Los primitivos (<code>string</code>, <code>number</code>, <code>boolean</code>) se comparan
+        por valor. Los objetos se comparan por referencia — si se recrea el objeto en cada render,
+        React ve una "dependencia nueva" siempre y el efecto se ejecuta infinitamente.
+      </p>
+
+      <hr />
+
+      <h3>✅ Buenas prácticas y ❌ qué evitar</h3>
+
+      <p><strong>✅ Hacer siempre:</strong></p>
+      <ul>
+        <li>Listar <strong>todas</strong> las variables usadas dentro del efecto como dependencias</li>
+        <li>Usar <code>URLSearchParams</code> para construir query strings — no concatenación manual</li>
+        <li>Agregar dependencias de forma granular (primitivos, no objetos completos)</li>
+        <li>Mostrar feedback cuando no hay resultados</li>
+        <li>Respetar las advertencias del linter sobre dependencias faltantes</li>
+      </ul>
+
+      <p><strong>❌ Nunca hacer:</strong></p>
+      <ul>
+        <li>Silenciar advertencias del linter con <code>// eslint-disable</code></li>
+        <li>Pasar el objeto de filtros completo como dependencia si se recrea en cada render</li>
+        <li>Construir URLs con concatenación de strings manual (<code>'?text=' + text + '&type=' + type</code>)</li>
+        <li>Dejar el array de dependencias vacío si el efecto usa valores del estado o props</li>
+      </ul>
+
+      <hr />
+
+      <h3>🚀 Próximos pasos</h3>
+      <p>Con los filtros integrados, lo que sigue es:</p>
+      <ul>
+        <li><strong>Paginación real:</strong> agregar <code>limit</code> y <code>offset</code> como dependencias también</li>
+        <li><strong>Reset de página al filtrar:</strong> cuando cambia un filtro, volver a página 1</li>
+        <li><strong>Debouncing:</strong> evitar una petición por cada tecla al escribir en el buscador de texto</li>
+      </ul>
+
+      <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; text-align: center;">
+        <strong style="color: white; font-size: 1.1em; display: block; margin-bottom: 15px;">📚 ¿Querés profundizar más?</strong>
+        <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+          <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/69f35e0b-b250-83eb-8f1a-b5f13c4b563c"
+             target="_blank"
+             style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+            💬 Preguntarle a ChatGPT sobre Filtros con API →
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </article>
+
+</section>
