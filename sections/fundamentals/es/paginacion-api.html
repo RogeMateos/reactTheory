@@ -1,0 +1,469 @@
+<section class="box">
+  <h1>Paginación con la API: limit y offset</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">Conceptos y fórmulas</button>
+    <button class="tab-button" data-tab="code-examples">Implementación completa</button>
+    <button class="tab-button" data-tab="exercises">Errores comunes</button>
+  </div>
+
+  <!-- ===================== CONCEPTS ===================== -->
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+
+      <h3>🔎 El problema inicial</h3>
+      <p>
+        Ya tenemos filtros funcionando con la API, pero la paginación no está integrada.
+        El estado existe en el frontend pero la petición nunca lo usa:
+      </p>
+
+      <pre><code>// Estado actual:
+✅ Filtros se envían correctamente a la API
+✅ Paginación existe en el frontend
+❌ Paginación NO funciona con la API — cada cambio de página no hace una nueva petición</code></pre>
+
+      <hr />
+
+      <h3>📐 ¿Cómo funcionan las APIs de paginación?</h3>
+      <p>
+        La mayoría de APIs no usan un parámetro <code>page</code>. Usan dos parámetros fundamentales:
+        <strong>limit</strong> y <strong>offset</strong>.
+      </p>
+
+      <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+        <thead>
+          <tr style="background: #f5f5f5;">
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Parámetro</th>
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Descripción</th>
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Ejemplo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>limit</code></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Cuántos resultados devolver por página</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">10</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>offset</code></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Cuántos resultados saltarse desde el inicio</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">0, 10, 20…</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <pre><code>// Página 1 → ?limit=10&offset=0   → resultados del 0 al 9
+// Página 2 → ?limit=10&offset=10  → resultados del 10 al 19
+// Página 3 → ?limit=10&offset=20  → resultados del 20 al 29</code></pre>
+
+      <hr />
+
+      <h3>🧮 La fórmula del offset</h3>
+      <p>Para calcular el offset a partir del número de página:</p>
+
+      <pre><code>offset = (currentPage - 1) * RESULTS_PER_PAGE</code></pre>
+
+      <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+        <thead>
+          <tr style="background: #f5f5f5;">
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Página actual</th>
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Resultados por página</th>
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Offset</th>
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cálculo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">1</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">10</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">0</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">(1-1) × 10 = 0</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">2</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">10</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">10</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">(2-1) × 10 = 10</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">3</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">10</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">20</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">(3-1) × 10 = 20</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">5</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">20</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">80</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">(5-1) × 20 = 80</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <hr />
+
+      <h3>🐛 Error crítico: total de páginas incorrecto</h3>
+      <p>
+        Al calcular el total de páginas, hay un error muy común:
+      </p>
+
+      <pre><code>// ❌ Error: jobs.length es solo la página actual (siempre 10 o menos)
+const totalPages = Math.ceil(jobs.length / RESULTS_PER_PAGE)
+// → Math.ceil(10 / 10) = 1 página... siempre
+
+// ✅ Correcto: usar el total real que devuelve la API
+const totalPages = Math.ceil(total / RESULTS_PER_PAGE)
+// → Math.ceil(143 / 10) = 15 páginas</code></pre>
+
+      <p style="padding: 15px; background: #fdecea; border-left: 4px solid #f44336; border-radius: 4px;">
+        <strong>Regla:</strong> <code>jobs.length</code> es el número de resultados de la página actual.
+        El <code>total</code> que devuelve la API es el número real de registros en la base de datos.
+        Son dos cosas completamente distintas.
+      </p>
+
+      <hr />
+
+      <h3>🔄 Reiniciar paginación al cambiar filtros</h3>
+      <p>
+        Si el usuario está en la página 5 de "JavaScript" y cambia a "Python" (que solo tiene 2 páginas),
+        quedarse en la página 5 no tiene sentido. Hay que volver a página 1 al cambiar cualquier filtro:
+      </p>
+
+      <pre><code>// ✅ Segundo useEffect que solo reinicia la página
+useEffect(() => {
+  setCurrentPage(1)
+}, [textToFilter, filters.technology, filters.location, filters.experienceLevel])</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== CODE EXAMPLES ===================== -->
+  <article id="code-examples" class="tab-content">
+    <div class="description">
+
+      <h3>🏗️ useEffect con paginación integrada</h3>
+      <p>
+        Agregamos <code>limit</code>, <code>offset</code> y <code>currentPage</code> como dependencia:
+      </p>
+
+      <pre><code class="language-jsx">const RESULTS_PER_PAGE = 10
+
+useEffect(() => {
+  async function fetchJobs() {
+    try {
+      setLoading(true)
+
+      const params = new URLSearchParams()
+
+      // Filtros
+      if (textToFilter)              params.append('text',       textToFilter)
+      if (filters.technology)        params.append('technology', filters.technology)
+      if (filters.location)          params.append('type',       filters.location)
+      if (filters.experienceLevel)   params.append('level',      filters.experienceLevel)
+
+      // Paginación
+      const offset = (currentPage - 1) * RESULTS_PER_PAGE
+      params.append('limit',  RESULTS_PER_PAGE)
+      params.append('offset', offset)
+
+      const res = await fetch(
+        `https://jscamp-api.vercel.app/api/jobs?${params.toString()}`
+      )
+      const json = await res.json()
+
+      setJobs(json.data)
+      setTotal(json.total)
+    } catch (error) {
+      console.error('Error fetching jobs:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  fetchJobs()
+}, [textToFilter, filters.technology, filters.location, filters.experienceLevel, currentPage])
+//                                                                                 ↑ clave</code></pre>
+
+      <hr />
+
+      <h3>🔄 Flujo completo con dos useEffect</h3>
+
+      <pre><code class="language-jsx">function JobSearch() {
+  const [jobs, setJobs]           = useState([])
+  const [loading, setLoading]     = useState(true)
+  const [total, setTotal]         = useState(0)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [textToFilter, setTextToFilter] = useState('')
+  const [filters, setFilters] = useState({
+    technology: '',
+    location: '',
+    experienceLevel: '',
+  })
+
+  // Total de páginas — usa el total de la API, no jobs.length
+  const totalPages = Math.ceil(total / RESULTS_PER_PAGE)
+
+  // useEffect 1: reiniciar página cuando cambia un filtro
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [textToFilter, filters.technology, filters.location, filters.experienceLevel])
+
+  // useEffect 2: fetch cada vez que cambia página o filtros
+  useEffect(() => {
+    async function fetchJobs() {
+      try {
+        setLoading(true)
+
+        const params = new URLSearchParams()
+        if (textToFilter)              params.append('text',       textToFilter)
+        if (filters.technology)        params.append('technology', filters.technology)
+        if (filters.location)          params.append('type',       filters.location)
+        if (filters.experienceLevel)   params.append('level',      filters.experienceLevel)
+
+        const offset = (currentPage - 1) * RESULTS_PER_PAGE
+        params.append('limit',  RESULTS_PER_PAGE)
+        params.append('offset', offset)
+
+        const res = await fetch(
+          `https://jscamp-api.vercel.app/api/jobs?${params.toString()}`
+        )
+        const json = await res.json()
+
+        setJobs(json.data)
+        setTotal(json.total)
+      } catch (error) {
+        console.error('Error fetching jobs:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchJobs()
+  }, [textToFilter, filters.technology, filters.location, filters.experienceLevel, currentPage])
+
+  const nextPage = () => { if (currentPage &lt; totalPages) setCurrentPage(p => p + 1) }
+  const prevPage = () => { if (currentPage &gt; 1) setCurrentPage(p => p - 1) }
+
+  return (
+    &lt;div&gt;
+      &lt;SearchForm ... /&gt;
+      {loading ? (
+        &lt;div&gt;Cargando empleos...&lt;/div&gt;
+      ) : (
+        &lt;&gt;
+          &lt;JobListing jobs={jobs} /&gt;
+          &lt;Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onNext={nextPage}
+            onPrev={prevPage}
+          /&gt;
+        &lt;/&gt;
+      )}
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+      <hr />
+
+      <h3>📋 Flujo completo paso a paso</h3>
+
+      <pre><code>1. Usuario escribe "JavaScript"
+   └─ textToFilter cambia
+   └─ useEffect 1 ejecuta: setCurrentPage(1)
+   └─ currentPage cambia a 1
+   └─ useEffect 2 ejecuta: fetch con página 1 + text=javascript
+
+2. Usuario navega a página 3
+   └─ setCurrentPage(3)
+   └─ useEffect 2 ejecuta: fetch con página 3 + text=javascript
+   └─ URL → ?text=javascript&limit=10&offset=20
+
+3. Usuario cambia filtro a "Python"
+   └─ filters.technology cambia
+   └─ useEffect 1 ejecuta: setCurrentPage(1)   ← reset
+   └─ useEffect 2 ejecuta: fetch con página 1 + technology=python</code></pre>
+
+      <hr />
+
+      <h3>🧩 Componente Pagination reutilizable</h3>
+
+      <pre><code class="language-jsx">function Pagination({ currentPage, totalPages, onNext, onPrev, onGoToPage }) {
+  return (
+    &lt;div className="pagination"&gt;
+      &lt;button onClick={onPrev} disabled={currentPage === 1}&gt;
+        Anterior
+      &lt;/button&gt;
+
+      &lt;span&gt;Página {currentPage} de {totalPages}&lt;/span&gt;
+
+      &lt;button onClick={onNext} disabled={currentPage === totalPages}&gt;
+        Siguiente
+      &lt;/button&gt;
+
+      {/* Números de página opcionales */}
+      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+        &lt;button
+          key={page}
+          onClick={() => onGoToPage(page)}
+          className={page === currentPage ? 'active' : ''}
+        &gt;
+          {page}
+        &lt;/button&gt;
+      ))}
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+      <hr />
+
+      <h3>🔍 Verificando en DevTools → Network</h3>
+      <p>Al cambiar de página deberías ver peticiones como estas:</p>
+
+      <pre><code>Página 1 sin filtros:  /api/jobs?limit=10&offset=0
+Página 2 sin filtros:  /api/jobs?limit=10&offset=10
+Página 3 sin filtros:  /api/jobs?limit=10&offset=20
+
+Con filtros activos:
+/api/jobs?text=javascript&technology=react&limit=10&offset=20</code></pre>
+
+      <p>Y la respuesta de la API debe incluir:</p>
+
+      <pre><code class="language-jsx">{
+  "total": 143,   // ← el que usamos para calcular totalPages
+  "limit": 10,
+  "offset": 20,
+  "results": 10,
+  "data": [ /* empleos de esta página */ ]
+}</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== EXERCISES ===================== -->
+  <article id="exercises" class="tab-content">
+    <div class="description">
+
+      <h3>🐛 Error 1: loop infinito por objeto como dependencia</h3>
+
+      <pre><code class="language-jsx">// ❌ Peligroso — filters es un objeto nuevo en cada render
+useEffect(() => {
+  // ...
+}, [filters])
+
+// ✅ Correcto — valores primitivos
+useEffect(() => {
+  // ...
+}, [filters.technology, filters.location, filters.experienceLevel])</code></pre>
+
+      <hr />
+
+      <h3>🐛 Error 2: total de páginas calculado con jobs.length</h3>
+
+      <pre><code class="language-jsx">// ❌ jobs.length siempre es el tamaño de la página actual
+const totalPages = Math.ceil(jobs.length / RESULTS_PER_PAGE)
+// → Math.ceil(10/10) = 1 ... siempre 1 página
+
+// ✅ total viene de la API — es el count real de la base de datos
+const totalPages = Math.ceil(total / RESULTS_PER_PAGE)
+// → Math.ceil(143/10) = 15 páginas</code></pre>
+
+      <hr />
+
+      <h3>🐛 Error 3: no reiniciar paginación al filtrar</h3>
+
+      <pre><code class="language-jsx">// ❌ El usuario puede quedar en página 10 cuando Python solo tiene 2
+// No hay nada que reinicie currentPage al cambiar filtros
+
+// ✅ useEffect dedicado solo al reset
+useEffect(() => {
+  setCurrentPage(1)
+}, [textToFilter, filters.technology, filters.location, filters.experienceLevel])</code></pre>
+
+      <hr />
+
+      <h3>🐛 Error 4: falta currentPage en las dependencias del fetch</h3>
+
+      <pre><code class="language-jsx">// ❌ El fetch no se ejecuta al cambiar de página
+useEffect(() => {
+  fetchJobs()
+}, [textToFilter, filters.technology]) // ← falta currentPage
+
+// ✅ currentPage debe estar en las dependencias
+useEffect(() => {
+  fetchJobs()
+}, [textToFilter, filters.technology, filters.location, filters.experienceLevel, currentPage])</code></pre>
+
+      <hr />
+
+      <h3>📋 Tests de verificación</h3>
+
+      <pre><code>Test 1 — Navegación básica:
+  1. Carga la página
+  2. Verifica que muestra "Página 1 de X"
+  3. Hacé clic en "Siguiente"
+  4. Verificá que los empleos cambian
+  5. DevTools → Network: la petición tiene offset=10
+
+Test 2 — Filtros + Paginación:
+  1. Navegá a la página 3
+  2. Aplicá un filtro (ej: "JavaScript")
+  3. Verificá que vuelve a la página 1
+  4. Navegá a la página 2
+  5. Verificá que mantiene el filtro de JavaScript
+
+Test 3 — Total de páginas:
+  1. Sin filtros, verificá el total de páginas
+  2. Aplicá un filtro que reduzca resultados
+  3. Verificá que el total de páginas se actualiza correctamente</code></pre>
+
+      <hr />
+
+      <h3>✅ Buenas prácticas y ❌ qué evitar</h3>
+
+      <p><strong>✅ Hacer siempre:</strong></p>
+      <ul>
+        <li>Usar <code>total</code> de la API para calcular <code>totalPages</code>, nunca <code>jobs.length</code></li>
+        <li>Incluir <code>currentPage</code> en las dependencias del useEffect de fetch</li>
+        <li>Tener un useEffect separado que reinicie la página al cambiar filtros</li>
+        <li>Deshabilitar los botones Anterior/Siguiente cuando corresponde (<code>disabled</code>)</li>
+        <li>Verificar en DevTools que el offset cambia correctamente entre páginas</li>
+      </ul>
+
+      <p><strong>❌ Nunca hacer:</strong></p>
+      <ul>
+        <li>Usar <code>jobs.length</code> para calcular el total de páginas</li>
+        <li>Pasar el objeto <code>filters</code> completo como dependencia</li>
+        <li>Omitir <code>currentPage</code> del array de dependencias</li>
+        <li>Olvidar reiniciar la página cuando cambia un filtro</li>
+      </ul>
+
+      <hr />
+
+      <h3>🚀 Próximos pasos</h3>
+      <ul>
+        <li><strong>Sincronizar con la URL:</strong> que la página actual se refleje en la URL (ej: <code>?page=3</code>)</li>
+        <li><strong>Debouncing:</strong> evitar peticiones en cada tecla al escribir en el buscador</li>
+        <li><strong>Skeleton loading:</strong> mejorar la UX mientras se cargan los datos</li>
+      </ul>
+
+      <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; text-align: center;">
+        <strong style="color: white; font-size: 1.1em; display: block; margin-bottom: 15px;">📚 ¿Querés profundizar más?</strong>
+        <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+          <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/69f3649a-74e4-83eb-af7f-d708e96d90cd"
+             target="_blank"
+             style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+            💬 Preguntarle a ChatGPT sobre Paginación con API →
+          </a>
+          <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/69f3e60d-cb64-83eb-acb7-fb03c9d7670d"
+             target="_blank"
+             style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+            💬 Preguntarle a ChatGPT sobre Paginación con API (2) →
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </article>
+
+</section>

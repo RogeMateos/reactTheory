@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function loadContent(section) {
     const lang = currentLanguage === "es" ? "es" : "en";
     const hooks = ["useState", "useEffect", "useEffect2midu", "useEffect3midu", "useContext", "useRef", "useReducer", "globalSwitch", "useId", "customHooks", "customHooks2"];
-    const fundamentals = ["componentes", "componentesVsFunciones", "jobCard", "props", "modulos", "paginacion", "callbacks", "listas", "paginacion-final", "css-modules", "eventos", "renderizado", "spa", "vite-bundlers", "vite-install", "fast-refresh", "bareBonesMethod", "lifeCicle", "formularios", "filtros-routing", "formulario-navegacion", "componente-route", "llamada-api", "filtros-api"];
+    const fundamentals = ["componentes", "componentesVsFunciones", "jobCard", "props", "modulos", "paginacion", "callbacks", "listas", "paginacion-final", "css-modules", "eventos", "renderizado", "spa", "vite-bundlers", "vite-install", "fast-refresh", "bareBonesMethod", "lifeCicle", "formularios", "filtros-routing", "formulario-navegacion", "componente-route", "llamada-api", "filtros-api", "paginacion-api"];
     const interview = ["interviewQuestions", "react-hooks-rules-and-order", "react-hooks-masterclass"];
 
     let folder = "";
@@ -128,6 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
       "componente-route": { en: "Declarative <Route> Component", es: "Componente <Route>" },
       "llamada-api": { en: "API Call with fetch", es: "Llamada a la API" },
       "filtros-api": { en: "Integrating Filters with the API", es: "Filtros con la API" },
+      "paginacion-api": { en: "API Pagination: limit & offset", es: "Paginación con la API" },
       "vite-bundlers": { en: "Vite & Bundlers", es: "Vite y Bundlers" },
       "vite-install": { en: "Installing Vite", es: "Instalación de Vite" },
       "fast-refresh": { en: "Fast Refresh & State Updates", es: "Fast Refresh y Actualizaciones de Estado" },
