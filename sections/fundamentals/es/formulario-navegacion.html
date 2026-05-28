@@ -112,25 +112,25 @@ function Home() {
 
       <h3>⚖️ FormData vs useState — ¿cuándo cada uno?</h3>
 
-      <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
-        <thead style="background: #f5f5f5;">
+      <table>
+        <thead>
           <tr>
-            <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Usar <code>FormData</code></th>
-            <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Usar <code>useState</code></th>
+            <th>Usar <code>FormData</code></th>
+            <th>Usar <code>useState</code></th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td style="padding: 10px; border: 1px solid #ddd;">Solo necesitás el valor al enviar</td>
-            <td style="padding: 10px; border: 1px solid #ddd;">Necesitás validación en tiempo real</td>
+            <td>Solo necesitás el valor al enviar</td>
+            <td>Necesitás validación en tiempo real</td>
           </tr>
           <tr>
-            <td style="padding: 10px; border: 1px solid #ddd;">No hace falta validación mientras escribe</td>
-            <td style="padding: 10px; border: 1px solid #ddd;">Querés mostrar el valor en otros componentes</td>
+            <td>No hace falta validación mientras escribe</td>
+            <td>Querés mostrar el valor en otros componentes</td>
           </tr>
           <tr>
-            <td style="padding: 10px; border: 1px solid #ddd;">Múltiples campos y querés menos código</td>
-            <td style="padding: 10px; border: 1px solid #ddd;">Necesitás deshabilitar el botón según el input</td>
+            <td>Múltiples campos y querés menos código</td>
+            <td>Necesitás deshabilitar el botón según el input</td>
           </tr>
         </tbody>
       </table>
@@ -154,21 +154,21 @@ targetUrl += `?text=${encodedTerm}`</code></pre>
         <li>"¿Qué es React?" → <code>/search?text=%C2%BFQu%C3%A9%20es%20React%3F</code> ✅</li>
       </ul>
 
-      <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
-        <thead style="background: #f5f5f5;">
+      <table>
+        <thead>
           <tr>
-            <th style="padding: 8px; border: 1px solid #ddd;">Carácter</th>
-            <th style="padding: 8px; border: 1px solid #ddd;">Codificado</th>
-            <th style="padding: 8px; border: 1px solid #ddd;">Razón</th>
+            <th>Carácter</th>
+            <th>Codificado</th>
+            <th>Razón</th>
           </tr>
         </thead>
         <tbody>
-          <tr><td style="padding: 8px; border: 1px solid #ddd;">espacio</td><td style="padding: 8px; border: 1px solid #ddd;"><code>%20</code></td><td style="padding: 8px; border: 1px solid #ddd;">No válido en URL</td></tr>
-          <tr><td style="padding: 8px; border: 1px solid #ddd;"><code>+</code></td><td style="padding: 8px; border: 1px solid #ddd;"><code>%2B</code></td><td style="padding: 8px; border: 1px solid #ddd;">Significado especial</td></tr>
-          <tr><td style="padding: 8px; border: 1px solid #ddd;"><code>?</code></td><td style="padding: 8px; border: 1px solid #ddd;"><code>%3F</code></td><td style="padding: 8px; border: 1px solid #ddd;">Delimita query params</td></tr>
-          <tr><td style="padding: 8px; border: 1px solid #ddd;"><code>&amp;</code></td><td style="padding: 8px; border: 1px solid #ddd;"><code>%26</code></td><td style="padding: 8px; border: 1px solid #ddd;">Separa query params</td></tr>
-          <tr><td style="padding: 8px; border: 1px solid #ddd;"><code>=</code></td><td style="padding: 8px; border: 1px solid #ddd;"><code>%3D</code></td><td style="padding: 8px; border: 1px solid #ddd;">Asigna valores</td></tr>
-          <tr><td style="padding: 8px; border: 1px solid #ddd;"><code>#</code></td><td style="padding: 8px; border: 1px solid #ddd;"><code>%23</code></td><td style="padding: 8px; border: 1px solid #ddd;">Indica fragmento</td></tr>
+          <tr><td>espacio</td><td><code>%20</code></td><td>No válido en URL</td></tr>
+          <tr><td><code>+</code></td><td><code>%2B</code></td><td>Significado especial</td></tr>
+          <tr><td><code>?</code></td><td><code>%3F</code></td><td>Delimita query params</td></tr>
+          <tr><td><code>&amp;</code></td><td><code>%26</code></td><td>Separa query params</td></tr>
+          <tr><td><code>=</code></td><td><code>%3D</code></td><td>Asigna valores</td></tr>
+          <tr><td><code>#</code></td><td><code>%23</code></td><td>Indica fragmento</td></tr>
         </tbody>
       </table>
 
@@ -364,21 +364,21 @@ export default Home</code></pre>
       <hr />
 
       <h3>🔑 Conceptos clave</h3>
-      <table style="width: 100%; border-collapse: collapse;">
-        <thead style="background: #f5f5f5;">
+      <table>
+        <thead>
           <tr>
-            <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Concepto</th>
-            <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Descripción</th>
+            <th>Concepto</th>
+            <th>Descripción</th>
           </tr>
         </thead>
         <tbody>
-          <tr><td style="padding: 10px; border: 1px solid #ddd;"><code>event.preventDefault()</code></td><td style="padding: 10px; border: 1px solid #ddd;">Evita el reload por defecto del form</td></tr>
-          <tr><td style="padding: 10px; border: 1px solid #ddd;"><code>FormData</code></td><td style="padding: 10px; border: 1px solid #ddd;">API para extraer valores del form fácilmente</td></tr>
-          <tr><td style="padding: 10px; border: 1px solid #ddd;"><code>encodeURIComponent</code></td><td style="padding: 10px; border: 1px solid #ddd;">Codifica texto para que sea seguro en URL</td></tr>
-          <tr><td style="padding: 10px; border: 1px solid #ddd;">Query params</td><td style="padding: 10px; border: 1px solid #ddd;"><code>?text=valor&amp;filtro=otro</code></td></tr>
-          <tr><td style="padding: 10px; border: 1px solid #ddd;"><code>navigateTo</code></td><td style="padding: 10px; border: 1px solid #ddd;">Reutilizar la lógica del router</td></tr>
-          <tr><td style="padding: 10px; border: 1px solid #ddd;">Atributo <code>name</code></td><td style="padding: 10px; border: 1px solid #ddd;">Identifica inputs para FormData</td></tr>
-          <tr><td style="padding: 10px; border: 1px solid #ddd;">JSX attributes</td><td style="padding: 10px; border: 1px solid #ddd;">camelCase en SVG/HTML (strokeWidth, no stroke-width)</td></tr>
+          <tr><td><code>event.preventDefault()</code></td><td>Evita el reload por defecto del form</td></tr>
+          <tr><td><code>FormData</code></td><td>API para extraer valores del form fácilmente</td></tr>
+          <tr><td><code>encodeURIComponent</code></td><td>Codifica texto para que sea seguro en URL</td></tr>
+          <tr><td>Query params</td><td><code>?text=valor&amp;filtro=otro</code></td></tr>
+          <tr><td><code>navigateTo</code></td><td>Reutilizar la lógica del router</td></tr>
+          <tr><td>Atributo <code>name</code></td><td>Identifica inputs para FormData</td></tr>
+          <tr><td>JSX attributes</td><td>camelCase en SVG/HTML (strokeWidth, no stroke-width)</td></tr>
         </tbody>
       </table>
 
@@ -395,10 +395,10 @@ export default Home</code></pre>
     </div>
   </article>
 
-  <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; text-align: center;">
-    <strong style="color: white; font-size: 1.1em; display: block; margin-bottom: 15px;">📚 ¿Querés profundizar?</strong>
-    <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
-      <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/69e52a55-ba7c-83eb-9cbf-95ef295664bc" target="_blank" style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+  <div class="resource-box">
+    <strong class="resource-box__title">📚 ¿Querés profundizar?</strong>
+    <div class="resource-box__links">
+      <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/69e52a55-ba7c-83eb-9cbf-95ef295664bc" target="_blank" class="resource-box__link" rel="noreferrer noopener">
         💬 Practicá en ChatGPT →
       </a>
     </div>

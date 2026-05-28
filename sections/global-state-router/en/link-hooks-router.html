@@ -68,25 +68,25 @@ export function Link(props) {
       <h3>🏗️ Abstraction Pattern</h3>
       <p>This technique is called the <strong>abstraction pattern</strong> or <strong>dependency abstraction pattern</strong>.</p>
 
-      <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+      <table>
         <thead>
-          <tr style="background: #f5f5f5;">
-            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Advantage</th>
-            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">What it means</th>
+          <tr>
+            <th>Advantage</th>
+            <th>What it means</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">No coupling to React Router</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Your components don't know React Router exists</td>
+            <td>No coupling to React Router</td>
+            <td>Your components don't know React Router exists</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Single place to change</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">One file instead of dozens if you switch libraries</td>
+            <td>Single place to change</td>
+            <td>One file instead of dozens if you switch libraries</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Stable public API</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Consumers never need to change</td>
+            <td>Stable public API</td>
+            <td>Consumers never need to change</td>
           </tr>
         </tbody>
       </table>
@@ -162,29 +162,29 @@ export function useRouter() {
         and our own logic to detect URL changes. React Router includes <code>useLocation</code>, which gives us:
       </p>
 
-      <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+      <table>
         <thead>
-          <tr style="background: #f5f5f5;">
-            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Property</th>
-            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">What it contains</th>
+          <tr>
+            <th>Property</th>
+            <th>What it contains</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;"><code>pathname</code></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">The current path: <code>/search</code></td>
+            <td><code>pathname</code></td>
+            <td>The current path: <code>/search</code></td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;"><code>search</code></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Query string: <code>?q=react</code></td>
+            <td><code>search</code></td>
+            <td>Query string: <code>?q=react</code></td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;"><code>hash</code></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">The hash: <code>#section</code></td>
+            <td><code>hash</code></td>
+            <td>The hash: <code>#section</code></td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;"><code>state</code></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">State passed during navigation</td>
+            <td><code>state</code></td>
+            <td>State passed during navigation</td>
           </tr>
         </tbody>
       </table>
@@ -349,29 +349,29 @@ export function useRouter() {
 
       <h3>📌 Summary</h3>
 
-      <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+      <table>
         <thead>
-          <tr style="background: #f5f5f5;">
-            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Concept</th>
-            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">What you learned</th>
+          <tr>
+            <th>Concept</th>
+            <th>What you learned</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Abstraction pattern</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Wrap external deps in your own API to isolate them</td>
+            <td>Abstraction pattern</td>
+            <td>Wrap external deps in your own API to isolate them</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;"><code>useNavigate</code></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Replaces all manual <code>pushState</code> and custom events</td>
+            <td><code>useNavigate</code></td>
+            <td>Replaces all manual <code>pushState</code> and custom events</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;"><code>useLocation</code></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Replaces manual <code>currentPath</code> state + <code>useEffect</code></td>
+            <td><code>useLocation</code></td>
+            <td>Replaces manual <code>currentPath</code> state + <code>useEffect</code></td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Same external API</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Components keep using <code>useRouter</code> and <code>Link</code> unchanged</td>
+            <td>Same external API</td>
+            <td>Components keep using <code>useRouter</code> and <code>Link</code> unchanged</td>
           </tr>
         </tbody>
       </table>
@@ -379,12 +379,12 @@ export function useRouter() {
     </div>
   </article>
 
-  <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; text-align: center;">
-    <strong style="color: white; font-size: 1.1em; display: block; margin-bottom: 15px;">📚 Want to go deeper?</strong>
-    <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+  <div class="resource-box">
+    <strong class="resource-box__title">📚 Want to go deeper?</strong>
+    <div class="resource-box__links">
       <a href="https://www.jscamp.dev/estado-global-y-react-router/link-y-hooks-usenavigate-uselocation-de-react-router"
          target="_blank"
-         style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+         class="resource-box__link" rel="noreferrer noopener">
         📖 Read about Link & hooks on JSCamp →
       </a>
     </div>

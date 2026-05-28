@@ -59,25 +59,25 @@ createRoot(document.getElementById('root')).render(
 
       <h3>🔀 Otros tipos de Router</h3>
 
-      <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+      <table>
         <thead>
-          <tr style="background: #f5f5f5;">
-            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Router</th>
-            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cuándo usarlo</th>
+          <tr>
+            <th>Router</th>
+            <th>Cuándo usarlo</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;"><code>BrowserRouter</code></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">El más común. URLs limpias: <code>/search</code></td>
+            <td><code>BrowserRouter</code></td>
+            <td>El más común. URLs limpias: <code>/search</code></td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;"><code>HashRouter</code></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Usa <code>#</code> en la URL: <code>example.com/#/about</code>. Útil cuando no podés configurar el servidor</td>
+            <td><code>HashRouter</code></td>
+            <td>Usa <code>#</code> en la URL: <code>example.com/#/about</code>. Útil cuando no podés configurar el servidor</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;"><code>MemoryRouter</code></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Historial en memoria, no modifica la URL. Ideal para testing y React Native</td>
+            <td><code>MemoryRouter</code></td>
+            <td>Historial en memoria, no modifica la URL. Ideal para testing y React Native</td>
           </tr>
         </tbody>
       </table>
@@ -105,26 +105,26 @@ createRoot(document.getElementById('root')).render(
       <h3>🧩 Anatomía de una ruta</h3>
       <p>Cada <code>&lt;Route&gt;</code> tiene dos props fundamentales:</p>
 
-      <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+      <table>
         <thead>
-          <tr style="background: #f5f5f5;">
-            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Prop</th>
-            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Qué hace</th>
+          <tr>
+            <th>Prop</th>
+            <th>Qué hace</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;"><code>path</code></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">El patrón de URL que debe coincidir</td>
+            <td><code>path</code></td>
+            <td>El patrón de URL que debe coincidir</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;"><code>element</code></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">El componente React (en JSX) que se renderiza cuando la ruta coincide</td>
+            <td><code>element</code></td>
+            <td>El componente React (en JSX) que se renderiza cuando la ruta coincide</td>
           </tr>
         </tbody>
       </table>
 
-      <p style="margin-top: 16px;">
+      <p>
         React Router usa <code>element</code> (recibe JSX) en lugar de <code>component</code> (solo referencia).
         Esto nos da más flexibilidad para pasar props directamente.
       </p>
@@ -162,25 +162,25 @@ Las rutas siguientes NO se evalúan</code></pre>
 
       <h3>Resultado con nuestras rutas</h3>
 
-      <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+      <table>
         <thead>
-          <tr style="background: #f5f5f5;">
-            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">URL visitada</th>
-            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Componente renderizado</th>
+          <tr>
+            <th>URL visitada</th>
+            <th>Componente renderizado</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;"><code>/</code></td>
-            <td style="padding: 8px; border: 1px solid #ddd;"><code>&lt;HomePage /&gt;</code></td>
+            <td><code>/</code></td>
+            <td><code>&lt;HomePage /&gt;</code></td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;"><code>/search</code></td>
-            <td style="padding: 8px; border: 1px solid #ddd;"><code>&lt;SearchPage /&gt;</code></td>
+            <td><code>/search</code></td>
+            <td><code>&lt;SearchPage /&gt;</code></td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;"><code>/about</code>, <code>/xyz</code>, cualquier otra</td>
-            <td style="padding: 8px; border: 1px solid #ddd;"><code>&lt;NotFoundPage /&gt;</code></td>
+            <td><code>/about</code>, <code>/xyz</code>, cualquier otra</td>
+            <td><code>&lt;NotFoundPage /&gt;</code></td>
           </tr>
         </tbody>
       </table>
@@ -265,33 +265,33 @@ createRoot(document.getElementById('root')).render(
 
       <h3>📌 Resumen</h3>
 
-      <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+      <table>
         <thead>
-          <tr style="background: #f5f5f5;">
-            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Concepto</th>
-            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Lo que aprendiste</th>
+          <tr>
+            <th>Concepto</th>
+            <th>Lo que aprendiste</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Instalación</td>
-            <td style="padding: 8px; border: 1px solid #ddd;"><code>npm install react-router</code></td>
+            <td>Instalación</td>
+            <td><code>npm install react-router</code></td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;"><code>BrowserRouter</code></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Envuelve toda la app en <code>main.jsx</code></td>
+            <td><code>BrowserRouter</code></td>
+            <td>Envuelve toda la app en <code>main.jsx</code></td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;"><code>Routes</code> + <code>Route</code></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Declaran las rutas en <code>App.jsx</code></td>
+            <td><code>Routes</code> + <code>Route</code></td>
+            <td>Declaran las rutas en <code>App.jsx</code></td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Matching</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">De arriba hacia abajo, para en la primera coincidencia</td>
+            <td>Matching</td>
+            <td>De arriba hacia abajo, para en la primera coincidencia</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;"><code>path="*"</code></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Comodín para 404 — siempre al final</td>
+            <td><code>path="*"</code></td>
+            <td>Comodín para 404 — siempre al final</td>
           </tr>
         </tbody>
       </table>
@@ -300,12 +300,12 @@ createRoot(document.getElementById('root')).render(
   </article>
 
 
-  <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; text-align: center;">
-    <strong style="color: white; font-size: 1.1em; display: block; margin-bottom: 15px;">📚 ¿Querés profundizar?</strong>
-    <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+  <div class="resource-box">
+    <strong class="resource-box__title">📚 ¿Querés profundizar?</strong>
+    <div class="resource-box__links">
       <a href="https://www.jscamp.dev/estado-global-y-react-router/como-crear-rutas-con-react-router"
          target="_blank"
-         style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+         class="resource-box__link" rel="noreferrer noopener">
         📖 Leé sobre cómo crear rutas en JSCamp →
       </a>
     </div>

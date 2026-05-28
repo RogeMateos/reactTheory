@@ -55,8 +55,8 @@
       To see Fast Refresh in action, follow these steps in a Vite project:
     </p>
 
-    <div  class="callout-success"style="margin: 20px 0">
-      <h3 style="margin-top: 0;">Step 1: Initial code (App.jsx)</h3>
+    <div  class="callout-success">
+      <h3>Step 1: Initial code (App.jsx)</h3>
       <pre><code class="language-jsx">// src/App.jsx
 import { useState } from 'react'
 
@@ -77,49 +77,49 @@ function App() {
 export default App</code></pre>
     </div>
 
-    <div  class="callout-warning"style="margin: 20px 0">
-      <h3 style="margin-top: 0;">Step 2: Run the project</h3>
+    <div  class="callout-warning">
+      <h3>Step 2: Run the project</h3>
       <pre><code class="language-bash">npm run dev</code></pre>
       <p>Open http://localhost:5173/ in your browser</p>
     </div>
 
-    <div  class="callout-info"style="margin: 20px 0">
-      <h3 style="margin-top: 0;">Step 3: Increment the counter</h3>
+    <div  class="callout-info">
+      <h3>Step 3: Increment the counter</h3>
       <p>
         Click the button several times until you reach <strong>15</strong>
       </p>
       <pre  class="callout-info">Counter: 15 ← Current state</pre>
     </div>
 
-    <div  class="callout-danger"style="margin: 20px 0">
-      <h3 style="margin-top: 0;">❌ Without Fast Refresh (manual reload)</h3>
+    <div  class="callout-danger">
+      <h3>❌ Without Fast Refresh (manual reload)</h3>
       <p>If you manually reload the page (F5 or Cmd+R):</p>
       <pre  class="callout-neutral">Counter: 0 ← You lost the state!</pre>
       <p><strong>The state goes back to 0 because the page reloaded.</strong></p>
     </div>
 
-    <div  class="callout-success"style="margin: 20px 0">
-      <h3 style="margin-top: 0;">✅ With Fast Refresh (edit code)</h3>
+    <div  class="callout-success">
+      <h3>✅ With Fast Refresh (edit code)</h3>
 
       <p><strong>Step 4: Edit the code</strong></p>
       <p>Change this line in App.jsx:</p>
 
-      <table style="width: 100%; border-collapse: collapse; margin: 10px 0;">
+      <table>
         <thead>
-          <tr style="background: #333; color: white;">
-            <th style="padding: 10px; text-align: left;">❌ Original code</th>
-            <th style="padding: 10px; text-align: left;">✅ New code</th>
+          <tr class="callout-neutral">
+            <th>❌ Original code</th>
+            <th>✅ New code</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td style="padding: 15px; border: 2px solid #f44336; background: white;">
-              <pre style="margin: 0;"><code class="language-jsx">&lt;button onClick={() =&gt; setCount(count + 1)}&gt;
+            <td class="callout-danger">
+              <pre><code class="language-jsx">&lt;button onClick={() =&gt; setCount(count + 1)}&gt;
   Increment
 &lt;/button&gt;</code></pre>
             </td>
-            <td style="padding: 15px; border: 2px solid #4caf50; background: white;">
-              <pre style="margin: 0;"><code class="language-jsx">&lt;button onClick={() =&gt; setCount(count + 1)}&gt;
+            <td class="callout-success">
+              <pre><code class="language-jsx">&lt;button onClick={() =&gt; setCount(count + 1)}&gt;
   Add +1
 &lt;/button&gt;</code></pre>
             </td>
@@ -130,15 +130,15 @@ export default App</code></pre>
       <p><strong>Step 5: Save the file (Ctrl+S / Cmd+S)</strong></p>
 
       <p><strong>What happens?</strong></p>
-      <pre  class="callout-success"style="font-size: 16px">
+      <pre  class="callout-success">
 🔥 Fast Refresh detects the change
 ⚡ Updates the component instantly
 ✅ The button now says "Add +1"
 💾 The counter stays at 15 ← State was preserved!</pre>
     </div>
 
-    <div  class="callout-warning"style="margin: 20px 0">
-      <h3 style="margin-top: 0;">🎯 Other changes you can try</h3>
+    <div  class="callout-warning">
+      <h3>🎯 Other changes you can try</h3>
 
       <p><strong>1. Change the title:</strong></p>
       <pre><code class="language-jsx">// From:
@@ -169,8 +169,8 @@ export default App</code></pre>
 // State preserved: ✅</code></pre>
     </div>
 
-    <div  class="callout-danger"style="margin: 20px 0">
-      <h3 style="margin-top: 0;">⚠️ When Fast Refresh does NOT preserve state</h3>
+    <div  class="callout-danger">
+      <h3>⚠️ When Fast Refresh does NOT preserve state</h3>
       <p>Fast Refresh loses state in these cases:</p>
       <ul>
         <li>❌ <strong>You change the component name</strong> (from <code>App</code> to <code>Counter</code>)</li>
@@ -187,8 +187,8 @@ export default App</code></pre>
     <p>Although they seem the same, there's an important difference:</p>
 
     <h3>🔧 Hot Module Replacement (HMR)</h3>
-    <div  class="callout-code"style="margin-bottom: 20px">
-      <ul style="margin: 0;">
+    <div  class="callout-code">
+      <ul>
         <li>🔧 <strong>Generic technology</strong> for any type of code</li>
         <li>📦 <strong>Works with</strong> JavaScript, CSS, images, etc.</li>
         <li>🔄 <strong>Replaces modules</strong> without reloading the page</li>
@@ -196,13 +196,13 @@ export default App</code></pre>
         <li>💻 <strong>Used by</strong> Vite, Webpack, Parcel, etc.</li>
       </ul>
 
-      <pre  class="callout-neutral"style="margin-top: 10px"><code>HMR: "CSS file changed → Update only the CSS"
+      <pre  class="callout-neutral"><code>HMR: "CSS file changed → Update only the CSS"
 HMR: "JS file changed → Update that module"</code></pre>
     </div>
 
     <h3>⚛️ Fast Refresh</h3>
-    <div  class="callout-info"style="margin-bottom: 20px">
-      <ul style="margin: 0;">
+    <div  class="callout-info">
+      <ul>
         <li>⚛️ <strong>React-specific technology</strong></li>
         <li>🎯 <strong>Only works</strong> with React components</li>
         <li>💾 <strong>Preserves state</strong> of components intelligently</li>
@@ -210,44 +210,44 @@ HMR: "JS file changed → Update that module"</code></pre>
         <li>✨ <strong>Built on top of HMR</strong> (uses it underneath)</li>
       </ul>
 
-      <pre  class="callout-neutral"style="margin-top: 10px"><code>Fast Refresh: "Component changed → Update AND keep the state"</code></pre>
+      <pre  class="callout-neutral"><code>Fast Refresh: "Component changed → Update AND keep the state"</code></pre>
     </div>
 
     <h3>📊 Visual comparison</h3>
-    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+    <table>
       <thead>
-        <tr style="background: #333; color: white;">
-          <th style="padding: 12px; text-align: left;">Feature</th>
-          <th style="padding: 12px; text-align: center;">HMR</th>
-          <th style="padding: 12px; text-align: center;">Fast Refresh</th>
+        <tr class="callout-neutral">
+          <th>Feature</th>
+          <th>HMR</th>
+          <th>Fast Refresh</th>
         </tr>
       </thead>
       <tbody>
-        <tr style="background: #f9f9f9;">
-          <td style="padding: 12px; border-bottom: 1px solid #ddd;">React-specific</td>
-          <td style="padding: 12px; text-align: center; border-bottom: 1px solid #ddd;">❌</td>
-          <td style="padding: 12px; text-align: center; border-bottom: 1px solid #ddd;">✅</td>
+        <tr>
+          <td>React-specific</td>
+          <td>❌</td>
+          <td>✅</td>
         </tr>
         <tr>
-          <td style="padding: 12px; border-bottom: 1px solid #ddd;">Preserves state</td>
-          <td style="padding: 12px; text-align: center; border-bottom: 1px solid #ddd;">⚠️ Manual</td>
-          <td style="padding: 12px; text-align: center; border-bottom: 1px solid #ddd;">✅ Automatic</td>
-        </tr>
-        <tr style="background: #f9f9f9;">
-          <td style="padding: 12px; border-bottom: 1px solid #ddd;">Works with CSS/Assets</td>
-          <td style="padding: 12px; text-align: center; border-bottom: 1px solid #ddd;">✅</td>
-          <td style="padding: 12px; text-align: center; border-bottom: 1px solid #ddd;">❌ Components only</td>
+          <td>Preserves state</td>
+          <td>⚠️ Manual</td>
+          <td>✅ Automatic</td>
         </tr>
         <tr>
-          <td style="padding: 12px; border-bottom: 1px solid #ddd;">Speed</td>
-          <td style="padding: 12px; text-align: center; border-bottom: 1px solid #ddd;">⚡ Fast</td>
-          <td style="padding: 12px; text-align: center; border-bottom: 1px solid #ddd;">⚡⚡ Faster</td>
+          <td>Works with CSS/Assets</td>
+          <td>✅</td>
+          <td>❌ Components only</td>
+        </tr>
+        <tr>
+          <td>Speed</td>
+          <td>⚡ Fast</td>
+          <td>⚡⚡ Faster</td>
         </tr>
       </tbody>
     </table>
 
     <h3>🎯 In summary</h3>
-    <pre  class="callout-success"style="font-size: 16px; line-height: 1.8">
+    <pre  class="callout-success">
 <strong>HMR</strong> = Replaces code without reloading the page
 <strong>Fast Refresh</strong> = HMR + Preserve React state
     </pre>
@@ -279,7 +279,7 @@ HMR: "JS file changed → Update that module"</code></pre>
   )
 }</code></pre>
 
-    <p  class="callout-danger"style="font-size: 18px; text-align: center">
+    <p  class="callout-danger">
       <strong>The result?</strong> ❌ Only adds 1, not 3
     </p>
 
@@ -301,7 +301,7 @@ HMR: "JS file changed → Update that module"</code></pre>
 }</code></pre>
 
     <h3>🔍 Step-by-step visualization</h3>
-    <pre  class="callout-warning"style="font-family: monospace; line-height: 2">
+    <pre  class="callout-warning">
 <strong>Initial state:</strong> count = 0
 
 <strong>Button click:</strong>
@@ -341,7 +341,7 @@ HMR: "JS file changed → Update that module"</code></pre>
   )
 }</code></pre>
 
-    <p  class="callout-success"style="font-size: 18px; text-align: center">
+    <p  class="callout-success">
       <strong>Now it works correctly:</strong> ✅ Adds 3
     </p>
 
@@ -350,7 +350,7 @@ HMR: "JS file changed → Update that module"</code></pre>
     <p>You tell React: <strong>"Give me the most recent value and I'll return the new value"</strong></p>
 
     <h3>🔍 Step-by-step visualization</h3>
-    <pre  class="callout-success"style="font-family: monospace; line-height: 2">
+    <pre  class="callout-success">
 <strong>Initial state:</strong> count = 0
 
 <strong>Button click:</strong>
@@ -373,25 +373,25 @@ HMR: "JS file changed → Update that module"</code></pre>
     </p>
 
     <h3>📊 Side-by-side comparison</h3>
-    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+    <table>
       <thead>
-        <tr style="background: #333; color: white;">
-          <th style="padding: 12px;">❌ Direct value (Incorrect)</th>
-          <th style="padding: 12px;">✅ Callback (Correct)</th>
+        <tr class="callout-neutral">
+          <th>❌ Direct value (Incorrect)</th>
+          <th>✅ Callback (Correct)</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td style="padding: 20px; vertical-align: top; border: 2px solid #f44336;">
-            <pre style="margin: 0;"><code class="language-jsx">setCount(count + 1)
+          <td class="callout-danger">
+            <pre><code class="language-jsx">setCount(count + 1)
 setCount(count + 1)
 setCount(count + 1)
 
 // All use the same count (0)
 // Result: 1 ❌</code></pre>
           </td>
-          <td style="padding: 20px; vertical-align: top; border: 2px solid #4caf50;">
-            <pre style="margin: 0;"><code class="language-jsx">setCount(prev => prev + 1)
+          <td class="callout-success">
+            <pre><code class="language-jsx">setCount(prev => prev + 1)
 setCount(prev => prev + 1)
 setCount(prev => prev + 1)
 
@@ -425,7 +425,7 @@ setItems(prevItems => [...prevItems, newItem])</code></pre>
     <h2>🎯 When to use each form?</h2>
 
     <h3>📝 Direct value (simple form)</h3>
-    <div  class="callout-info"style="margin-bottom: 20px">
+    <div  class="callout-info">
       <p><strong>Use this form when the new value is INDEPENDENT of the current value:</strong></p>
       <pre><code class="language-jsx">// ✅ Good: the new value does NOT depend on the previous one
 setName('Michael')
@@ -435,7 +435,7 @@ setUser({ id: 1, name: 'Anna' })</code></pre>
     </div>
 
     <h3>🔄 Callback (function form)</h3>
-    <div  class="callout-success"style="margin-bottom: 20px">
+    <div  class="callout-success">
       <p><strong>Use this form when the new value DEPENDS on the previous value:</strong></p>
       <pre><code class="language-jsx">// ✅ Good: the new value depends on the previous one
 setCount(prev => prev + 1)
@@ -446,7 +446,7 @@ setUser(prev => ({ ...prev, age: prev.age + 1 }))</code></pre>
 
     <h3>🚦 When to use callback (checklist)</h3>
     <p>Use <code>setState(prev => ...)</code> when:</p>
-    <ul style="font-size: 16px; line-height: 2;">
+    <ul>
       <li>⚡ The new value <strong>depends on the previous value</strong></li>
       <li>🔄 You're making <strong>multiple consecutive updates</strong></li>
       <li>🎯 You want to <strong>guarantee using the most recent value</strong></li>
@@ -464,9 +464,9 @@ const handleClick = () => {
   // Option B
   setCount(prev => prev + 1)
 }</code></pre>
-    <details style="background: #f4f4f4; padding: 15px; border-radius: 8px; margin: 10px 0;">
-      <summary style="cursor: pointer; font-weight: bold;">See answer</summary>
-      <p style="margin-top: 10px;">
+    <details>
+      <summary>See answer</summary>
+      <p>
         <strong>Answer: Option B</strong> is safer. If the user clicks very quickly
         or there are multiple updates, Option A might lose some clicks. Option B
         guarantees each click is counted correctly.
@@ -482,9 +482,9 @@ const handleChange = (e) => {
   // Option B
   setName(prev => e.target.value)
 }</code></pre>
-    <details style="background: #f4f4f4; padding: 15px; border-radius: 8px; margin: 10px 0;">
-      <summary style="cursor: pointer; font-weight: bold;">See answer</summary>
-      <p style="margin-top: 10px;">
+    <details>
+      <summary>See answer</summary>
+      <p>
         <strong>Answer: Option A</strong> is fine. The new value (<code>e.target.value</code>)
         is completely independent of the previous value. You don't need the callback here.
       </p>
@@ -498,9 +498,9 @@ const handleClick = () => {
   setCount(count + 1)
   console.log(count) // What gets printed?
 }</code></pre>
-    <details style="background: #f4f4f4; padding: 15px; border-radius: 8px; margin: 10px 0;">
-      <summary style="cursor: pointer; font-weight: bold;">See answer</summary>
-      <p style="margin-top: 10px;">
+    <details>
+      <summary>See answer</summary>
+      <p>
         <strong>Prints: 0</strong><br>
         1. The <code>console.log</code> runs immediately, before React updates the state<br>
         2. Both <code>setCount</code> calls schedule updates but don't execute them immediately<br>
@@ -509,7 +509,7 @@ const handleClick = () => {
     </details>
 
     <h3>🎯 Golden rule</h3>
-    <pre  class="callout-warning"style="font-size: 16px; line-height: 1.8">
+    <pre  class="callout-warning">
 <strong>If you see the state name inside setState, use callback:</strong>
 
 ❌ setCount(count + 1)        → count is here!
@@ -519,65 +519,65 @@ const handleClick = () => {
     </pre>
 
     <h2>📋 Lesson summary</h2>
-    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+    <table>
       <thead>
-        <tr style="background: #333; color: white;">
-          <th style="padding: 12px; text-align: left;">Concept</th>
-          <th style="padding: 12px; text-align: left;">What we learned</th>
+        <tr class="callout-neutral">
+          <th>Concept</th>
+          <th>What we learned</th>
         </tr>
       </thead>
       <tbody>
-        <tr style="background: #f9f9f9;">
-          <td style="padding: 12px; border-bottom: 1px solid #ddd;"><strong>🔥 Fast Refresh</strong></td>
-          <td style="padding: 12px; border-bottom: 1px solid #ddd;">
+        <tr>
+          <td><strong>🔥 Fast Refresh</strong></td>
+          <td>
             React technology that preserves state when saving changes during development
           </td>
         </tr>
         <tr>
-          <td style="padding: 12px; border-bottom: 1px solid #ddd;"><strong>🔄 HMR vs Fast Refresh</strong></td>
-          <td style="padding: 12px; border-bottom: 1px solid #ddd;">
+          <td><strong>🔄 HMR vs Fast Refresh</strong></td>
+          <td>
             HMR is generic, Fast Refresh is React-specific and automatically preserves state
           </td>
         </tr>
-        <tr style="background: #f9f9f9;">
-          <td style="padding: 12px; border-bottom: 1px solid #ddd;"><strong>📝 Callback in setState</strong></td>
-          <td style="padding: 12px; border-bottom: 1px solid #ddd;">
+        <tr>
+          <td><strong>📝 Callback in setState</strong></td>
+          <td>
             Use function when the new value depends on the previous one
           </td>
         </tr>
         <tr>
-          <td style="padding: 12px; border-bottom: 1px solid #ddd;"><strong>⚡ Multiple updates</strong></td>
-          <td style="padding: 12px; border-bottom: 1px solid #ddd;">
+          <td><strong>⚡ Multiple updates</strong></td>
+          <td>
             Callback guarantees you use the most recent value in each update
           </td>
         </tr>
-        <tr style="background: #f9f9f9;">
-          <td style="padding: 12px; border-bottom: 1px solid #ddd;"><strong>🎯 When to use each form</strong></td>
-          <td style="padding: 12px; border-bottom: 1px solid #ddd;">
+        <tr>
+          <td><strong>🎯 When to use each form</strong></td>
+          <td>
             Direct value for independent, callback for dependent on previous
           </td>
         </tr>
       </tbody>
     </table>
 
-    <p  class="callout-info"style="margin-top: 30px; font-size: 16px">
+    <p  class="callout-info">
       <strong>💡 Remember:</strong> Use <code>setState((prev) => ...)</code> when the new value
       depends on the previous one. Fast Refresh makes your development experience smoother by
       maintaining state while you edit code.
     </p>
   </article>
 
-  <div style="margin-top: 40px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; text-align: center;">
-    <strong style="color: white; font-size: 1.1em; display: block; margin-bottom: 15px;">🤖 Want to dive deeper?</strong>
-    <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+  <div class="resource-box">
+    <strong class="resource-box__title">🤖 Want to dive deeper?</strong>
+    <div class="resource-box__links">
       <a href="https://www.jscamp.dev/introduccion-a-react/fast-refresh-update-state"
          target="_blank"
-         style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+         class="resource-box__link" rel="noreferrer noopener">
         📚 Read the full article on JSCamp →
       </a>
       <a href="https://chatgpt.com/c/69d6eceb-8364-8386-ba70-c6a8f953dab7"
          target="_blank"
-         style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+         class="resource-box__link" rel="noreferrer noopener">
         💬 Ask ChatGPT about Fast Refresh →
       </a>
     </div>

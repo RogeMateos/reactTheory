@@ -34,34 +34,34 @@ que lleva años manteniendo React Router.</code></pre>
       <h3>⚠️ Limitaciones del router que hemos creado</h3>
       <p>Nuestro router casero funciona, pero tiene muchas cosas pendientes que en una app real vas a necesitar:</p>
 
-      <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+      <table>
         <thead>
-          <tr style="background: #f5f5f5;">
-            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Limitación</th>
-            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Qué implica</th>
+          <tr>
+            <th>Limitación</th>
+            <th>Qué implica</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Página 404</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Si el usuario escribe una ruta incorrecta, la experiencia no es la ideal</td>
+            <td>Página 404</td>
+            <td>Si el usuario escribe una ruta incorrecta, la experiencia no es la ideal</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Rutas protegidas</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Toda la lógica de redirección y tokens hay que montarla a mano</td>
+            <td>Rutas protegidas</td>
+            <td>Toda la lógica de redirección y tokens hay que montarla a mano</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Code splitting</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Cargar rutas bajo demanda requiere combinar a mano <code>lazy</code> + <code>Suspense</code></td>
+            <td>Code splitting</td>
+            <td>Cargar rutas bajo demanda requiere combinar a mano <code>lazy</code> + <code>Suspense</code></td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Carga de datos</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Loading states, manejo de errores y cuándo cargar no están resueltos</td>
+            <td>Carga de datos</td>
+            <td>Loading states, manejo de errores y cuándo cargar no están resueltos</td>
           </tr>
         </tbody>
       </table>
 
-      <p style="margin-top: 16px;">
+      <p>
         Todo esto no está resuelto en nuestro router actual, y es precisamente el tipo de problemas que <strong>React Router lleva años trabajando</strong>.
       </p>
 
@@ -75,34 +75,34 @@ que lleva años manteniendo React Router.</code></pre>
       <h3>📦 Qué es React Router</h3>
       <p>React Router es la <strong>biblioteca estándar de enrutado</strong> en el ecosistema React.</p>
 
-      <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+      <table>
         <thead>
-          <tr style="background: #f5f5f5;">
-            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Dato</th>
-            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Valor</th>
+          <tr>
+            <th>Dato</th>
+            <th>Valor</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Descargas en npm</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Miles de millones</td>
+            <td>Descargas en npm</td>
+            <td>Miles de millones</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Estrellas en GitHub</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Decenas de miles</td>
+            <td>Estrellas en GitHub</td>
+            <td>Decenas de miles</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Contribuidores</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Cientos</td>
+            <td>Contribuidores</td>
+            <td>Cientos</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Proyectos que dependen de ella</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Millones</td>
+            <td>Proyectos que dependen de ella</td>
+            <td>Millones</td>
           </tr>
         </tbody>
       </table>
 
-      <p style="margin-top: 16px;">
+      <p>
         No es una librería random. Es una <strong>pieza crítica en el ecosistema React</strong>.
       </p>
 
@@ -194,29 +194,29 @@ React Router         → hecho para proyectos de verdad</code></pre>
 
       <h3>📌 Objetivos de esta clase</h3>
 
-      <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+      <table>
         <thead>
-          <tr style="background: #f5f5f5;">
-            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Concepto</th>
-            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Lo que te llevás</th>
+          <tr>
+            <th>Concepto</th>
+            <th>Lo que te llevás</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Router casero</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Por qué tiene límites claros</td>
+            <td>Router casero</td>
+            <td>Por qué tiene límites claros</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">React Router</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Qué problemas reales resuelve en producción</td>
+            <td>React Router</td>
+            <td>Qué problemas reales resuelve en producción</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Modos de uso</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Cuáles existen y por qué usamos el declarativo</td>
+            <td>Modos de uso</td>
+            <td>Cuáles existen y por qué usamos el declarativo</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Perspectiva</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">React Router no es magia, es la evolución de lo que ya construiste</td>
+            <td>Perspectiva</td>
+            <td>React Router no es magia, es la evolución de lo que ya construiste</td>
           </tr>
         </tbody>
       </table>
@@ -233,12 +233,12 @@ React Router         → hecho para proyectos de verdad</code></pre>
     </div>
   </article>
 
-  <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; text-align: center;">
-    <strong style="color: white; font-size: 1.1em; display: block; margin-bottom: 15px;">📚 ¿Querés profundizar más?</strong>
-    <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+  <div class="resource-box">
+    <strong class="resource-box__title">📚 ¿Querés profundizar más?</strong>
+    <div class="resource-box__links">
       <a href="https://www.jscamp.dev/estado-global-y-react-router/que-es-react-router"
          target="_blank"
-         style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+         class="resource-box__link" rel="noreferrer noopener">
         📖 Lee sobre React Router en JSCamp →
       </a>
     </div>

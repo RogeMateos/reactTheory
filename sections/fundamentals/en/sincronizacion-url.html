@@ -17,29 +17,29 @@
         Making the search state (text, filters, and current page) synchronize with the URL so the search is:
       </p>
 
-      <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+      <table>
         <thead>
-          <tr style="background: #f5f5f5;">
-            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Benefit</th>
-            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">What it means</th>
+          <tr>
+            <th>Benefit</th>
+            <th>What it means</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Shareable</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">You can send the URL and the other person sees exactly the same thing</td>
+            <td>Shareable</td>
+            <td>You can send the URL and the other person sees exactly the same thing</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Persistent after F5</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Reloading the page doesn't clear the filters</td>
+            <td>Persistent after F5</td>
+            <td>Reloading the page doesn't clear the filters</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Multi-tab compatible</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Each tab can have its own search state</td>
+            <td>Multi-tab compatible</td>
+            <td>Each tab can have its own search state</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Browser history</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">The back button works as expected</td>
+            <td>Browser history</td>
+            <td>The back button works as expected</td>
           </tr>
         </tbody>
       </table>
@@ -271,33 +271,33 @@ User changes filter / text / page
 
       <h3>📌 Key concepts summary</h3>
 
-      <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+      <table>
         <thead>
-          <tr style="background: #f5f5f5;">
-            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Concept</th>
-            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Purpose</th>
+          <tr>
+            <th>Concept</th>
+            <th>Purpose</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;"><code>URLSearchParams</code></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Build and read query params safely</td>
+            <td><code>URLSearchParams</code></td>
+            <td>Build and read query params safely</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;"><code>window.history.pushState</code></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Update the URL without reloading the page</td>
+            <td><code>window.history.pushState</code></td>
+            <td>Update the URL without reloading the page</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Lazy initialization</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Initialize state from URL only once</td>
+            <td>Lazy initialization</td>
+            <td>Initialize state from URL only once</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">URL validation</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Protect against invalid manually typed values</td>
+            <td>URL validation</td>
+            <td>Protect against invalid manually typed values</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Synced input</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Visual consistency between URL, state and input</td>
+            <td>Synced input</td>
+            <td>Visual consistency between URL, state and input</td>
           </tr>
         </tbody>
       </table>
@@ -305,17 +305,17 @@ User changes filter / text / page
     </div>
   </article>
 
-  <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; text-align: center;">
-    <strong style="color: white; font-size: 1.1em; display: block; margin-bottom: 15px;">📚 Want to go deeper?</strong>
-    <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+  <div class="resource-box">
+    <strong class="resource-box__title">📚 Want to go deeper?</strong>
+    <div class="resource-box__links">
       <a href="https://www.jscamp.dev/introduccion-a-react/sincronizacion-de-la-url"
          target="_blank"
-         style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+         class="resource-box__link" rel="noreferrer noopener">
         📖 Read about URL Synchronization on JSCamp →
       </a>
       <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633/c/6a189f1c-90e0-83eb-85f6-d9c32c36c8f7"
          target="_blank"
-         style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+         class="resource-box__link" rel="noreferrer noopener">
         💬 Ask ChatGPT about URL Synchronization →
       </a>
     </div>

@@ -30,24 +30,24 @@
         <strong>limit</strong> y <strong>offset</strong>.
       </p>
 
-      <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+      <table>
         <thead>
-          <tr style="background: #f5f5f5;">
-            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Parámetro</th>
-            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Descripción</th>
-            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Ejemplo</th>
+          <tr>
+            <th>Parámetro</th>
+            <th>Descripción</th>
+            <th>Ejemplo</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;"><code>limit</code></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Cuántos resultados devolver por página</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">10</td>
+            <td><code>limit</code></td>
+            <td>Cuántos resultados devolver por página</td>
+            <td>10</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;"><code>offset</code></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Cuántos resultados saltarse desde el inicio</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">0, 10, 20…</td>
+            <td><code>offset</code></td>
+            <td>Cuántos resultados saltarse desde el inicio</td>
+            <td>0, 10, 20…</td>
           </tr>
         </tbody>
       </table>
@@ -63,39 +63,39 @@
 
       <pre><code>offset = (currentPage - 1) * RESULTS_PER_PAGE</code></pre>
 
-      <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+      <table>
         <thead>
-          <tr style="background: #f5f5f5;">
-            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Página actual</th>
-            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Resultados por página</th>
-            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Offset</th>
-            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cálculo</th>
+          <tr>
+            <th>Página actual</th>
+            <th>Resultados por página</th>
+            <th>Offset</th>
+            <th>Cálculo</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">1</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">10</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">0</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">(1-1) × 10 = 0</td>
+            <td>1</td>
+            <td>10</td>
+            <td>0</td>
+            <td>(1-1) × 10 = 0</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">2</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">10</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">10</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">(2-1) × 10 = 10</td>
+            <td>2</td>
+            <td>10</td>
+            <td>10</td>
+            <td>(2-1) × 10 = 10</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">3</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">10</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">20</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">(3-1) × 10 = 20</td>
+            <td>3</td>
+            <td>10</td>
+            <td>20</td>
+            <td>(3-1) × 10 = 20</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">5</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">20</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">80</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">(5-1) × 20 = 80</td>
+            <td>5</td>
+            <td>20</td>
+            <td>80</td>
+            <td>(5-1) × 20 = 80</td>
           </tr>
         </tbody>
       </table>
@@ -447,17 +447,17 @@ Test 3 — Total de páginas:
         <li><strong>Skeleton loading:</strong> mejorar la UX mientras se cargan los datos</li>
       </ul>
 
-      <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; text-align: center;">
-        <strong style="color: white; font-size: 1.1em; display: block; margin-bottom: 15px;">📚 ¿Querés profundizar más?</strong>
-        <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+      <div class="resource-box">
+        <strong class="resource-box__title">📚 ¿Querés profundizar más?</strong>
+        <div class="resource-box__links">
           <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/69f3649a-74e4-83eb-af7f-d708e96d90cd"
              target="_blank"
-             style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+             class="resource-box__link" rel="noreferrer noopener">
             💬 Preguntarle a ChatGPT sobre Paginación con API →
           </a>
           <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/69f3e60d-cb64-83eb-acb7-fb03c9d7670d"
              target="_blank"
-             style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+             class="resource-box__link" rel="noreferrer noopener">
             💬 Preguntarle a ChatGPT sobre Paginación con API (2) →
           </a>
         </div>

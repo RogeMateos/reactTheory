@@ -488,6 +488,44 @@ table tr:hover {
 }
 
 /* ==========================================
+   RESOURCE / CTA BOX
+   ========================================== */
+
+.resource-box {
+  margin-top: 2rem;
+  padding: 1.25rem 1.5rem;
+  background: linear-gradient(135deg, #1e2a4a 0%, #1a1f3a 100%);
+  border: 1px solid var(--border-accent);
+  border-radius: 10px;
+  text-align: center;
+}
+
+.resource-box__title {
+  color: var(--text-heading);
+  font-size: 1.05rem;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.resource-box__links {
+  display: flex;
+  gap: 1.25rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.resource-box__link {
+  color: var(--accent);
+  text-decoration: underline;
+  font-size: 1rem;
+}
+
+.resource-box__link:hover {
+  color: var(--primary-hover);
+}
+
+/* ==========================================
    LOADING STATE
    ========================================== */
 

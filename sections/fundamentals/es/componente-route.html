@@ -220,29 +220,29 @@ Resultado: solo se renderiza &lt;Search /&gt;</code></pre>
 
       <h3>⚖️ Imperativo vs Declarativo</h3>
 
-      <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
-        <thead style="background: #f5f5f5;">
+      <table>
+        <thead>
           <tr>
-            <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Imperativo (<code>if/switch</code>)</th>
-            <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Declarativo (<code>&lt;Route&gt;</code>)</th>
+            <th>Imperativo (<code>if/switch</code>)</th>
+            <th>Declarativo (<code>&lt;Route&gt;</code>)</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td style="padding: 10px; border: 1px solid #ddd;">Describe CÓMO decidir</td>
-            <td style="padding: 10px; border: 1px solid #ddd;">Declara QUÉ debe pasar</td>
+            <td>Describe CÓMO decidir</td>
+            <td>Declara QUÉ debe pasar</td>
           </tr>
           <tr>
-            <td style="padding: 10px; border: 1px solid #ddd;">App conoce todos los detalles</td>
-            <td style="padding: 10px; border: 1px solid #ddd;">Cada ruta es autónoma</td>
+            <td>App conoce todos los detalles</td>
+            <td>Cada ruta es autónoma</td>
           </tr>
           <tr>
-            <td style="padding: 10px; border: 1px solid #ddd;">Difícil añadir/quitar rutas</td>
-            <td style="padding: 10px; border: 1px solid #ddd;">Trivial añadir/quitar rutas</td>
+            <td>Difícil añadir/quitar rutas</td>
+            <td>Trivial añadir/quitar rutas</td>
           </tr>
           <tr>
-            <td style="padding: 10px; border: 1px solid #ddd;">Difícil testear rutas aisladas</td>
-            <td style="padding: 10px; border: 1px solid #ddd;">Fácil testear cada ruta</td>
+            <td>Difícil testear rutas aisladas</td>
+            <td>Fácil testear cada ruta</td>
           </tr>
         </tbody>
       </table>
@@ -276,21 +276,21 @@ Resultado: solo se renderiza &lt;Search /&gt;</code></pre>
       <hr />
 
       <h3>🔑 Conceptos clave</h3>
-      <table style="width: 100%; border-collapse: collapse;">
-        <thead style="background: #f5f5f5;">
+      <table>
+        <thead>
           <tr>
-            <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Concepto</th>
-            <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Descripción</th>
+            <th>Concepto</th>
+            <th>Descripción</th>
           </tr>
         </thead>
         <tbody>
-          <tr><td style="padding: 10px; border: 1px solid #ddd;">Declarativo</td><td style="padding: 10px; border: 1px solid #ddd;">Expresar QUÉ queremos, no CÓMO lograrlo</td></tr>
-          <tr><td style="padding: 10px; border: 1px solid #ddd;">Imperativo</td><td style="padding: 10px; border: 1px solid #ddd;">Describir paso a paso cómo hacer algo</td></tr>
-          <tr><td style="padding: 10px; border: 1px solid #ddd;">Renderizado condicional</td><td style="padding: 10px; border: 1px solid #ddd;">Componentes que deciden si renderizar o no</td></tr>
-          <tr><td style="padding: 10px; border: 1px solid #ddd;">Retornar <code>null</code></td><td style="padding: 10px; border: 1px solid #ddd;">Patrón para "no renderizar nada"</td></tr>
-          <tr><td style="padding: 10px; border: 1px solid #ddd;">Composición</td><td style="padding: 10px; border: 1px solid #ddd;">Crear componentes que usan otros componentes</td></tr>
-          <tr><td style="padding: 10px; border: 1px solid #ddd;">Props con renaming</td><td style="padding: 10px; border: 1px solid #ddd;"><code>component: Component</code> para usar mayúsculas</td></tr>
-          <tr><td style="padding: 10px; border: 1px solid #ddd;">Reutilización de hooks</td><td style="padding: 10px; border: 1px solid #ddd;"><code>useRouter()</code> usado en múltiples componentes</td></tr>
+          <tr><td>Declarativo</td><td>Expresar QUÉ queremos, no CÓMO lograrlo</td></tr>
+          <tr><td>Imperativo</td><td>Describir paso a paso cómo hacer algo</td></tr>
+          <tr><td>Renderizado condicional</td><td>Componentes que deciden si renderizar o no</td></tr>
+          <tr><td>Retornar <code>null</code></td><td>Patrón para "no renderizar nada"</td></tr>
+          <tr><td>Composición</td><td>Crear componentes que usan otros componentes</td></tr>
+          <tr><td>Props con renaming</td><td><code>component: Component</code> para usar mayúsculas</td></tr>
+          <tr><td>Reutilización de hooks</td><td><code>useRouter()</code> usado en múltiples componentes</td></tr>
         </tbody>
       </table>
 
@@ -305,7 +305,7 @@ Resultado: solo se renderiza &lt;Search /&gt;</code></pre>
         <li><strong>React Router:</strong> migrar a la librería oficial</li>
       </ul>
 
-      <p  class="callout-warning"style="margin-top: 15px">
+      <p  class="callout-warning">
         💡 <strong>Recordá:</strong> en producción siempre usá React Router o una librería similar.
         Pero entender cómo funciona internamente te hace mejor desarrollador.
       </p>
@@ -313,13 +313,13 @@ Resultado: solo se renderiza &lt;Search /&gt;</code></pre>
     </div>
   </article>
 
-  <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; text-align: center;">
-    <strong style="color: white; font-size: 1.1em; display: block; margin-bottom: 15px;">📚 ¿Querés profundizar?</strong>
-    <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
-      <a href="https://www.jscamp.dev/introduccion-a-react/componente-route-declarativo" target="_blank" style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+  <div class="resource-box">
+    <strong class="resource-box__title">📚 ¿Querés profundizar?</strong>
+    <div class="resource-box__links">
+      <a href="https://www.jscamp.dev/introduccion-a-react/componente-route-declarativo" target="_blank" class="resource-box__link" rel="noreferrer noopener">
         📖 Leé sobre Componente Route Declarativo en JSCamp →
       </a>
-      <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/69e529c3-2a4c-83eb-9a01-ff245214ef2c" target="_blank" style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+      <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/69e529c3-2a4c-83eb-9a01-ff245214ef2c" target="_blank" class="resource-box__link" rel="noreferrer noopener">
         💬 Practicá en ChatGPT →
       </a>
     </div>
