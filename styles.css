@@ -73,7 +73,8 @@ body {
 h1,
 h2,
 h3 {
-  color: var(--heading-color);
+  font-family: "JetBrains Mono", monospace;
+  color: var(--text-heading);
   line-height: var(--lh-tight);
   font-weight: 700;
   margin: 1.5rem 0 0.75rem;
@@ -81,7 +82,7 @@ h3 {
 
 h1 {
   font-size: var(--fs-h1);
-  margin-top: 2rem;
+  margin-top: 0;
 }
 
 h2 {
@@ -95,6 +96,7 @@ h3 {
 
 p {
   margin: 0 0 1rem;
+  color: var(--text-primary);
 }
 
 /* ==========================================
@@ -168,13 +170,23 @@ header h1 {
 }
 
 /* ==========================================
+   CONTENT AREA
+   ========================================== */
+
+#content {
+  min-height: 300px;
+  padding: 2rem 3rem;
+  max-width: 860px;
+}
+
+/* ==========================================
    LINKS
    ========================================== */
 
 a {
-  color: var(--primary-color);
+  color: var(--accent);
   text-decoration: none;
-  transition: color 0.3s ease;
+  transition: color 0.2s ease;
 }
 
 a:hover {
@@ -376,10 +388,6 @@ nav a.active {
 /* ==========================================
    TABS
    ========================================== */
-
-#content {
-  min-height: 300px;
-}
 
 .tab-buttons {
   margin-bottom: 1.5rem;
