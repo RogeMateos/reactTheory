@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const languageToggle = document.getElementById("languageToggle");
   const title = document.getElementById("title");
 
-  let currentLanguage = "en";
+  let currentLanguage = localStorage.getItem("language") || "en";
 
   // Menu toggle functionality
   menuToggle.addEventListener("click", () => {
@@ -47,12 +47,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   languageToggle.addEventListener("click", () => {
     currentLanguage = currentLanguage === "en" ? "es" : "en";
+    localStorage.setItem("language", currentLanguage);
     languageToggle.textContent =
       currentLanguage === "en" ? "Español" : "English";
     updateLanguage();
   });
 
   function loadContent(section) {
+    content.innerHTML = '<div class="loading-state">Loading...</div>';
     const lang = currentLanguage === "es" ? "es" : "en";
     const hooks = ["useState", "useEffect", "useEffect2midu", "useEffect3midu", "useContext", "useRef", "useReducer", "globalSwitch", "useId", "customHooks", "customHooks2"];
     const fundamentals = ["componentes", "componentesVsFunciones", "jobCard", "props", "modulos", "paginacion", "callbacks", "listas", "paginacion-final", "css-modules", "eventos", "renderizado", "spa", "vite-bundlers", "vite-install", "fast-refresh", "bareBonesMethod", "lifeCicle", "formularios", "filtros-routing", "formulario-navegacion", "componente-route", "llamada-api", "filtros-api", "paginacion-api", "arreglando-paginacion", "sincronizacion-url"];
@@ -92,8 +94,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function updateLanguage() {
-    title.textContent =
-      currentLanguage === "en" ? "React Theory" : "Teoría de React";
+    title.innerHTML =
+      currentLanguage === "en" ? "&lt; React Theory /&gt;" : "&lt; Teoría de React /&gt;";
+    languageToggle.textContent =
+      currentLanguage === "en" ? "Español" : "English";
 
     nav.querySelectorAll("a, .accordion-header").forEach((element) => {
       const key =
@@ -144,9 +148,8 @@ document.addEventListener("DOMContentLoaded", () => {
         en: "Router Browser Navigation",
         es: "Navegación del Enrutador",
       },
-      useContext: { en: "use Context", es: "usar Contexto" },
-      useState: { en: "Use State", es: "Usar Estado" },
-      useEffect: { en: "Use Effect", es: "Usar Efecto" },
+      useContext: { en: "useContext", es: "useContext" },
+      useEffect: { en: "useEffect", es: "useEffect" },
       fundamentals: { en: "Fundamentals", es: "Fundamentos" },
       globalStateAndRouter: { en: "Global State & React Router", es: "Estado Global y React Router" },
       "react-router": { en: "What is React Router?", es: "¿Qué es React Router?" },
@@ -186,17 +189,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
           const code = textarea.value;
 
-          // Create a new function to run the code in its own scope
           const runCode = new Function(
             "console",
+            "outputEl",
             `
             const log = console.log;
             console.log = function(...args) {
               log.apply(console, args);
-              const msg = args.map(arg => 
-                typeof arg === 'object' ? JSON.stringify(arg, null, 2) : arg
+              const msg = args.map(arg =>
+                typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
               ).join(' ');
-              document.querySelector('#${output.id}').innerHTML += msg + '<br>';
+              const line = document.createElement('span');
+              line.textContent = msg;
+              outputEl.appendChild(line);
+              outputEl.appendChild(document.createElement('br'));
             };
             try {
               ${code}
@@ -206,8 +212,7 @@ document.addEventListener("DOMContentLoaded", () => {
           `
           );
 
-          // Run the code
-          runCode(console);
+          runCode(console, output);
         });
       }
     });
