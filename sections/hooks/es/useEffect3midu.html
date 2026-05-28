@@ -23,7 +23,7 @@
   ¿Solo quiero inicializar un estado?        → NO, usá el valor inicial de useState
   ¿Necesito comunicarme con algo externo?    → SÍ, useEffect es correcto</code></pre>
 
-      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+      <p  class="callout-info">
         <strong>💡 La regla de oro:</strong> si podés hacerlo sin useEffect, no uses useEffect. Cada useEffect
         innecesario agrega complejidad y posibles bugs.
       </p>
@@ -62,7 +62,7 @@ Desmontar componente (o dep cambia)
   → cleanup corre → removeEventListener / clearInterval / ws.close()
   → (si dep cambió) → useEffect corre con nuevos valores</code></pre>
 
-      <p style="padding: 15px; background: #fff3cd; border-left: 4px solid #ff9800; border-radius: 4px;">
+      <p  class="callout-warning">
         <strong>⚠️ Atención:</strong> si creás un event listener, interval o WebSocket dentro de useEffect y
         NO limpiás, estás creando un memory leak. El navegador sigue ejecutando código para un componente
         que ya no existe.
@@ -96,7 +96,7 @@ useEffect(() => { /* actualizar el título */ }, [user])</code></pre>
         <li><strong>TanStack Query / SWR</strong>: manejan caché, estados de carga, manejo de errores y refetch — casi no necesitás useEffect para fetching de datos.</li>
       </ul>
 
-      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+      <p  class="callout-info">
         <strong>💡 Dato profesional:</strong> para fetching de datos en apps reales, TanStack Query o SWR
         son la elección profesional. useEffect para fetching es educativo — te enseña los fundamentos, pero
         en producción hay mejores herramientas.
@@ -243,7 +243,7 @@ function WindowSize() {
   return &lt;div&gt;Contador cada {delay}ms: {count}&lt;/div&gt;
 }</code></pre>
 
-      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+      <p  class="callout-info">
         <strong>💡 Tip:</strong> cuando <code>delay</code> cambia: (1) corre el cleanup del efecto anterior
         → (2) corre el efecto nuevo. El componente nunca tiene dos intervals al mismo tiempo.
       </p>

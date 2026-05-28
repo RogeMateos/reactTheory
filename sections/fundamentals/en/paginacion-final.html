@@ -33,7 +33,7 @@ Now — data in the parent:
    ├─→ JobListings (just renders)
    └─→ Pagination (navigates)</code></pre>
 
-      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+      <p  class="callout-info">
         <strong>💡 React principle:</strong> Data should live in the parent component that
         needs to manipulate it. Children only display what they receive.
       </p>
@@ -83,7 +83,7 @@ arr.slice(2, 4)   // [2, 3]
 
 console.log(arr)  // [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] ← unchanged</code></pre>
 
-      <p style="padding: 15px; background: #fce4ec; border-left: 4px solid #e53935; border-radius: 4px;">
+      <p  class="callout-danger">
         <strong>⚠️ Classic trap — <code>splice()</code> mutates the original:</strong><br/><br/>
         <code>slice()</code> → creates a copy, doesn't touch the original ✅<br/>
         <code>splice()</code> → modifies the original ❌ never in React
@@ -329,7 +329,7 @@ function App() {
 🔄 Full flow           — click → setCurrentPage → re-render → new slice
 ⚡ Optimization        — only render the items we need</code></pre>
 
-      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+      <p  class="callout-info">
         <strong>💡 Next class:</strong> More advanced React concepts to build
         more complex applications.
       </p>

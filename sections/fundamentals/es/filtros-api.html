@@ -91,7 +91,7 @@ if (filters.experienceLevel) params.append('level',    filters.experienceLevel)
 
 const url = `https://jscamp-api.vercel.app/api/jobs?${params.toString()}`</code></pre>
 
-      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+      <p  class="callout-info">
         <strong>Ventaja clave:</strong> si no hay ningún filtro activo, <code>params.toString()</code>
         devuelve una cadena vacía y la URL queda con un <code>?</code> al final, lo cual funciona perfectamente.
       </p>
@@ -311,7 +311,7 @@ useEffect(() => {
         esa variable debería estar en las dependencias.
       </p>
 
-      <p style="padding: 15px; background: #fdecea; border-left: 4px solid #f44336; border-radius: 4px;">
+      <p  class="callout-danger">
         <strong>Regla:</strong> Si una variable se usa dentro del <code>useEffect</code>,
         tiene que estar en el array de dependencias. Sin excepciones.
       </p>

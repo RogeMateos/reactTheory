@@ -33,7 +33,7 @@ Ahora — datos en el padre:
    ├─→ JobListings (solo renderiza)
    └─→ Pagination (navega)</code></pre>
 
-      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+      <p  class="callout-info">
         <strong>💡 Principio de React:</strong> Los datos deben vivir en el componente padre que
         necesita manipularlos. Los hijos solo muestran lo que reciben.
       </p>
@@ -83,7 +83,7 @@ arr.slice(2, 4)   // [2, 3]
 
 console.log(arr)  // [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] ← no cambió</code></pre>
 
-      <p style="padding: 15px; background: #fce4ec; border-left: 4px solid #e53935; border-radius: 4px;">
+      <p  class="callout-danger">
         <strong>⚠️ Trampa clásica — <code>splice()</code> muta el original:</strong><br/><br/>
         <code>slice()</code> → crea copia, no toca el original ✅<br/>
         <code>splice()</code> → modifica el original ❌ nunca en React
@@ -329,7 +329,7 @@ function App() {
 🔄 Flujo completo     — click → setCurrentPage → re-render → nuevo slice
 ⚡ Optimización       — solo renderizamos los ítems necesarios</code></pre>
 
-      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+      <p  class="callout-info">
         <strong>💡 Próxima clase:</strong> Conceptos más avanzados de React para construir
         aplicaciones más complejas.
       </p>

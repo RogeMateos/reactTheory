@@ -111,7 +111,7 @@ function JobSearch() {
   const [total, setTotal] = useState(0)
 }</code></pre>
 
-      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+      <p  class="callout-info">
         <strong>¿Por qué <code>loading</code> empieza en <code>true</code>?</strong>
         Porque antes de que el componente se monte, ya sabemos que vamos a cargar datos.
         Arrancar en <code>true</code> evita mostrar una pantalla vacía sin explicación al usuario.
@@ -211,7 +211,7 @@ function JobSearch() {
   return &lt;JobListing jobs={jobs} total={total} /&gt;
 }</code></pre>
 
-      <p style="padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;">
+      <p  class="callout-warning">
         <strong>¿Por qué no usar el callback de useEffect como async directamente?</strong><br />
         Porque useEffect espera que su callback retorne <em>undefined</em> o una función de cleanup.
         Una función <code>async</code> retorna una Promise, lo que rompe el contrato de useEffect.
@@ -351,7 +351,7 @@ jobs.map(job => ...) // TypeError: jobs.map is not a function</code></pre>
 setJobs(json.data)   // solo el array
 setTotal(json.total) // el total por separado</code></pre>
 
-      <p style="padding: 15px; background: #fdecea; border-left: 4px solid #f44336; border-radius: 4px;">
+      <p  class="callout-danger">
         <strong>Regla de oro:</strong> Antes de hacer <code>setJobs(x)</code>, preguntate:
         "¿<code>x</code> es un array?" Si no lo es, navegá hasta el array dentro del objeto
         primero.

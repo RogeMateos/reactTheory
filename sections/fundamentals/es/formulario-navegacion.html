@@ -103,7 +103,7 @@ function Home() {
   console.log('Buscando:', searchTerm)
 }</code></pre>
 
-      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+      <p  class="callout-info">
         <strong>Importante:</strong> el input necesita un atributo <code>name</code> para que
         FormData pueda identificarlo: <code>&lt;input name="search" /&gt;</code>
       </p>
@@ -193,7 +193,7 @@ window.history.pushState({}, '', targetUrl)</code></pre>
         El hook se encarga de actualizar la URL <strong>y</strong> el estado → re-render automático.
       </p>
 
-      <p style="padding: 15px; background: #e8f5e9; border-left: 4px solid #4caf50; border-radius: 4px;">
+      <p  class="callout-success">
         <strong>Ventaja:</strong> separación de responsabilidades. El componente solo se preocupa por
         su UI; la lógica del router vive en un solo lugar.
       </p>

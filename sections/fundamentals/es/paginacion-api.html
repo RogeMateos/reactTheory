@@ -115,7 +115,7 @@ const totalPages = Math.ceil(jobs.length / RESULTS_PER_PAGE)
 const totalPages = Math.ceil(total / RESULTS_PER_PAGE)
 // → Math.ceil(143 / 10) = 15 páginas</code></pre>
 
-      <p style="padding: 15px; background: #fdecea; border-left: 4px solid #f44336; border-radius: 4px;">
+      <p  class="callout-danger">
         <strong>Regla:</strong> <code>jobs.length</code> es el número de resultados de la página actual.
         El <code>total</code> que devuelve la API es el número real de registros en la base de datos.
         Son dos cosas completamente distintas.

@@ -45,7 +45,7 @@ WITHOUT BUNDLER: 10+ separate HTTP requests
 WITH BUNDLER: 1-3 optimized files</code></pre>
 
     <h3>✅ Solution with bundler</h3>
-    <pre style="background: #f4f4f4; padding: 15px; border-radius: 8px; font-family: monospace;">
+    <pre  class="callout-code"style="font-family: monospace">
       100+ files (src/)
             ⬇️
       [BUNDLER] 🔄
@@ -134,7 +134,7 @@ npm create vite@latest my-app -- --template react
       When you edit a component, Vite updates ONLY that component without reloading the entire page.
       React state remains intact.
     </p>
-    <pre style="background: #f4f4f4; padding: 15px; border-radius: 8px; font-family: monospace;">
+    <pre  class="callout-code"style="font-family: monospace">
       You edit Counter.jsx
             ⬇️
       Vite detects the change
@@ -166,7 +166,7 @@ import Button from './Button.jsx'     // Components</code></pre>
     <h2>🏗️ How Vite Works</h2>
 
     <h3>🔍 Architecture in DEVELOPMENT</h3>
-    <pre style="background: #f4f4f4; padding: 15px; border-radius: 8px; font-family: monospace;">
+    <pre  class="callout-code"style="font-family: monospace">
       Browser requests: /src/App.jsx
             ⬇️
       Vite intercepts the request
@@ -181,7 +181,7 @@ import Button from './Button.jsx'     // Components</code></pre>
     </pre>
 
     <h3>📦 Architecture in PRODUCTION</h3>
-    <pre style="background: #f4f4f4; padding: 15px; border-radius: 8px; font-family: monospace;">
+    <pre  class="callout-code"style="font-family: monospace">
       npm run build
             ⬇️
       Rollup analyzes entire project
@@ -267,7 +267,7 @@ export default defineConfig({
       <li>🎯 <strong>esbuild</strong> - Transforms JSX 10-100x faster than Babel (written in Go)</li>
     </ul>
 
-    <div style="margin-top: 30px; padding: 15px; background: #e8f4f8; border-radius: 8px;">
+    <div  class="callout-info"style="margin-top: 30px">
       <p><strong>💡 Tip:</strong> In interviews, mention that Vite does NOT bundle in development (uses native ES Modules),
       but DOES bundle in production with Rollup. This shows you understand the architecture.</p>
     </div>
@@ -466,7 +466,7 @@ function Avatar({ userId }) {
     <h2>🏋️ Practical Exercises</h2>
 
     <h3>📋 Exercise 1: Create your first Vite project</h3>
-    <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+    <div  class="callout-code"style="margin-bottom: 20px">
       <h4>Goal:</h4>
       <p>Create a React project with Vite and familiarize yourself with the structure.</p>
 
@@ -488,7 +488,7 @@ function Avatar({ userId }) {
     </div>
 
     <h3>🔥 Exercise 2: Test Fast Refresh (HMR)</h3>
-    <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+    <div  class="callout-code"style="margin-bottom: 20px">
       <h4>Goal:</h4>
       <p>Experience hot reloading without losing state.</p>
 
@@ -513,7 +513,7 @@ function Avatar({ userId }) {
     </div>
 
     <h3>📦 Exercise 3: Analyze the production bundle</h3>
-    <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+    <div  class="callout-code"style="margin-bottom: 20px">
       <h4>Goal:</h4>
       <p>See how Vite optimizes your code for production.</p>
 
@@ -536,7 +536,7 @@ function Avatar({ userId }) {
     </div>
 
     <h3>⚡ Exercise 4: Compare with CDN approach</h3>
-    <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+    <div  class="callout-code"style="margin-bottom: 20px">
       <h4>Goal:</h4>
       <p>Understand why Vite is better than importing React from CDN.</p>
 
@@ -587,7 +587,7 @@ function Avatar({ userId }) {
     </div>
 
     <h3>🎨 Exercise 5: Import CSS and assets</h3>
-    <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+    <div  class="callout-code"style="margin-bottom: 20px">
       <h4>Goal:</h4>
       <p>Learn to import different types of files in Vite.</p>
 
@@ -646,7 +646,7 @@ function App() {
     </div>
 
     <h3>🔌 Exercise 6: Configure a plugin</h3>
-    <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+    <div  class="callout-code"style="margin-bottom: 20px">
       <h4>Goal:</h4>
       <p>Customize Vite with a plugin to change port and open browser automatically.</p>
 
@@ -679,7 +679,7 @@ export default defineConfig({
     </div>
 
     <h3>🎯 Final Mini Challenge</h3>
-    <div style="background: #fff3cd; padding: 15px; border-radius: 8px; border: 2px solid #ffc107;">
+    <div  class="callout-warning">
       <h4>Create a mini counter app with:</h4>
       <ul>
         <li>A <code>Counter</code> component with useState</li>

@@ -49,7 +49,7 @@ function Greeting({ name }) {
 JobCard (child)
   └─ uses: {title} and {company} to render</code></pre>
 
-      <p style="padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;">
+      <p  class="callout-warning">
         <strong>⚠️ Fundamental rule:</strong> A child component can <strong>never</strong> pass props to its parent directly.
         For that, you use callbacks — which we'll cover later.
       </p>
@@ -114,7 +114,7 @@ function JobCard({ title, company }) {
       <pre><code class="language-jsx">{isRemote &amp;&amp; &lt;span&gt;🏠 Remote&lt;/span&gt;}
 {isFeatured &amp;&amp; &lt;span&gt;⭐ Featured&lt;/span&gt;}</code></pre>
 
-      <p style="padding: 15px; background: #fce4ec; border-left: 4px solid #e53935; border-radius: 4px;">
+      <p  class="callout-danger">
         <strong>⚠️ Classic trap with <code>&&</code>:</strong> if the value is not a boolean but a number,
         React renders the number <code>0</code> on screen.<br/><br/>
         <code>{results.length &amp;&amp; &lt;span&gt;Results&lt;/span&gt;}</code><br/>
@@ -230,7 +230,7 @@ function JobCard({ job: { title, company, location } }) {
   )
 }</code></pre>
 
-      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+      <p  class="callout-info">
         <strong>💡 Recommendation:</strong> Option 1 is more readable, especially when the object has many properties.
       </p>
 
@@ -411,7 +411,7 @@ export default JobCard</code></pre>
 ❓ Conditional   — ternary is safer than &&
 🧩 Fragments     — &lt;&gt;&lt;/&gt; to group without polluting the DOM</code></pre>
 
-      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+      <p  class="callout-info">
         <strong>💡 Next class:</strong> Rendering lists with <code>.map()</code> and importing data
         from a JSON file to automatically create multiple JobCards.
       </p>

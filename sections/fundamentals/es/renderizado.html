@@ -88,7 +88,7 @@ Botón ahora muestra: "Clicks: 1"</code></pre>
 
       <h3>3️⃣ ¿Por Qué el State No Se Pierde?</h3>
       <p>Muchos desarrolladores se preguntan:</p>
-      <p style="padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;">
+      <p  class="callout-warning">
         <strong>"Si React vuelve a ejecutar la función del componente, ¿por qué el state no se resetea?"</strong>
       </p>
 
@@ -130,7 +130,7 @@ Botón ahora muestra: "Clicks: 1"</code></pre>
    ├─ React encuentra state existente: count = 1
    └─ Retorna: [1, setCount]</code></pre>
 
-      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+      <p  class="callout-info">
         <strong>💡 Clave:</strong> React mantiene el state entre renders. No se pierde porque no está dentro de tu función, está en la memoria interna de React.
       </p>
 
@@ -399,7 +399,7 @@ React re-renderiza UNA vez
        ↓
 console.log ejecuta UNA vez</code></pre>
 
-      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+      <p  class="callout-info">
         <strong>💡 Optimización automática:</strong> React agrupa automáticamente múltiples setState en un solo re-render para mejor rendimiento.
       </p>
 
@@ -455,7 +455,7 @@ console.log ejecuta UNA vez</code></pre>
 // Porque clicks NO es state
 // React no sabe que cambió</code></pre>
 
-      <p style="padding: 15px; background: #ffe7e7; border-left: 4px solid #ff6b6b; border-radius: 4px;">
+      <p  class="callout-danger">
         <strong>⚠️ Regla importante:</strong> Solo los cambios en STATE y PROPS causan re-renderizado. Variables locales no.
       </p>
 
@@ -622,7 +622,7 @@ function Counter() {
 
       <h3>1️⃣3️⃣ Pregunta de Entrevista Típica</h3>
 
-      <p style="padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;">
+      <p  class="callout-warning">
         <strong>❓ "¿Por qué React usa Virtual DOM?"</strong>
       </p>
 
@@ -644,7 +644,7 @@ function Counter() {
       </p>
 
       <h3>🎯 Próximos Pasos</h3>
-      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+      <p  class="callout-info">
         Ahora que entiendes cómo React renderiza, el siguiente paso es aprender sobre
         <strong>useEffect</strong>, que te permite ejecutar código después de que el renderizado termine.
       </p>

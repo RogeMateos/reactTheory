@@ -503,6 +503,60 @@ table tr:hover {
 }
 
 /* ==========================================
+   CALLOUT BOXES
+   ========================================== */
+
+.callout-warning,
+.callout-danger,
+.callout-success,
+.callout-info,
+.callout-neutral,
+.callout-code {
+  padding: 1rem 1.25rem;
+  border-radius: 6px;
+  margin: 1rem 0;
+  border-left: 4px solid;
+}
+
+.callout-warning {
+  background: rgba(255, 193, 7, 0.1);
+  border-left-color: #ffc107;
+  color: var(--text-primary);
+}
+
+.callout-danger {
+  background: rgba(244, 67, 54, 0.1);
+  border-left-color: #f44336;
+  color: var(--text-primary);
+}
+
+.callout-success {
+  background: rgba(76, 175, 80, 0.1);
+  border-left-color: #4caf50;
+  color: var(--text-primary);
+}
+
+.callout-info {
+  background: rgba(33, 150, 243, 0.1);
+  border-left-color: #2196f3;
+  color: var(--text-primary);
+}
+
+.callout-neutral {
+  background: var(--bg-hover);
+  border-left-color: var(--border);
+  color: var(--text-muted);
+}
+
+.callout-code {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--border);
+  color: var(--text-primary);
+  font-family: "JetBrains Mono", monospace;
+}
+
+/* ==========================================
    RESPONSIVE DESIGN - MOBILE FIRST
    ========================================== */
 

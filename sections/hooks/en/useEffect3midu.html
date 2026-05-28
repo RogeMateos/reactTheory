@@ -23,7 +23,7 @@
   Do I just want to initialize some state?  → NO, use the initial value of useState
   Do I need to communicate with something external? → YES, useEffect is correct</code></pre>
 
-      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+      <p  class="callout-info">
         <strong>💡 The golden rule:</strong> if you can do it without useEffect, don't use useEffect.
         Every unnecessary useEffect adds complexity and potential bugs.
       </p>
@@ -62,7 +62,7 @@ Unmount component (or dep changes)
   → cleanup runs → removeEventListener / clearInterval / ws.close()
   → (if dep changed) → useEffect runs with new values</code></pre>
 
-      <p style="padding: 15px; background: #fff3cd; border-left: 4px solid #ff9800; border-radius: 4px;">
+      <p  class="callout-warning">
         <strong>⚠️ Warning:</strong> if you create an event listener, interval, or WebSocket inside
         useEffect and do NOT clean up, you're creating a memory leak. The browser keeps running code
         for a component that no longer exists.
@@ -96,7 +96,7 @@ useEffect(() => { /* update the title */ }, [user])</code></pre>
         <li><strong>TanStack Query / SWR</strong>: handle cache, loading states, error handling, and refetch — you barely need useEffect for data fetching.</li>
       </ul>
 
-      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+      <p  class="callout-info">
         <strong>💡 Pro tip:</strong> for data fetching in real apps, TanStack Query or SWR are the
         professional choice. useEffect for fetching is educational — it teaches you the fundamentals,
         but in production there are better tools.
@@ -243,7 +243,7 @@ function WindowSize() {
   return &lt;div&gt;Counter every {delay}ms: {count}&lt;/div&gt;
 }</code></pre>
 
-      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+      <p  class="callout-info">
         <strong>💡 Tip:</strong> when <code>delay</code> changes: (1) the previous effect's cleanup runs
         → (2) the new effect runs. The component never has two intervals at the same time.
       </p>

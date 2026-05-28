@@ -23,7 +23,7 @@
         not on each individual field.
       </p>
 
-      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+      <p  class="callout-info">
         <strong>Tip:</strong> When you put <code>onChange</code> on the <code>&lt;form&gt;</code>
         (not on each field), React captures changes from ALL child fields with a single handler.
       </p>
@@ -46,7 +46,7 @@ event.currentTarget = the element that HAS the listener (always the form)</code>
         changed), FormData can only read THAT element, not all the fields.
       </p>
 
-      <p style="padding: 15px; background: #fff3e0; border-left: 4px solid #ff9800; border-radius: 4px;">
+      <p  class="callout-warning">
         <strong>⚠️ Very common mistake:</strong> This is one of the most common errors with forms
         in React. Always use <code>event.currentTarget</code> when the handler is on the
         <code>&lt;form&gt;</code> and you need to read all fields.
@@ -242,7 +242,7 @@ export default App</code></pre>
   )
 }</code></pre>
 
-      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+      <p  class="callout-info">
         <strong>Tip:</strong> Both versions do the same thing. The first (if/else) is more readable
         when there are many routes. The second (&amp;&amp;) is more compact but gets hard to read
         with many conditions.

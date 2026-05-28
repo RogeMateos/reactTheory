@@ -23,7 +23,7 @@
         <code>&lt;form&gt;</code> mismo, no en cada campo individual.
       </p>
 
-      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+      <p  class="callout-info">
         <strong>Tip:</strong> Cuando ponés <code>onChange</code> en el <code>&lt;form&gt;</code>
         (no en cada campo), React captura los cambios de TODOS los campos hijo con un solo handler.
       </p>
@@ -46,7 +46,7 @@ event.currentTarget = el elemento que TIENE el listener (siempre el form)</code>
         FormData solo puede leer ESE elemento, no todos los campos.
       </p>
 
-      <p style="padding: 15px; background: #fff3e0; border-left: 4px solid #ff9800; border-radius: 4px;">
+      <p  class="callout-warning">
         <strong>⚠️ Error muy común:</strong> Este es uno de los errores más comunes con formularios
         en React. Siempre usá <code>event.currentTarget</code> cuando el handler está en el
         <code>&lt;form&gt;</code> y necesitás leer todos los campos.
@@ -243,7 +243,7 @@ export default App</code></pre>
   )
 }</code></pre>
 
-      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+      <p  class="callout-info">
         <strong>Tip:</strong> Ambas versiones hacen lo mismo. La primera (if/else) es más legible
         cuando hay muchas rutas. La segunda (&amp;&amp;) es más compacta pero se vuelve difícil
         de leer con muchas condiciones.

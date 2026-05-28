@@ -50,7 +50,7 @@ const data = new FormData(e.target)
 data.get("location")  → "remote"
 data.get("level")     → "senior"</code></pre>
 
-      <p style="padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+      <p  class="callout-info">
         <strong>¿Por qué evitar un useState por campo?</strong> Con FormData no necesitás sincronizar
         el estado en cada keystroke. Solo leés los valores cuando el usuario hace submit.
         Menos re-renders, código más limpio.

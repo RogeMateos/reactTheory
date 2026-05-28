@@ -83,7 +83,7 @@ useEffect(() => {
         <li>But <code>index.html</code> already has a default <code>&lt;title&gt;</code></li>
       </ul>
 
-      <p style="padding: 15px; background: #fdecea; border-left: 4px solid #f44336; border-radius: 4px;">
+      <p  class="callout-danger">
         <strong>Official React warning:</strong> You should only render a single
         <code>&lt;title&gt;</code> at a time. If more than one component renders a
         <code>&lt;title&gt;</code> simultaneously, React places all of them in the
@@ -145,7 +145,7 @@ useEffect(() => {
   )
 }</code></pre>
 
-      <p style="padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;">
+      <p  class="callout-warning">
         <strong>Important about interpolation:</strong> Children of <code>&lt;title&gt;</code>
         must be a <em>single string</em>. Use template literals
         (<code>`${jobs.length} jobs`</code>) to produce one string.
