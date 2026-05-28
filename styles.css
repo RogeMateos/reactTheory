@@ -567,6 +567,9 @@ table tr:hover {
 
   .container {
     display: block;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
   }
 
   header {
@@ -575,7 +578,9 @@ table tr:hover {
 
   #content {
     padding: 1.25rem 1rem;
+    width: 100%;
     max-width: 100%;
+    overflow-x: hidden;
   }
 
   .menu-toggle {
@@ -616,6 +621,21 @@ table tr:hover {
   .tab-button {
     padding: 0.375rem 0.75rem;
     font-size: 0.8rem;
+  }
+
+  .state-table,
+  table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+  }
+
+  .state-table td,
+  table td,
+  .state-table th,
+  table th {
+    white-space: normal;
   }
 }
 
