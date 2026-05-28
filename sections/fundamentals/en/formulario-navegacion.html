@@ -11,7 +11,7 @@
   <article id="concepts" class="tab-content active">
     <div class="description">
 
-      <h3>🎯 The goal</h3>
+      <h2>🎯 The goal</h2>
       <p>
         Connect a search form with an SPA router. When the user submits the form, the app
         should navigate to <code>/search</code> with the entered text as a query param —
@@ -20,7 +20,7 @@
 
       <hr />
 
-      <h3>😤 The initial problem</h3>
+      <h2>😤 The initial problem</h2>
       <p>
         We have a form with an input and a search button on the Home page, but it does nothing. We need to:
       </p>
@@ -43,7 +43,7 @@ function Home() {
 
       <hr />
 
-      <h3>⚠️ SVG attributes in JSX — camelCase</h3>
+      <h2>⚠️ SVG attributes in JSX — camelCase</h2>
       <p>
         In HTML, SVG attributes use kebab-case, but in JSX they must be camelCase:
       </p>
@@ -64,7 +64,7 @@ function Home() {
 
       <hr />
 
-      <h3>🛑 Why <code>event.preventDefault()</code>?</h3>
+      <h2>🛑 Why <code>event.preventDefault()</code>?</h2>
       <p>
         In a traditional web app, when you submit a form, the browser:
       </p>
@@ -88,7 +88,7 @@ function Home() {
 
       <hr />
 
-      <h3>📦 FormData — extract values without controlled state</h3>
+      <h2>📦 FormData — extract values without controlled state</h2>
       <p>
         The <code>FormData</code> API lets you read form values directly, without needing
         <code>useState</code> for each field.
@@ -110,7 +110,7 @@ function Home() {
 
       <hr />
 
-      <h3>⚖️ FormData vs useState — when to use each?</h3>
+      <h2>⚖️ FormData vs useState — when to use each?</h2>
 
       <table>
         <thead>
@@ -137,7 +137,7 @@ function Home() {
 
       <hr />
 
-      <h3>🔗 <code>encodeURIComponent</code> — safe characters in the URL</h3>
+      <h2>🔗 <code>encodeURIComponent</code> — safe characters in the URL</h2>
       <p>
         If the user types <em>"React de Dev"</em>, the URL would be broken:
       </p>
@@ -174,7 +174,7 @@ targetUrl += `?text=${encodedTerm}`</code></pre>
 
       <hr />
 
-      <h3>🧩 Reusing <code>navigateTo</code> from the <code>useRouter</code> custom hook</h3>
+      <h2>🧩 Reusing <code>navigateTo</code> from the <code>useRouter</code> custom hook</h2>
 
       <p>If we used <code>window.history.pushState</code> directly:</p>
       <pre><code class="language-jsx">// ❌ Problem: only changes the URL, doesn't re-render the view
@@ -205,7 +205,7 @@ window.history.pushState({}, '', targetUrl)</code></pre>
   <article id="code-examples" class="tab-content">
     <div class="description">
 
-      <h3>Step 1 — Initial submit handler</h3>
+      <h2>Step 1 — Initial submit handler</h2>
       <pre><code class="language-jsx">function Home() {
   const handleSearch = (event) =&gt; {
     event.preventDefault()
@@ -222,7 +222,7 @@ window.history.pushState({}, '', targetUrl)</code></pre>
 
       <hr />
 
-      <h3>Step 2 — Extract the value with FormData</h3>
+      <h2>Step 2 — Extract the value with FormData</h2>
       <pre><code class="language-jsx">const handleSearch = (event) =&gt; {
   event.preventDefault()
 
@@ -234,7 +234,7 @@ window.history.pushState({}, '', targetUrl)</code></pre>
 
       <hr />
 
-      <h3>Step 3 — Build the URL with encodeURIComponent</h3>
+      <h2>Step 3 — Build the URL with encodeURIComponent</h2>
       <pre><code class="language-jsx">const handleSearch = (event) =&gt; {
   event.preventDefault()
 
@@ -253,7 +253,7 @@ window.history.pushState({}, '', targetUrl)</code></pre>
 
       <hr />
 
-      <h3>Step 4 — The useRouter custom hook</h3>
+      <h2>Step 4 — The useRouter custom hook</h2>
       <pre><code class="language-jsx">// hooks/useRouter.js
 import { useState, useEffect } from 'react'
 
@@ -279,7 +279,7 @@ export function useRouter() {
 
       <hr />
 
-      <h3>Step 5 — Full integration in Home</h3>
+      <h2>Step 5 — Full integration in Home</h2>
       <pre><code class="language-jsx">import { useRouter } from './hooks/useRouter'
 
 function Home() {
@@ -329,9 +329,9 @@ export default Home</code></pre>
   <article id="exercises" class="tab-content">
     <div class="description">
 
-      <h3>🧪 Test cases</h3>
+      <h2>🧪 Test cases</h2>
 
-      <h4>Case 1 — Search with text</h4>
+      <h3>Case 1 — Search with text</h3>
       <ol>
         <li>Type "developer" in the input</li>
         <li>Press Enter or click "Search"</li>
@@ -339,21 +339,21 @@ export default Home</code></pre>
         <li>✅ URL updates without reloading</li>
       </ol>
 
-      <h4>Case 2 — Empty search</h4>
+      <h3>Case 2 — Empty search</h3>
       <ol>
         <li>Leave the input empty</li>
         <li>Press "Search"</li>
         <li>✅ Should navigate to <code>/search</code> (no query params)</li>
       </ol>
 
-      <h4>Case 3 — Search with spaces / special characters</h4>
+      <h3>Case 3 — Search with spaces / special characters</h3>
       <ol>
         <li>Type "React de Dev"</li>
         <li>Press "Search"</li>
         <li>✅ Should navigate to <code>/search?text=React%20de%20Dev</code></li>
       </ol>
 
-      <h4>Case 4 — Browser's "Back" button</h4>
+      <h3>Case 4 — Browser's "Back" button</h3>
       <ol>
         <li>Perform a search</li>
         <li>Press the "Back" button</li>
@@ -363,7 +363,7 @@ export default Home</code></pre>
 
       <hr />
 
-      <h3>🔑 Key concepts</h3>
+      <h2>🔑 Key concepts</h2>
       <table>
         <thead>
           <tr>
@@ -384,7 +384,7 @@ export default Home</code></pre>
 
       <hr />
 
-      <h3>🚀 Next steps</h3>
+      <h2>🚀 Next steps</h2>
       <ul>
         <li>Sync search filters with the URL</li>
         <li>Read query params to display filtered results</li>

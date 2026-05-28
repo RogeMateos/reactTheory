@@ -23,7 +23,7 @@
 
     <p>Para solucionar esto, React nos da <strong>estado (state)</strong>.</p>
 
-    <h3>1️⃣ ¿Qué es el estado en React?</h3>
+    <h2>1️⃣ ¿Qué es el estado en React?</h2>
     <p>
       El estado es la <strong>memoria de un componente</strong>.
     </p>
@@ -39,7 +39,7 @@
       <li>Si un modal está abierto</li>
     </ul>
 
-    <h3>2️⃣ Analogía: El interruptor de luz</h3>
+    <h2>2️⃣ Analogía: El interruptor de luz</h2>
     <p>Imagina un interruptor:</p>
 
     <pre><code>apagado  →  encendido</code></pre>
@@ -63,7 +63,7 @@ aplicado = true
   ↓
 React actualiza el botón</code></pre>
 
-    <h3>3️⃣ Problema sin estado</h3>
+    <h2>3️⃣ Problema sin estado</h2>
     <p>Sin estado, un componente no recuerda nada.</p>
 
     <pre><code class="language-jsx">function Boton() {
@@ -73,7 +73,7 @@ React actualiza el botón</code></pre>
     <p>Este botón siempre será igual.</p>
     <p>No puede recordar si hiciste clic.</p>
 
-    <h3>4️⃣ Introduciendo useState</h3>
+    <h2>4️⃣ Introduciendo useState</h2>
     <p>React tiene un Hook para manejar estado:</p>
 
     <p><strong>useState</strong></p>
@@ -97,7 +97,7 @@ React actualiza el botón</code></pre>
       <li>React re-renderiza automáticamente</li>
     </ul>
 
-    <h3>5️⃣ Cómo funciona useState</h3>
+    <h2>5️⃣ Cómo funciona useState</h2>
     <p>La sintaxis:</p>
 
     <pre><code class="language-jsx">const [estado, setEstado] = React.useState(valorInicial)</code></pre>
@@ -120,7 +120,7 @@ setAplicado
 ↓
 función para cambiar el estado</code></pre>
 
-    <h3>6️⃣ ¿Por qué usamos destructuring?</h3>
+    <h2>6️⃣ ¿Por qué usamos destructuring?</h2>
     <p>useState devuelve un array.</p>
 
     <p>Esto:</p>
@@ -135,7 +135,7 @@ const setAplicado = resultado[1]</code></pre>
 
     <p>Mucho más limpio.</p>
 
-    <h3>7️⃣ Ejemplo real: JobCard</h3>
+    <h2>7️⃣ Ejemplo real: JobCard</h2>
     <p>Vamos a mejorar nuestro componente de empleo.</p>
 
     <p>Queremos que el botón:</p>
@@ -145,7 +145,7 @@ const setAplicado = resultado[1]</code></pre>
       <li>Cambie el estilo</li>
     </ul>
 
-    <h4>Componente completo</h4>
+    <h3>Componente completo</h3>
 
     <pre><code class="language-jsx">function JobCard({ titulo, empresa, ubicacion, descripcion }) {
   const [aplicado, setAplicado] = React.useState(false)
@@ -176,7 +176,7 @@ const setAplicado = resultado[1]</code></pre>
   )
 }</code></pre>
 
-    <h3>8️⃣ Flujo completo de React</h3>
+    <h2>8️⃣ Flujo completo de React</h2>
     <p>Cuando el usuario hace clic ocurre esto:</p>
 
     <pre><code>Estado inicial
@@ -197,7 +197,7 @@ La UI cambia automáticamente</code></pre>
     <p>Esto es <strong>React declarativo</strong>.</p>
     <p>No manipulas el DOM manualmente.</p>
 
-    <h3>9️⃣ Usando estado en JSX</h3>
+    <h2>9️⃣ Usando estado en JSX</h2>
     <p>El estado controla tres cosas:</p>
     <ul>
       <li>Estilo</li>
@@ -219,7 +219,7 @@ La UI cambia automáticamente</code></pre>
       <li>clase → is-applied</li>
     </ul>
 
-    <h3>🔟 El operador ternario</h3>
+    <h2>🔟 El operador ternario</h2>
     <p>El operador ternario es como un if corto.</p>
 
     <pre><code>condición ? valorSiTrue : valorSiFalse</code></pre>
@@ -239,9 +239,9 @@ La UI cambia automáticamente</code></pre>
     <p>Pero JSX solo permite expresiones, no if.</p>
     <p>Por eso usamos ternarios.</p>
 
-    <h3>1️⃣1️⃣ Antes vs Ahora</h3>
+    <h2>1️⃣1️⃣ Antes vs Ahora</h2>
 
-    <h4>Antes (JavaScript vanilla)</h4>
+    <h3>Antes (JavaScript vanilla)</h3>
     <p>Manipulábamos el DOM manualmente.</p>
 
     <pre><code class="language-javascript">jobsListingSection.addEventListener('click', function (event) {
@@ -262,7 +262,7 @@ La UI cambia automáticamente</code></pre>
       <li>❌ Propenso a errores</li>
     </ul>
 
-    <h4>Ahora (React)</h4>
+    <h3>Ahora (React)</h3>
 
     <pre><code class="language-jsx">function JobCard() {
   const [aplicado, setAplicado] = React.useState(false)
@@ -285,7 +285,7 @@ La UI cambia automáticamente</code></pre>
       <li>✅ Cada componente tiene su propio estado</li>
     </ul>
 
-    <h3>1️⃣2️⃣ Cada componente tiene su propio estado</h3>
+    <h2>1️⃣2️⃣ Cada componente tiene su propio estado</h2>
     <p>Ejemplo:</p>
 
     <pre><code class="language-jsx">&lt;JobCard titulo="Desarrollador Frontend" /&gt;
@@ -306,28 +306,28 @@ La UI cambia automáticamente</code></pre>
 
     <p>No se afectan entre sí.</p>
 
-    <h3>1️⃣3️⃣ Tipos de estado</h3>
+    <h2>1️⃣3️⃣ Tipos de estado</h2>
     <p>Puedes guardar cualquier tipo en estado.</p>
 
-    <h4>Boolean</h4>
+    <h3>Boolean</h3>
     <pre><code class="language-jsx">const [visible, setVisible] = React.useState(false)</code></pre>
 
-    <h4>Número</h4>
+    <h3>Número</h3>
     <pre><code class="language-jsx">const [count, setCount] = React.useState(0)</code></pre>
 
-    <h4>String</h4>
+    <h3>String</h3>
     <pre><code class="language-jsx">const [nombre, setNombre] = React.useState("")</code></pre>
 
-    <h4>Array</h4>
+    <h3>Array</h3>
     <pre><code class="language-jsx">const [empleos, setEmpleos] = React.useState([])</code></pre>
 
-    <h4>Objeto</h4>
+    <h3>Objeto</h3>
     <pre><code class="language-jsx">const [usuario, setUsuario] = React.useState({
   nombre: "Miguel",
   edad: 25
 })</code></pre>
 
-    <h3>1️⃣4️⃣ Múltiples estados</h3>
+    <h2>1️⃣4️⃣ Múltiples estados</h2>
     <p>Un componente puede tener varios estados.</p>
 
     <pre><code class="language-jsx">function JobCard({ titulo }) {
@@ -356,7 +356,7 @@ La UI cambia automáticamente</code></pre>
 
     <p>Cada estado funciona independientemente.</p>
 
-    <h3>1️⃣5️⃣ Actualizar estado basado en el anterior</h3>
+    <h2>1️⃣5️⃣ Actualizar estado basado en el anterior</h2>
     <p>A veces necesitas usar el valor anterior.</p>
 
     <p>Forma segura:</p>
@@ -381,23 +381,23 @@ La UI cambia automáticamente</code></pre>
 
     <p>Esto evita errores cuando React agrupa actualizaciones.</p>
 
-    <h3>1️⃣6️⃣ Reglas de useState</h3>
+    <h2>1️⃣6️⃣ Reglas de useState</h2>
 
-    <h4>1. Solo en el nivel superior</h4>
+    <h3>1. Solo en el nivel superior</h3>
 
     <p><strong>❌ Incorrecto:</strong></p>
     <pre><code class="language-jsx">if (algo) {
   const [estado, setEstado] = React.useState(false)
 }</code></pre>
 
-    <h4>2. Solo en componentes React</h4>
+    <h3>2. Solo en componentes React</h3>
 
     <p><strong>❌ Incorrecto:</strong></p>
     <pre><code class="language-jsx">function miFuncion() {
   const [estado, setEstado] = React.useState(0)
 }</code></pre>
 
-    <h4>3. Nunca modificar el estado directamente</h4>
+    <h3>3. Nunca modificar el estado directamente</h3>
 
     <p><strong>❌ Incorrecto:</strong></p>
     <pre><code class="language-jsx">aplicado = true</code></pre>
@@ -405,7 +405,7 @@ La UI cambia automáticamente</code></pre>
     <p><strong>✅ Correcto:</strong></p>
     <pre><code class="language-jsx">setAplicado(true)</code></pre>
 
-    <h3>1️⃣7️⃣ Idea clave para entrevistas</h3>
+    <h2>1️⃣7️⃣ Idea clave para entrevistas</h2>
     <p>En entrevistas React esperan escuchar esto:</p>
 
     <p  class="callout-warning">
@@ -421,7 +421,7 @@ React re-renderiza
   ↓
 la UI se actualiza</code></pre>
 
-    <h3>📋 Lo que debes recordar</h3>
+    <h2>📋 Lo que debes recordar</h2>
     <ul>
       <li>Estado = memoria del componente</li>
       <li>Cuando el estado cambia:
@@ -440,9 +440,9 @@ la UI se actualiza</code></pre>
       </li>
     </ul>
 
-    <h3>1️⃣8️⃣ Analogías del Mundo Real para Recordar State</h3>
+    <h2>1️⃣8️⃣ Analogías del Mundo Real para Recordar State</h2>
 
-    <h4>🚦 Analogía 1: El Semáforo</h4>
+    <h3>🚦 Analogía 1: El Semáforo</h3>
     <p><strong>Props (Características Fijas)</strong></p>
     <ul>
       <li>El poste</li>
@@ -467,7 +467,7 @@ rojo → amarillo → verde → rojo
   ↓
 setColor("yellow")</code></pre>
 
-    <h4>🌡️ Analogía 2: El Termómetro</h4>
+    <h3>🌡️ Analogía 2: El Termómetro</h3>
     <p>Analogía perfecta para state numérico.</p>
 
     <p><strong>Props</strong></p>
@@ -489,7 +489,7 @@ React re-renderiza
   ↓
 la pantalla cambia: 20°C → 25°C</code></pre>
 
-    <h4>📝 Analogía 3: El Formulario (Ejemplo Más Real)</h4>
+    <h3>📝 Analogía 3: El Formulario (Ejemplo Más Real)</h3>
     <p><strong>Props</strong></p>
     <ul>
       <li>Texto placeholder</li>
@@ -517,7 +517,7 @@ React re-renderiza
   ↓
 pantalla muestra texto nuevo</code></pre>
 
-    <h3>1️⃣9️⃣ La Ecuación Fundamental de React</h3>
+    <h2>1️⃣9️⃣ La Ecuación Fundamental de React</h2>
     <p  class="callout-danger">
       UI = f(state)
     </p>
@@ -536,7 +536,7 @@ React re-renderiza componente
   ↓
 UI nueva aparece automáticamente</code></pre>
 
-    <h3>2️⃣0️⃣ Modelo Mental: ¿Qué Debería Ser State?</h3>
+    <h2>2️⃣0️⃣ Modelo Mental: ¿Qué Debería Ser State?</h2>
     <p><strong>Regla de oro:</strong> Si cambia con el tiempo, probablemente es state.</p>
 
     <p><strong>Ejemplos de State:</strong></p>
@@ -556,7 +556,7 @@ UI nueva aparece automáticamente</code></pre>
       <li>❌ Datos iniciales (estáticos)</li>
     </ul>
 
-    <h3>🎯 Próximo paso</h3>
+    <h2>🎯 Próximo paso</h2>
     <p  class="callout-info">
       Próximamente exploraremos <strong>6 preguntas trampa sobre useState</strong> que aparecen en entrevistas React senior.<br>
       Muchos desarrolladores fallan en estas, ¡así que entenderlas te dará una gran ventaja!

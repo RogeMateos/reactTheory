@@ -11,7 +11,7 @@
   <article id="concepts" class="tab-content active">
     <div class="description">
 
-      <h3>🆔 El Problema: IDs Duplicados en HTML</h3>
+      <h2>🆔 El Problema: IDs Duplicados en HTML</h2>
       <p>
         En HTML, los IDs deben ser <strong>únicos en toda la página</strong>.
         Son la forma en que un <code>&lt;label&gt;</code> sabe a qué campo pertenece,
@@ -38,7 +38,7 @@ Segundo SearchForm:
 
       <hr />
 
-      <h3>💡 La Solución: Dejar que React Genere los IDs</h3>
+      <h2>💡 La Solución: Dejar que React Genere los IDs</h2>
       <p>
         <code>useId()</code> es un hook de React 18 que genera un ID único automáticamente
         cada vez que se crea una nueva instancia del componente.
@@ -57,7 +57,7 @@ Segundo SearchForm:
 
       <hr />
 
-      <h3>📋 ¿Qué Genera useId() Exactamente?</h3>
+      <h2>📋 ¿Qué Genera useId() Exactamente?</h2>
       <p>
         El formato que genera React es <code>:r0:</code>, <code>:r1:</code>, <code>:r2:</code>, etc.
         Los dos puntos son válidos en HTML5 y el número incrementa automáticamente
@@ -74,7 +74,7 @@ Segundo SearchForm:
 
       <hr />
 
-      <h3>📝 El Evento Submit y preventDefault()</h3>
+      <h2>📝 El Evento Submit y preventDefault()</h2>
       <p>
         Antes de hablar solo de IDs, hay algo igual de importante en los formularios:
         el <strong>evento submit</strong>.
@@ -97,7 +97,7 @@ Con preventDefault():
 
       <hr />
 
-      <h3>🔘 Tipos de Botones en Formularios</h3>
+      <h2>🔘 Tipos de Botones en Formularios</h2>
       <p>
         Un detalle que suele sorprender: dentro de un <code>&lt;form&gt;</code>,
         un <code>&lt;button&gt;</code> sin <code>type</code> es automáticamente
@@ -121,7 +121,7 @@ Con preventDefault():
   <article id="code-examples" class="tab-content">
     <div class="description">
 
-      <h3>📋 Formulario sin useId() — El Problema</h3>
+      <h2>📋 Formulario sin useId() — El Problema</h2>
 
       <pre><code class="language-jsx">// ❌ IDs hardcodeados — si el componente se usa dos veces, se duplican
 export function SearchForm() {
@@ -146,7 +146,7 @@ export function SearchForm() {
 
       <hr />
 
-      <h3>✅ Formulario con useId() + handleSubmit</h3>
+      <h2>✅ Formulario con useId() + handleSubmit</h2>
 
       <pre><code class="language-jsx">import { useId } from 'react'
 
@@ -192,7 +192,7 @@ export function SearchForm() {
 
       <hr />
 
-      <h3>🔍 Lo que React Genera en el DOM</h3>
+      <h2>🔍 Lo que React Genera en el DOM</h2>
 
       <pre><code class="language-jsx">// Si usás el componente dos veces:
 function App() {
@@ -220,9 +220,9 @@ function App() {
 
       <hr />
 
-      <h3>🎯 Casos de Uso de useId()</h3>
+      <h2>🎯 Casos de Uso de useId()</h2>
 
-      <h4>Labels e inputs</h4>
+      <h3>Labels e inputs</h3>
       <pre><code class="language-jsx">function TextField({ label }) {
   const id = useId()
   return (
@@ -233,7 +233,7 @@ function App() {
   )
 }</code></pre>
 
-      <h4>Atributos ARIA</h4>
+      <h3>Atributos ARIA</h3>
       <pre><code class="language-jsx">function Tooltip({ children, tip }) {
   const id = useId()
   return (
@@ -244,7 +244,7 @@ function App() {
   )
 }</code></pre>
 
-      <h4>IDs relacionados con sufijos</h4>
+      <h3>IDs relacionados con sufijos</h3>
       <pre><code class="language-jsx">function FormField({ label }) {
   const baseId = useId()              // ":r0:"
 
@@ -262,7 +262,7 @@ function App() {
 
       <hr />
 
-      <h3>⚖️ useId() vs Alternativas</h3>
+      <h2>⚖️ useId() vs Alternativas</h2>
 
       <pre><code class="language-javascript">// ❌ Math.random() — cambia en cada render, bugs garantizados
 const id = `input-${Math.random()}`
@@ -280,7 +280,7 @@ const id = useId()</code></pre>
   <article id="exercises" class="tab-content">
     <div class="description">
 
-      <h3>📏 Reglas de useId() — Como Todo Hook</h3>
+      <h2>📏 Reglas de useId() — Como Todo Hook</h2>
       <p>
         <code>useId()</code> sigue las mismas reglas que todos los hooks de React:
         debe llamarse en el <strong>nivel superior del componente</strong>.
@@ -320,7 +320,7 @@ items.map((item) =&gt; &lt;div key={useId()}&gt;{item}&lt;/div&gt;)
 
       <hr />
 
-      <h3>💪 Ejercicio: Refactorizar el SearchForm</h3>
+      <h2>💪 Ejercicio: Refactorizar el SearchForm</h2>
       <p>
         Tomá este formulario con IDs hardcodeados y refactorizalo para usar
         <code>useId()</code> y <code>handleSubmit</code>.
@@ -376,7 +376,7 @@ export function SearchForm() {
 
       <hr />
 
-      <h3>✅ Resumen de la Clase</h3>
+      <h2>✅ Resumen de la Clase</h2>
       <pre><code>🆔 useId()           — genera IDs únicos por instancia de componente
 ⛔ e.preventDefault() — cancela la recarga de página en submit
 🔘 type="submit"      — siempre declarar el type del botón

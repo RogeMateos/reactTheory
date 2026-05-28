@@ -11,7 +11,7 @@
   <article id="concepts" class="tab-content active">
     <div class="description">
 
-      <h3>🔎 El problema inicial</h3>
+      <h2>🔎 El problema inicial</h2>
       <p>
         Ya tenemos filtros funcionando con la API, pero la paginación no está integrada.
         El estado existe en el frontend pero la petición nunca lo usa:
@@ -24,7 +24,7 @@
 
       <hr />
 
-      <h3>📐 ¿Cómo funcionan las APIs de paginación?</h3>
+      <h2>📐 ¿Cómo funcionan las APIs de paginación?</h2>
       <p>
         La mayoría de APIs no usan un parámetro <code>page</code>. Usan dos parámetros fundamentales:
         <strong>limit</strong> y <strong>offset</strong>.
@@ -58,7 +58,7 @@
 
       <hr />
 
-      <h3>🧮 La fórmula del offset</h3>
+      <h2>🧮 La fórmula del offset</h2>
       <p>Para calcular el offset a partir del número de página:</p>
 
       <pre><code>offset = (currentPage - 1) * RESULTS_PER_PAGE</code></pre>
@@ -102,7 +102,7 @@
 
       <hr />
 
-      <h3>🐛 Error crítico: total de páginas incorrecto</h3>
+      <h2>🐛 Error crítico: total de páginas incorrecto</h2>
       <p>
         Al calcular el total de páginas, hay un error muy común:
       </p>
@@ -123,7 +123,7 @@ const totalPages = Math.ceil(total / RESULTS_PER_PAGE)
 
       <hr />
 
-      <h3>🔄 Reiniciar paginación al cambiar filtros</h3>
+      <h2>🔄 Reiniciar paginación al cambiar filtros</h2>
       <p>
         Si el usuario está en la página 5 de "JavaScript" y cambia a "Python" (que solo tiene 2 páginas),
         quedarse en la página 5 no tiene sentido. Hay que volver a página 1 al cambiar cualquier filtro:
@@ -141,7 +141,7 @@ useEffect(() => {
   <article id="code-examples" class="tab-content">
     <div class="description">
 
-      <h3>🏗️ useEffect con paginación integrada</h3>
+      <h2>🏗️ useEffect con paginación integrada</h2>
       <p>
         Agregamos <code>limit</code>, <code>offset</code> y <code>currentPage</code> como dependencia:
       </p>
@@ -186,7 +186,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>🔄 Flujo completo con dos useEffect</h3>
+      <h2>🔄 Flujo completo con dos useEffect</h2>
 
       <pre><code class="language-jsx">function JobSearch() {
   const [jobs, setJobs]           = useState([])
@@ -266,7 +266,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>📋 Flujo completo paso a paso</h3>
+      <h2>📋 Flujo completo paso a paso</h2>
 
       <pre><code>1. Usuario escribe "JavaScript"
    └─ textToFilter cambia
@@ -286,7 +286,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>🧩 Componente Pagination reutilizable</h3>
+      <h2>🧩 Componente Pagination reutilizable</h2>
 
       <pre><code class="language-jsx">function Pagination({ currentPage, totalPages, onNext, onPrev, onGoToPage }) {
   return (
@@ -317,7 +317,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>🔍 Verificando en DevTools → Network</h3>
+      <h2>🔍 Verificando en DevTools → Network</h2>
       <p>Al cambiar de página deberías ver peticiones como estas:</p>
 
       <pre><code>Página 1 sin filtros:  /api/jobs?limit=10&offset=0
@@ -344,7 +344,7 @@ Con filtros activos:
   <article id="exercises" class="tab-content">
     <div class="description">
 
-      <h3>🐛 Error 1: loop infinito por objeto como dependencia</h3>
+      <h2>🐛 Error 1: loop infinito por objeto como dependencia</h2>
 
       <pre><code class="language-jsx">// ❌ Peligroso — filters es un objeto nuevo en cada render
 useEffect(() => {
@@ -358,7 +358,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>🐛 Error 2: total de páginas calculado con jobs.length</h3>
+      <h2>🐛 Error 2: total de páginas calculado con jobs.length</h2>
 
       <pre><code class="language-jsx">// ❌ jobs.length siempre es el tamaño de la página actual
 const totalPages = Math.ceil(jobs.length / RESULTS_PER_PAGE)
@@ -370,7 +370,7 @@ const totalPages = Math.ceil(total / RESULTS_PER_PAGE)
 
       <hr />
 
-      <h3>🐛 Error 3: no reiniciar paginación al filtrar</h3>
+      <h2>🐛 Error 3: no reiniciar paginación al filtrar</h2>
 
       <pre><code class="language-jsx">// ❌ El usuario puede quedar en página 10 cuando Python solo tiene 2
 // No hay nada que reinicie currentPage al cambiar filtros
@@ -382,7 +382,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>🐛 Error 4: falta currentPage en las dependencias del fetch</h3>
+      <h2>🐛 Error 4: falta currentPage en las dependencias del fetch</h2>
 
       <pre><code class="language-jsx">// ❌ El fetch no se ejecuta al cambiar de página
 useEffect(() => {
@@ -396,7 +396,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>📋 Tests de verificación</h3>
+      <h2>📋 Tests de verificación</h2>
 
       <pre><code>Test 1 — Navegación básica:
   1. Carga la página
@@ -419,7 +419,7 @@ Test 3 — Total de páginas:
 
       <hr />
 
-      <h3>✅ Buenas prácticas y ❌ qué evitar</h3>
+      <h2>✅ Buenas prácticas y ❌ qué evitar</h2>
 
       <p><strong>✅ Hacer siempre:</strong></p>
       <ul>
@@ -440,7 +440,7 @@ Test 3 — Total de páginas:
 
       <hr />
 
-      <h3>🚀 Próximos pasos</h3>
+      <h2>🚀 Próximos pasos</h2>
       <ul>
         <li><strong>Sincronizar con la URL:</strong> que la página actual se refleje en la URL (ej: <code>?page=3</code>)</li>
         <li><strong>Debouncing:</strong> evitar peticiones en cada tecla al escribir en el buscador</li>

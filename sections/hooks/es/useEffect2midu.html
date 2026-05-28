@@ -11,7 +11,7 @@
   <article id="concepts" class="tab-content active">
     <div class="description">
 
-      <h3>🌊 ¿Qué es un efecto secundario?</h3>
+      <h2>🌊 ¿Qué es un efecto secundario?</h2>
       <p>
         El render de un componente debe ser una función pura: misma entrada → misma salida, sin sorpresas.
         Pero las apps <strong>necesitan</strong> interactuar con el mundo exterior.
@@ -27,7 +27,7 @@
 
       <hr />
 
-      <h3>⏰ ¿Cuándo se ejecuta useEffect?</h3>
+      <h2>⏰ ¿Cuándo se ejecuta useEffect?</h2>
       <p>
         La clave está en el segundo parámetro: el array de dependencias. Hay tres escenarios:
       </p>
@@ -43,7 +43,7 @@
 
       <hr />
 
-      <h3>🔗 El array de dependencias</h3>
+      <h2>🔗 El array de dependencias</h2>
       <p>
         Pensá en el array de dependencias como una "lista de vigilancia".
         React observa esos valores, y si alguno cambia entre renders, vuelve a ejecutar el efecto.
@@ -60,7 +60,7 @@
 
       <hr />
 
-      <h3>♾️ El bucle infinito: el error más común</h3>
+      <h2>♾️ El bucle infinito: el error más común</h2>
       <p>
         ¿Cuándo ocurre? Cuando el efecto <strong>modifica una de sus propias dependencias</strong>. Esto crea un ciclo:
       </p>
@@ -75,7 +75,7 @@
 
       <hr />
 
-      <h3>⚠️ Objetos y arrays como dependencias</h3>
+      <h2>⚠️ Objetos y arrays como dependencias</h2>
       <p>
         Los objetos y arrays se recrean en cada render. React usa <code>===</code> para comparar dependencias:
         un objeto nuevo <strong>nunca</strong> es igual al anterior, aunque tenga el mismo contenido:
@@ -97,7 +97,7 @@ const filters = { tech: 'react' }   ← nuevo objeto, nueva referencia
   <article id="code-examples" class="tab-content">
     <div class="description">
 
-      <h3>1️⃣ Sin dependencias: en cada render</h3>
+      <h2>1️⃣ Sin dependencias: en cada render</h2>
 
       <pre><code class="language-jsx">function App() {
   const [count, setCount] = useState(0)
@@ -117,7 +117,7 @@ const filters = { tech: 'react' }   ← nuevo objeto, nueva referencia
 
       <hr />
 
-      <h3>2️⃣ Array vacío: solo al montar</h3>
+      <h2>2️⃣ Array vacío: solo al montar</h2>
 
       <pre><code class="language-jsx">function App() {
   const [count, setCount] = useState(0)
@@ -139,7 +139,7 @@ const filters = { tech: 'react' }   ← nuevo objeto, nueva referencia
 
       <hr />
 
-      <h3>3️⃣ Con dependencias: cuando cambia algo específico</h3>
+      <h2>3️⃣ Con dependencias: cuando cambia algo específico</h2>
 
       <pre><code class="language-jsx">function App() {
   const [count, setCount] = useState(0)
@@ -162,7 +162,7 @@ const filters = { tech: 'react' }   ← nuevo objeto, nueva referencia
 
       <hr />
 
-      <h3>4️⃣ Ejemplo real: actualizar el título del documento</h3>
+      <h2>4️⃣ Ejemplo real: actualizar el título del documento</h2>
 
       <pre><code class="language-jsx">function App() {
   const [currentPage, setCurrentPage] = useState(1)
@@ -225,7 +225,7 @@ const filters = { tech: 'react' }   ← nuevo objeto, nueva referencia
 
       <hr />
 
-      <h3>5️⃣ Múltiples dependencias</h3>
+      <h2>5️⃣ Múltiples dependencias</h2>
 
       <pre><code class="language-jsx">function JobListings() {
   const [currentPage, setCurrentPage] = useState(1)
@@ -253,7 +253,7 @@ const filters = { tech: 'react' }   ← nuevo objeto, nueva referencia
 
       <hr />
 
-      <h3>📊 Tabla resumen de dependencias</h3>
+      <h2>📊 Tabla resumen de dependencias</h2>
 
       <pre><code>Dependencias            ¿Cuándo corre el efecto?
 ──────────────────────────────────────────────────────
@@ -269,7 +269,7 @@ Sin segundo parámetro   En cada render
   <article id="exercises" class="tab-content">
     <div class="description">
 
-      <h3>🐛 Error 1: bucle infinito</h3>
+      <h2>🐛 Error 1: bucle infinito</h2>
 
       <pre><code class="language-jsx">// ❌ BUCLE INFINITO — el efecto modifica su propia dependencia
 function App() {
@@ -299,7 +299,7 @@ useEffect(() =&gt; {
 
       <hr />
 
-      <h3>🐛 Error 2: dependencia faltante</h3>
+      <h2>🐛 Error 2: dependencia faltante</h2>
 
       <pre><code class="language-jsx">// ❌ textToFilter se usa pero no está en las dependencias
 useEffect(() =&gt; {
@@ -314,7 +314,7 @@ useEffect(() =&gt; {
 
       <hr />
 
-      <h3>🐛 Error 3: objeto como dependencia</h3>
+      <h2>🐛 Error 3: objeto como dependencia</h2>
 
       <pre><code class="language-jsx">// ❌ El objeto se recrea en cada render → el efecto corre en cada render
 const filters = { technology: 'react', location: 'remote' }
@@ -330,7 +330,7 @@ useEffect(() =&gt; {
 
       <hr />
 
-      <h3>💪 Ejercicio</h3>
+      <h2>💪 Ejercicio</h2>
 
       <pre><code>Implementá los siguientes efectos en un componente de búsqueda:
 
@@ -353,7 +353,7 @@ useEffect(() =&gt; {
 
       <hr />
 
-      <h3>✅ Resumen</h3>
+      <h2>✅ Resumen</h2>
 
       <pre><code>Sin deps         →  corre en cada render (cuidado con rendimiento)
 []               →  corre una vez al montar

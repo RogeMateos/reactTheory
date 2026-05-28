@@ -1,35 +1,35 @@
 <section id="useReducer" class="box">
     <h2>useReducer</h2>
     <article>
-      <h3>¿Qué es useReducer?</h3>
+      <h2>¿Qué es useReducer?</h2>
       <p>
         useReducer es una alternativa a useState para gestionar el estado en React. Es útil cuando se trata de lógica de estado compleja, especialmente cuando es necesario actualizar múltiples estados simultáneamente.
         Similar a Redux, useReducer trabaja con una función reductora (reducer) que determina cómo cambia el estado en respuesta a las acciones. Es beneficioso cuando tienes varias acciones que alteran varios estados a la vez, evitando la complejidad de manejar numerosos hooks de useState.
       </p>
   
-      <h3>¿Cómo se diferencia useReducer de useState?</h3>
+      <h2>¿Cómo se diferencia useReducer de useState?</h2>
       <p>
         Ambos se utilizan para gestionar el estado, pero useReducer es más estructurado y permite actualizaciones de estado más complejas.
         Con useState, gestionas cada estado individualmente, mientras que con useReducer puedes gestionar múltiples estados de forma colectiva en un solo objeto, que se actualiza mediante acciones.
       </p>
   
-      <h3>¿Cuándo usar useReducer?</h3>
+      <h2>¿Cuándo usar useReducer?</h2>
       <p>
         - Cuando tienes varios estados que cambian juntos en respuesta a una sola interacción del usuario (por ejemplo, un clic en un botón).<br>
         - Cuando gestionas transiciones de estado más complejas, especialmente aquellas con valores interdependientes.
       </p>
   
-      <h3>¿Cómo implementar useReducer?</h3>
+      <h2>¿Cómo implementar useReducer?</h2>
       <p>
         Comienzas importando useReducer y luego defines un objeto de estado inicial que contiene todos los estados necesarios.
         Definirás una función reductora que maneje la lógica para actualizar el estado según las acciones que se envíen (dispatch).
         Usarás una función de despacho (dispatch) para disparar cambios de estado enviando una acción a la función reductora.
       </p>
   
-      <h3>Código de Ejemplo:</h3>
+      <h2>Código de Ejemplo:</h2>
       <p>Veamos un ejemplo basado en la descripción.</p>
   
-      <h4>Paso 1: Configuración del Estado Inicial</h4>
+      <h3>Paso 1: Configuración del Estado Inicial</h3>
       <p>En <code>useState</code>, podríamos definir el estado de esta forma:</p>
   
       <pre><code class="language-javascript">
@@ -86,7 +86,7 @@
         export default Counter;
       </code></pre>
   
-      <h3>Explicación del Código:</h3>
+      <h2>Explicación del Código:</h2>
       <p>
         El objeto de estado inicial contiene las variables <code>count</code> y <code>showText</code>. La función reductora maneja las actualizaciones del estado según las acciones enviadas, que modifican el conteo o la visibilidad del texto. Cuando se hace clic en el botón, se envían ambas acciones.
       </p>

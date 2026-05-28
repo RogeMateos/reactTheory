@@ -1,35 +1,35 @@
 <section id="useReducer" class="box">
     <h2>useReducer</h2>
     <article>
-      <h3>What is useReducer?</h3>
+      <h2>What is useReducer?</h2>
       <p>
         useReducer is an alternative to useState for managing state in React. It is useful when dealing with complex state logic, especially when multiple states need to be updated simultaneously. 
         Similar to Redux, useReducer works with a reducer function that determines how state changes in response to actions. It is beneficial when you have multiple actions altering multiple states at once, avoiding the complexity of handling numerous useState hooks.
       </p>
   
-      <h3>How useReducer Differs from useState:</h3>
+      <h2>How useReducer Differs from useState:</h2>
       <p>
         Both are used to manage state, but useReducer is more structured and allows for more complex state updates.
         In useState, you manage each state individually, while in useReducer, you can manage multiple states collectively in one object, updated by actions.
       </p>
   
-      <h3>When to Use useReducer:</h3>
+      <h2>When to Use useReducer:</h2>
       <p>
         - When you have several pieces of state that change together in response to a single user interaction (e.g., a button click).<br>
         - When managing more complex state transitions, especially those with interdependent values.
       </p>
   
-      <h3>How to Implement useReducer:</h3>
+      <h2>How to Implement useReducer:</h2>
       <p>
         You start by importing useReducer and then defining an initial state object containing all the necessary pieces of state.
         You define a reducer function that handles the logic for updating the state based on the actions dispatched.
         A dispatch function is used to trigger state changes by passing an action to the reducer.
       </p>
   
-      <h3>Example Code:</h3>
+      <h2>Example Code:</h2>
       <p>Let's go through an example based on the description.</p>
   
-      <h4>Step 1: Setting Up Initial State</h4>
+      <h3>Step 1: Setting Up Initial State</h3>
       <p>In <code>useState</code>, we might define state like this:</p>
   
       <pre><code class="language-javascript">
@@ -86,7 +86,7 @@
         export default Counter;
       </code></pre>
   
-      <h3>Code Explanation:</h3>
+      <h2>Code Explanation:</h2>
       <p>
         The initial state object holds the variables <code>count</code> and <code>showText</code>. The reducer function handles state updates based on actions dispatched, which modify either the count or the visibility of the text. When the button is clicked, both actions are dispatched.
       </p>

@@ -23,7 +23,7 @@
 
     <p>To solve this, React gives us <strong>state (estado)</strong>.</p>
 
-    <h3>1️⃣ What is State in React?</h3>
+    <h2>1️⃣ What is State in React?</h2>
     <p>
       State is the <strong>memory of a component</strong>.
     </p>
@@ -39,7 +39,7 @@
       <li>If a modal is open</li>
     </ul>
 
-    <h3>2️⃣ Analogy: The Light Switch</h3>
+    <h2>2️⃣ Analogy: The Light Switch</h2>
     <p>Imagine a light switch:</p>
 
     <pre><code>off  →  on</code></pre>
@@ -63,7 +63,7 @@ applied = true
   ↓
 React updates the button</code></pre>
 
-    <h3>3️⃣ Problem Without State</h3>
+    <h2>3️⃣ Problem Without State</h2>
     <p>Without state, a component doesn't remember anything.</p>
 
     <pre><code class="language-jsx">function Button() {
@@ -73,7 +73,7 @@ React updates the button</code></pre>
     <p>This button will always be the same.</p>
     <p>It can't remember if you clicked it.</p>
 
-    <h3>4️⃣ Introducing useState</h3>
+    <h2>4️⃣ Introducing useState</h2>
     <p>React has a Hook to handle state:</p>
 
     <p><strong>useState</strong></p>
@@ -97,7 +97,7 @@ React updates the button</code></pre>
       <li>React re-renders automatically</li>
     </ul>
 
-    <h3>5️⃣ How useState Works</h3>
+    <h2>5️⃣ How useState Works</h2>
     <p>The syntax:</p>
 
     <pre><code class="language-jsx">const [state, setState] = React.useState(initialValue)</code></pre>
@@ -120,7 +120,7 @@ setApplied
 ↓
 function to change the state</code></pre>
 
-    <h3>6️⃣ Why Do We Use Destructuring?</h3>
+    <h2>6️⃣ Why Do We Use Destructuring?</h2>
     <p>useState returns an array.</p>
 
     <p>This:</p>
@@ -135,7 +135,7 @@ const setApplied = result[1]</code></pre>
 
     <p>Much cleaner.</p>
 
-    <h3>7️⃣ Real Example: JobCard</h3>
+    <h2>7️⃣ Real Example: JobCard</h2>
     <p>Let's improve our job component.</p>
 
     <p>We want the button to:</p>
@@ -145,7 +145,7 @@ const setApplied = result[1]</code></pre>
       <li>Change style</li>
     </ul>
 
-    <h4>Complete Component</h4>
+    <h3>Complete Component</h3>
 
     <pre><code class="language-jsx">function JobCard({ title, company, location, description }) {
   const [applied, setApplied] = React.useState(false)
@@ -176,7 +176,7 @@ const setApplied = result[1]</code></pre>
   )
 }</code></pre>
 
-    <h3>8️⃣ Complete React Flow</h3>
+    <h2>8️⃣ Complete React Flow</h2>
     <p>When the user clicks, this happens:</p>
 
     <pre><code>Initial state
@@ -197,7 +197,7 @@ The UI changes automatically</code></pre>
     <p>This is <strong>declarative React</strong>.</p>
     <p>You don't manipulate the DOM manually.</p>
 
-    <h3>9️⃣ Using State in JSX</h3>
+    <h2>9️⃣ Using State in JSX</h2>
     <p>State controls three things:</p>
     <ul>
       <li>Style</li>
@@ -219,7 +219,7 @@ The UI changes automatically</code></pre>
       <li>class → is-applied</li>
     </ul>
 
-    <h3>🔟 The Ternary Operator</h3>
+    <h2>🔟 The Ternary Operator</h2>
     <p>The ternary operator is like a short if.</p>
 
     <pre><code>condition ? valueIfTrue : valueIfFalse</code></pre>
@@ -239,9 +239,9 @@ The UI changes automatically</code></pre>
     <p>But JSX only allows expressions, not if statements.</p>
     <p>That's why we use ternary operators.</p>
 
-    <h3>1️⃣1️⃣ Before vs Now</h3>
+    <h2>1️⃣1️⃣ Before vs Now</h2>
 
-    <h4>Before (Vanilla JavaScript)</h4>
+    <h3>Before (Vanilla JavaScript)</h3>
     <p>We manipulated the DOM manually.</p>
 
     <pre><code class="language-javascript">jobsListingSection.addEventListener('click', function (event) {
@@ -262,7 +262,7 @@ The UI changes automatically</code></pre>
       <li>❌ Prone to errors</li>
     </ul>
 
-    <h4>Now (React)</h4>
+    <h3>Now (React)</h3>
 
     <pre><code class="language-jsx">function JobCard() {
   const [applied, setApplied] = React.useState(false)
@@ -285,7 +285,7 @@ The UI changes automatically</code></pre>
       <li>✅ Each component has its own state</li>
     </ul>
 
-    <h3>1️⃣2️⃣ Each Component Has Its Own State</h3>
+    <h2>1️⃣2️⃣ Each Component Has Its Own State</h2>
     <p>Example:</p>
 
     <pre><code class="language-jsx">&lt;JobCard title="Frontend Developer" /&gt;
@@ -306,28 +306,28 @@ The UI changes automatically</code></pre>
 
     <p>They don't affect each other.</p>
 
-    <h3>1️⃣3️⃣ Types of State</h3>
+    <h2>1️⃣3️⃣ Types of State</h2>
     <p>You can store any type in state.</p>
 
-    <h4>Boolean</h4>
+    <h3>Boolean</h3>
     <pre><code class="language-jsx">const [visible, setVisible] = React.useState(false)</code></pre>
 
-    <h4>Number</h4>
+    <h3>Number</h3>
     <pre><code class="language-jsx">const [count, setCount] = React.useState(0)</code></pre>
 
-    <h4>String</h4>
+    <h3>String</h3>
     <pre><code class="language-jsx">const [name, setName] = React.useState("")</code></pre>
 
-    <h4>Array</h4>
+    <h3>Array</h3>
     <pre><code class="language-jsx">const [jobs, setJobs] = React.useState([])</code></pre>
 
-    <h4>Object</h4>
+    <h3>Object</h3>
     <pre><code class="language-jsx">const [user, setUser] = React.useState({
   name: "Miguel",
   age: 25
 })</code></pre>
 
-    <h3>1️⃣4️⃣ Multiple States</h3>
+    <h2>1️⃣4️⃣ Multiple States</h2>
     <p>A component can have several states.</p>
 
     <pre><code class="language-jsx">function JobCard({ title }) {
@@ -356,7 +356,7 @@ The UI changes automatically</code></pre>
 
     <p>Each state works independently.</p>
 
-    <h3>1️⃣5️⃣ Update State Based on Previous Value</h3>
+    <h2>1️⃣5️⃣ Update State Based on Previous Value</h2>
     <p>Sometimes you need to use the previous value.</p>
 
     <p>Safe way:</p>
@@ -381,23 +381,23 @@ The UI changes automatically</code></pre>
 
     <p>This prevents errors when React batches updates.</p>
 
-    <h3>1️⃣6️⃣ Rules of useState</h3>
+    <h2>1️⃣6️⃣ Rules of useState</h2>
 
-    <h4>1. Only at the Top Level</h4>
+    <h3>1. Only at the Top Level</h3>
 
     <p><strong>❌ Incorrect:</strong></p>
     <pre><code class="language-jsx">if (something) {
   const [state, setState] = React.useState(false)
 }</code></pre>
 
-    <h4>2. Only in React Components</h4>
+    <h3>2. Only in React Components</h3>
 
     <p><strong>❌ Incorrect:</strong></p>
     <pre><code class="language-jsx">function myFunction() {
   const [state, setState] = React.useState(0)
 }</code></pre>
 
-    <h4>3. Never Modify State Directly</h4>
+    <h3>3. Never Modify State Directly</h3>
 
     <p><strong>❌ Incorrect:</strong></p>
     <pre><code class="language-jsx">applied = true</code></pre>
@@ -405,7 +405,7 @@ The UI changes automatically</code></pre>
     <p><strong>✅ Correct:</strong></p>
     <pre><code class="language-jsx">setApplied(true)</code></pre>
 
-    <h3>1️⃣7️⃣ Key Idea for Interviews</h3>
+    <h2>1️⃣7️⃣ Key Idea for Interviews</h2>
     <p>In interviews, React experts expect to hear:</p>
 
     <p  class="callout-warning">
@@ -421,7 +421,7 @@ React re-renders
   ↓
 UI updates</code></pre>
 
-    <h3>📋 What You Must Remember</h3>
+    <h2>📋 What You Must Remember</h2>
     <ul>
       <li>State = component's memory</li>
       <li>When state changes:
@@ -440,9 +440,9 @@ UI updates</code></pre>
       </li>
     </ul>
 
-    <h3>1️⃣8️⃣ Real-World Analogies to Remember State</h3>
+    <h2>1️⃣8️⃣ Real-World Analogies to Remember State</h2>
 
-    <h4>🚦 Analogy 1: The Traffic Light</h4>
+    <h3>🚦 Analogy 1: The Traffic Light</h3>
     <p><strong>Props (Fixed Characteristics)</strong></p>
     <ul>
       <li>The pole</li>
@@ -467,7 +467,7 @@ red → yellow → green → red
   ↓
 setColor("yellow")</code></pre>
 
-    <h4>🌡️ Analogy 2: The Thermometer</h4>
+    <h3>🌡️ Analogy 2: The Thermometer</h3>
     <p>Perfect analogy for numeric state.</p>
 
     <p><strong>Props</strong></p>
@@ -489,7 +489,7 @@ React re-renders
   ↓
 display changes: 20°C → 25°C</code></pre>
 
-    <h4>📝 Analogy 3: The Form (Most Real-World Example)</h4>
+    <h3>📝 Analogy 3: The Form (Most Real-World Example)</h3>
     <p><strong>Props</strong></p>
     <ul>
       <li>Placeholder text</li>
@@ -517,7 +517,7 @@ React re-renders
   ↓
 display shows new text</code></pre>
 
-    <h3>1️⃣9️⃣ The Fundamental React Equation</h3>
+    <h2>1️⃣9️⃣ The Fundamental React Equation</h2>
     <p  class="callout-danger">
       UI = f(state)
     </p>
@@ -536,7 +536,7 @@ React re-renders component
   ↓
 new UI appears automatically</code></pre>
 
-    <h3>2️⃣0️⃣ Mental Model: What Should Be State?</h3>
+    <h2>2️⃣0️⃣ Mental Model: What Should Be State?</h2>
     <p><strong>Rule of thumb:</strong> If it changes over time, it's probably state.</p>
 
     <p><strong>Examples of State:</strong></p>
@@ -556,7 +556,7 @@ new UI appears automatically</code></pre>
       <li>❌ Initial data (static)</li>
     </ul>
 
-    <h3>🎯 Next Step</h3>
+    <h2>🎯 Next Step</h2>
     <p  class="callout-info">
       Next, we'll explore <strong>6 trick questions about useState</strong> that appear in senior React interviews.<br>
       Many developers fail these, so understanding them will give you a big advantage!

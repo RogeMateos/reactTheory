@@ -11,7 +11,7 @@
   <article id="concepts" class="tab-content active">
     <div class="description">
 
-      <h3>🔎 The initial problem</h3>
+      <h2>🔎 The initial problem</h2>
       <p>
         The app already makes an HTTP call to the API and the filters update in state correctly.
         But there's a critical problem: <strong>the request doesn't send those filters</strong>.
@@ -30,7 +30,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>🎯 Goal</h3>
+      <h2>🎯 Goal</h2>
       <p>
         When the user types "JavaScript" or changes any filter (technology, type, experience level),
         the app should <strong>re-query the API</strong> sending those filters as query params.
@@ -38,7 +38,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>🔧 How to send filters to the API</h3>
+      <h2>🔧 How to send filters to the API</h2>
       <p>
         The API accepts filters in the URL via query params:
       </p>
@@ -74,7 +74,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>🛠️ URLSearchParams — the web platform standard</h3>
+      <h2>🛠️ URLSearchParams — the web platform standard</h2>
       <p>
         To build query params dynamically, we use <code>URLSearchParams</code>,
         a native browser API. No packages needed.
@@ -97,7 +97,7 @@ const url = `https://jscamp-api.vercel.app/api/jobs?${params.toString()}`</code>
 
       <hr />
 
-      <h3>🐛 First attempt — why it still doesn't work</h3>
+      <h2>🐛 First attempt — why it still doesn't work</h2>
       <p>
         You build the URL with filters but selecting "JavaScript" does nothing. Why?
         Because <code>useEffect</code> has an empty dependency array:
@@ -116,7 +116,7 @@ const url = `https://jscamp-api.vercel.app/api/jobs?${params.toString()}`</code>
 
       <hr />
 
-      <h3>✅ The solution: correct dependencies</h3>
+      <h2>✅ The solution: correct dependencies</h2>
       <p>
         The effect needs to re-run every time a filter changes. For that, list each filter as a dependency:
       </p>
@@ -133,7 +133,7 @@ const url = `https://jscamp-api.vercel.app/api/jobs?${params.toString()}`</code>
   <article id="code-examples" class="tab-content">
     <div class="description">
 
-      <h3>🏗️ Full implementation with filters</h3>
+      <h2>🏗️ Full implementation with filters</h2>
       <p>
         The <code>useEffect</code> builds the URL dynamically with active filters
         and re-runs every time any of them changes:
@@ -164,7 +164,7 @@ const url = `https://jscamp-api.vercel.app/api/jobs?${params.toString()}`</code>
 
       <hr />
 
-      <h3>🔄 What happens when the user changes a filter?</h3>
+      <h2>🔄 What happens when the user changes a filter?</h2>
 
       <pre><code>// Flow with active filters:
 
@@ -188,7 +188,7 @@ const url = `https://jscamp-api.vercel.app/api/jobs?${params.toString()}`</code>
 
       <hr />
 
-      <h3>🚫 Handling the no-results case</h3>
+      <h2>🚫 Handling the no-results case</h2>
       <p>
         When the filter combination finds nothing, you need to give feedback to the user.
         Without this, the screen stays blank with no explanation:
@@ -210,7 +210,7 @@ const url = `https://jscamp-api.vercel.app/api/jobs?${params.toString()}`</code>
 
       <hr />
 
-      <h3>📋 Verification checklist</h3>
+      <h2>📋 Verification checklist</h2>
 
       <pre><code>// Tests that should work:
 
@@ -225,7 +225,7 @@ const url = `https://jscamp-api.vercel.app/api/jobs?${params.toString()}`</code>
 
       <hr />
 
-      <h3>📦 Full component with everything integrated</h3>
+      <h2>📦 Full component with everything integrated</h2>
 
       <pre><code class="language-jsx">function JobSearch({ filters, textToFilter }) {
   const [jobs, setJobs] = useState([])
@@ -282,7 +282,7 @@ const url = `https://jscamp-api.vercel.app/api/jobs?${params.toString()}`</code>
   <article id="exercises" class="tab-content">
     <div class="description">
 
-      <h3>🐛 Classic bug: filter selected but nothing changes</h3>
+      <h2>🐛 Classic bug: filter selected but nothing changes</h2>
       <p>
         The symptom: user selects a filter, the list doesn't update.
         The cause is almost always an empty or incomplete dependency array.
@@ -302,7 +302,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>🐛 Bug: linter warning about missing dependencies</h3>
+      <h2>🐛 Bug: linter warning about missing dependencies</h2>
       <p>
         If you see <em>"React Hook useEffect has missing dependencies: 'filters.technology'"</em>,
         don't silence it with <code>// eslint-disable-next-line</code>. The linter is right —
@@ -316,7 +316,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>🐛 Bug: infinite loop when adding an object as dependency</h3>
+      <h2>🐛 Bug: infinite loop when adding an object as dependency</h2>
       <p>
         If you put the whole <code>filters</code> object as a dependency instead of its properties,
         you can trigger an infinite loop:
@@ -340,7 +340,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>✅ Best practices and ❌ what to avoid</h3>
+      <h2>✅ Best practices and ❌ what to avoid</h2>
 
       <p><strong>✅ Always do:</strong></p>
       <ul>
@@ -361,7 +361,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>🚀 Next steps</h3>
+      <h2>🚀 Next steps</h2>
       <p>With filters integrated, what comes next is:</p>
       <ul>
         <li><strong>Real pagination:</strong> add <code>limit</code> and <code>offset</code> as dependencies too</li>

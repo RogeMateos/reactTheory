@@ -11,7 +11,7 @@
   <article id="concepts" class="tab-content active">
     <div class="description">
 
-      <h3>🏗️ Architecture: Where Should the Data Live?</h3>
+      <h2>🏗️ Architecture: Where Should the Data Live?</h2>
       <p>
         If the data lives inside <code>JobListings</code>, only <code>JobListings</code>
         can use it. To paginate and filter from <code>App</code>, the data must live in <code>App</code>.
@@ -40,7 +40,7 @@ Now — data in the parent:
 
       <hr />
 
-      <h3>🔢 Math.floor() vs Math.round() vs Math.ceil()</h3>
+      <h2>🔢 Math.floor() vs Math.round() vs Math.ceil()</h2>
       <p>All three round numbers, but in different ways:</p>
 
       <pre><code>Number  floor()  round()  ceil()
@@ -55,7 +55,7 @@ Now — data in the parent:
 round()  →  NEAREST        ↔  4.4 → 4,  4.6 → 5
 ceil()   →  always UP      ↑  4.1 → 5</code></pre>
 
-      <h4>Which one for total pages?</h4>
+      <h3>Which one for total pages?</h3>
       <pre><code class="language-javascript">// 23 jobs, 5 per page → 4.6 pages
 
 Math.floor(23 / 5)  // ❌ 4 — we lose the last 3 jobs
@@ -69,7 +69,7 @@ Math.ceil(23 / 5)   // ✅ 5 — always correct: we need 5 pages</code></pre>
 
       <hr />
 
-      <h3>✂️ Array.slice() — Extract Without Mutating</h3>
+      <h2>✂️ Array.slice() — Extract Without Mutating</h2>
       <p>
         <code>slice(start, end)</code> extracts a portion of the array
         <strong>without modifying the original</strong>:
@@ -91,7 +91,7 @@ console.log(arr)  // [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] ← unchanged</code></pre>
 
       <hr />
 
-      <h3>🧮 The Pagination Formula</h3>
+      <h2>🧮 The Pagination Formula</h2>
       <p>To get the items for page <code>N</code> with <code>SIZE</code> items per page:</p>
 
       <pre><code>start = (N - 1) * SIZE
@@ -109,7 +109,7 @@ Page 5:  slice(20, 25)  → items 20-22  (no issue if end > length)</code></pre>
   <article id="code-examples" class="tab-content">
     <div class="description">
 
-      <h3>🏗️ Move the Data to App.jsx</h3>
+      <h2>🏗️ Move the Data to App.jsx</h2>
 
       <pre><code class="language-jsx">// src/components/JobListings.jsx — before
 import jobsData from '../data/jobs.json'  // ❌ data hardcoded here
@@ -133,7 +133,7 @@ export function JobListings({ jobs }) {  // ✅ receives data as prop
 
       <hr />
 
-      <h3>🧩 App.jsx — Full Pagination</h3>
+      <h2>🧩 App.jsx — Full Pagination</h2>
 
       <pre><code class="language-jsx">// src/App.jsx
 import { useState } from 'react'
@@ -179,7 +179,7 @@ export default App</code></pre>
 
       <hr />
 
-      <h3>📊 Visual Table: Formula Per Page</h3>
+      <h2>📊 Visual Table: Formula Per Page</h2>
 
       <pre><code>RESULTS_PER_PAGE = 5, total = 23 jobs
 
@@ -192,7 +192,7 @@ Page  start=(N-1)*5  end=N*5   slice()      Jobs
 
       <hr />
 
-      <h3>🔄 Full Flow: Click → Re-render</h3>
+      <h2>🔄 Full Flow: Click → Re-render</h2>
 
       <pre><code class="language-jsx">// Initial state — page 1
 currentPage = 1
@@ -210,7 +210,7 @@ pagedResults = jobsData.slice(10, 15)  // jobs 11-15
 
       <hr />
 
-      <h3>✨ Improvement: Scroll to Top on Page Change</h3>
+      <h2>✨ Improvement: Scroll to Top on Page Change</h2>
 
       <pre><code class="language-jsx">const handlePageChange = (page) =&gt; {
   setCurrentPage(page)
@@ -219,7 +219,7 @@ pagedResults = jobsData.slice(10, 15)  // jobs 11-15
 
       <hr />
 
-      <h3>📍 Improvement: Show Results Range</h3>
+      <h2>📍 Improvement: Show Results Range</h2>
 
       <pre><code class="language-jsx">const from = (currentPage - 1) * RESULTS_PER_PAGE + 1
 const to   = Math.min(currentPage * RESULTS_PER_PAGE, jobsData.length)
@@ -238,9 +238,9 @@ const to   = Math.min(currentPage * RESULTS_PER_PAGE, jobsData.length)
   <article id="exercises" class="tab-content">
     <div class="description">
 
-      <h3>🐛 Common Errors</h3>
+      <h2>🐛 Common Errors</h2>
 
-      <h4>1. Forgetting to subtract 1 from the start</h4>
+      <h3>1. Forgetting to subtract 1 from the start</h3>
       <pre><code class="language-jsx">// ❌ Page 1 starts at index 5 instead of 0
 const pagedResults = jobsData.slice(
   currentPage * RESULTS_PER_PAGE,          // page 1 → index 5 ❌
@@ -253,12 +253,12 @@ const pagedResults = jobsData.slice(
   currentPage * RESULTS_PER_PAGE
 )</code></pre>
 
-      <h4>2. Using Math.floor() for total pages</h4>
+      <h3>2. Using Math.floor() for total pages</h3>
       <pre><code class="language-javascript">// 23 jobs, 5 per page
 Math.floor(23 / 5)  // ❌ 4 — we lose the last 3 jobs
 Math.ceil(23 / 5)   // ✅ 5 — correct</code></pre>
 
-      <h4>3. Confusing slice() with splice()</h4>
+      <h3>3. Confusing slice() with splice()</h3>
       <pre><code class="language-javascript">const original = [1, 2, 3, 4, 5]
 
 // ✅ slice() — no mutation, returns a copy
@@ -271,7 +271,7 @@ console.log(original) // [1, 4, 5] ← damaged</code></pre>
 
       <hr />
 
-      <h3>💪 Exercise: Implement Full Pagination</h3>
+      <h2>💪 Exercise: Implement Full Pagination</h2>
 
       <pre><code class="language-jsx">// App.jsx — fill in the blanks
 
@@ -310,7 +310,7 @@ function App() {
 
       <hr />
 
-      <h3>🧪 Extra Challenge</h3>
+      <h2>🧪 Extra Challenge</h2>
       <pre><code>1. Add the text "Showing X - Y of Z jobs"
    above the list using the formula shown.
 
@@ -321,7 +321,7 @@ function App() {
 
       <hr />
 
-      <h3>✅ Class Summary</h3>
+      <h2>✅ Class Summary</h2>
       <pre><code>🏗️ Data in App        — parent controls, children render
 🔢 Math.ceil()         — round up for total pages
 ✂️ Array.slice()       — extract portion without mutating

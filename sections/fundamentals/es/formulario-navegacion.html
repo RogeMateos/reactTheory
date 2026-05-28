@@ -11,7 +11,7 @@
   <article id="concepts" class="tab-content active">
     <div class="description">
 
-      <h3>🎯 El objetivo</h3>
+      <h2>🎯 El objetivo</h2>
       <p>
         Conectar un formulario de búsqueda con el router de una SPA. Cuando el usuario envía el formulario,
         la app debe navegar a <code>/search</code> con el texto introducido como query param —
@@ -20,7 +20,7 @@
 
       <hr />
 
-      <h3>😤 El problema inicial</h3>
+      <h2>😤 El problema inicial</h2>
       <p>
         Tenemos un formulario con input y botón de búsqueda en la Home, pero no hace nada. Necesitamos:
       </p>
@@ -43,7 +43,7 @@ function Home() {
 
       <hr />
 
-      <h3>⚠️ Atributos SVG en JSX — camelCase</h3>
+      <h2>⚠️ Atributos SVG en JSX — camelCase</h2>
       <p>
         En HTML los atributos SVG usan kebab-case, pero en JSX tienen que ir en camelCase:
       </p>
@@ -64,7 +64,7 @@ function Home() {
 
       <hr />
 
-      <h3>🛑 ¿Por qué <code>event.preventDefault()</code>?</h3>
+      <h2>🛑 ¿Por qué <code>event.preventDefault()</code>?</h2>
       <p>
         En una web tradicional, al enviar un formulario el navegador:
       </p>
@@ -88,7 +88,7 @@ function Home() {
 
       <hr />
 
-      <h3>📦 FormData — extraer valores sin estado controlado</h3>
+      <h2>📦 FormData — extraer valores sin estado controlado</h2>
       <p>
         La API <code>FormData</code> permite leer los valores de un formulario directamente,
         sin necesidad de <code>useState</code> para cada campo.
@@ -110,7 +110,7 @@ function Home() {
 
       <hr />
 
-      <h3>⚖️ FormData vs useState — ¿cuándo cada uno?</h3>
+      <h2>⚖️ FormData vs useState — ¿cuándo cada uno?</h2>
 
       <table>
         <thead>
@@ -137,7 +137,7 @@ function Home() {
 
       <hr />
 
-      <h3>🔗 <code>encodeURIComponent</code> — caracteres seguros en la URL</h3>
+      <h2>🔗 <code>encodeURIComponent</code> — caracteres seguros en la URL</h2>
       <p>
         Si el usuario escribe <em>"React de Dev"</em>, la URL quedaría rota:
       </p>
@@ -174,7 +174,7 @@ targetUrl += `?text=${encodedTerm}`</code></pre>
 
       <hr />
 
-      <h3>🧩 Reutilizar <code>navigateTo</code> del custom hook <code>useRouter</code></h3>
+      <h2>🧩 Reutilizar <code>navigateTo</code> del custom hook <code>useRouter</code></h2>
 
       <p>Si usáramos <code>window.history.pushState</code> directamente:</p>
       <pre><code class="language-jsx">// ❌ Problema: solo cambia la URL, no renderiza la vista
@@ -205,7 +205,7 @@ window.history.pushState({}, '', targetUrl)</code></pre>
   <article id="code-examples" class="tab-content">
     <div class="description">
 
-      <h3>Paso 1 — Manejador inicial del submit</h3>
+      <h2>Paso 1 — Manejador inicial del submit</h2>
       <pre><code class="language-jsx">function Home() {
   const handleSearch = (event) =&gt; {
     event.preventDefault()
@@ -222,7 +222,7 @@ window.history.pushState({}, '', targetUrl)</code></pre>
 
       <hr />
 
-      <h3>Paso 2 — Extraer valor con FormData</h3>
+      <h2>Paso 2 — Extraer valor con FormData</h2>
       <pre><code class="language-jsx">const handleSearch = (event) =&gt; {
   event.preventDefault()
 
@@ -234,7 +234,7 @@ window.history.pushState({}, '', targetUrl)</code></pre>
 
       <hr />
 
-      <h3>Paso 3 — Construir la URL con encodeURIComponent</h3>
+      <h2>Paso 3 — Construir la URL con encodeURIComponent</h2>
       <pre><code class="language-jsx">const handleSearch = (event) =&gt; {
   event.preventDefault()
 
@@ -253,7 +253,7 @@ window.history.pushState({}, '', targetUrl)</code></pre>
 
       <hr />
 
-      <h3>Paso 4 — El custom hook useRouter</h3>
+      <h2>Paso 4 — El custom hook useRouter</h2>
       <pre><code class="language-jsx">// hooks/useRouter.js
 import { useState, useEffect } from 'react'
 
@@ -279,7 +279,7 @@ export function useRouter() {
 
       <hr />
 
-      <h3>Paso 5 — Integración completa en Home</h3>
+      <h2>Paso 5 — Integración completa en Home</h2>
       <pre><code class="language-jsx">import { useRouter } from './hooks/useRouter'
 
 function Home() {
@@ -329,9 +329,9 @@ export default Home</code></pre>
   <article id="exercises" class="tab-content">
     <div class="description">
 
-      <h3>🧪 Casos de prueba</h3>
+      <h2>🧪 Casos de prueba</h2>
 
-      <h4>Caso 1 — Búsqueda con texto</h4>
+      <h3>Caso 1 — Búsqueda con texto</h3>
       <ol>
         <li>Escribir "programador" en el input</li>
         <li>Presionar Enter o clic en "Buscar"</li>
@@ -339,21 +339,21 @@ export default Home</code></pre>
         <li>✅ La URL se actualiza sin recargar</li>
       </ol>
 
-      <h4>Caso 2 — Búsqueda vacía</h4>
+      <h3>Caso 2 — Búsqueda vacía</h3>
       <ol>
         <li>Dejar el input vacío</li>
         <li>Presionar "Buscar"</li>
         <li>✅ Debe navegar a <code>/search</code> (sin query params)</li>
       </ol>
 
-      <h4>Caso 3 — Búsqueda con espacios / caracteres especiales</h4>
+      <h3>Caso 3 — Búsqueda con espacios / caracteres especiales</h3>
       <ol>
         <li>Escribir "React de Dev"</li>
         <li>Presionar "Buscar"</li>
         <li>✅ Debe navegar a <code>/search?text=React%20de%20Dev</code></li>
       </ol>
 
-      <h4>Caso 4 — Botón "Atrás" del navegador</h4>
+      <h3>Caso 4 — Botón "Atrás" del navegador</h3>
       <ol>
         <li>Hacer una búsqueda</li>
         <li>Presionar el botón "Atrás"</li>
@@ -363,7 +363,7 @@ export default Home</code></pre>
 
       <hr />
 
-      <h3>🔑 Conceptos clave</h3>
+      <h2>🔑 Conceptos clave</h2>
       <table>
         <thead>
           <tr>
@@ -384,7 +384,7 @@ export default Home</code></pre>
 
       <hr />
 
-      <h3>🚀 Próximos pasos</h3>
+      <h2>🚀 Próximos pasos</h2>
       <ul>
         <li>Sincronizar filtros de búsqueda con la URL</li>
         <li>Leer los query params para mostrar resultados filtrados</li>

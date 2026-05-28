@@ -12,7 +12,7 @@
   <article id="concepts" class="tab-content active">
     <div class="description">
 
-      <h3>🧠 ¿Qué problema resuelve?</h3>
+      <h2>🧠 ¿Qué problema resuelve?</h2>
       <p>
         Antes, la ruta <code>/search</code> era siempre igual sin importar lo que el usuario hacía:
       </p>
@@ -51,7 +51,7 @@ búsqueda Vue
 
       <hr />
 
-      <h3>✅ Lo que queremos conseguir</h3>
+      <h2>✅ Lo que queremos conseguir</h2>
       <p>
         Que la URL <strong>represente el estado de la app</strong>. Por ejemplo:
       </p>
@@ -83,7 +83,7 @@ búsqueda Vue
 
       <hr />
 
-      <h3>🚀 Beneficio REAL</h3>
+      <h2>🚀 Beneficio REAL</h2>
       <p>Con este cambio, la app:</p>
 
       <pre><code>✅ Recuerda el estado
@@ -92,7 +92,7 @@ búsqueda Vue
 ✅ Funciona bien con el historial del navegador
 ✅ Tiene URLs profesionales</code></pre>
 
-      <h3>📌 La idea MÁS importante</h3>
+      <h2>📌 La idea MÁS importante</h2>
       <p>La URL se convierte en <strong>LA FUENTE DE LA VERDAD</strong>. No solo el estado de React. La URL ahora también guarda el estado de la aplicación.</p>
 
     </div>
@@ -102,7 +102,7 @@ búsqueda Vue
   <article id="code-examples" class="tab-content">
     <div class="description">
 
-      <h3>🔥 Qué hace <code>URLSearchParams</code></h3>
+      <h2>🔥 Qué hace <code>URLSearchParams</code></h2>
       <p>
         Ayuda a leer y modificar los parámetros de la URL fácilmente, sin romper los que ya existen.
       </p>
@@ -119,7 +119,7 @@ searchParams.set('page', '2')
 
       <hr />
 
-      <h3>🎯 Qué consigue <code>buildPageURL</code></h3>
+      <h2>🎯 Qué consigue <code>buildPageURL</code></h2>
       <p>
         Construir correctamente los links de paginación para que cada botón tenga una URL real:
       </p>
@@ -136,7 +136,7 @@ searchParams.set('page', '2')
 
       <hr />
 
-      <h3>💻 Implementación</h3>
+      <h2>💻 Implementación</h2>
 
       <pre><code class="language-jsx">function buildPageURL(search, page) {
   // Tomamos los parámetros actuales de la URL
@@ -168,7 +168,7 @@ function Pagination({ search, currentPage, totalPages }) {
 
       <hr />
 
-      <h3>📥 Leer los parámetros de la URL en el componente</h3>
+      <h2>📥 Leer los parámetros de la URL en el componente</h2>
 
       <pre><code class="language-jsx">import { useSearchParams } from 'react-router-dom'
 
@@ -188,7 +188,7 @@ function SearchPage() {
   <article id="exercises" class="tab-content">
     <div class="description">
 
-      <h3>🧩 Flujo mental visual</h3>
+      <h2>🧩 Flujo mental visual</h2>
 
       <pre><code>Usuario busca "React"
         ↓
@@ -206,7 +206,7 @@ La app sabe:
 
       <hr />
 
-      <h3>⚠️ Errores comunes</h3>
+      <h2>⚠️ Errores comunes</h2>
 
       <table>
         <thead>
@@ -242,7 +242,7 @@ La app sabe:
 
       <hr />
 
-      <h3>🎯 Ejercicio</h3>
+      <h2>🎯 Ejercicio</h2>
       <p>
         Modificá tu componente de búsqueda para que:
       </p>
@@ -260,7 +260,7 @@ La app sabe:
   <article id="improvements" class="tab-content">
     <div class="description">
 
-      <h3>🔧 Bloque 1: simplificando <code>buildPageURL</code></h3>
+      <h2>🔧 Bloque 1: simplificando <code>buildPageURL</code></h2>
 
       <p><strong>Problema detectado:</strong> el código funciona, pero usar <code>window.location.href</code> dentro del componente lo hace menos testeable y más acoplado al navegador.</p>
 
@@ -281,7 +281,7 @@ const buildPageURL = (pageNumber) => {
 
       <hr />
 
-      <h3>🔧 Bloque 2: páginas anterior y siguiente</h3>
+      <h2>🔧 Bloque 2: páginas anterior y siguiente</h2>
 
       <p><strong>Problema detectado:</strong> sin control, podés generar URLs inválidas:</p>
 
@@ -297,7 +297,7 @@ const nextPage = Math.min(currentPage + 1, totalPages)</code></pre>
 
       <hr />
 
-      <h3>🔧 Bloque 3: legibilidad con <code>isFirstPage</code> / <code>isLastPage</code></h3>
+      <h2>🔧 Bloque 3: legibilidad con <code>isFirstPage</code> / <code>isLastPage</code></h2>
 
       <p><strong>Problema detectado:</strong> <code>aria-disabled</code> solo ayuda a accesibilidad, pero no desactiva el enlace. Además, repetir <code>currentPage === 1</code> en varios lugares ensucia el código.</p>
 
@@ -317,7 +317,7 @@ const isLastPage = currentPage === totalPages
 
       <hr />
 
-      <h3>✅ Versión final mejorada completa</h3>
+      <h2>✅ Versión final mejorada completa</h2>
 
       <pre><code class="language-jsx">function Pagination({ currentPage, totalPages }) {
   const buildPageURL = (pageNumber) => {
@@ -375,7 +375,7 @@ const isLastPage = currentPage === totalPages
 
       <hr />
 
-      <h3>📌 Resumen de mejoras</h3>
+      <h2>📌 Resumen de mejoras</h2>
 
       <table>
         <thead>

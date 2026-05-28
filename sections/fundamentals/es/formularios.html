@@ -11,7 +11,7 @@
   <article id="concepts" class="tab-content active">
     <div class="description">
 
-      <h3>😰 El problema: ¿dónde viven los datos del formulario?</h3>
+      <h2>😰 El problema: ¿dónde viven los datos del formulario?</h2>
       <p>
         Cuando App renderiza <code>JobList</code> y <code>SearchForm</code> como componentes hermanos,
         <code>SearchForm</code> no puede comunicarle directamente sus valores a <code>JobList</code>
@@ -31,7 +31,7 @@ Los datos suben con callbacks → App los guarda → App los pasa hacia abajo co
 
       <hr />
 
-      <h3>📋 FormData: leer un formulario de una sola vez</h3>
+      <h2>📋 FormData: leer un formulario de una sola vez</h2>
       <p>
         En lugar de crear un <code>useState</code> por cada campo (ubicación, nivel, etc.),
         la API nativa <strong>FormData</strong> te permite leer <em>todos</em> los campos
@@ -58,7 +58,7 @@ data.get("level")     → "senior"</code></pre>
 
       <hr />
 
-      <h3>🔗 Callback: el puente entre hijo y padre</h3>
+      <h2>🔗 Callback: el puente entre hijo y padre</h2>
       <p>
         El patrón es siempre el mismo: el padre <strong>crea</strong> la función
         (<code>handleSearch</code>) y la pasa como prop al hijo. El hijo la <strong>llama</strong>
@@ -81,7 +81,7 @@ props.onSearch({ location: "remote", level: "senior" })
 
       <hr />
 
-      <h3>🔍 Filtros en cascada: el orden importa</h3>
+      <h2>🔍 Filtros en cascada: el orden importa</h2>
       <p>
         El insight clave: no filtramos el array original múltiples veces de forma independiente.
         Filtramos <strong>en secuencia</strong>: primero por dropdowns, después por texto libre
@@ -104,7 +104,7 @@ resultadosPaginados   ← esto va al JobList</code></pre>
 
       <hr />
 
-      <h3>⌨️ Filtro de texto en tiempo real (onChange)</h3>
+      <h2>⌨️ Filtro de texto en tiempo real (onChange)</h2>
       <p>
         A diferencia del submit del formulario (que dispara una sola vez), la búsqueda por texto
         usa <code>onChange</code> y dispara en <strong>cada keystroke</strong>. Actualiza el estado
@@ -123,7 +123,7 @@ resultadosPaginados   ← esto va al JobList</code></pre>
   <article id="code-examples" class="tab-content">
     <div class="description">
 
-      <h3>🔧 SearchForm con FormData y useId</h3>
+      <h2>🔧 SearchForm con FormData y useId</h2>
       <p>
         El componente SearchForm usa <code>useId</code> para generar IDs accesibles y
         <code>FormData</code> para leer todos los campos en el submit.
@@ -174,7 +174,7 @@ export function SearchForm({ onSearch }) {
 
       <hr />
 
-      <h3>🏠 App.jsx: el estado centralizado</h3>
+      <h2>🏠 App.jsx: el estado centralizado</h2>
       <p>
         App es el único dueño del estado. Centraliza los tres estados y aplica los filtros
         en cascada antes de pasarle los resultados al JobList.
@@ -254,7 +254,7 @@ export function App() {
 
       <hr />
 
-      <h3>🗺️ Diagrama completo del flujo de datos</h3>
+      <h2>🗺️ Diagrama completo del flujo de datos</h2>
 
       <pre><code>App.jsx
 ├── state: filters       { location: '', experienceLevel: '' }
@@ -279,7 +279,7 @@ export function App() {
 
       <hr />
 
-      <h3>🔎 Cómo funciona el filtro de texto</h3>
+      <h2>🔎 Cómo funciona el filtro de texto</h2>
 
       <pre><code class="language-jsx">const jobsConFiltroTexto = jobsFiltradosPorFiltros.filter((job) =&gt; {
   if (!textToFilter) return true   // sin texto → pasa todo
@@ -303,7 +303,7 @@ export function App() {
   <article id="exercises" class="tab-content">
     <div class="description">
 
-      <h3>🐛 Errores frecuentes</h3>
+      <h2>🐛 Errores frecuentes</h2>
 
       <p><strong>Error 1: Olvidar el atributo <code>name</code> en los selects</strong></p>
 
@@ -349,7 +349,7 @@ const handleSearch = (filters) =&gt; {
 
       <hr />
 
-      <h3>💪 Ejercicio</h3>
+      <h2>💪 Ejercicio</h2>
 
       <pre><code>Implementá el sistema de búsqueda completo:
 
@@ -372,7 +372,7 @@ const handleSearch = (filters) =&gt; {
 
       <hr />
 
-      <h3>✅ Resumen de la clase</h3>
+      <h2>✅ Resumen de la clase</h2>
 
       <pre><code>📋 FormData         — lee todos los campos del form de una vez con data.get('name')
 🔗 Lifting state    — el padre guarda, el hijo notifica con callbacks

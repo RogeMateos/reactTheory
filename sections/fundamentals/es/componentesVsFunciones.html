@@ -27,7 +27,7 @@
     <p>Aunque los componentes son funciones de JavaScript, no todas las funciones son componentes.</p>
     <p>Entender esta diferencia es clave para escribir React correctamente.</p>
 
-    <h3>1️⃣ ¿Qué es un componente en React?</h3>
+    <h2>1️⃣ ¿Qué es un componente en React?</h2>
     <p>
       Un componente de React es una <strong>función especial que React usa para renderizar interfaz (UI)</strong>.
     </p>
@@ -39,18 +39,18 @@
       <li>Se usa como una etiqueta JSX</li>
     </ul>
 
-    <h4>Ejemplo</h4>
+    <h3>Ejemplo</h3>
     <pre><code class="language-jsx">function Saludo() {
   return &lt;h1&gt;¡Hola desde React!&lt;/h1&gt;
 }</code></pre>
 
-    <h4>Usar el componente:</h4>
+    <h3>Usar el componente:</h3>
     <pre><code class="language-jsx">&lt;Saludo /&gt;</code></pre>
 
     <p>React ejecutará la función y renderizará:</p>
     <pre><code>&lt;h1&gt;¡Hola desde React!&lt;/h1&gt;</code></pre>
 
-    <h4>Analogía sencilla: La Impresora</h4>
+    <h3>Analogía sencilla: La Impresora</h3>
     <p>Imagina React como una impresora de interfaz.</p>
     <p>Los componentes son como plantillas.</p>
     <ul>
@@ -66,7 +66,7 @@ function Saludo()
   ↓
 &lt;h1&gt;Hola&lt;/h1&gt;</code></pre>
 
-    <h4>Otra Analogía: El Semáforo</h4>
+    <h3>Otra Analogía: El Semáforo</h3>
     <p>Piensa en Componentes y Funciones Normales como un sistema de semáforo:</p>
     <ul>
       <li><strong>🟢 Componentes (Luz verde)</strong> → Controlan lo que VES en pantalla
@@ -89,13 +89,13 @@ function Saludo()
     <pre><code>🟢 Verde = "Esto es UI" (Componente)
 🟡 Amarillo = "Esto es lógica" (Función Normal)</code></pre>
 
-    <h3>2️⃣ ¿Qué es una función normal?</h3>
+    <h2>2️⃣ ¿Qué es una función normal?</h2>
     <p>
       Una función normal de JavaScript es simplemente una función que ejecuta lógica.
     </p>
     <p>No está diseñada para renderizar UI.</p>
 
-    <h4>Ejemplo</h4>
+    <h3>Ejemplo</h3>
     <pre><code class="language-jsx">function calcularTotal(precio, iva) {
   return precio + precio * iva
 }
@@ -109,7 +109,7 @@ const total = calcularTotal(100, 0.21)</code></pre>
       <li>Solo ejecuta lógica</li>
     </ul>
 
-    <h4>Diferencia clave</h4>
+    <h3>Diferencia clave</h3>
     <table>
       <tr>
         <th>Tipo</th>
@@ -125,10 +125,10 @@ const total = calcularTotal(100, 0.21)</code></pre>
       </tr>
     </table>
 
-    <h3>3️⃣ Cómo se invocan</h3>
+    <h2>3️⃣ Cómo se invocan</h2>
     <p>Esta es una de las diferencias más importantes.</p>
 
-    <h4>Componentes</h4>
+    <h3>Componentes</h3>
     <p>Se usan como etiquetas JSX.</p>
     <pre><code class="language-jsx">function Boton() {
   return &lt;button&gt;Haz clic&lt;/button&gt;
@@ -141,7 +141,7 @@ const total = calcularTotal(100, 0.21)</code></pre>
 
     <p>Pero gestiona el ciclo de renderizado.</p>
 
-    <h4>Funciones normales</h4>
+    <h3>Funciones normales</h3>
     <p>Se llaman con paréntesis.</p>
     <pre><code class="language-jsx">function saludar(nombre) {
   return `Hola ${nombre}`
@@ -149,9 +149,9 @@ const total = calcularTotal(100, 0.21)</code></pre>
 
 saludar("Miguel")</code></pre>
 
-    <h3>4️⃣ Lo que retornan</h3>
+    <h2>4️⃣ Lo que retornan</h2>
 
-    <h4>Componentes</h4>
+    <h3>Componentes</h3>
     <p>Devuelven cosas que React puede renderizar.</p>
     <pre><code class="language-jsx">function Titulo() {
   return &lt;h1&gt;Mi título&lt;/h1&gt;
@@ -159,7 +159,7 @@ saludar("Miguel")</code></pre>
 
     <p>React lo convierte en HTML.</p>
 
-    <h4>Funciones normales</h4>
+    <h3>Funciones normales</h3>
     <p>Pueden devolver cualquier cosa.</p>
     <pre><code class="language-jsx">function sumar(a, b) {
   return a + b
@@ -169,33 +169,33 @@ function obtenerUsuario() {
   return { nombre: "Miguel", edad: 25 }
 }</code></pre>
 
-    <h3>5️⃣ Convención de nombres</h3>
+    <h2>5️⃣ Convención de nombres</h2>
     <p>React usa una regla muy importante.</p>
 
-    <h4>Componentes → PascalCase</h4>
+    <h3>Componentes → PascalCase</h3>
     <pre><code class="language-jsx">function MiComponente() {}
 function BotonPrimario() {}
 function TarjetaProducto() {}</code></pre>
 
-    <h4>Funciones normales → camelCase</h4>
+    <h3>Funciones normales → camelCase</h3>
     <pre><code class="language-jsx">function calcularPrecio() {}
 function validarEmail() {}
 function obtenerFecha() {}</code></pre>
 
-    <h3>6️⃣ ¿Por qué PascalCase es obligatorio?</h3>
+    <h2>6️⃣ ¿Por qué PascalCase es obligatorio?</h2>
     <p>React necesita distinguir entre:</p>
 
-    <h4>1️⃣ HTML nativo</h4>
+    <h3>1️⃣ HTML nativo</h3>
     <pre><code>&lt;div&gt;
 &lt;button&gt;
 &lt;h1&gt;</code></pre>
 
-    <h4>2️⃣ Componentes personalizados</h4>
+    <h3>2️⃣ Componentes personalizados</h3>
     <pre><code>&lt;MiBoton&gt;
 &lt;App&gt;
 &lt;Producto&gt;</code></pre>
 
-    <h4>Ejemplo</h4>
+    <h3>Ejemplo</h3>
     <pre><code class="language-jsx">&lt;MiBoton /&gt;</code></pre>
 
     <p>React entiende: → Es un componente personalizado</p>
@@ -206,25 +206,25 @@ function obtenerFecha() {}</code></pre>
     <p>React piensa: → Es una etiqueta HTML</p>
     <p>Y eso no funciona correctamente.</p>
 
-    <h3>7️⃣ Qué puede renderizar React</h3>
+    <h2>7️⃣ Qué puede renderizar React</h2>
     <p>Un componente puede devolver varios tipos de valores.</p>
 
-    <h4>JSX</h4>
+    <h3>JSX</h3>
     <pre><code class="language-jsx">function App() {
   return &lt;h1&gt;Hola mundo&lt;/h1&gt;
 }</code></pre>
 
-    <h4>Strings</h4>
+    <h3>Strings</h3>
     <pre><code class="language-jsx">function Saludo() {
   return "Hola"
 }</code></pre>
 
-    <h4>Números</h4>
+    <h3>Números</h3>
     <pre><code class="language-jsx">function Contador() {
   return 42
 }</code></pre>
 
-    <h4>null o undefined</h4>
+    <h3>null o undefined</h3>
     <p>No renderizan nada.</p>
     <pre><code class="language-jsx">function Invisible() {
   return null
@@ -232,11 +232,11 @@ function obtenerFecha() {}</code></pre>
 
     <p>Esto se usa mucho para renderizado condicional.</p>
 
-    <h3>8️⃣ Mezclando componentes y funciones</h3>
+    <h2>8️⃣ Mezclando componentes y funciones</h2>
     <p>En proyectos reales siempre se mezclan.</p>
     <p>Las funciones normales ayudan a los componentes.</p>
 
-    <h4>Ejemplo</h4>
+    <h3>Ejemplo</h3>
     <pre><code class="language-jsx">function formatearPrecio(precio) {
   return `${precio}€`
 }
@@ -258,9 +258,9 @@ function Producto({ nombre, precio }) {
       <li>formatearPrecio → función helper</li>
     </ul>
 
-    <h3>9️⃣ Cuándo usar cada uno</h3>
+    <h2>9️⃣ Cuándo usar cada uno</h2>
 
-    <h4>Usa componentes cuando</h4>
+    <h3>Usa componentes cuando</h3>
     <p>Necesitas UI.</p>
 
     <p>Ejemplos:</p>
@@ -281,7 +281,7 @@ function Producto({ nombre, precio }) {
   )
 }</code></pre>
 
-    <h4>Usa funciones normales cuando</h4>
+    <h3>Usa funciones normales cuando</h3>
     <p>Necesitas lógica.</p>
 
     <p>Ejemplos:</p>
@@ -296,9 +296,9 @@ function Producto({ nombre, precio }) {
   return email.includes("@")
 }</code></pre>
 
-    <h3>🔟 Errores comunes de principiantes</h3>
+    <h2>🔟 Errores comunes de principiantes</h2>
 
-    <h4>Error 1: Llamar un componente como función</h4>
+    <h3>Error 1: Llamar un componente como función</h3>
     <p>❌ Incorrecto:</p>
     <pre><code class="language-jsx">function Saludo() {
   return &lt;h1&gt;Hola&lt;/h1&gt;
@@ -309,7 +309,7 @@ Saludo()</code></pre>
     <p>✅ Correcto:</p>
     <pre><code class="language-jsx">&lt;Saludo /&gt;</code></pre>
 
-    <h4>Error 2: Usar minúscula</h4>
+    <h3>Error 2: Usar minúscula</h3>
     <p>❌ Incorrecto:</p>
     <pre><code class="language-jsx">function saludo() {
   return &lt;h1&gt;Hola&lt;/h1&gt;
@@ -320,7 +320,7 @@ Saludo()</code></pre>
   return &lt;h1&gt;Hola&lt;/h1&gt;
 }</code></pre>
 
-    <h4>Error 3: Intentar renderizar objetos</h4>
+    <h3>Error 3: Intentar renderizar objetos</h3>
     <p>❌ Incorrecto:</p>
     <pre><code class="language-jsx">function Usuario() {
   return { nombre: "Miguel" }
@@ -338,7 +338,7 @@ Saludo()</code></pre>
   )
 }</code></pre>
 
-    <h3>📋 Resumen final</h3>
+    <h2>📋 Resumen final</h2>
     <table>
       <tr>
         <th>Concepto</th>
@@ -367,14 +367,14 @@ Saludo()</code></pre>
       </tr>
     </table>
 
-    <h3>💡 Idea clave que debes recordar</h3>
+    <h2>💡 Idea clave que debes recordar</h2>
     <p  class="callout-info">
       <strong>Componentes → construyen la interfaz</strong><br>
       <strong>Funciones → ayudan con la lógica</strong><br><br>
       React está construido alrededor de componer componentes pequeños.
     </p>
 
-    <h3>🎯 Próximo paso</h3>
+    <h2>🎯 Próximo paso</h2>
     <p>
       Ahora que entiendes componentes vs funciones, estás listo para aprender sobre
       <strong>los 7 errores más comunes que cometen los juniors con componentes React</strong>.

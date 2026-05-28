@@ -11,7 +11,7 @@
   <article id="concepts" class="tab-content active">
     <div class="description">
 
-      <h3>😤 The problem: a component with too many responsibilities</h3>
+      <h2>😤 The problem: a component with too many responsibilities</h2>
       <p>
         We have a main component that handles <strong>all</strong> the search logic, and that
         makes it too complex. The component mixes:
@@ -34,14 +34,14 @@
 
       <hr />
 
-      <h3>✨ The solution: <code>useSearchForm</code></h3>
+      <h2>✨ The solution: <code>useSearchForm</code></h2>
       <p>
         We'll create a custom hook called <code>useSearchForm</code> that encapsulates all the
         form logic. Unlike hooks such as <code>useRouter</code> (seen earlier), custom hooks
         <strong>can accept parameters</strong> like regular functions.
       </p>
 
-      <h4>Parameters the hook needs</h4>
+      <h3>Parameters the hook needs</h3>
       <ul>
         <li><code>onSearch</code>: function executed when searching</li>
         <li><code>onTextFilter</code>: function to filter by text</li>
@@ -56,7 +56,7 @@
 
       <hr />
 
-      <h3>🎯 Advantages of the refactor</h3>
+      <h2>🎯 Advantages of the refactor</h2>
       <ul>
         <li>✅ <strong>Cleaner code:</strong> the component focuses on rendering</li>
         <li>✅ <strong>Reusable logic:</strong> the hook can be used in other components</li>
@@ -71,7 +71,7 @@
   <article id="code-examples" class="tab-content">
     <div class="description">
 
-      <h3>Step 1 — Hook skeleton with parameters</h3>
+      <h2>Step 1 — Hook skeleton with parameters</h2>
       <pre><code class="language-jsx">function useSearchForm({
   onSearch,
   onTextFilter,
@@ -84,7 +84,7 @@
 
       <hr />
 
-      <h3>Step 2 — Add internal state</h3>
+      <h2>Step 2 — Add internal state</h2>
       <p>The search text lives inside the hook:</p>
       <pre><code class="language-jsx">function useSearchForm({ onSearch, onTextFilter, IDTechnology, IDLocation, IDExperienceLevel }) {
   const [searchText, setSearchText] = useState('')
@@ -97,7 +97,7 @@
 
       <hr />
 
-      <h3>Step 3 — Implement the handlers</h3>
+      <h2>Step 3 — Implement the handlers</h2>
       <pre><code class="language-jsx">function useSearchForm({ onSearch, onTextFilter, IDTechnology, IDLocation, IDExperienceLevel }) {
   const [searchText, setSearchText] = useState('')
 
@@ -132,7 +132,7 @@
 
       <hr />
 
-      <h3>Step 4 — Use the hook in the component</h3>
+      <h2>Step 4 — Use the hook in the component</h2>
       <p>The component gets much simpler:</p>
       <pre><code class="language-jsx">function SearchComponent() {
   const { searchText, handleSubmit, handleChange } = useSearchForm({
@@ -163,9 +163,9 @@
   <article id="exercises" class="tab-content">
     <div class="description">
 
-      <h3>📏 Important custom hook rules</h3>
+      <h2>📏 Important custom hook rules</h2>
 
-      <h4>1. Call only at the top level</h4>
+      <h3>1. Call only at the top level</h3>
       <p>Custom hooks must be called only at the top level of a component or another custom hook.</p>
       <p><strong>❌ NOT</strong> inside:</p>
       <ul>
@@ -201,7 +201,7 @@ function Component() {
 
       <hr />
 
-      <h4>2. Must start with the <code>use</code> prefix</h4>
+      <h3>2. Must start with the <code>use</code> prefix</h3>
       <p>
         Like <code>useState</code>, <code>useEffect</code>, etc. This is not just a convention:
         React <strong>relies on that name</strong> to enforce internal rules.
@@ -217,7 +217,7 @@ function getSearchForm() {}   // Not a hook</code></pre>
 
       <hr />
 
-      <h4>3. Only usable in components or custom hooks</h4>
+      <h3>3. Only usable in components or custom hooks</h3>
       <pre><code class="language-jsx">// ❌ BAD - regular function
 function calculateTotal() {
   const { data } = useData() // ERROR
@@ -238,22 +238,22 @@ function useCalculateTotal() {
 
       <hr />
 
-      <h3>🧪 Exercises</h3>
+      <h2>🧪 Exercises</h2>
 
-      <h4>Exercise 1</h4>
+      <h3>Exercise 1</h3>
       <p>
         Add a <code>handleReset</code> to the hook that clears <code>searchText</code> and calls
         <code>onTextFilter('')</code>. Expose it in the return.
       </p>
 
-      <h4>Exercise 2</h4>
+      <h3>Exercise 2</h3>
       <p>
         Create another hook <code>useDebouncedText(value, delay)</code> that returns the delayed
         value. Then use it inside <code>useSearchForm</code> to trigger <code>onTextFilter</code>
         only when the user stops typing for 300ms.
       </p>
 
-      <h4>Exercise 3 — Challenge</h4>
+      <h3>Exercise 3 — Challenge</h3>
       <p>
         Refactor <code>useSearchForm</code> so it doesn't depend on callbacks
         (<code>onSearch</code>, <code>onTextFilter</code>). Instead, have it expose
@@ -263,7 +263,7 @@ function useCalculateTotal() {
 
       <hr />
 
-      <h3>🔑 Conclusion</h3>
+      <h2>🔑 Conclusion</h2>
       <p>Extracting logic to custom hooks is an essential practice in modern React:</p>
       <ul>
         <li>The component focuses on <strong>rendering</strong></li>

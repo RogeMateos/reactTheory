@@ -6,7 +6,7 @@
       To master React, it is essential to understand how the Virtual DOM works and the rendering process.
     </p>
 
-    <h3>🧱 What is the DOM?</h3>
+    <h2>🧱 What is the DOM?</h2>
     <p>
       When a web page first loads, the browser creates a structure in memory called the <strong>DOM (Document Object Model)</strong>.
     </p>
@@ -22,7 +22,7 @@
          ├── h1
          └── button</code></pre>
 
-    <h3>⚡ The Problem with the Traditional DOM</h3>
+    <h2>⚡ The Problem with the Traditional DOM</h2>
     <p>If every change in the interface directly modified the DOM:</p>
     <ul>
       <li>❌ It would be slow</li>
@@ -31,7 +31,7 @@
     </ul>
     <p><strong>This is where React comes in.</strong></p>
 
-    <h3>🪞 What is the Virtual DOM?</h3>
+    <h2>🪞 What is the Virtual DOM?</h2>
     <p>
       The Virtual DOM is a <strong>lightweight copy of the real DOM</strong>, kept in memory by React.
     </p>
@@ -43,16 +43,16 @@
       React works with the Virtual DOM first and only touches the real DOM when necessary.
     </p>
 
-    <h3>🔁 React Rendering Process (Step by Step)</h3>
+    <h2>🔁 React Rendering Process (Step by Step)</h2>
 
-    <h4>1️⃣ Initial Rendering</h4>
+    <h3>1️⃣ Initial Rendering</h3>
     <ul>
       <li>React creates the Virtual DOM</li>
       <li>The real DOM is generated and the UI is painted</li>
     </ul>
     <pre><code>Virtual DOM  →  Real DOM  →  Screen</code></pre>
 
-    <h4>2️⃣ State Change (state or props)</h4>
+    <h3>2️⃣ State Change (state or props)</h3>
     <p>When something changes in the application:</p>
     <ul>
       <li>React doesn't touch the real DOM directly</li>
@@ -61,13 +61,13 @@
     <pre><code>Virtual DOM (previous)
 Virtual DOM (new)</code></pre>
 
-    <h4>3️⃣ Diffing (Comparison)</h4>
+    <h3>3️⃣ Diffing (Comparison)</h3>
     <p>React compares both versions:</p>
     <pre><code>BEFORE: &lt;h1&gt;Hello&lt;/h1&gt;
 AFTER: &lt;h1&gt;Hello Roge&lt;/h1&gt;</code></pre>
     <p>👉 It only detects what changed</p>
 
-    <h4>4️⃣ Efficient Update</h4>
+    <h3>4️⃣ Efficient Update</h3>
     <ul>
       <li>React updates only that node</li>
       <li>The rest of the DOM remains intact</li>
@@ -78,7 +78,7 @@ AFTER: &lt;h1&gt;Hello Roge&lt;/h1&gt;</code></pre>
       <li>✅ Better performance</li>
     </ul>
 
-    <h3>🧠 Why is React So Fast?</h3>
+    <h2>🧠 Why is React So Fast?</h2>
     <p>Because it:</p>
     <ul>
       <li>Minimizes access to the real DOM</li>
@@ -87,14 +87,14 @@ AFTER: &lt;h1&gt;Hello Roge&lt;/h1&gt;</code></pre>
     </ul>
     <p>This process is known as <strong>diffing + reconciliation</strong>.</p>
 
-    <h3>🔥 Advanced Tip</h3>
+    <h2>🔥 Advanced Tip</h2>
     <p>
       Although we often talk about the "Virtual DOM", internally React uses a
       <strong>Fiber-based reconciliation system</strong>, which allows it to pause, prioritize,
       and resume renders to improve user experience.
     </p>
 
-    <h3>🎯 Conclusion</h3>
+    <h2>🎯 Conclusion</h2>
     <p>
       <strong>React doesn't update the interface directly. First it thinks, compares, and decides.</strong><br>
       Only then does it modify the real DOM, and only where necessary.

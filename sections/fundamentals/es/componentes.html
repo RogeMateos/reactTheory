@@ -18,7 +18,7 @@
     <p>Un componente es una <strong>pieza reutilizable de la interfaz</strong>.</p>
     <p>Piensa en ellos como <strong>bloques LEGO para construir interfaces</strong>.</p>
 
-    <h3>1️⃣ ¿Qué es un componente?</h3>
+    <h2>1️⃣ ¿Qué es un componente?</h2>
     <p>
       Un componente es simplemente una <strong>función de JavaScript que devuelve JSX</strong>.
     </p>
@@ -27,7 +27,7 @@
 }</code></pre>
     <p>Ese JSX React lo convertirá en HTML.</p>
 
-    <h4>Usar el componente</h4>
+    <h3>Usar el componente</h3>
     <p>Una vez creado, se usa como si fuera una etiqueta HTML:</p>
     <pre><code class="language-jsx">&lt;Saludo /&gt;</code></pre>
 
@@ -43,15 +43,15 @@
 &lt;Saludo /&gt;
 &lt;Saludo /&gt;</code></pre>
 
-    <h3>2️⃣ Diferencia entre elemento y componente</h3>
+    <h2>2️⃣ Diferencia entre elemento y componente</h2>
     <p>Esta pregunta aparece muchísimo en entrevistas React.</p>
 
-    <h4>Elemento</h4>
+    <h3>Elemento</h3>
     <p>Un elemento es JSX simple.</p>
     <pre><code class="language-jsx">&lt;h1&gt;Hola&lt;/h1&gt;</code></pre>
     <p>React lo renderiza directamente en el DOM.</p>
 
-    <h4>Componente</h4>
+    <h3>Componente</h3>
     <p>Un componente es una función que devuelve elementos.</p>
     <pre><code class="language-jsx">function Saludar() {
   return &lt;h1&gt;Hola&lt;/h1&gt;
@@ -65,25 +65,25 @@
       Un componente es una función que retorna elementos JSX
     </p>
 
-    <h3>3️⃣ Tu primer componente completo</h3>
+    <h2>3️⃣ Tu primer componente completo</h2>
     <p>Vamos a verlo en un ejemplo real.</p>
 
-    <h4>HTML base</h4>
+    <h3>HTML base</h3>
     <pre><code class="language-html">&lt;div id="root"&gt;&lt;/div&gt;</code></pre>
     <p>React siempre renderiza dentro de un contenedor.</p>
 
-    <h4>Componente React</h4>
+    <h3>Componente React</h3>
     <pre><code class="language-jsx">function Saludar() {
   return &lt;h1&gt;¡Hola desde un componente!&lt;/h1&gt;
 }</code></pre>
 
-    <h4>Renderizarlo</h4>
+    <h3>Renderizarlo</h3>
     <pre><code class="language-jsx">const rootEl = document.querySelector('#root')
 const root = ReactDOMClient.createRoot(rootEl)
 
 root.render(&lt;Saludar /&gt;)</code></pre>
 
-    <h4>Qué ocurre internamente</h4>
+    <h3>Qué ocurre internamente</h3>
     <pre><code>&lt;Saludar /&gt;
      ↓
 ejecuta la función
@@ -92,7 +92,7 @@ return &lt;h1&gt;
      ↓
 lo convierte en DOM real</code></pre>
 
-    <h3>4️⃣ Props: pasar datos a los componentes</h3>
+    <h2>4️⃣ Props: pasar datos a los componentes</h2>
     <p>Los componentes pueden recibir datos.</p>
     <p>Es como pasar argumentos a una función.</p>
 
@@ -100,13 +100,13 @@ lo convierte en DOM real</code></pre>
   return &lt;h1&gt;¡Hola {props.nombre}!&lt;/h1&gt;
 }</code></pre>
 
-    <h4>Uso</h4>
+    <h3>Uso</h3>
     <pre><code class="language-jsx">&lt;Saludar nombre="Miguel" /&gt;</code></pre>
 
-    <h4>Resultado</h4>
+    <h3>Resultado</h3>
     <pre><code>Hola Miguel</code></pre>
 
-    <h4>Analogía simple</h4>
+    <h3>Analogía simple</h3>
     <p>Un componente es como una máquina de café.</p>
     <ul>
       <li>Componente = máquina</li>
@@ -119,7 +119,7 @@ lo convierte en DOM real</code></pre>
 &lt;Saludar nombre="Ana" /&gt;</code></pre>
     <p>Misma máquina, diferentes ingredientes.</p>
 
-    <h3>5️⃣ Destructuring de props</h3>
+    <h2>5️⃣ Destructuring de props</h2>
     <p>En React casi siempre verás esto:</p>
     <pre><code class="language-jsx">function Saludar({ nombre }) {
   return &lt;h1&gt;Hola {nombre}&lt;/h1&gt;
@@ -130,7 +130,7 @@ lo convierte en DOM real</code></pre>
 
     <p>Pero más limpio.</p>
 
-    <h3>6️⃣ Múltiples props</h3>
+    <h2>6️⃣ Múltiples props</h2>
     <p>Puedes pasar varios datos.</p>
 
     <pre><code class="language-jsx">function Saludar({ nombre, edad, ciudad }) {
@@ -142,10 +142,10 @@ lo convierte en DOM real</code></pre>
   )
 }</code></pre>
 
-    <h4>Uso</h4>
+    <h3>Uso</h3>
     <pre><code class="language-jsx">&lt;Saludar nombre="Miguel" edad={25} ciudad="Madrid" /&gt;</code></pre>
 
-    <h4>Regla importante</h4>
+    <h3>Regla importante</h3>
     <p><strong>Strings:</strong></p>
     <pre><code class="language-jsx">nombre="Miguel"</code></pre>
 
@@ -155,14 +155,14 @@ lo convierte en DOM real</code></pre>
     <p>Las llaves significan:</p>
     <p>👉 <strong>"Esto es JavaScript"</strong></p>
 
-    <h3>7️⃣ Estilos en JSX</h3>
+    <h2>7️⃣ Estilos en JSX</h2>
     <p>En HTML normal haríamos:</p>
     <pre><code class="language-html">&lt;h1 style="color:red; font-size:32px"&gt;</code></pre>
 
     <p>Pero en JSX los estilos son objetos JavaScript.</p>
     <pre><code class="language-jsx">&lt;h1 style={{ color: 'red', fontSize: '32px' }}&gt;</code></pre>
 
-    <h4>Ejemplo completo</h4>
+    <h3>Ejemplo completo</h3>
     <pre><code class="language-jsx">function Saludar({ nombre, color }) {
 
   const estilos = {
@@ -176,11 +176,11 @@ lo convierte en DOM real</code></pre>
 }
 </code></pre>
 
-    <h4>Uso</h4>
+    <h3>Uso</h3>
     <pre><code class="language-jsx">&lt;Saludar nombre="Miguel" color="blue" /&gt;
 &lt;Saludar nombre="Ana" color="green" /&gt;</code></pre>
 
-    <h3>8️⃣ CamelCase en estilos</h3>
+    <h2>8️⃣ CamelCase en estilos</h2>
     <p>En CSS usamos:</p>
     <pre><code>font-size
 background-color
@@ -193,7 +193,7 @@ textAlign</code></pre>
 
     <p>Porque JSX es JavaScript, no HTML.</p>
 
-    <h3>9️⃣ Estilos inline con props</h3>
+    <h2>9️⃣ Estilos inline con props</h2>
     <p>Podemos escribirlo más corto:</p>
     <pre><code class="language-jsx">function Saludar({ nombre, color }) {
   return (
@@ -209,7 +209,7 @@ textAlign</code></pre>
     <p>Puede escribirse:</p>
     <pre><code>color</code></pre>
 
-    <h3>🔟 Reutilización de componentes</h3>
+    <h2>🔟 Reutilización de componentes</h2>
     <p>Aquí está el verdadero poder de React.</p>
 
     <pre><code class="language-jsx">&lt;Saludar nombre="Miguel" color="blue" /&gt;
@@ -218,7 +218,7 @@ textAlign</code></pre>
 
     <p>Un mismo componente genera interfaces diferentes.</p>
 
-    <h3>1️⃣1️⃣ Composición de componentes</h3>
+    <h2>1️⃣1️⃣ Composición de componentes</h2>
     <p>Los componentes se pueden combinar.</p>
 
     <p>Ejemplo:</p>
@@ -233,7 +233,7 @@ textAlign</code></pre>
 
     <p>Esto es como construir con bloques LEGO.</p>
 
-    <h3>1️⃣2️⃣ Ventajas de los componentes</h3>
+    <h2>1️⃣2️⃣ Ventajas de los componentes</h2>
     <ul>
       <li><strong>Reutilización:</strong> Escribes una vez, usas muchas.</li>
       <li><strong>Organización:</strong> Cada componente tiene su lógica.</li>
@@ -241,7 +241,7 @@ textAlign</code></pre>
       <li><strong>Escalabilidad:</strong> Las apps grandes se construyen con muchos componentes pequeños.</li>
     </ul>
 
-    <h3>1️⃣3️⃣ Mental model (muy importante)</h3>
+    <h2>1️⃣3️⃣ Mental model (muy importante)</h2>
     <p>Piensa en React así:</p>
     <pre><code>App
  ├── Header
@@ -253,7 +253,7 @@ textAlign</code></pre>
 
     <p>Cada parte de la UI es un componente.</p>
 
-    <h3>1️⃣4️⃣ Resumen final</h3>
+    <h2>1️⃣4️⃣ Resumen final</h2>
     <p>Los componentes son:</p>
     <pre><code>Funciones
      ↓
@@ -263,7 +263,7 @@ Retornan JSX
      ↓
 React lo convierte en DOM</code></pre>
 
-    <h4>Lo que debes recordar</h4>
+    <h3>Lo que debes recordar</h3>
     <ul>
       <li>✔ Componentes = funciones que devuelven JSX</li>
       <li>✔ Props = datos que recibe el componente</li>
@@ -272,7 +272,7 @@ React lo convierte en DOM</code></pre>
       <li>✔ Componentes = reutilización</li>
     </ul>
 
-    <h3>1️⃣5️⃣ Ejercicio (muy típico en entrevistas)</h3>
+    <h2>1️⃣5️⃣ Ejercicio (muy típico en entrevistas)</h2>
     <p>Crea un componente <code>UserCard</code>.</p>
 
     <p>Debe recibir:</p>

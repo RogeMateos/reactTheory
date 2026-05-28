@@ -12,7 +12,7 @@
   <article id="concepts" class="tab-content active">
     <div class="description">
 
-      <h3>🚀 Introducción</h3>
+      <h2>🚀 Introducción</h2>
       <p>
         Vamos a migrar nuestro router casero hacia una solución profesional y robusta.
         Hasta este punto, nuestro router propio era funcional pero tenía limitaciones importantes:
@@ -33,13 +33,13 @@
 
       <hr />
 
-      <h3>📦 Instalación</h3>
+      <h2>📦 Instalación</h2>
 
       <pre><code class="language-jsx">npm install react-router</code></pre>
 
       <hr />
 
-      <h3>Paso 1: envolver la app con <code>&lt;BrowserRouter&gt;</code></h3>
+      <h2>Paso 1: envolver la app con <code>&lt;BrowserRouter&gt;</code></h2>
       <p>
         El primer paso es envolver toda la aplicación con <code>BrowserRouter</code>.
         Este componente proporciona el contexto de enrutado necesario para que React Router funcione en toda la app.
@@ -57,7 +57,7 @@ createRoot(document.getElementById('root')).render(
 
       <hr />
 
-      <h3>🔀 Otros tipos de Router</h3>
+      <h2>🔀 Otros tipos de Router</h2>
 
       <table>
         <thead>
@@ -89,7 +89,7 @@ createRoot(document.getElementById('root')).render(
   <article id="code-examples" class="tab-content">
     <div class="description">
 
-      <h3>Paso 2: definir rutas con <code>&lt;Routes&gt;</code> y <code>&lt;Route&gt;</code></h3>
+      <h2>Paso 2: definir rutas con <code>&lt;Routes&gt;</code> y <code>&lt;Route&gt;</code></h2>
       <p>En <code>App.jsx</code>, importamos los componentes y definimos las rutas:</p>
 
       <pre><code class="language-jsx">import { Routes, Route } from 'react-router-dom'
@@ -102,7 +102,7 @@ createRoot(document.getElementById('root')).render(
 
       <hr />
 
-      <h3>🧩 Anatomía de una ruta</h3>
+      <h2>🧩 Anatomía de una ruta</h2>
       <p>Cada <code>&lt;Route&gt;</code> tiene dos props fundamentales:</p>
 
       <table>
@@ -142,7 +142,7 @@ createRoot(document.getElementById('root')).render(
   <article id="exercises" class="tab-content">
     <div class="description">
 
-      <h3>🔍 Cómo funciona el matching de rutas</h3>
+      <h2>🔍 Cómo funciona el matching de rutas</h2>
       <p>
         React Router evalúa las rutas <strong>de arriba hacia abajo</strong> dentro de <code>&lt;Routes&gt;</code>.
         Cuando encuentra una coincidencia, renderiza ese componente y <strong>deja de buscar</strong>.
@@ -160,7 +160,7 @@ Las rutas siguientes NO se evalúan</code></pre>
 
       <hr />
 
-      <h3>Resultado con nuestras rutas</h3>
+      <h2>Resultado con nuestras rutas</h2>
 
       <table>
         <thead>
@@ -187,7 +187,7 @@ Las rutas siguientes NO se evalúan</code></pre>
 
       <hr />
 
-      <h3>⚠️ El comodín <code>*</code> como página 404</h3>
+      <h2>⚠️ El comodín <code>*</code> como página 404</h2>
       <p>
         El <code>path="*"</code> coincide con cualquier ruta que no haya sido capturada antes.
         Por eso <strong>siempre debe ir al final</strong>:
@@ -218,9 +218,9 @@ Las rutas siguientes NO se evalúan</code></pre>
   <article id="summary" class="tab-content">
     <div class="description">
 
-      <h3>🚫 Errores comunes al configurar rutas</h3>
+      <h2>🚫 Errores comunes al configurar rutas</h2>
 
-      <h4>1. Olvidar envolver con <code>&lt;BrowserRouter&gt;</code></h4>
+      <h3>1. Olvidar envolver con <code>&lt;BrowserRouter&gt;</code></h3>
       <p>Sin el wrapper en <code>main.jsx</code>, React Router lanza un error indicando que sus componentes deben estar dentro de un Router.</p>
 
       <pre><code class="language-jsx">// ❌ Sin BrowserRouter — falla
@@ -235,7 +235,7 @@ createRoot(document.getElementById('root')).render(
 
       <hr />
 
-      <h4>2. Usar <code>component</code> en lugar de <code>element</code></h4>
+      <h3>2. Usar <code>component</code> en lugar de <code>element</code></h3>
 
       <pre><code class="language-jsx">// ❌ Sintaxis antigua
 &lt;Route path="/" component={HomePage} /&gt;
@@ -245,7 +245,7 @@ createRoot(document.getElementById('root')).render(
 
       <hr />
 
-      <h4>3. Olvidar el comodín para el 404</h4>
+      <h3>3. Olvidar el comodín para el 404</h3>
       <p>Sin <code>path="*"</code>, las URLs no encontradas simplemente no renderizan nada — página en blanco.</p>
 
       <pre><code class="language-jsx">// ✅ Siempre incluir al final
@@ -253,7 +253,7 @@ createRoot(document.getElementById('root')).render(
 
       <hr />
 
-      <h4>4. Paths sin <code>/</code></h4>
+      <h3>4. Paths sin <code>/</code></h3>
 
       <pre><code class="language-jsx">// ❌ Sin slash inicial
 &lt;Route path="search" element={&lt;SearchPage /&gt;} /&gt;
@@ -263,7 +263,7 @@ createRoot(document.getElementById('root')).render(
 
       <hr />
 
-      <h3>📌 Resumen</h3>
+      <h2>📌 Resumen</h2>
 
       <table>
         <thead>

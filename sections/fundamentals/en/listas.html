@@ -11,7 +11,7 @@
   <article id="concepts" class="tab-content active">
     <div class="description">
 
-      <h3>😱 The Problem: Manually Repeated Components</h3>
+      <h2>😱 The Problem: Manually Repeated Components</h2>
       <p>When data is dynamic, repeating JSX manually doesn't scale:</p>
 
       <pre><code class="language-jsx">// ❌ Repetitive, doesn't scale, data mixed with UI
@@ -34,7 +34,7 @@ function App() {
 
       <hr />
 
-      <h3>🔄 What does <code>.map()</code> do?</h3>
+      <h2>🔄 What does <code>.map()</code> do?</h2>
       <p>
         <code>.map()</code> iterates over an array and returns a new transformed array.
         In React, we transform data into JSX elements:
@@ -58,14 +58,14 @@ jobs.map((job) => &lt;JobCard key={job.id} job={job} /&gt;)
 
       <hr />
 
-      <h3>🔑 Why is the <code>key</code> Required?</h3>
+      <h2>🔑 Why is the <code>key</code> Required?</h2>
       <p>
         The <code>key</code> is a unique identifier that lets React know
         which elements <strong>changed, were added, or were removed</strong>
         when the list updates.
       </p>
 
-      <h4>Without keys — React doesn't know what changed</h4>
+      <h3>Without keys — React doesn't know what changed</h3>
       <pre><code>// You add an element at the start
 Before:  [Frontend, Backend, FullStack]
 After:   [DevOps, Frontend, Backend, FullStack]
@@ -77,7 +77,7 @@ After:   [DevOps, Frontend, Backend, FullStack]
 // position 3: (none)   → FullStack ← "new"
 // React re-renders EVERYTHING 🐌</code></pre>
 
-      <h4>With keys — React knows exactly what happened</h4>
+      <h3>With keys — React knows exactly what happened</h3>
       <pre><code>// With key={id}, React compares by identity
 Before:  [key=1 Frontend, key=2 Backend, key=3 FullStack]
 After:   [key=4 DevOps, key=1 Frontend, key=2 Backend, key=3 FullStack]
@@ -87,23 +87,23 @@ After:   [key=4 DevOps, key=1 Frontend, key=2 Backend, key=3 FullStack]
 
       <hr />
 
-      <h3>📋 Rules for Keys</h3>
+      <h2>📋 Rules for Keys</h2>
 
-      <h4>1. Must be unique among siblings</h4>
+      <h3>1. Must be unique among siblings</h3>
       <pre><code class="language-jsx">// ✅ Unique IDs
 {jobs.map((job) =&gt; &lt;JobCard key={job.id} job={job} /&gt;)}
 
 // ❌ All the same — React can't tell them apart
 {jobs.map((job) =&gt; &lt;JobCard key="job" job={job} /&gt;)}</code></pre>
 
-      <h4>2. Must be stable (not change between renders)</h4>
+      <h3>2. Must be stable (not change between renders)</h3>
       <pre><code class="language-jsx">// ❌ Math.random() generates a different key every render
 {jobs.map((job) =&gt; &lt;JobCard key={Math.random()} job={job} /&gt;)}
 
 // ✅ The ID doesn't change between renders
 {jobs.map((job) =&gt; &lt;JobCard key={job.id} job={job} /&gt;)}</code></pre>
 
-      <h4>3. Indexes: only for static lists</h4>
+      <h3>3. Indexes: only for static lists</h3>
       <pre><code class="language-jsx">// ✅ OK — static list that never changes
 const DAYS = ['Monday', 'Tuesday', 'Wednesday']
 {DAYS.map((day, index) =&gt; &lt;li key={index}&gt;{day}&lt;/li&gt;)}
@@ -121,7 +121,7 @@ const DAYS = ['Monday', 'Tuesday', 'Wednesday']
   <article id="code-examples" class="tab-content">
     <div class="description">
 
-      <h3>🗂️ Data in a JSON File</h3>
+      <h2>🗂️ Data in a JSON File</h2>
 
       <pre><code class="language-json">// src/data/jobs.json
 [
@@ -153,7 +153,7 @@ const DAYS = ['Monday', 'Tuesday', 'Wednesday']
 
       <hr />
 
-      <h3>🧩 JobCard Component</h3>
+      <h2>🧩 JobCard Component</h2>
 
       <pre><code class="language-jsx">// src/components/JobCard.jsx
 export function JobCard({ job }) {
@@ -175,7 +175,7 @@ export function JobCard({ job }) {
 
       <hr />
 
-      <h3>📋 JobListings Component with <code>.map()</code></h3>
+      <h2>📋 JobListings Component with <code>.map()</code></h2>
 
       <pre><code class="language-jsx">// src/components/JobListings.jsx
 import { JobCard } from './JobCard'
@@ -205,7 +205,7 @@ Array of rendered React components</code></pre>
 
       <hr />
 
-      <h3>🎭 Empty List: Conditional Rendering</h3>
+      <h2>🎭 Empty List: Conditional Rendering</h2>
 
       <pre><code class="language-jsx">// With early return
 export function JobListings({ jobs }) {
@@ -241,7 +241,7 @@ export function JobListings({ jobs }) {
 
       <hr />
 
-      <h3>⚠️ The Index Bug: Visual Example</h3>
+      <h2>⚠️ The Index Bug: Visual Example</h2>
       <p>Why using <code>index</code> as a key can cause bugs in dynamic lists:</p>
 
       <pre><code class="language-jsx">// Initial state
@@ -268,13 +268,13 @@ export function JobListings({ jobs }) {
   <article id="exercises" class="tab-content">
     <div class="description">
 
-      <h3>💪 Exercise: Connect Everything</h3>
+      <h2>💪 Exercise: Connect Everything</h2>
       <p>
         Build the full flow: JSON data → list of components.
         Follow the steps in order.
       </p>
 
-      <h4>Step 1 — Create the data</h4>
+      <h3>Step 1 — Create the data</h3>
       <pre><code class="language-json">// src/data/jobs.json
 [
   { "id": "1", "titulo": "Frontend Developer", "empresa": "TechCorp",  "ubicacion": "Madrid" },
@@ -282,7 +282,7 @@ export function JobListings({ jobs }) {
   { "id": "3", "titulo": "Full Stack Dev",     "empresa": "StartupX",  "ubicacion": "Remote" }
 ]</code></pre>
 
-      <h4>Step 2 — Create JobCard</h4>
+      <h3>Step 2 — Create JobCard</h3>
       <pre><code class="language-jsx">// src/components/JobCard.jsx
 export function JobCard({ job }) {
   return (
@@ -294,7 +294,7 @@ export function JobCard({ job }) {
   )
 }</code></pre>
 
-      <h4>Step 3 — Create JobListings</h4>
+      <h3>Step 3 — Create JobListings</h3>
       <pre><code class="language-jsx">// src/components/JobListings.jsx
 import { JobCard } from './JobCard'
 import jobsData from '../data/jobs.json'
@@ -309,7 +309,7 @@ export function JobListings() {
   )
 }</code></pre>
 
-      <h4>Step 4 — Use in App</h4>
+      <h3>Step 4 — Use in App</h3>
       <pre><code class="language-jsx">// src/App.jsx
 import { JobListings } from './components/JobListings'
 
@@ -324,7 +324,7 @@ function App() {
 
       <hr />
 
-      <h3>🧪 Extra Challenge</h3>
+      <h2>🧪 Extra Challenge</h2>
       <pre><code>1. Add a "No jobs available" message
    when the array is empty.
 
@@ -336,7 +336,7 @@ function App() {
 
       <hr />
 
-      <h3>✅ Class Summary</h3>
+      <h2>✅ Class Summary</h2>
       <pre><code>🗂️ External JSON      — separate data from the UI
 🧩 JobCard            — component that displays one job
 📋 JobListings        — component that renders the list

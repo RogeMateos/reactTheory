@@ -11,7 +11,7 @@
   <article id="concepts" class="tab-content active">
     <div class="description">
 
-      <h3>🔎 The initial problem</h3>
+      <h2>🔎 The initial problem</h2>
       <p>
         Filters are already working with the API, but pagination isn't integrated.
         The state exists on the frontend but the request never uses it:
@@ -24,7 +24,7 @@
 
       <hr />
 
-      <h3>📐 How API pagination works</h3>
+      <h2>📐 How API pagination works</h2>
       <p>
         Most APIs don't use a <code>page</code> parameter. Instead they use two fundamental parameters:
         <strong>limit</strong> and <strong>offset</strong>.
@@ -58,7 +58,7 @@
 
       <hr />
 
-      <h3>🧮 The offset formula</h3>
+      <h2>🧮 The offset formula</h2>
       <p>To calculate the offset from a page number:</p>
 
       <pre><code>offset = (currentPage - 1) * RESULTS_PER_PAGE</code></pre>
@@ -102,7 +102,7 @@
 
       <hr />
 
-      <h3>🐛 Critical bug: wrong total pages</h3>
+      <h2>🐛 Critical bug: wrong total pages</h2>
       <p>There's a very common mistake when calculating total pages:</p>
 
       <pre><code>// ❌ jobs.length is only the current page's results (always 10 or less)
@@ -121,7 +121,7 @@ const totalPages = Math.ceil(total / RESULTS_PER_PAGE)
 
       <hr />
 
-      <h3>🔄 Reset pagination when filters change</h3>
+      <h2>🔄 Reset pagination when filters change</h2>
       <p>
         If the user is on page 5 of "JavaScript" and switches to "Python" (which only has 2 pages),
         staying on page 5 makes no sense. Go back to page 1 whenever any filter changes:
@@ -139,7 +139,7 @@ useEffect(() => {
   <article id="code-examples" class="tab-content">
     <div class="description">
 
-      <h3>🏗️ useEffect with pagination integrated</h3>
+      <h2>🏗️ useEffect with pagination integrated</h2>
       <p>
         We add <code>limit</code>, <code>offset</code>, and <code>currentPage</code> as a dependency:
       </p>
@@ -184,7 +184,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>🔄 Full component with two useEffects</h3>
+      <h2>🔄 Full component with two useEffects</h2>
 
       <pre><code class="language-jsx">function JobSearch() {
   const [jobs, setJobs]               = useState([])
@@ -264,7 +264,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>📋 Full flow step by step</h3>
+      <h2>📋 Full flow step by step</h2>
 
       <pre><code>1. User types "JavaScript"
    └─ textToFilter changes
@@ -284,7 +284,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>🧩 Reusable Pagination component</h3>
+      <h2>🧩 Reusable Pagination component</h2>
 
       <pre><code class="language-jsx">function Pagination({ currentPage, totalPages, onNext, onPrev, onGoToPage }) {
   return (
@@ -315,7 +315,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>🔍 Verifying in DevTools → Network</h3>
+      <h2>🔍 Verifying in DevTools → Network</h2>
       <p>When changing pages you should see requests like these:</p>
 
       <pre><code>Page 1, no filters:  /api/jobs?limit=10&offset=0
@@ -342,7 +342,7 @@ With active filters:
   <article id="exercises" class="tab-content">
     <div class="description">
 
-      <h3>🐛 Bug 1: infinite loop from object as dependency</h3>
+      <h2>🐛 Bug 1: infinite loop from object as dependency</h2>
 
       <pre><code class="language-jsx">// ❌ Dangerous — filters is a new object on every render
 useEffect(() => {
@@ -356,7 +356,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>🐛 Bug 2: total pages calculated with jobs.length</h3>
+      <h2>🐛 Bug 2: total pages calculated with jobs.length</h2>
 
       <pre><code class="language-jsx">// ❌ jobs.length is always the current page size
 const totalPages = Math.ceil(jobs.length / RESULTS_PER_PAGE)
@@ -368,7 +368,7 @@ const totalPages = Math.ceil(total / RESULTS_PER_PAGE)
 
       <hr />
 
-      <h3>🐛 Bug 3: pagination not reset when filtering</h3>
+      <h2>🐛 Bug 3: pagination not reset when filtering</h2>
 
       <pre><code class="language-jsx">// ❌ User can end up on page 10 when Python only has 2 pages
 // Nothing resets currentPage when filters change
@@ -380,7 +380,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>🐛 Bug 4: currentPage missing from fetch dependencies</h3>
+      <h2>🐛 Bug 4: currentPage missing from fetch dependencies</h2>
 
       <pre><code class="language-jsx">// ❌ fetch doesn't run when the page changes
 useEffect(() => {
@@ -394,7 +394,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>📋 Verification tests</h3>
+      <h2>📋 Verification tests</h2>
 
       <pre><code>Test 1 — Basic navigation:
   1. Load the page
@@ -417,7 +417,7 @@ Test 3 — Total pages:
 
       <hr />
 
-      <h3>✅ Best practices and ❌ what to avoid</h3>
+      <h2>✅ Best practices and ❌ what to avoid</h2>
 
       <p><strong>✅ Always do:</strong></p>
       <ul>
@@ -438,7 +438,7 @@ Test 3 — Total pages:
 
       <hr />
 
-      <h3>🚀 Next steps</h3>
+      <h2>🚀 Next steps</h2>
       <ul>
         <li><strong>URL sync:</strong> reflect the current page in the URL (e.g., <code>?page=3</code>)</li>
         <li><strong>Debouncing:</strong> avoid requests on every keystroke in the text search</li>

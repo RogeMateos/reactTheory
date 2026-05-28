@@ -15,7 +15,7 @@
 
   <article id="concepts" class="tab-content active">
     <div class="description">
-      <h3>What is a Single Page Application (SPA)?</h3>
+      <h2>What is a Single Page Application (SPA)?</h2>
       <p>
         A Single Page Application (SPA) is a web application that <strong>doesn't reload the page when navigating between different routes</strong>.
         Instead of requesting new pages from the server, the SPA loads all necessary code at startup and then dynamically renders content based on the URL.
@@ -26,9 +26,9 @@
         This will help you understand how SPAs work internally before using more advanced tools.
       </p>
 
-      <h3>Why Build an SPA?</h3>
+      <h2>Why Build an SPA?</h2>
 
-      <h4>Traditional Navigation (Multi-Page Application)</h4>
+      <h3>Traditional Navigation (Multi-Page Application)</h3>
       <p>In a traditional web app, every time you click a link:</p>
 
       <pre><code>1. A request is made to the server
@@ -37,7 +37,7 @@
 4. Application state is lost
 5. There's a "flicker" while the new page loads</code></pre>
 
-      <h4>SPA Navigation</h4>
+      <h3>SPA Navigation</h3>
       <p>In an SPA, when you click:</p>
 
       <pre><code>1. Page reload is prevented
@@ -46,7 +46,7 @@
 4. Resources are NOT downloaded again
 5. Instant and smooth navigation</code></pre>
 
-      <h4>Advantages:</h4>
+      <h3>Advantages:</h3>
       <ul>
         <li>⚡ <strong>Instant navigation:</strong> no resource reloading</li>
         <li>💾 <strong>State preservation:</strong> variables and data persist</li>
@@ -54,7 +54,7 @@
         <li>📦 <strong>Less data:</strong> only new content is downloaded</li>
       </ul>
 
-      <h3>The Problem: Links Reload the Page</h3>
+      <h2>The Problem: Links Reload the Page</h2>
       <p>By default, when you click an <code>&lt;a&gt;</code> tag:</p>
 
       <pre><code class="language-jsx">function Header() {
@@ -69,7 +69,7 @@
 
       <p>Each click reloads the entire page → downloads HTML, CSS, JS, images again…</p>
 
-      <h3>Solution: Create a Custom Link Component</h3>
+      <h2>Solution: Create a Custom Link Component</h2>
       <p>We'll create our own <code>&lt;Link&gt;</code> component that intercepts clicks and prevents reloading:</p>
 
       <pre><code class="language-jsx">function Link({ href, children, ...props }) {
@@ -92,7 +92,7 @@
   )
 }</code></pre>
 
-      <h4>What Does Each Part Do?</h4>
+      <h3>What Does Each Part Do?</h3>
 
       <p><strong>1. preventDefault()</strong></p>
       <p>Prevents the browser from doing its default behavior, which is navigating to the link.</p>
@@ -125,7 +125,7 @@ window.dispatchEvent(navigationEvent)</code></pre>
         but since we're changing the URL manually with <code>pushState</code>, we must emit it ourselves.
       </p>
 
-      <h3>Replace Traditional Links</h3>
+      <h2>Replace Traditional Links</h2>
       <p>Now we replace all <code>&lt;a&gt;</code> tags with our <code>&lt;Link&gt;</code> component:</p>
 
       <pre><code class="language-jsx">function Header() {
@@ -145,7 +145,7 @@ window.dispatchEvent(navigationEvent)</code></pre>
         <li>❌ But… the content doesn't change</li>
       </ul>
 
-      <h3>The Problem: React Doesn't React to URL Changes</h3>
+      <h2>The Problem: React Doesn't React to URL Changes</h2>
       <p>
         Although the URL changes, no component is re-rendering because React doesn't know the URL has changed.
       </p>
@@ -157,7 +157,7 @@ window.dispatchEvent(navigationEvent)</code></pre>
         <li>Render the corresponding content based on that route</li>
       </ol>
 
-      <h3>Solution: Keep the Route in State</h3>
+      <h2>Solution: Keep the Route in State</h2>
       <p>We'll create a state that contains the current route:</p>
 
       <pre><code class="language-jsx">import { useState, useEffect } from 'react'
@@ -177,7 +177,7 @@ function App() {
 
       <p>Now we have the route in state, but it still doesn't update when we navigate.</p>
 
-      <h3>Listen for URL Changes with useEffect</h3>
+      <h2>Listen for URL Changes with useEffect</h2>
       <p>We need to listen for the <code>popstate</code> event to detect when the URL changes:</p>
 
       <pre><code class="language-jsx">import { useState, useEffect } from 'react'
@@ -215,7 +215,7 @@ function App() {
         If we used different anonymous functions, it wouldn't clean up correctly.
       </p>
 
-      <h4>Why the Empty Array []?</h4>
+      <h3>Why the Empty Array []?</h3>
 
       <pre><code class="language-jsx">useEffect(() => {
   // ...
@@ -226,7 +226,7 @@ function App() {
         That's why we use an empty array as a dependency.
       </p>
 
-      <h3>Render Content Based on Route</h3>
+      <h2>Render Content Based on Route</h2>
       <p>Now that we have <code>currentPath</code> updated, we can render different content based on the route:</p>
 
       <pre><code class="language-jsx">function App() {
@@ -257,7 +257,7 @@ function App() {
 
       <p><strong>We now have a functional SPA!</strong></p>
 
-      <h3>The Complete Flow</h3>
+      <h2>The Complete Flow</h2>
       <p>When the user clicks a <code>&lt;Link&gt;</code>:</p>
 
       <pre><code>1. Link captures the click → event.preventDefault()
@@ -267,10 +267,10 @@ function App() {
 5. Updates state → setCurrentPath(window.location.pathname)
 6. React re-renders → displays the corresponding component</code></pre>
 
-      <h3>It's an SPA! Verification with DevTools</h3>
+      <h2>It's an SPA! Verification with DevTools</h2>
       <p>Open browser DevTools → Network tab:</p>
 
-      <h4>Traditional Navigation (without SPA)</h4>
+      <h3>Traditional Navigation (without SPA)</h3>
       <p>When clicking a normal <code>&lt;a&gt;</code> link:</p>
 
       <pre><code>✅ index.html        200 OK  1.2 KB
@@ -281,14 +281,14 @@ function App() {
 ---------------------------------
     Total: 357 KB downloaded</code></pre>
 
-      <h4>SPA Navigation (with our Link)</h4>
+      <h3>SPA Navigation (with our Link)</h3>
       <p>When clicking our <code>&lt;Link&gt;</code>:</p>
 
       <pre><code>(empty, nothing downloaded)</code></pre>
 
       <p><strong>Instant navigation!</strong> Resources aren't reloaded because the page never reloads.</p>
 
-      <h4>Comparison with Slow Network</h4>
+      <h3>Comparison with Slow Network</h3>
       <p>To see the difference more clearly, simulate a slow connection:</p>
       <ol>
         <li>Open DevTools → Network</li>
@@ -299,7 +299,7 @@ function App() {
 
       <p>This is the big advantage of SPAs: much faster and smoother user experience.</p>
 
-      <h3>Support Browser Back/Forward Buttons</h3>
+      <h2>Support Browser Back/Forward Buttons</h2>
       <p>Our SPA already supports browser navigation buttons without additional code because:</p>
 
       <pre><code>When the user clicks "Back" or "Forward"
@@ -312,7 +312,7 @@ React re-renders the corresponding content</code></pre>
 
       <p><strong>Everything works! 🎉</strong></p>
 
-      <h3>What About React Router?</h3>
+      <h2>What About React Router?</h2>
       <p>
         Now that you understand how an SPA works internally, in the next lessons we'll use React Router,
         which is a professional library that:
@@ -328,7 +328,7 @@ React re-renders the corresponding content</code></pre>
 
       <p>But it's important to understand what React Router does internally before using it. Now you know!</p>
 
-      <h3>Summary</h3>
+      <h2>Summary</h2>
       <p>In this lesson, you learned to create an SPA from scratch:</p>
 
       <ul>
@@ -341,7 +341,7 @@ React re-renders the corresponding content</code></pre>
         <li>⚡ Instant navigation without downloading resources again</li>
       </ul>
 
-      <h3>SPA Advantages</h3>
+      <h2>SPA Advantages</h2>
       <ul>
         <li>⚡ <strong>Performance:</strong> instant navigation</li>
         <li>💾 <strong>Persistent state:</strong> information isn't lost when navigating</li>

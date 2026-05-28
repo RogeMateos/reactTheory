@@ -11,7 +11,7 @@
   <article id="concepts" class="tab-content active">
     <div class="description">
 
-      <h3>🔄 ¿Qué es un Callback?</h3>
+      <h2>🔄 ¿Qué es un Callback?</h2>
       <p>
         Un <strong>callback</strong> es una función que se pasa como argumento a otra función,
         y que será ejecutada más tarde — de ahí el nombre <em>"call back"</em> (llamar de vuelta).
@@ -28,7 +28,7 @@ El hijo la invoca al necesitar →  onPageChange(3)</code></pre>
 
       <hr />
 
-      <h3>⬆️ Comunicación Hijo → Padre</h3>
+      <h2>⬆️ Comunicación Hijo → Padre</h2>
       <p>
         Las props fluyen de padre a hijo. Los callbacks invierten esa comunicación:
         el hijo le <em>avisa</em> al padre que algo ocurrió.
@@ -61,7 +61,7 @@ El hijo la invoca al necesitar →  onPageChange(3)</code></pre>
 
       <hr />
 
-      <h3>📛 Convención on / handle</h3>
+      <h2>📛 Convención on / handle</h2>
       <pre><code>Props que reciben funciones   →  on + Evento
   onPageChange, onClick, onSubmit, onDelete
 
@@ -81,7 +81,7 @@ function Pagination({ onPageChange }) {
 
       <hr />
 
-      <h3>⚡ Referencia vs Ejecución Inmediata</h3>
+      <h2>⚡ Referencia vs Ejecución Inmediata</h2>
       <p>Esta es una de las confusiones más comunes en React — prestá mucha atención:</p>
 
       <pre><code class="language-jsx">// ✅ Correcto — pasa la REFERENCIA a la función
@@ -100,7 +100,7 @@ function Pagination({ onPageChange }) {
 
       <hr />
 
-      <h3>🛡️ Prop de Función con Valor por Defecto</h3>
+      <h2>🛡️ Prop de Función con Valor por Defecto</h2>
       <p>
         Si el callback es opcional, usá una función vacía como default para que el componente
         no rompa cuando no se pasa:
@@ -123,7 +123,7 @@ function Pagination({ onPageChange = () => {} }) {
   <article id="code-examples" class="tab-content">
     <div class="description">
 
-      <h3>🧩 Pagination con Callbacks</h3>
+      <h2>🧩 Pagination con Callbacks</h2>
       <p>Actualizamos el componente para que notifique al padre con cada click:</p>
 
       <pre><code class="language-jsx">// src/components/Pagination.jsx
@@ -198,7 +198,7 @@ export default Pagination</code></pre>
 
       <hr />
 
-      <h3>🏗️ App conectada al callback</h3>
+      <h2>🏗️ App conectada al callback</h2>
 
       <pre><code class="language-jsx">// src/App.jsx
 import Pagination from './components/Pagination'
@@ -231,7 +231,7 @@ export default App</code></pre>
 
       <hr />
 
-      <h3>🔘 Ejemplo Adicional: Button Reutilizable</h3>
+      <h2>🔘 Ejemplo Adicional: Button Reutilizable</h2>
       <p>El mismo patrón funciona para cualquier componente interactivo:</p>
 
       <pre><code class="language-jsx">// Componente Button reutilizable
@@ -258,7 +258,7 @@ function App() {
 
       <hr />
 
-      <h3>📦 Pasando Argumentos al Callback</h3>
+      <h2>📦 Pasando Argumentos al Callback</h2>
       <p>Cuando necesitás enviar datos adicionales al padre, usás una arrow function:</p>
 
       <pre><code class="language-jsx">// JobCard notifica al padre con el ID del trabajo
@@ -288,7 +288,7 @@ function App() {
   <article id="exercises" class="tab-content">
     <div class="description">
 
-      <h3>💪 Ejercicio: Flujo Completo de Callbacks</h3>
+      <h2>💪 Ejercicio: Flujo Completo de Callbacks</h2>
       <p>
         Vas a trazar el flujo completo de callbacks en la app. El objetivo es entender
         qué sucede en cada paso cuando el usuario hace click en "Página 3".
@@ -308,7 +308,7 @@ function App() {
 
       <hr />
 
-      <h3>🧪 Desafío: JobCard con Callback</h3>
+      <h2>🧪 Desafío: JobCard con Callback</h2>
       <p>
         Agregá un callback <code>onFavorite</code> a <code>JobCard</code> que notifique al padre
         cuando el usuario marca un trabajo como favorito.
@@ -346,7 +346,7 @@ function App() {
 
       <hr />
 
-      <h3>✅ Resumen de la Clase</h3>
+      <h2>✅ Resumen de la Clase</h2>
       <pre><code>🔄 Callback        — función pasada como prop para notificar al padre
 ⬆️ Hijo → Padre    — el hijo llama al callback, el padre reacciona
 📛 on / handle     — onEvento para props, handleEvento para funciones

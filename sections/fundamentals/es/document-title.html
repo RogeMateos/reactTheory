@@ -11,7 +11,7 @@
   <article id="concepts" class="tab-content active">
     <div class="description">
 
-      <h3>🐛 El enfoque habitual (y sus problemas)</h3>
+      <h2>🐛 El enfoque habitual (y sus problemas)</h2>
       <p>
         Es muy común ver código que actualiza el título de la página con <code>useEffect</code>:
       </p>
@@ -28,7 +28,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>✅ La solución: usar &lt;title&gt; directamente en JSX</h3>
+      <h2>✅ La solución: usar &lt;title&gt; directamente en JSX</h2>
       <p>
         React permite usar etiquetas de SEO como <code>&lt;title&gt;</code> o <code>&lt;meta&gt;</code>
         directamente en el JSX. No hace falta manipular el DOM manualmente:
@@ -72,7 +72,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>⚠️ El problema oculto: duplicación del &lt;title&gt;</h3>
+      <h2>⚠️ El problema oculto: duplicación del &lt;title&gt;</h2>
       <p>
         Al implementar esta solución, si inspeccionás el DOM en DevTools vas a ver
         <strong>dos etiquetas <code>&lt;title&gt;</code> en el <code>&lt;head&gt;</code></strong>.
@@ -92,7 +92,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>🔧 Solución: eliminar el &lt;title&gt; del index.html</h3>
+      <h2>🔧 Solución: eliminar el &lt;title&gt; del index.html</h2>
       <p>
         Eliminá la etiqueta <code>&lt;title&gt;</code> del HTML estático y dejá que React
         controle el título completamente:
@@ -119,7 +119,7 @@ useEffect(() => {
   <article id="code-examples" class="tab-content">
     <div class="description">
 
-      <h3>🔄 Título dinámico según el estado</h3>
+      <h2>🔄 Título dinámico según el estado</h2>
       <p>
         La gran ventaja de gestionar el título desde React es que puede depender del estado
         de la aplicación. El título de la pestaña se actualiza en tiempo real:
@@ -154,7 +154,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>📋 Casos de uso del título dinámico</h3>
+      <h2>📋 Casos de uso del título dinámico</h2>
 
       <pre><code>// El título de la pestaña muestra en tiempo real:
 
@@ -165,7 +165,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>🏗️ Ejemplo completo con función getTitle</h3>
+      <h2>🏗️ Ejemplo completo con función getTitle</h2>
 
       <pre><code class="language-jsx">function JobsApp() {
   const [jobs, setJobs]     = useState([])
@@ -206,7 +206,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>🚀 Ventajas del título dinámico</h3>
+      <h2>🚀 Ventajas del título dinámico</h2>
 
       <table>
         <thead>
@@ -242,7 +242,7 @@ useEffect(() => {
   <article id="exercises" class="tab-content">
     <div class="description">
 
-      <h3>⚠️ Casos donde &lt;title&gt; NO va al &lt;head&gt;</h3>
+      <h2>⚠️ Casos donde &lt;title&gt; NO va al &lt;head&gt;</h2>
       <p>
         Según la documentación oficial de React, hay dos excepciones donde <code>&lt;title&gt;</code>
         no se coloca en el <code>&lt;head&gt;</code> del documento:
@@ -250,7 +250,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>1. Dentro de un componente &lt;svg&gt;</h3>
+      <h2>1. Dentro de un componente &lt;svg&gt;</h2>
       <p>
         En este contexto, <code>&lt;title&gt;</code> no representa el título del documento
         sino una <strong>anotación de accesibilidad</strong> para ese gráfico SVG:
@@ -264,7 +264,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>2. Con la prop itemProp</h3>
+      <h2>2. Con la prop itemProp</h2>
       <p>
         Si <code>&lt;title&gt;</code> tiene una prop <code>itemProp</code>, tampoco tiene
         comportamiento especial. Representa metadatos de schema.org sobre una parte de la página,
@@ -279,7 +279,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>📚 Librerías para proyectos grandes</h3>
+      <h2>📚 Librerías para proyectos grandes</h2>
       <p>
         En aplicaciones más grandes, podés usar librerías dedicadas. El principio es el mismo:
         gestionar el SEO de forma declarativa desde React.
@@ -316,7 +316,7 @@ function Page() {
 
       <hr />
 
-      <h3>✅ Buenas prácticas y ❌ qué evitar</h3>
+      <h2>✅ Buenas prácticas y ❌ qué evitar</h2>
 
       <p><strong>✅ Hacer siempre:</strong></p>
       <ul>

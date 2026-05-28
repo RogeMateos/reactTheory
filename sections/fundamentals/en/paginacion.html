@@ -11,7 +11,7 @@
   <article id="concepts" class="tab-content active">
     <div class="description">
 
-      <h3>⬇️ Data Flow: Parent → Child</h3>
+      <h2>⬇️ Data Flow: Parent → Child</h2>
       <p>
         The parent component (<code>App</code>) owns the data and passes it down to the child (<code>Pagination</code>) via props.
         The child only knows how to render what it receives — it doesn't manage or decide the data.
@@ -28,7 +28,7 @@ Pagination (child)
 
       <hr />
 
-      <h3>🎯 Default Props</h3>
+      <h2>🎯 Default Props</h2>
       <p>What happens if the component is used without passing props? Without defaults, it breaks.</p>
 
       <pre><code class="language-jsx">// ❌ Old way — verbose
@@ -57,7 +57,7 @@ function Pagination({ currentPage = 1, totalPages = 5 }) {
 
       <hr />
 
-      <h3>🎨 Inline Styles with Objects</h3>
+      <h2>🎨 Inline Styles with Objects</h2>
       <p>
         In React, inline styles are passed as <strong>JavaScript objects</strong>, not strings.
         CSS properties use <strong>camelCase</strong>.
@@ -80,7 +80,7 @@ z-index          →  zIndex</code></pre>
 
       <hr />
 
-      <h3>🚫 <code>preventDefault()</code></h3>
+      <h2>🚫 <code>preventDefault()</code></h2>
       <p>
         <code>&lt;a href="#"&gt;</code> elements scroll to the top of the page by default when clicked.
         <code>preventDefault()</code> cancels that behavior and only runs your custom logic.
@@ -93,7 +93,7 @@ z-index          →  zIndex</code></pre>
 
       <hr />
 
-      <h3>📛 Event Handler Naming Convention</h3>
+      <h2>📛 Event Handler Naming Convention</h2>
       <p>React has a clear convention for naming event-related functions:</p>
 
       <pre><code>Props that receive functions     →  on + Event
@@ -122,7 +122,7 @@ function Pagination({ onPageChange }) {
   <article id="code-examples" class="tab-content">
     <div class="description">
 
-      <h3>🔢 Generating the Pages Array</h3>
+      <h2>🔢 Generating the Pages Array</h2>
       <p>To render the page buttons, we need an array of numbers:</p>
 
       <pre><code class="language-javascript">const pages = Array.from({ length: totalPages }, (_, i) => i + 1)
@@ -141,7 +141,7 @@ Array.from()             → creates a new array
 
       <hr />
 
-      <h3>🔄 Rendering the List with <code>.map()</code></h3>
+      <h2>🔄 Rendering the List with <code>.map()</code></h2>
 
       <pre><code class="language-jsx">{pages.map((page) => (
   &lt;a
@@ -163,7 +163,7 @@ className   → ternary to apply 'is-active' only to the current page</code></pr
 
       <hr />
 
-      <h3>🧩 Full Pagination Component</h3>
+      <h2>🧩 Full Pagination Component</h2>
 
       <pre><code class="language-jsx">// src/components/Pagination.jsx
 
@@ -224,7 +224,7 @@ export default Pagination</code></pre>
 
       <hr />
 
-      <h3>🏗️ Using Pagination in App</h3>
+      <h2>🏗️ Using Pagination in App</h2>
 
       <pre><code class="language-jsx">// src/App.jsx
 import Pagination from './components/Pagination'
@@ -256,19 +256,19 @@ export default App</code></pre>
   <article id="exercises" class="tab-content">
     <div class="description">
 
-      <h3>💪 Exercise: Pagination with Callbacks</h3>
+      <h2>💪 Exercise: Pagination with Callbacks</h2>
       <p>
         The current component only displays the pagination — clicks don't do anything yet.
         Your goal: add <strong>callbacks</strong> so the child can tell the parent which page was selected.
       </p>
 
-      <h4>Step 1 — Receive the function as a prop</h4>
+      <h3>Step 1 — Receive the function as a prop</h3>
       <pre><code class="language-jsx">// Add onPageChange to the component's props
 function Pagination({ currentPage = 1, totalPages = 5, onPageChange }) {
   // ...
 }</code></pre>
 
-      <h4>Step 2 — Call it in event handlers</h4>
+      <h3>Step 2 — Call it in event handlers</h3>
       <pre><code class="language-jsx">const handlePrevious = (e) => {
   e.preventDefault()
   if (currentPage &gt; 1) onPageChange(currentPage - 1)
@@ -284,7 +284,7 @@ const handlePageClick = (e, page) => {
   onPageChange(page)
 }</code></pre>
 
-      <h4>Step 3 — Connect in App with useState</h4>
+      <h3>Step 3 — Connect in App with useState</h3>
       <pre><code class="language-jsx">import { useState } from 'react'
 import Pagination from './components/Pagination'
 
@@ -325,7 +325,7 @@ App                        Pagination
 
       <hr />
 
-      <h3>✅ Class Summary</h3>
+      <h2>✅ Class Summary</h2>
       <pre><code>🧩 Pagination        — navigation component between pages
 📊 Array.from()      — generate number arrays [1, 2, 3...]
 🔄 .map()            — transform data array into JSX

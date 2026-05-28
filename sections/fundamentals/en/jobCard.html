@@ -14,7 +14,7 @@
     <p>Now we're going to apply all of that by creating a real component for our DevJobs application.</p>
     <p>This will be the first component that represents a real piece of UI.</p>
 
-    <h3>1️⃣ The Goal: A Job Card</h3>
+    <h2>1️⃣ The Goal: A Job Card</h2>
     <p>We want to create something like this:</p>
     <pre><code>-------------------------------
 Frontend Developer
@@ -28,7 +28,7 @@ We are looking for a developer...
     <p><strong>This is where React shines.</strong></p>
     <p>We create a reusable component.</p>
 
-    <h3>2️⃣ The JobCard Component</h3>
+    <h2>2️⃣ The JobCard Component</h2>
     <p>This is our first real component.</p>
 
     <pre><code class="language-jsx">function JobCard({ title, company, location, description }) {
@@ -53,10 +53,10 @@ We are looking for a developer...
       <li>Represents a job card</li>
     </ul>
 
-    <h3>3️⃣ What are Props?</h3>
+    <h2>3️⃣ What are Props?</h2>
     <p>Props are data passed to a component.</p>
 
-    <h4>Example:</h4>
+    <h3>Example:</h3>
     <pre><code class="language-jsx">&lt;JobCard
   title="Frontend Developer"
   company="Tech Solutions"
@@ -72,7 +72,7 @@ We are looking for a developer...
 
     <p>React replaces those values automatically.</p>
 
-    <h3>4️⃣ Props Destructuring</h3>
+    <h2>4️⃣ Props Destructuring</h2>
     <p>Notice this line:</p>
     <pre><code class="language-jsx">function JobCard({ title, company, location, description })</code></pre>
 
@@ -90,14 +90,14 @@ We are looking for a developer...
   return &lt;h3&gt;{title}&lt;/h3&gt;
 }</code></pre>
 
-    <h4>Advantages:</h4>
+    <h3>Advantages:</h3>
     <ul>
       <li>Cleaner code</li>
       <li>Easier to read</li>
       <li>Very common in React</li>
     </ul>
 
-    <h3>5️⃣ The App Component</h3>
+    <h2>5️⃣ The App Component</h2>
     <p>Now we have a main component that uses JobCard.</p>
 
     <pre><code class="language-jsx">function App() {
@@ -124,11 +124,11 @@ We are looking for a developer...
 
     <p>Here we see component composition.</p>
 
-    <h3>6️⃣ What is Component Composition?</h3>
+    <h2>6️⃣ What is Component Composition?</h2>
     <p>React works like LEGO.</p>
     <p>You build interfaces using small components.</p>
 
-    <h4>Example:</h4>
+    <h3>Example:</h3>
     <pre><code>App
  ├── Header
  ├── JobList
@@ -139,9 +139,9 @@ We are looking for a developer...
 
     <p>Each component has its own responsibility.</p>
 
-    <h3>7️⃣ Comparison with Vanilla JavaScript</h3>
+    <h2>7️⃣ Comparison with Vanilla JavaScript</h2>
 
-    <h4>Before with plain JavaScript we did this:</h4>
+    <h3>Before with plain JavaScript we did this:</h3>
     <pre><code class="language-javascript">jobs.forEach((job) => {
   const article = document.createElement('article')
   article.innerHTML = `
@@ -151,7 +151,7 @@ We are looking for a developer...
   container.appendChild(article)
 })</code></pre>
 
-    <h4>Problems:</h4>
+    <h3>Problems:</h3>
     <ul>
       <li>❌ Lots of repeated code</li>
       <li>❌ Manual DOM manipulation</li>
@@ -159,7 +159,7 @@ We are looking for a developer...
       <li>❌ Hard to maintain</li>
     </ul>
 
-    <h3>8️⃣ With React</h3>
+    <h2>8️⃣ With React</h2>
     <p>We write the component once:</p>
 
     <pre><code class="language-jsx">function JobCard({ title, company, location, description }) {
@@ -173,7 +173,7 @@ We are looking for a developer...
 
     <p>And we use it as many times as we want.</p>
 
-    <h4>Advantages:</h4>
+    <h3>Advantages:</h3>
     <ul>
       <li>✅ Declarative code</li>
       <li>✅ Reusable components</li>
@@ -181,7 +181,7 @@ We are looking for a developer...
       <li>✅ Easier to maintain</li>
     </ul>
 
-    <h3>9️⃣ Using Dynamic Data</h3>
+    <h2>9️⃣ Using Dynamic Data</h2>
     <p>We can use real data.</p>
 
     <pre><code class="language-jsx">const jobs = [
@@ -201,7 +201,7 @@ We are looking for a developer...
 
     <p>Then pass them as props.</p>
 
-    <h3>🔟 Extending the Component</h3>
+    <h2>🔟 Extending the Component</h2>
     <p>We can add more information.</p>
 
     <pre><code class="language-jsx">function JobCard({
@@ -230,9 +230,9 @@ We are looking for a developer...
   )
 }</code></pre>
 
-    <h3>1️⃣1️⃣ Best Practices with Components</h3>
+    <h2>1️⃣1️⃣ Best Practices with Components</h2>
 
-    <h4>1. One component = One responsibility</h4>
+    <h3>1. One component = One responsibility</h3>
 
     <p><strong>Correct:</strong></p>
     <pre><code class="language-jsx">function JobTitle({ children }) {
@@ -244,7 +244,7 @@ We are looking for a developer...
   // does too many things
 }</code></pre>
 
-    <h4>2. Clear names</h4>
+    <h3>2. Clear names</h3>
 
     <p><strong>Correct:</strong></p>
     <pre><code>UserProfileCard
@@ -256,7 +256,7 @@ NavigationMenu</code></pre>
 Thing
 Comp1</code></pre>
 
-    <h4>3. Descriptive props</h4>
+    <h3>3. Descriptive props</h3>
 
     <p><strong>Correct:</strong></p>
     <pre><code class="language-jsx">function Button({ text, onClick, disabled })</code></pre>
@@ -264,7 +264,7 @@ Comp1</code></pre>
     <p><strong>Incorrect:</strong></p>
     <pre><code class="language-jsx">function Button({ t, oc, d })</code></pre>
 
-    <h3>1️⃣2️⃣ What You've Learned</h3>
+    <h2>1️⃣2️⃣ What You've Learned</h2>
     <p>Now you know:</p>
     <ul>
       <li>🎯 Create a real component</li>
@@ -274,14 +274,14 @@ Comp1</code></pre>
       <li>✨ Organize React applications</li>
     </ul>
 
-    <h3>💡 Key Idea</h3>
+    <h2>💡 Key Idea</h2>
     <p  class="callout-info">
       <strong>React is based on this principle:</strong><br>
       <strong>UI = Reusable components</strong><br><br>
       Divide your interface into small, reusable components.
     </p>
 
-    <h3>🎯 Next Step</h3>
+    <h2>🎯 Next Step</h2>
     <p>
       Next, we'll show you how a senior would write this same example using <code>.map()</code>
       (the real way it's used in React).

@@ -27,7 +27,7 @@
     <p>Although components are JavaScript functions, not all functions are components.</p>
     <p>Understanding this difference is key to writing React correctly.</p>
 
-    <h3>1️⃣ What is a Component in React?</h3>
+    <h2>1️⃣ What is a Component in React?</h2>
     <p>
       A React component is a <strong>special function that React uses to render the user interface (UI)</strong>.
     </p>
@@ -39,18 +39,18 @@
       <li>Is used as a JSX tag</li>
     </ul>
 
-    <h4>Example</h4>
+    <h3>Example</h3>
     <pre><code class="language-jsx">function Greeting() {
   return &lt;h1&gt;Hello from React&lt;/h1&gt;
 }</code></pre>
 
-    <h4>Using the component:</h4>
+    <h3>Using the component:</h3>
     <pre><code class="language-jsx">&lt;Greeting /&gt;</code></pre>
 
     <p>React will execute the function and render:</p>
     <pre><code>&lt;h1&gt;Hello from React&lt;/h1&gt;</code></pre>
 
-    <h4>Simple Analogy: The Printer</h4>
+    <h3>Simple Analogy: The Printer</h3>
     <p>Imagine React as a UI printer.</p>
     <p>Components are like templates.</p>
     <ul>
@@ -66,7 +66,7 @@ function Greeting()
   ↓
 &lt;h1&gt;Hello&lt;/h1&gt;</code></pre>
 
-    <h4>Another Analogy: The Traffic Light</h4>
+    <h3>Another Analogy: The Traffic Light</h3>
     <p>Think of Components and Normal Functions like a traffic light system:</p>
     <ul>
       <li><strong>🟢 Components (Green light)</strong> → They control what you SEE on the screen
@@ -89,13 +89,13 @@ function Greeting()
     <pre><code>🟢 Green = "This is UI" (Component)
 🟡 Yellow = "This is logic" (Normal Function)</code></pre>
 
-    <h3>2️⃣ What is a Normal Function?</h3>
+    <h2>2️⃣ What is a Normal Function?</h2>
     <p>
       A normal JavaScript function is simply a function that executes logic.
     </p>
     <p>It's not designed to render UI.</p>
 
-    <h4>Example</h4>
+    <h3>Example</h3>
     <pre><code class="language-jsx">function calculateTotal(price, tax) {
   return price + price * tax
 }
@@ -109,7 +109,7 @@ const total = calculateTotal(100, 0.21)</code></pre>
       <li>Only executes logic</li>
     </ul>
 
-    <h4>Key Difference</h4>
+    <h3>Key Difference</h3>
     <table>
       <tr>
         <th>Type</th>
@@ -125,10 +125,10 @@ const total = calculateTotal(100, 0.21)</code></pre>
       </tr>
     </table>
 
-    <h3>3️⃣ How They are Invoked</h3>
+    <h2>3️⃣ How They are Invoked</h2>
     <p>This is one of the most important differences.</p>
 
-    <h4>Components</h4>
+    <h3>Components</h3>
     <p>They are used as JSX tags.</p>
     <pre><code class="language-jsx">function Button() {
   return &lt;button&gt;Click me&lt;/button&gt;
@@ -141,7 +141,7 @@ const total = calculateTotal(100, 0.21)</code></pre>
 
     <p>But it manages the rendering lifecycle.</p>
 
-    <h4>Normal Functions</h4>
+    <h3>Normal Functions</h3>
     <p>They are called with parentheses.</p>
     <pre><code class="language-jsx">function greet(name) {
   return `Hello ${name}`
@@ -149,9 +149,9 @@ const total = calculateTotal(100, 0.21)</code></pre>
 
 greet("Miguel")</code></pre>
 
-    <h3>4️⃣ What They Return</h3>
+    <h2>4️⃣ What They Return</h2>
 
-    <h4>Components</h4>
+    <h3>Components</h3>
     <p>Return things that React can render.</p>
     <pre><code class="language-jsx">function Title() {
   return &lt;h1&gt;My title&lt;/h1&gt;
@@ -159,7 +159,7 @@ greet("Miguel")</code></pre>
 
     <p>React converts it to HTML.</p>
 
-    <h4>Normal Functions</h4>
+    <h3>Normal Functions</h3>
     <p>Can return anything.</p>
     <pre><code class="language-jsx">function add(a, b) {
   return a + b
@@ -169,33 +169,33 @@ function getUser() {
   return { name: "Miguel", age: 25 }
 }</code></pre>
 
-    <h3>5️⃣ Naming Convention</h3>
+    <h2>5️⃣ Naming Convention</h2>
     <p>React uses a very important rule.</p>
 
-    <h4>Components → PascalCase</h4>
+    <h3>Components → PascalCase</h3>
     <pre><code class="language-jsx">function MyComponent() {}
 function PrimaryButton() {}
 function JobCard() {}</code></pre>
 
-    <h4>Normal Functions → camelCase</h4>
+    <h3>Normal Functions → camelCase</h3>
     <pre><code class="language-jsx">function calculatePrice() {}
 function validateEmail() {}
 function getDate() {}</code></pre>
 
-    <h3>6️⃣ Why is PascalCase Mandatory?</h3>
+    <h2>6️⃣ Why is PascalCase Mandatory?</h2>
     <p>React needs to distinguish between:</p>
 
-    <h4>1️⃣ Native HTML</h4>
+    <h3>1️⃣ Native HTML</h3>
     <pre><code>&lt;div&gt;
 &lt;button&gt;
 &lt;h1&gt;</code></pre>
 
-    <h4>2️⃣ Custom Components</h4>
+    <h3>2️⃣ Custom Components</h3>
     <pre><code>&lt;MyButton&gt;
 &lt;App&gt;
 &lt;Product&gt;</code></pre>
 
-    <h4>Example</h4>
+    <h3>Example</h3>
     <pre><code class="language-jsx">&lt;MyButton /&gt;</code></pre>
 
     <p>React understands: → It's a custom component</p>
@@ -206,25 +206,25 @@ function getDate() {}</code></pre>
     <p>React thinks: → It's an HTML tag</p>
     <p>And that doesn't work correctly.</p>
 
-    <h3>7️⃣ What Can React Render</h3>
+    <h2>7️⃣ What Can React Render</h2>
     <p>A component can return several types of values.</p>
 
-    <h4>JSX</h4>
+    <h3>JSX</h3>
     <pre><code class="language-jsx">function App() {
   return &lt;h1&gt;Hello world&lt;/h1&gt;
 }</code></pre>
 
-    <h4>Strings</h4>
+    <h3>Strings</h3>
     <pre><code class="language-jsx">function Greeting() {
   return "Hello"
 }</code></pre>
 
-    <h4>Numbers</h4>
+    <h3>Numbers</h3>
     <pre><code class="language-jsx">function Counter() {
   return 42
 }</code></pre>
 
-    <h4>null or undefined</h4>
+    <h3>null or undefined</h3>
     <p>They don't render anything.</p>
     <pre><code class="language-jsx">function Invisible() {
   return null
@@ -232,11 +232,11 @@ function getDate() {}</code></pre>
 
     <p>This is used a lot for conditional rendering.</p>
 
-    <h3>8️⃣ Mixing Components and Functions</h3>
+    <h2>8️⃣ Mixing Components and Functions</h2>
     <p>In real projects, they are always mixed.</p>
     <p>Normal functions help components.</p>
 
-    <h4>Example</h4>
+    <h3>Example</h3>
     <pre><code class="language-jsx">function formatPrice(price) {
   return `${price}€`
 }
@@ -258,9 +258,9 @@ function Product({ name, price }) {
       <li>formatPrice → helper function</li>
     </ul>
 
-    <h3>9️⃣ When to Use Each One</h3>
+    <h2>9️⃣ When to Use Each One</h2>
 
-    <h4>Use Components when</h4>
+    <h3>Use Components when</h3>
     <p>You need UI.</p>
 
     <p>Examples:</p>
@@ -281,7 +281,7 @@ function Product({ name, price }) {
   )
 }</code></pre>
 
-    <h4>Use Normal Functions when</h4>
+    <h3>Use Normal Functions when</h3>
     <p>You need logic.</p>
 
     <p>Examples:</p>
@@ -296,9 +296,9 @@ function Product({ name, price }) {
   return email.includes("@")
 }</code></pre>
 
-    <h3>🔟 Common Beginner Mistakes</h3>
+    <h2>🔟 Common Beginner Mistakes</h2>
 
-    <h4>Error 1: Calling a component as a function</h4>
+    <h3>Error 1: Calling a component as a function</h3>
     <p>❌ Incorrect:</p>
     <pre><code class="language-jsx">function Greeting() {
   return &lt;h1&gt;Hello&lt;/h1&gt;
@@ -309,7 +309,7 @@ Greeting()</code></pre>
     <p>✅ Correct:</p>
     <pre><code class="language-jsx">&lt;Greeting /&gt;</code></pre>
 
-    <h4>Error 2: Using lowercase</h4>
+    <h3>Error 2: Using lowercase</h3>
     <p>❌ Incorrect:</p>
     <pre><code class="language-jsx">function greeting() {
   return &lt;h1&gt;Hello&lt;/h1&gt;
@@ -320,7 +320,7 @@ Greeting()</code></pre>
   return &lt;h1&gt;Hello&lt;/h1&gt;
 }</code></pre>
 
-    <h4>Error 3: Trying to render objects</h4>
+    <h3>Error 3: Trying to render objects</h3>
     <p>❌ Incorrect:</p>
     <pre><code class="language-jsx">function User() {
   return { name: "Miguel" }
@@ -338,7 +338,7 @@ Greeting()</code></pre>
   )
 }</code></pre>
 
-    <h3>📋 Final Summary</h3>
+    <h2>📋 Final Summary</h2>
     <table>
       <tr>
         <th>Concept</th>
@@ -367,14 +367,14 @@ Greeting()</code></pre>
       </tr>
     </table>
 
-    <h3>💡 Key Idea You Must Remember</h3>
+    <h2>💡 Key Idea You Must Remember</h2>
     <p  class="callout-info">
       <strong>Components → build the interface</strong><br>
       <strong>Functions → help with logic</strong><br><br>
       React is built around composing small components.
     </p>
 
-    <h3>🎯 Next Step</h3>
+    <h2>🎯 Next Step</h2>
     <p>
       Now that you understand components vs functions, you're ready to learn about
       <strong>the 7 most common mistakes juniors make with React components</strong>.

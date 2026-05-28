@@ -11,7 +11,7 @@
   <article id="concepts" class="tab-content active">
     <div class="description">
 
-      <h3>🚫 Cuándo NO usar useEffect</h3>
+      <h2>🚫 Cuándo NO usar useEffect</h2>
       <p>
         La regla central: si la operación no toca nada <strong>fuera</strong> del componente, no necesitás
         <code>useEffect</code>. Tres anti-patrones muy comunes:
@@ -30,7 +30,7 @@
 
       <hr />
 
-      <h3>✅ Cuándo SÍ usar useEffect</h3>
+      <h2>✅ Cuándo SÍ usar useEffect</h2>
 
       <pre><code>useEffect es correcto cuando:
   🌐 Hacés fetching a APIs externas
@@ -41,7 +41,7 @@
 
       <hr />
 
-      <h3>🧹 La función de limpieza (cleanup)</h3>
+      <h2>🧹 La función de limpieza (cleanup)</h2>
       <p>
         El problema: si un componente se <strong>suscribe</strong> a un evento o inicia un timer, y después el
         componente se desmonta (desaparece de la pantalla), la suscripción o el timer <em>siguen corriendo</em>
@@ -70,7 +70,7 @@ Desmontar componente (o dep cambia)
 
       <hr />
 
-      <h3>📦 Un efecto, una responsabilidad</h3>
+      <h2>📦 Un efecto, una responsabilidad</h2>
       <p>
         No metas todo en un único useEffect gigante. Cada efecto debe hacer <strong>una sola cosa</strong>. ¿Por qué?
       </p>
@@ -88,7 +88,7 @@ useEffect(() => { /* actualizar el título */ }, [user])</code></pre>
 
       <hr />
 
-      <h3>🔮 Alternativas modernas al fetching con useEffect</h3>
+      <h2>🔮 Alternativas modernas al fetching con useEffect</h2>
       <p>Mencionamos brevemente las alternativas que existen en proyectos reales:</p>
       <ul>
         <li><strong>React Server Components</strong> (Next.js 13+): podés hacer fetch directo en el componente, sin useEffect.</li>
@@ -109,7 +109,7 @@ useEffect(() => { /* actualizar el título */ }, [user])</code></pre>
   <article id="code-examples" class="tab-content">
     <div class="description">
 
-      <h3>❌ Anti-patrón: transformar datos con useEffect</h3>
+      <h2>❌ Anti-patrón: transformar datos con useEffect</h2>
 
       <pre><code class="language-jsx">// ❌ MAL: useEffect innecesario para transformar datos
 function ProductList({ products }) {
@@ -137,7 +137,7 @@ function ProductList({ products }) {
 
       <hr />
 
-      <h3>✅ Caso 1: Fetching de datos</h3>
+      <h2>✅ Caso 1: Fetching de datos</h2>
 
       <pre><code class="language-jsx">import { useState, useEffect } from 'react'
 
@@ -178,7 +178,7 @@ function UserProfile({ userId }) {
 
       <hr />
 
-      <h3>✅ Caso 2: Suscripción a eventos con limpieza</h3>
+      <h2>✅ Caso 2: Suscripción a eventos con limpieza</h2>
 
       <pre><code class="language-jsx">import { useState, useEffect } from 'react'
 
@@ -204,7 +204,7 @@ function WindowSize() {
 
       <hr />
 
-      <h3>✅ Caso 3: Timer con limpieza</h3>
+      <h2>✅ Caso 3: Timer con limpieza</h2>
 
       <pre><code class="language-jsx">function LiveCounter() {
   const [count, setCount] = useState(0)
@@ -223,7 +223,7 @@ function WindowSize() {
 
       <hr />
 
-      <h3>✅ Caso 4: Cleanup cuando cambian dependencias</h3>
+      <h2>✅ Caso 4: Cleanup cuando cambian dependencias</h2>
 
       <pre><code class="language-jsx">function Timer({ delay }) {
   const [count, setCount] = useState(0)
@@ -250,7 +250,7 @@ function WindowSize() {
 
       <hr />
 
-      <h3>✅ Caso 5: Múltiples efectos — un efecto, una responsabilidad</h3>
+      <h2>✅ Caso 5: Múltiples efectos — un efecto, una responsabilidad</h2>
 
       <pre><code class="language-jsx">function UserDashboard({ userId }) {
   const [user, setUser] = useState(null)
@@ -285,7 +285,7 @@ function WindowSize() {
 
       <hr />
 
-      <h3>✅ Caso 6: Debounce con cleanup</h3>
+      <h2>✅ Caso 6: Debounce con cleanup</h2>
 
       <pre><code class="language-jsx">function SearchWithDebounce() {
   const [query, setQuery] = useState('')
@@ -331,7 +331,7 @@ function WindowSize() {
 
       <hr />
 
-      <h3>📊 Tabla resumen</h3>
+      <h2>📊 Tabla resumen</h2>
 
       <pre><code>Caso de uso                    useEffect?   ¿Limpieza necesaria?
 ──────────────────────────────────────────────────────────────────
@@ -351,7 +351,7 @@ WebSocket / conexión           ✅ Sí        ✅ Sí — ws.close()</code></pr
   <article id="exercises" class="tab-content">
     <div class="description">
 
-      <h3>🐛 Error 1: useEffect para datos derivados (render doble)</h3>
+      <h2>🐛 Error 1: useEffect para datos derivados (render doble)</h2>
 
       <pre><code class="language-jsx">// ❌ Dos renders, más código, mismo resultado
 function Cart({ items }) {
@@ -372,7 +372,7 @@ function Cart({ items }) {
 
       <hr />
 
-      <h3>🐛 Error 2: memory leak por no limpiar</h3>
+      <h2>🐛 Error 2: memory leak por no limpiar</h2>
 
       <pre><code class="language-jsx">// ❌ Memory leak: el interval sigue corriendo después de desmontar
 function Ticker() {
@@ -404,7 +404,7 @@ function Ticker() {
 
       <hr />
 
-      <h3>💪 Ejercicio</h3>
+      <h2>💪 Ejercicio</h2>
 
       <pre><code>Dado este componente, identificá los problemas y corregilos:
 
@@ -445,7 +445,7 @@ Problemas a encontrar:
 
       <hr />
 
-      <h3>✅ Resumen</h3>
+      <h2>✅ Resumen</h2>
 
       <pre><code>NO necesitás useEffect para:
   → Transformar datos                  (calculalo en el render)

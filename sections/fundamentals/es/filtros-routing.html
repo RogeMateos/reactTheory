@@ -11,7 +11,7 @@
   <article id="concepts" class="tab-content active">
     <div class="description">
 
-      <h3>😤 El problema: filtros que no filtran solos</h3>
+      <h2>😤 El problema: filtros que no filtran solos</h2>
       <p>
         Pensá en la experiencia de usuario típica: el usuario cambia un select → nada pasa.
         Cambia otro select → nada pasa. Escribe en el input → nada pasa. Finalmente hace clic
@@ -30,7 +30,7 @@
 
       <hr />
 
-      <h3>🎯 event.target vs event.currentTarget — la diferencia que importa</h3>
+      <h2>🎯 event.target vs event.currentTarget — la diferencia que importa</h2>
 
       <pre><code>&lt;form onChange={handleChange}&gt;   ← tiene el listener
   &lt;input name="search" /&gt;        ← puede lanzar el evento
@@ -54,7 +54,7 @@ event.currentTarget = el elemento que TIENE el listener (siempre el form)</code>
 
       <hr />
 
-      <h3>🗂️ Routing manual: páginas sin React Router</h3>
+      <h2>🗂️ Routing manual: páginas sin React Router</h2>
       <p>
         Una app real necesita múltiples páginas: Home (<code>/</code>), Search (<code>/search</code>),
         404. Sin React Router, podemos usar <code>window.location.pathname</code>, una propiedad
@@ -77,7 +77,7 @@ window.location.pathname  →  "/cualquier-cosa"</code></pre>
 
       <hr />
 
-      <h3>📁 Separar páginas de componentes</h3>
+      <h2>📁 Separar páginas de componentes</h2>
       <p>
         La diferencia arquitectónica es importante:
       </p>
@@ -103,7 +103,7 @@ window.location.pathname  →  "/cualquier-cosa"</code></pre>
 
       <hr />
 
-      <h3>⚠️ La limitación del router manual</h3>
+      <h2>⚠️ La limitación del router manual</h2>
       <p>
         Seamos honestos: los links con <code>&lt;a href="..."&gt;</code> causan una recarga
         completa de la página. Esto:
@@ -132,7 +132,7 @@ Producción           ❌ No            ✅ Recomendado</code></pre>
   <article id="code-examples" class="tab-content">
     <div class="description">
 
-      <h3>🔧 SearchForm sin botón: onChange en el form</h3>
+      <h2>🔧 SearchForm sin botón: onChange en el form</h2>
 
       <pre><code class="language-jsx">import { useId } from 'react'
 
@@ -176,7 +176,7 @@ export function SearchForm({ onSearch }) {
 
       <hr />
 
-      <h3>🔍 target vs currentTarget en acción</h3>
+      <h2>🔍 target vs currentTarget en acción</h2>
 
       <pre><code class="language-jsx">// ❌ INCORRECTO — target es el &lt;select&gt; que cambió
 const handleChange = (event) => {
@@ -194,7 +194,7 @@ const handleChange = (event) => {
 
       <hr />
 
-      <h3>🏠 Router manual en App.jsx</h3>
+      <h2>🏠 Router manual en App.jsx</h2>
 
       <pre><code class="language-jsx">import { Header } from './components/Header'
 import { Footer } from './components/Footer'
@@ -227,7 +227,7 @@ export default App</code></pre>
 
       <hr />
 
-      <h3>🔄 Versión alternativa con &amp;&amp;</h3>
+      <h2>🔄 Versión alternativa con &amp;&amp;</h2>
 
       <pre><code class="language-jsx">function App() {
   const { pathname } = window.location
@@ -251,7 +251,7 @@ export default App</code></pre>
 
       <hr />
 
-      <h3>🚫 Página 404</h3>
+      <h2>🚫 Página 404</h2>
 
       <pre><code class="language-jsx">// src/pages/NotFound.jsx
 export function NotFound() {
@@ -267,7 +267,7 @@ export function NotFound() {
 
       <hr />
 
-      <h3>⚠️ Errores frecuentes: HTML → JSX</h3>
+      <h2>⚠️ Errores frecuentes: HTML → JSX</h2>
 
       <pre><code>// 1. Inputs sin cerrar
 ❌  &lt;input type="text"&gt;
@@ -296,7 +296,7 @@ export function NotFound() {
   <article id="exercises" class="tab-content">
     <div class="description">
 
-      <h3>🐛 El error del target</h3>
+      <h2>🐛 El error del target</h2>
 
       <pre><code class="language-jsx">// ❌ Problema: FormData del campo, no del form
 &lt;form onChange={handleChange}&gt;
@@ -319,7 +319,7 @@ const handleChange = (event) => {
 
       <hr />
 
-      <h3>🐛 Botón submit que queda por accidente</h3>
+      <h2>🐛 Botón submit que queda por accidente</h2>
 
       <pre><code class="language-jsx">// ❌ Si dejás el botón, el form hace submit y recarga la página
 &lt;form onChange={handleChange}&gt;
@@ -335,7 +335,7 @@ const handleChange = (event) => {
 
       <hr />
 
-      <h3>💪 Ejercicio</h3>
+      <h2>💪 Ejercicio</h2>
 
       <pre><code>1. Transformá el SearchForm:
    □ Quitá el botón de "Buscar"
@@ -357,7 +357,7 @@ const handleChange = (event) => {
 
       <hr />
 
-      <h3>✅ Resumen</h3>
+      <h2>✅ Resumen</h2>
 
       <pre><code>onChange en &lt;form&gt;      — captura cambios de todos los campos hijo
 event.currentTarget     — siempre el elemento con el listener (el form)

@@ -11,7 +11,7 @@
   <article id="concepts" class="tab-content active">
     <div class="description">
 
-      <h3>🚫 When NOT to use useEffect</h3>
+      <h2>🚫 When NOT to use useEffect</h2>
       <p>
         The core rule: if the operation doesn't touch anything <strong>outside</strong> the component,
         don't use <code>useEffect</code>. Three very common anti-patterns:
@@ -30,7 +30,7 @@
 
       <hr />
 
-      <h3>✅ When you SHOULD use useEffect</h3>
+      <h2>✅ When you SHOULD use useEffect</h2>
 
       <pre><code>useEffect is correct when:
   🌐 You're fetching from external APIs
@@ -41,7 +41,7 @@
 
       <hr />
 
-      <h3>🧹 The cleanup function</h3>
+      <h2>🧹 The cleanup function</h2>
       <p>
         The problem: if a component <strong>subscribes</strong> to an event or starts a timer, and then the
         component unmounts (disappears from the screen), the subscription or timer <em>keeps running</em>
@@ -70,7 +70,7 @@ Unmount component (or dep changes)
 
       <hr />
 
-      <h3>📦 One effect, one responsibility</h3>
+      <h2>📦 One effect, one responsibility</h2>
       <p>
         Don't put everything in one giant useEffect. Each effect should do <strong>one thing</strong>. Why?
       </p>
@@ -88,7 +88,7 @@ useEffect(() => { /* update the title */ }, [user])</code></pre>
 
       <hr />
 
-      <h3>🔮 Modern alternatives to fetching with useEffect</h3>
+      <h2>🔮 Modern alternatives to fetching with useEffect</h2>
       <p>A brief overview of the alternatives available in real-world projects:</p>
       <ul>
         <li><strong>React Server Components</strong> (Next.js 13+): fetch data directly in the component, no useEffect needed.</li>
@@ -109,7 +109,7 @@ useEffect(() => { /* update the title */ }, [user])</code></pre>
   <article id="code-examples" class="tab-content">
     <div class="description">
 
-      <h3>❌ Anti-pattern: transforming data with useEffect</h3>
+      <h2>❌ Anti-pattern: transforming data with useEffect</h2>
 
       <pre><code class="language-jsx">// ❌ BAD: unnecessary useEffect to transform data
 function ProductList({ products }) {
@@ -137,7 +137,7 @@ function ProductList({ products }) {
 
       <hr />
 
-      <h3>✅ Case 1: Data fetching</h3>
+      <h2>✅ Case 1: Data fetching</h2>
 
       <pre><code class="language-jsx">import { useState, useEffect } from 'react'
 
@@ -178,7 +178,7 @@ function UserProfile({ userId }) {
 
       <hr />
 
-      <h3>✅ Case 2: Subscribing to events with cleanup</h3>
+      <h2>✅ Case 2: Subscribing to events with cleanup</h2>
 
       <pre><code class="language-jsx">import { useState, useEffect } from 'react'
 
@@ -204,7 +204,7 @@ function WindowSize() {
 
       <hr />
 
-      <h3>✅ Case 3: Timer with cleanup</h3>
+      <h2>✅ Case 3: Timer with cleanup</h2>
 
       <pre><code class="language-jsx">function LiveCounter() {
   const [count, setCount] = useState(0)
@@ -223,7 +223,7 @@ function WindowSize() {
 
       <hr />
 
-      <h3>✅ Case 4: Cleanup when dependencies change</h3>
+      <h2>✅ Case 4: Cleanup when dependencies change</h2>
 
       <pre><code class="language-jsx">function Timer({ delay }) {
   const [count, setCount] = useState(0)
@@ -250,7 +250,7 @@ function WindowSize() {
 
       <hr />
 
-      <h3>✅ Case 5: Multiple effects — one effect, one responsibility</h3>
+      <h2>✅ Case 5: Multiple effects — one effect, one responsibility</h2>
 
       <pre><code class="language-jsx">function UserDashboard({ userId }) {
   const [user, setUser] = useState(null)
@@ -285,7 +285,7 @@ function WindowSize() {
 
       <hr />
 
-      <h3>✅ Case 6: Debounce with cleanup</h3>
+      <h2>✅ Case 6: Debounce with cleanup</h2>
 
       <pre><code class="language-jsx">function SearchWithDebounce() {
   const [query, setQuery] = useState('')
@@ -331,7 +331,7 @@ function WindowSize() {
 
       <hr />
 
-      <h3>📊 Summary table</h3>
+      <h2>📊 Summary table</h2>
 
       <pre><code>Use case                       useEffect?   Cleanup needed?
 ──────────────────────────────────────────────────────────────────
@@ -351,7 +351,7 @@ WebSocket / connection         ✅ Yes       ✅ Yes — ws.close()</code></pre>
   <article id="exercises" class="tab-content">
     <div class="description">
 
-      <h3>🐛 Error 1: useEffect for derived data (double render)</h3>
+      <h2>🐛 Error 1: useEffect for derived data (double render)</h2>
 
       <pre><code class="language-jsx">// ❌ Two renders, more code, same result
 function Cart({ items }) {
@@ -372,7 +372,7 @@ function Cart({ items }) {
 
       <hr />
 
-      <h3>🐛 Error 2: memory leak from missing cleanup</h3>
+      <h2>🐛 Error 2: memory leak from missing cleanup</h2>
 
       <pre><code class="language-jsx">// ❌ Memory leak: the interval keeps running after unmount
 function Ticker() {
@@ -404,7 +404,7 @@ function Ticker() {
 
       <hr />
 
-      <h3>💪 Exercise</h3>
+      <h2>💪 Exercise</h2>
 
       <pre><code>Given this component, identify the problems and fix them:
 
@@ -445,7 +445,7 @@ Problems to find:
 
       <hr />
 
-      <h3>✅ Summary</h3>
+      <h2>✅ Summary</h2>
 
       <pre><code>You DON'T need useEffect for:
   → Transforming data              (calculate it in the render)

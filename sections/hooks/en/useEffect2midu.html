@@ -11,7 +11,7 @@
   <article id="concepts" class="tab-content active">
     <div class="description">
 
-      <h3>🌊 What is a side effect?</h3>
+      <h2>🌊 What is a side effect?</h2>
       <p>
         A component's render must be a pure function: same input → same output, no surprises.
         But apps <strong>need</strong> to interact with the outside world.
@@ -27,7 +27,7 @@
 
       <hr />
 
-      <h3>⏰ When does useEffect run?</h3>
+      <h2>⏰ When does useEffect run?</h2>
       <p>
         The key is the second parameter — the dependency array. Three scenarios:
       </p>
@@ -43,7 +43,7 @@
 
       <hr />
 
-      <h3>🔗 The dependency array</h3>
+      <h2>🔗 The dependency array</h2>
       <p>
         Think of the dependency array as a "watch list".
         React watches those values, and if any of them changes between renders, React runs the effect again.
@@ -60,7 +60,7 @@
 
       <hr />
 
-      <h3>♾️ The infinite loop: the most common mistake</h3>
+      <h2>♾️ The infinite loop: the most common mistake</h2>
       <p>
         When does it happen? When the effect <strong>modifies one of its own dependencies</strong>. This creates a cycle:
       </p>
@@ -75,7 +75,7 @@
 
       <hr />
 
-      <h3>⚠️ Objects and arrays as dependencies</h3>
+      <h2>⚠️ Objects and arrays as dependencies</h2>
       <p>
         Objects and arrays are recreated on every render. React uses <code>===</code> to compare dependencies:
         a new object is <strong>never</strong> equal to the previous one, even if the contents are the same:
@@ -97,7 +97,7 @@ const filters = { tech: 'react' }   ← new object, new reference
   <article id="code-examples" class="tab-content">
     <div class="description">
 
-      <h3>1️⃣ No dependencies: on every render</h3>
+      <h2>1️⃣ No dependencies: on every render</h2>
 
       <pre><code class="language-jsx">function App() {
   const [count, setCount] = useState(0)
@@ -117,7 +117,7 @@ const filters = { tech: 'react' }   ← new object, new reference
 
       <hr />
 
-      <h3>2️⃣ Empty array: only on mount</h3>
+      <h2>2️⃣ Empty array: only on mount</h2>
 
       <pre><code class="language-jsx">function App() {
   const [count, setCount] = useState(0)
@@ -139,7 +139,7 @@ const filters = { tech: 'react' }   ← new object, new reference
 
       <hr />
 
-      <h3>3️⃣ With dependencies: when something specific changes</h3>
+      <h2>3️⃣ With dependencies: when something specific changes</h2>
 
       <pre><code class="language-jsx">function App() {
   const [count, setCount] = useState(0)
@@ -162,7 +162,7 @@ const filters = { tech: 'react' }   ← new object, new reference
 
       <hr />
 
-      <h3>4️⃣ Real example: updating the document title</h3>
+      <h2>4️⃣ Real example: updating the document title</h2>
 
       <pre><code class="language-jsx">function App() {
   const [currentPage, setCurrentPage] = useState(1)
@@ -225,7 +225,7 @@ const filters = { tech: 'react' }   ← new object, new reference
 
       <hr />
 
-      <h3>5️⃣ Multiple dependencies</h3>
+      <h2>5️⃣ Multiple dependencies</h2>
 
       <pre><code class="language-jsx">function JobListings() {
   const [currentPage, setCurrentPage] = useState(1)
@@ -253,7 +253,7 @@ const filters = { tech: 'react' }   ← new object, new reference
 
       <hr />
 
-      <h3>📊 Dependency summary table</h3>
+      <h2>📊 Dependency summary table</h2>
 
       <pre><code>Dependencies            When does the effect run?
 ──────────────────────────────────────────────────────
@@ -269,7 +269,7 @@ No second parameter     On every render
   <article id="exercises" class="tab-content">
     <div class="description">
 
-      <h3>🐛 Bug 1: infinite loop</h3>
+      <h2>🐛 Bug 1: infinite loop</h2>
 
       <pre><code class="language-jsx">// ❌ INFINITE LOOP — the effect modifies its own dependency
 function App() {
@@ -299,7 +299,7 @@ useEffect(() =&gt; {
 
       <hr />
 
-      <h3>🐛 Bug 2: missing dependency</h3>
+      <h2>🐛 Bug 2: missing dependency</h2>
 
       <pre><code class="language-jsx">// ❌ textToFilter is used but not in the dependencies
 useEffect(() =&gt; {
@@ -314,7 +314,7 @@ useEffect(() =&gt; {
 
       <hr />
 
-      <h3>🐛 Bug 3: object as dependency</h3>
+      <h2>🐛 Bug 3: object as dependency</h2>
 
       <pre><code class="language-jsx">// ❌ The object is recreated on every render → effect runs on every render
 const filters = { technology: 'react', location: 'remote' }
@@ -330,7 +330,7 @@ useEffect(() =&gt; {
 
       <hr />
 
-      <h3>💪 Exercise</h3>
+      <h2>💪 Exercise</h2>
 
       <pre><code>Implement the following effects in a search component:
 
@@ -353,7 +353,7 @@ useEffect(() =&gt; {
 
       <hr />
 
-      <h3>✅ Summary</h3>
+      <h2>✅ Summary</h2>
 
       <pre><code>No deps          →  runs on every render (watch out for performance)
 []               →  runs once on mount

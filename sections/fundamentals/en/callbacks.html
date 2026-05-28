@@ -11,7 +11,7 @@
   <article id="concepts" class="tab-content active">
     <div class="description">
 
-      <h3>🔄 What is a Callback?</h3>
+      <h2>🔄 What is a Callback?</h2>
       <p>
         A <strong>callback</strong> is a function passed as an argument to another function,
         to be executed later — hence the name <em>"call back"</em>.
@@ -28,7 +28,7 @@ Child calls it when needed     →  onPageChange(3)</code></pre>
 
       <hr />
 
-      <h3>⬆️ Child → Parent Communication</h3>
+      <h2>⬆️ Child → Parent Communication</h2>
       <p>
         Props flow from parent to child. Callbacks reverse that communication:
         the child <em>notifies</em> the parent that something happened.
@@ -61,7 +61,7 @@ Child calls it when needed     →  onPageChange(3)</code></pre>
 
       <hr />
 
-      <h3>📛 on / handle Convention</h3>
+      <h2>📛 on / handle Convention</h2>
       <pre><code>Props that receive functions     →  on + Event
   onPageChange, onClick, onSubmit, onDelete
 
@@ -81,7 +81,7 @@ function Pagination({ onPageChange }) {
 
       <hr />
 
-      <h3>⚡ Reference vs Immediate Execution</h3>
+      <h2>⚡ Reference vs Immediate Execution</h2>
       <p>This is one of the most common confusions in React — pay close attention:</p>
 
       <pre><code class="language-jsx">// ✅ Correct — passes the REFERENCE to the function
@@ -100,7 +100,7 @@ function Pagination({ onPageChange }) {
 
       <hr />
 
-      <h3>🛡️ Function Prop with Default Value</h3>
+      <h2>🛡️ Function Prop with Default Value</h2>
       <p>
         If the callback is optional, use an empty function as default so the component
         doesn't break when it's not provided:
@@ -123,7 +123,7 @@ function Pagination({ onPageChange = () => {} }) {
   <article id="code-examples" class="tab-content">
     <div class="description">
 
-      <h3>🧩 Pagination with Callbacks</h3>
+      <h2>🧩 Pagination with Callbacks</h2>
       <p>We update the component to notify the parent on each click:</p>
 
       <pre><code class="language-jsx">// src/components/Pagination.jsx
@@ -198,7 +198,7 @@ export default Pagination</code></pre>
 
       <hr />
 
-      <h3>🏗️ App Connected to the Callback</h3>
+      <h2>🏗️ App Connected to the Callback</h2>
 
       <pre><code class="language-jsx">// src/App.jsx
 import Pagination from './components/Pagination'
@@ -231,7 +231,7 @@ export default App</code></pre>
 
       <hr />
 
-      <h3>🔘 Additional Example: Reusable Button</h3>
+      <h2>🔘 Additional Example: Reusable Button</h2>
       <p>The same pattern works for any interactive component:</p>
 
       <pre><code class="language-jsx">// Reusable Button component
@@ -258,7 +258,7 @@ function App() {
 
       <hr />
 
-      <h3>📦 Passing Arguments to the Callback</h3>
+      <h2>📦 Passing Arguments to the Callback</h2>
       <p>When you need to send additional data to the parent, use an arrow function:</p>
 
       <pre><code class="language-jsx">// JobCard notifies the parent with the job ID
@@ -288,7 +288,7 @@ function App() {
   <article id="exercises" class="tab-content">
     <div class="description">
 
-      <h3>💪 Exercise: Full Callback Flow</h3>
+      <h2>💪 Exercise: Full Callback Flow</h2>
       <p>
         Trace the full callback flow in the app. The goal is to understand
         what happens at each step when the user clicks "Page 3".
@@ -308,7 +308,7 @@ function App() {
 
       <hr />
 
-      <h3>🧪 Challenge: JobCard with Callback</h3>
+      <h2>🧪 Challenge: JobCard with Callback</h2>
       <p>
         Add an <code>onFavorite</code> callback to <code>JobCard</code> that notifies the parent
         when the user marks a job as a favorite.
@@ -346,7 +346,7 @@ function App() {
 
       <hr />
 
-      <h3>✅ Class Summary</h3>
+      <h2>✅ Class Summary</h2>
       <pre><code>🔄 Callback        — function passed as prop to notify the parent
 ⬆️ Child → Parent  — child calls the callback, parent reacts
 📛 on / handle     — onEvent for props, handleEvent for functions

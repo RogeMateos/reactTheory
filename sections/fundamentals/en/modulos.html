@@ -11,7 +11,7 @@
   <article id="concepts" class="tab-content active">
     <div class="description">
 
-      <h3>😱 The Problem: Everything in One File</h3>
+      <h2>😱 The Problem: Everything in One File</h2>
       <p>
         As your application grows, having everything in a single file becomes unmanageable:
       </p>
@@ -45,7 +45,7 @@ export default App</code></pre>
 
       <hr />
 
-      <h3>✅ The Solution: Modules</h3>
+      <h2>✅ The Solution: Modules</h2>
       <p>We split each component into its own file and use <code>import</code> / <code>export</code>:</p>
 
       <pre><code>src/
@@ -57,7 +57,7 @@ export default App</code></pre>
 │   └── SearchForm.jsx
 └── App.jsx</code></pre>
 
-      <h4>Step 1 — Create the component file</h4>
+      <h3>Step 1 — Create the component file</h3>
       <pre><code class="language-jsx">// src/components/Header.jsx
 
 function Header() {
@@ -74,7 +74,7 @@ function Header() {
 
 export default Header</code></pre>
 
-      <h4>Step 2 — Import it in App.jsx</h4>
+      <h3>Step 2 — Import it in App.jsx</h3>
       <pre><code class="language-jsx">// src/App.jsx
 import Header from './components/Header'
 
@@ -90,9 +90,9 @@ export default App</code></pre>
 
       <hr />
 
-      <h3>📤 Export Default vs Export Named</h3>
+      <h2>📤 Export Default vs Export Named</h2>
 
-      <h4>Export Default — one main export per file</h4>
+      <h3>Export Default — one main export per file</h3>
       <pre><code class="language-jsx">// Header.jsx
 function Header() {
   return &lt;header&gt;...&lt;/header&gt;
@@ -110,7 +110,7 @@ import TopBar from './components/Header'    // ✅ also works</code></pre>
         the codebase becomes inconsistent and hard to follow.
       </p>
 
-      <h4>Export Named — multiple exports with specific names</h4>
+      <h3>Export Named — multiple exports with specific names</h3>
       <pre><code class="language-jsx">// Header.jsx
 export function Header() {
   return &lt;header&gt;...&lt;/header&gt;
@@ -129,9 +129,9 @@ import { Header, HeaderLogo, HeaderNav } from './components/Header'</code></pre>
 
       <hr />
 
-      <h3>🏆 Why We Prefer Named Exports</h3>
+      <h2>🏆 Why We Prefer Named Exports</h2>
 
-      <h4>Consistency across the app</h4>
+      <h3>Consistency across the app</h3>
       <pre><code class="language-jsx">// ❌ Default export — every file can choose a different name
 import Header from './components/Header'    // App.jsx
 import MyHeader from './components/Header'  // OtherPage.jsx
@@ -144,14 +144,14 @@ import { Header } from './components/Header'  // OtherPage.jsx
 import { Header } from './components/Header'  // AnotherPage.jsx
 // 🎉 One name everywhere</code></pre>
 
-      <h4>Safe refactoring</h4>
+      <h3>Safe refactoring</h3>
       <p>
         With named exports, if you rename a component, your IDE can update
         <strong>all references automatically</strong>. With default exports, each file may have
         a different name and the IDE doesn't know which ones to update.
       </p>
 
-      <h4>Autocomplete</h4>
+      <h3>Autocomplete</h3>
       <pre><code class="language-jsx">// Named: your IDE suggests the exact name as you type
 import { Header } from './components/Header'
 //       ^ Autocomplete of the correct name ✅
@@ -167,7 +167,7 @@ import Header from './components/Header'
   <article id="code-examples" class="tab-content">
     <div class="description">
 
-      <h3>✏️ Two Ways to Write Named Exports</h3>
+      <h2>✏️ Two Ways to Write Named Exports</h2>
 
       <pre><code class="language-jsx">// Form 1: inline export (recommended)
 export function Header() {
@@ -193,7 +193,7 @@ export { Header, HeaderLogo }</code></pre>
 
       <hr />
 
-      <h3>🔄 Renaming Imports with <code>as</code></h3>
+      <h2>🔄 Renaming Imports with <code>as</code></h2>
       <p>Sometimes two different files export something with the same name. Use <code>as</code> to resolve the collision:</p>
 
       <pre><code class="language-jsx">// ❌ Error — both are called "Button"
@@ -228,7 +228,7 @@ function Dashboard() {
 
       <hr />
 
-      <h3>📂 Import Paths</h3>
+      <h2>📂 Import Paths</h2>
 
       <pre><code class="language-javascript">// Same directory
 import { Header } from './Header'
@@ -244,7 +244,7 @@ import { Header } from '../../Header'</code></pre>
 
       <hr />
 
-      <h3>📥 Importing Multiple Items</h3>
+      <h2>📥 Importing Multiple Items</h2>
 
       <pre><code class="language-jsx">// Multiple named exports at once
 import { Header, Footer, Nav } from './components'
@@ -259,7 +259,7 @@ Utils.formatCurrency()</code></pre>
 
       <hr />
 
-      <h3>🛠️ Full Example: Splitting the App</h3>
+      <h2>🛠️ Full Example: Splitting the App</h2>
 
       <pre><code class="language-jsx">// src/components/JobCard.jsx
 export function JobCard({ job, isRemote, isFeatured }) {
@@ -299,9 +299,9 @@ export default App</code></pre>
   <article id="exercises" class="tab-content">
     <div class="description">
 
-      <h3>🐛 Common Errors — and How to Avoid Them</h3>
+      <h2>🐛 Common Errors — and How to Avoid Them</h2>
 
-      <h4>1. Forgetting the export</h4>
+      <h3>1. Forgetting the export</h3>
       <pre><code class="language-jsx">// ❌ The component exists but can't be imported
 function Header() {
   return &lt;header&gt;...&lt;/header&gt;
@@ -312,7 +312,7 @@ export function Header() {
   return &lt;header&gt;...&lt;/header&gt;
 }</code></pre>
 
-      <h4>2. Mixing up default and named</h4>
+      <h3>2. Mixing up default and named</h3>
       <pre><code class="language-jsx">// Header.jsx — NAMED export
 export function Header() {
   return &lt;header&gt;...&lt;/header&gt;
@@ -324,21 +324,21 @@ import Header from './components/Header'
 // ✅ Correct — named export requires curly braces
 import { Header } from './components/Header'</code></pre>
 
-      <h4>3. Missing <code>./</code> in the path</h4>
+      <h3>3. Missing <code>./</code> in the path</h3>
       <pre><code class="language-jsx">// ❌ Error — bundler looks in node_modules
 import { Header } from 'components/Header'
 
 // ✅ Correct — relative paths start with ./
 import { Header } from './components/Header'</code></pre>
 
-      <h4>4. Extension in Vite</h4>
+      <h3>4. Extension in Vite</h3>
       <pre><code class="language-jsx">// Vite resolves the extension automatically
 import { Header } from './components/Header'      // ✅
 import { Header } from './components/Header.jsx'  // ✅ also works</code></pre>
 
       <hr />
 
-      <h3>💪 Exercise: Split the App into Modules</h3>
+      <h2>💪 Exercise: Split the App into Modules</h2>
       <p>Take this monolithic code and split it into individual files:</p>
 
       <pre><code class="language-jsx">// App.jsx — all together ❌
@@ -381,7 +381,7 @@ src/
 
       <hr />
 
-      <h3>✅ Class Summary</h3>
+      <h2>✅ Class Summary</h2>
       <pre><code>📦 Modules        — split code into multiple files
 📤 export default  — one main export per file
 📤 export named   — multiple exports with exact names

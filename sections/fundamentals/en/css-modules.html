@@ -11,7 +11,7 @@
   <article id="concepts" class="tab-content active">
     <div class="description">
 
-      <h3>😰 The Problem: Global CSS Breaks on Its Own</h3>
+      <h2>😰 The Problem: Global CSS Breaks on Its Own</h2>
       <p>
         When you write CSS globally, all styles share the same space.
         That means if two different files use the same class name, one will override the other.
@@ -32,7 +32,7 @@
 
       <hr />
 
-      <h3>💡 The Solution: Locally Scoped Styles</h3>
+      <h2>💡 The Solution: Locally Scoped Styles</h2>
       <p>
         CSS Modules solves this elegantly: each styles file has its own
         <strong>local scope</strong>. The classes you write only exist inside the component
@@ -50,7 +50,7 @@ Pagination.module.css → CSS Module (only Pagination sees it)</code></pre>
 
       <hr />
 
-      <h3>🔒 Encapsulation: Each Component is an Island</h3>
+      <h2>🔒 Encapsulation: Each Component is an Island</h2>
       <p>
         With CSS Modules you can use the same class name in different components
         without them interfering with each other:
@@ -68,7 +68,7 @@ Modal.module.css    → .button  (the green button inside Modal)</code></pre>
 
       <hr />
 
-      <h3>🗂️ Convention: One Module per Component</h3>
+      <h2>🗂️ Convention: One Module per Component</h2>
       <p>
         CSS Module files go <strong>next to the component</strong> that uses them,
         with the same name:
@@ -91,7 +91,7 @@ Modal.module.css    → .button  (the green button inside Modal)</code></pre>
 
       <hr />
 
-      <h3>⚖️ CSS Modules vs Global CSS — When to Use Each</h3>
+      <h2>⚖️ CSS Modules vs Global CSS — When to Use Each</h2>
 
       <pre><code>Use CSS Modules for:
   ✅ Component-specific styles
@@ -114,7 +114,7 @@ Use global CSS for:
   <article id="code-examples" class="tab-content">
     <div class="description">
 
-      <h3>📁 Create the .module.css File</h3>
+      <h2>📁 Create the .module.css File</h2>
 
       <pre><code class="language-css">/* src/components/Pagination.module.css */
 
@@ -160,7 +160,7 @@ Use global CSS for:
 
       <hr />
 
-      <h3>📥 Import and Use in the Component</h3>
+      <h2>📥 Import and Use in the Component</h2>
 
       <pre><code class="language-jsx">// src/components/Pagination.jsx
 import styles from './Pagination.module.css'
@@ -194,7 +194,7 @@ function Pagination({ currentPage = 1, totalPages = 5, onPageChange = () => {} }
 
       <hr />
 
-      <h3>🔍 What Happens Under the Hood</h3>
+      <h2>🔍 What Happens Under the Hood</h2>
       <p>
         When you import a CSS Module, you receive a JavaScript object where each key
         is your class name and the value is the generated unique name:
@@ -222,7 +222,7 @@ styles = {
 
       <hr />
 
-      <h3>🎨 Multiple Classes</h3>
+      <h2>🎨 Multiple Classes</h2>
 
       <pre><code class="language-jsx">// Template literal — most common way
 &lt;a className={`${styles.link} ${styles.active}`}&gt;Link&lt;/a&gt;
@@ -242,7 +242,7 @@ styles = {
 
       <hr />
 
-      <h3>🌐 Escaping to Global Scope: <code>:global()</code></h3>
+      <h2>🌐 Escaping to Global Scope: <code>:global()</code></h2>
       <p>
         Inside a CSS Module you can mark a class as global when you need to style elements
         from external libraries that inject their own HTML:
@@ -271,13 +271,13 @@ styles = {
   <article id="exercises" class="tab-content">
     <div class="description">
 
-      <h3>🐛 Common Errors</h3>
+      <h2>🐛 Common Errors</h2>
 
-      <h4>1. Forgetting .module in the filename</h4>
+      <h3>1. Forgetting .module in the filename</h3>
       <pre><code>Pagination.css        ❌ global CSS — no local scope
 Pagination.module.css ✅ CSS Module — local scope guaranteed</code></pre>
 
-      <h4>2. Using hyphens in class names</h4>
+      <h3>2. Using hyphens in class names</h3>
       <pre><code class="language-jsx">/* ❌ With hyphens — awkward to access */
 .is-active { color: white; }
 
@@ -289,7 +289,7 @@ Pagination.module.css ✅ CSS Module — local scope guaranteed</code></pre>
 
 &lt;a className={styles.isActive}&gt;Link&lt;/a&gt;</code></pre>
 
-      <h4>3. Trying to use the class as a plain string</h4>
+      <h3>3. Trying to use the class as a plain string</h3>
       <pre><code class="language-jsx">// ❌ The real class is "Pagination_pagination__a1b2c", not "pagination"
 &lt;nav className="pagination"&gt;
 
@@ -298,15 +298,15 @@ Pagination.module.css ✅ CSS Module — local scope guaranteed</code></pre>
 
       <hr />
 
-      <h3>💪 Exercise: Add Styles to JobCard</h3>
+      <h2>💪 Exercise: Add Styles to JobCard</h2>
       <p>Create a CSS Module for the <code>JobCard</code> component.</p>
 
-      <h4>Step 1 — Create the file</h4>
+      <h3>Step 1 — Create the file</h3>
       <pre><code>src/components/
   JobCard.jsx
   JobCard.module.css   ← create this file</code></pre>
 
-      <h4>Step 2 — Write the styles</h4>
+      <h3>Step 2 — Write the styles</h3>
       <pre><code class="language-css">/* JobCard.module.css */
 .card {
   border: 1px solid #e2e8f0;
@@ -342,7 +342,7 @@ Pagination.module.css ✅ CSS Module — local scope guaranteed</code></pre>
   border-left: 4px solid #667eea;
 }</code></pre>
 
-      <h4>Step 3 — Apply in the component</h4>
+      <h3>Step 3 — Apply in the component</h3>
       <pre><code class="language-jsx">import styles from './JobCard.module.css'
 
 export function JobCard({ job, isRemote, isFeatured }) {
@@ -357,7 +357,7 @@ export function JobCard({ job, isRemote, isFeatured }) {
 
       <hr />
 
-      <h3>✅ Class Summary</h3>
+      <h2>✅ Class Summary</h2>
       <pre><code>📦 CSS Modules     — locally scoped CSS, no collisions
 🏷️ .module.css     — the extension that activates local scope
 🔒 Encapsulation   — styles don't leak to other components

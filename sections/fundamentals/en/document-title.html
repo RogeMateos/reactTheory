@@ -11,7 +11,7 @@
   <article id="concepts" class="tab-content active">
     <div class="description">
 
-      <h3>🐛 The common approach (and its problems)</h3>
+      <h2>🐛 The common approach (and its problems)</h2>
       <p>
         It's common to see code that updates the page title using <code>useEffect</code>:
       </p>
@@ -28,7 +28,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>✅ The solution: use &lt;title&gt; directly in JSX</h3>
+      <h2>✅ The solution: use &lt;title&gt; directly in JSX</h2>
       <p>
         React allows you to use SEO tags like <code>&lt;title&gt;</code> or <code>&lt;meta&gt;</code>
         directly in JSX, without manually touching the DOM:
@@ -72,7 +72,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>⚠️ The hidden problem: duplicate &lt;title&gt;</h3>
+      <h2>⚠️ The hidden problem: duplicate &lt;title&gt;</h2>
       <p>
         When you implement this solution, if you inspect the DOM in DevTools you'll see
         <strong>two <code>&lt;title&gt;</code> tags in the <code>&lt;head&gt;</code></strong>.
@@ -93,7 +93,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>🔧 Solution: remove &lt;title&gt; from index.html</h3>
+      <h2>🔧 Solution: remove &lt;title&gt; from index.html</h2>
       <p>
         Remove the <code>&lt;title&gt;</code> tag from the static HTML and let React
         control the title entirely from your components:
@@ -120,7 +120,7 @@ useEffect(() => {
   <article id="code-examples" class="tab-content">
     <div class="description">
 
-      <h3>🔄 Dynamic title based on state</h3>
+      <h2>🔄 Dynamic title based on state</h2>
       <p>
         The big advantage of managing the title from React is that it can depend on
         application state. The tab title updates in real time:
@@ -155,7 +155,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>📋 Dynamic title use cases</h3>
+      <h2>📋 Dynamic title use cases</h2>
 
       <pre><code>// The tab title shows in real time:
 
@@ -166,7 +166,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>🏗️ Full example with a getTitle function</h3>
+      <h2>🏗️ Full example with a getTitle function</h2>
 
       <pre><code class="language-jsx">function JobsApp() {
   const [jobs, setJobs]     = useState([])
@@ -207,7 +207,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>🚀 Advantages of dynamic titles</h3>
+      <h2>🚀 Advantages of dynamic titles</h2>
 
       <table>
         <thead>
@@ -243,7 +243,7 @@ useEffect(() => {
   <article id="exercises" class="tab-content">
     <div class="description">
 
-      <h3>⚠️ Cases where &lt;title&gt; does NOT go to &lt;head&gt;</h3>
+      <h2>⚠️ Cases where &lt;title&gt; does NOT go to &lt;head&gt;</h2>
       <p>
         According to the official React docs, there are two exceptions where <code>&lt;title&gt;</code>
         is not placed in the document <code>&lt;head&gt;</code>:
@@ -251,7 +251,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>1. Inside an &lt;svg&gt; component</h3>
+      <h2>1. Inside an &lt;svg&gt; component</h2>
       <p>
         In this context, <code>&lt;title&gt;</code> doesn't represent the document title —
         it's an <strong>accessibility annotation</strong> for that SVG graphic:
@@ -265,7 +265,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>2. With the itemProp prop</h3>
+      <h2>2. With the itemProp prop</h2>
       <p>
         If <code>&lt;title&gt;</code> has an <code>itemProp</code> attribute, it also has no special behavior.
         It represents schema.org structured metadata about part of the page, not the document title:
@@ -279,7 +279,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>📚 Libraries for larger projects</h3>
+      <h2>📚 Libraries for larger projects</h2>
       <p>
         In larger apps you can use dedicated libraries. The principle is the same:
         manage SEO declaratively from React.
@@ -316,7 +316,7 @@ function Page() {
 
       <hr />
 
-      <h3>✅ Best practices and ❌ what to avoid</h3>
+      <h2>✅ Best practices and ❌ what to avoid</h2>
 
       <p><strong>✅ Always do:</strong></p>
       <ul>

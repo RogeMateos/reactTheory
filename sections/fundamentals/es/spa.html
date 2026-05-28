@@ -15,7 +15,7 @@
 
   <article id="concepts" class="tab-content active">
     <div class="description">
-      <h3>¿Qué es una Single Page Application (SPA)?</h3>
+      <h2>¿Qué es una Single Page Application (SPA)?</h2>
       <p>
         Una Single Page Application (SPA) es una aplicación web que <strong>no recarga la página al navegar entre diferentes rutas</strong>.
         En lugar de solicitar nuevas páginas al servidor, la SPA carga todo el código necesario al inicio y luego renderiza contenido dinámicamente según la URL.
@@ -26,9 +26,9 @@
         Esto te ayudará a entender cómo funcionan las SPAs por dentro antes de usar herramientas más avanzadas.
       </p>
 
-      <h3>¿Por qué crear una SPA?</h3>
+      <h2>¿Por qué crear una SPA?</h2>
 
-      <h4>Navegación tradicional (Multi-Page Application)</h4>
+      <h3>Navegación tradicional (Multi-Page Application)</h3>
       <p>En una web tradicional, cada vez que haces clic en un enlace:</p>
 
       <pre><code>1. Se hace una petición al servidor
@@ -37,7 +37,7 @@
 4. Se pierde el estado de la aplicación
 5. Hay un "parpadeo" mientras carga la nueva página</code></pre>
 
-      <h4>Navegación SPA</h4>
+      <h3>Navegación SPA</h3>
       <p>En una SPA, cuando haces clic:</p>
 
       <pre><code>1. Se previene la recarga de la página
@@ -46,7 +46,7 @@
 4. NO se vuelven a descargar recursos
 5. Navegación instantánea y fluida</code></pre>
 
-      <h4>Ventajas:</h4>
+      <h3>Ventajas:</h3>
       <ul>
         <li>⚡ <strong>Navegación instantánea:</strong> no se recargan recursos</li>
         <li>💾 <strong>Mantiene el estado:</strong> las variables y datos persisten</li>
@@ -54,7 +54,7 @@
         <li>📦 <strong>Menos datos:</strong> solo se descarga contenido nuevo</li>
       </ul>
 
-      <h3>El problema: Los enlaces recargan la página</h3>
+      <h2>El problema: Los enlaces recargan la página</h2>
       <p>Por defecto, cuando haces clic en un <code>&lt;a&gt;</code>:</p>
 
       <pre><code class="language-jsx">function Header() {
@@ -69,7 +69,7 @@
 
       <p>Cada clic recarga toda la página → descarga de nuevo HTML, CSS, JS, imágenes…</p>
 
-      <h3>Solución: Crear un componente Link personalizado</h3>
+      <h2>Solución: Crear un componente Link personalizado</h2>
       <p>Vamos a crear nuestro propio componente <code>&lt;Link&gt;</code> que intercepta los clics y evita la recarga:</p>
 
       <pre><code class="language-jsx">function Link({ href, children, ...props }) {
@@ -92,7 +92,7 @@
   )
 }</code></pre>
 
-      <h4>¿Qué hace cada parte?</h4>
+      <h3>¿Qué hace cada parte?</h3>
 
       <p><strong>1. preventDefault()</strong></p>
       <p>Evita que el navegador haga el comportamiento por defecto, que es navegar al enlace.</p>
@@ -125,7 +125,7 @@ window.dispatchEvent(navigationEvent)</code></pre>
         pero como nosotros estamos cambiando la URL manualmente con <code>pushState</code>, debemos emitirlo nosotros.
       </p>
 
-      <h3>Reemplazar los enlaces tradicionales</h3>
+      <h2>Reemplazar los enlaces tradicionales</h2>
       <p>Ahora sustituimos todos los <code>&lt;a&gt;</code> por nuestro componente <code>&lt;Link&gt;</code>:</p>
 
       <pre><code class="language-jsx">function Header() {
@@ -145,7 +145,7 @@ window.dispatchEvent(navigationEvent)</code></pre>
         <li>❌ Pero… el contenido no cambia</li>
       </ul>
 
-      <h3>El problema: React no reacciona al cambio de URL</h3>
+      <h2>El problema: React no reacciona al cambio de URL</h2>
       <p>
         Aunque la URL cambia, ningún componente se está re-renderizando porque React no sabe que la URL ha cambiado.
       </p>
@@ -157,7 +157,7 @@ window.dispatchEvent(navigationEvent)</code></pre>
         <li>Renderizar el contenido correspondiente según esa ruta</li>
       </ol>
 
-      <h3>Solución: Mantener la ruta en el estado</h3>
+      <h2>Solución: Mantener la ruta en el estado</h2>
       <p>Vamos a crear un estado que contenga la ruta actual:</p>
 
       <pre><code class="language-jsx">import { useState, useEffect } from 'react'
@@ -177,7 +177,7 @@ function App() {
 
       <p>Ahora tenemos la ruta en el estado, pero todavía no se actualiza cuando navegamos.</p>
 
-      <h3>Escuchar cambios de URL con useEffect</h3>
+      <h2>Escuchar cambios de URL con useEffect</h2>
       <p>Necesitamos escuchar el evento <code>popstate</code> para detectar cuando la URL cambia:</p>
 
       <pre><code class="language-jsx">import { useState, useEffect } from 'react'
@@ -215,7 +215,7 @@ function App() {
         Si usáramos funciones anónimas diferentes, no se limpiaría correctamente.
       </p>
 
-      <h4>¿Por qué el array vacío []?</h4>
+      <h3>¿Por qué el array vacío []?</h3>
 
       <pre><code class="language-jsx">useEffect(() => {
   // ...
@@ -226,7 +226,7 @@ function App() {
         Por eso usamos un array vacío como dependencia.
       </p>
 
-      <h3>Renderizar contenido según la ruta</h3>
+      <h2>Renderizar contenido según la ruta</h2>
       <p>Ahora que tenemos <code>currentPath</code> actualizado, podemos renderizar contenido diferente según la ruta:</p>
 
       <pre><code class="language-jsx">function App() {
@@ -257,7 +257,7 @@ function App() {
 
       <p><strong>¡Ya tenemos una SPA funcional!</strong></p>
 
-      <h3>El flujo completo</h3>
+      <h2>El flujo completo</h2>
       <p>Cuando el usuario hace clic en un <code>&lt;Link&gt;</code>:</p>
 
       <pre><code>1. Link captura el clic → event.preventDefault()
@@ -267,10 +267,10 @@ function App() {
 5. Actualiza el estado → setCurrentPath(window.location.pathname)
 6. React re-renderiza → muestra el componente correspondiente</code></pre>
 
-      <h3>¡Ya es una SPA! Comprobación con DevTools</h3>
+      <h2>¡Ya es una SPA! Comprobación con DevTools</h2>
       <p>Abre las DevTools del navegador → pestaña Network (Red):</p>
 
-      <h4>Navegación tradicional (sin SPA)</h4>
+      <h3>Navegación tradicional (sin SPA)</h3>
       <p>Al hacer clic en un enlace <code>&lt;a&gt;</code> normal:</p>
 
       <pre><code>✅ index.html        200 OK  1.2 KB
@@ -281,14 +281,14 @@ function App() {
 ---------------------------------
     Total: 357 KB descargados</code></pre>
 
-      <h4>Navegación SPA (con nuestro Link)</h4>
+      <h3>Navegación SPA (con nuestro Link)</h3>
       <p>Al hacer clic en nuestro <code>&lt;Link&gt;</code>:</p>
 
       <pre><code>(vacío, no se descarga nada)</code></pre>
 
       <p><strong>¡Navegación instantánea!</strong> No se recargan recursos porque la página nunca se recarga.</p>
 
-      <h4>Comparación con red lenta</h4>
+      <h3>Comparación con red lenta</h3>
       <p>Para ver la diferencia más claramente, simula una conexión lenta:</p>
       <ol>
         <li>Abre DevTools → Network</li>
@@ -299,7 +299,7 @@ function App() {
 
       <p>Esta es la gran ventaja de las SPAs: experiencia de usuario mucho más rápida y fluida.</p>
 
-      <h3>Soportar botones Atrás/Adelante del navegador</h3>
+      <h2>Soportar botones Atrás/Adelante del navegador</h2>
       <p>Nuestra SPA ya soporta los botones de navegación del navegador sin código adicional porque:</p>
 
       <pre><code>Cuando el usuario hace clic en "Atrás" o "Adelante"
@@ -312,7 +312,7 @@ React re-renderiza el contenido correspondiente</code></pre>
 
       <p><strong>¡Todo funciona! 🎉</strong></p>
 
-      <h3>¿Y React Router?</h3>
+      <h2>¿Y React Router?</h2>
       <p>
         Ahora que entiendes cómo funciona una SPA por dentro, en las próximas clases usaremos React Router,
         que es una librería profesional que:
@@ -328,7 +328,7 @@ React re-renderiza el contenido correspondiente</code></pre>
 
       <p>Pero es importante entender qué hace React Router por dentro antes de usarlo. ¡Ahora ya lo sabes!</p>
 
-      <h3>Resumen</h3>
+      <h2>Resumen</h2>
       <p>En esta clase aprendiste a crear una SPA desde cero:</p>
 
       <ul>
@@ -341,7 +341,7 @@ React re-renderiza el contenido correspondiente</code></pre>
         <li>⚡ Navegación instantánea sin descargar recursos de nuevo</li>
       </ul>
 
-      <h3>Ventajas de las SPAs</h3>
+      <h2>Ventajas de las SPAs</h2>
       <ul>
         <li>⚡ <strong>Rendimiento:</strong> navegación instantánea</li>
         <li>💾 <strong>Estado persistente:</strong> no se pierde información al navegar</li>

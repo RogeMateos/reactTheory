@@ -11,7 +11,7 @@
   <article id="concepts" class="tab-content active">
     <div class="description">
 
-      <h3>🎯 The goal</h3>
+      <h2>🎯 The goal</h2>
       <p>
         Transform a router with <strong>imperative</strong> logic (based on <code>if</code> and
         <code>switch</code>) into a <strong>declarative</strong> system using a
@@ -21,7 +21,7 @@
 
       <hr />
 
-      <h3>😤 The problem: imperative logic in App</h3>
+      <h2>😤 The problem: imperative logic in App</h2>
       <p>Currently the router works with conditionals in the main component:</p>
 
       <pre><code class="language-jsx">// App.jsx — with if
@@ -41,7 +41,7 @@ function App() {
   return &lt;NotFound /&gt;
 }</code></pre>
 
-      <h4>Alternative with <code>switch</code> (still not ideal)</h4>
+      <h3>Alternative with <code>switch</code> (still not ideal)</h3>
       <pre><code class="language-jsx">switch (currentPath) {
   case '/': return &lt;Home /&gt;
   case '/search': return &lt;Search /&gt;
@@ -59,7 +59,7 @@ function App() {
 
       <hr />
 
-      <h3>✨ The solution: declarative <code>&lt;Route&gt;</code> component</h3>
+      <h2>✨ The solution: declarative <code>&lt;Route&gt;</code> component</h2>
       <p>
         Instead of conditionals, we create a component that encapsulates the matching logic.
         Each <code>&lt;Route&gt;</code> decides <strong>by itself</strong> whether to render.
@@ -70,7 +70,7 @@ function App() {
         "how to achieve it step by step". React favors declarative.
       </p>
 
-      <h4>Advantages of the declarative approach</h4>
+      <h3>Advantages of the declarative approach</h3>
       <ul>
         <li>✅ <strong>Expresses intent:</strong> each route is clear and self-explanatory</li>
         <li>✅ <strong>Easy to read:</strong> you see all routes at a glance</li>
@@ -81,7 +81,7 @@ function App() {
 
       <hr />
 
-      <h3>🧩 Rendering pattern with <code>null</code></h3>
+      <h2>🧩 Rendering pattern with <code>null</code></h2>
       <p>
         Returning <code>null</code> is a very common pattern in React to mean "don't render anything":
       </p>
@@ -93,7 +93,7 @@ function App() {
 
       <hr />
 
-      <h3>🎨 Props with renaming (<code>component: Component</code>)</h3>
+      <h2>🎨 Props with renaming (<code>component: Component</code>)</h2>
       <p>
         In JSX, components must start with <strong>uppercase</strong>. That's why when receiving a
         prop called <code>component</code>, we rename it:
@@ -115,7 +115,7 @@ function App() {
   <article id="code-examples" class="tab-content">
     <div class="description">
 
-      <h3>Step 1 — Create the Route component</h3>
+      <h2>Step 1 — Create the Route component</h2>
       <pre><code class="language-jsx">// components/Route.jsx
 import { useRouter } from '../hooks/useRouter'
 
@@ -132,7 +132,7 @@ export function Route({ path, component: Component }) {
   return &lt;Component /&gt;
 }</code></pre>
 
-      <h4>Breakdown</h4>
+      <h3>Breakdown</h3>
       <ul>
         <li><code>useRouter()</code> reuses the hook from the previous class</li>
         <li><code>if (currentPath !== path) return null</code> is conditional rendering</li>
@@ -141,7 +141,7 @@ export function Route({ path, component: Component }) {
 
       <hr />
 
-      <h3>Step 2 — Use Route in App (declarative version)</h3>
+      <h2>Step 2 — Use Route in App (declarative version)</h2>
       <pre><code class="language-jsx">// App.jsx — AFTER
 import { Route } from './components/Route'
 import { Home } from './pages/Home'
@@ -164,16 +164,16 @@ export default App</code></pre>
 
       <hr />
 
-      <h3>🔍 How it works internally</h3>
+      <h2>🔍 How it works internally</h2>
 
-      <h4>If we are on <code>/</code></h4>
+      <h3>If we are on <code>/</code></h3>
       <pre><code>&lt;Route path="/" component={Home}/&gt;       → "/" === "/"       ✅ renders &lt;Home /&gt;
 &lt;Route path="/search" component={Search}/&gt; → "/" !== "/search" ❌ null
 &lt;Route path="/about" component={About}/&gt;   → "/" !== "/about"  ❌ null
 
 Result: only &lt;Home /&gt; is rendered</code></pre>
 
-      <h4>If we are on <code>/search</code></h4>
+      <h3>If we are on <code>/search</code></h3>
       <pre><code>&lt;Route path="/" component={Home}/&gt;       → "/search" !== "/"       ❌ null
 &lt;Route path="/search" component={Search}/&gt; → "/search" === "/search" ✅ renders &lt;Search /&gt;
 &lt;Route path="/about" component={About}/&gt;   → "/search" !== "/about"  ❌ null
@@ -182,7 +182,7 @@ Result: only &lt;Search /&gt; is rendered</code></pre>
 
       <hr />
 
-      <h3>Step 3 — Adding a shared layout</h3>
+      <h2>Step 3 — Adding a shared layout</h2>
       <p>
         Once it's declarative, it's trivial to add common elements that appear on every route:
       </p>
@@ -218,7 +218,7 @@ Result: only &lt;Search /&gt; is rendered</code></pre>
   <article id="exercises" class="tab-content">
     <div class="description">
 
-      <h3>⚖️ Imperative vs Declarative</h3>
+      <h2>⚖️ Imperative vs Declarative</h2>
 
       <table>
         <thead>
@@ -249,9 +249,9 @@ Result: only &lt;Search /&gt; is rendered</code></pre>
 
       <hr />
 
-      <h3>🧪 Exercises</h3>
+      <h2>🧪 Exercises</h2>
 
-      <h4>Exercise 1 — Refactor to declarative</h4>
+      <h3>Exercise 1 — Refactor to declarative</h3>
       <p>Given this imperative router, refactor it to the declarative version with <code>&lt;Route&gt;</code>:</p>
       <pre><code class="language-jsx">function App() {
   const { currentPath } = useRouter()
@@ -261,10 +261,10 @@ Result: only &lt;Search /&gt; is rendered</code></pre>
   return &lt;NotFound /&gt;
 }</code></pre>
 
-      <h4>Exercise 2 — Add layout</h4>
+      <h3>Exercise 2 — Add layout</h3>
       <p>To the router from exercise 1, add a <code>&lt;Navbar /&gt;</code> that appears on all routes and a <code>&lt;Footer /&gt;</code> at the end.</p>
 
-      <h4>Exercise 3 — Challenge</h4>
+      <h3>Exercise 3 — Challenge</h3>
       <p>
         Modify the <code>&lt;Route&gt;</code> component so it accepts <code>children</code>
         instead of the <code>component</code> prop. So you could use it like this:
@@ -275,7 +275,7 @@ Result: only &lt;Search /&gt; is rendered</code></pre>
 
       <hr />
 
-      <h3>🔑 Key concepts</h3>
+      <h2>🔑 Key concepts</h2>
       <table>
         <thead>
           <tr>
@@ -296,7 +296,7 @@ Result: only &lt;Search /&gt; is rendered</code></pre>
 
       <hr />
 
-      <h3>🚀 Next steps</h3>
+      <h2>🚀 Next steps</h2>
       <ul>
         <li><strong>Dynamic routes:</strong> <code>/users/:id</code></li>
         <li><strong>Nested routes:</strong> routes within routes</li>

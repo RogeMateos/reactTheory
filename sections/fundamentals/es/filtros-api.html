@@ -11,7 +11,7 @@
   <article id="concepts" class="tab-content active">
     <div class="description">
 
-      <h3>🔎 El problema inicial</h3>
+      <h2>🔎 El problema inicial</h2>
       <p>
         La app ya hace una llamada HTTP a la API y los filtros se actualizan en el estado correctamente.
         Pero hay un problema crítico: <strong>la petición no envía esos filtros</strong>.
@@ -30,7 +30,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>🎯 Objetivo</h3>
+      <h2>🎯 Objetivo</h2>
       <p>
         Cuando el usuario escribe "JavaScript" o cambia cualquier filtro (tecnología, tipo,
         nivel de experiencia), la app debe <strong>volver a consultar la API</strong> enviando
@@ -39,7 +39,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>🔧 Cómo enviar filtros a la API</h3>
+      <h2>🔧 Cómo enviar filtros a la API</h2>
       <p>
         La API acepta filtros en la URL mediante query params:
       </p>
@@ -75,7 +75,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>🛠️ URLSearchParams — el estándar de la plataforma web</h3>
+      <h2>🛠️ URLSearchParams — el estándar de la plataforma web</h2>
       <p>
         Para construir los parámetros dinámicamente, usamos <code>URLSearchParams</code>,
         una API nativa del browser. No hace falta instalar nada.
@@ -98,7 +98,7 @@ const url = `https://jscamp-api.vercel.app/api/jobs?${params.toString()}`</code>
 
       <hr />
 
-      <h3>🐛 Primer intento — por qué no funciona</h3>
+      <h2>🐛 Primer intento — por qué no funciona</h2>
       <p>
         Construís la URL con los filtros pero al seleccionar tecnología → JavaScript, no pasa nada.
         ¿Por qué? Porque el <code>useEffect</code> tiene el array de dependencias vacío:
@@ -117,7 +117,7 @@ const url = `https://jscamp-api.vercel.app/api/jobs?${params.toString()}`</code>
 
       <hr />
 
-      <h3>✅ La solución: dependencias correctas</h3>
+      <h2>✅ La solución: dependencias correctas</h2>
       <p>
         El efecto debe re-ejecutarse cada vez que cambia un filtro. Para eso, hay que
         listar cada filtro como dependencia:
@@ -135,7 +135,7 @@ const url = `https://jscamp-api.vercel.app/api/jobs?${params.toString()}`</code>
   <article id="code-examples" class="tab-content">
     <div class="description">
 
-      <h3>🏗️ Implementación completa con filtros</h3>
+      <h2>🏗️ Implementación completa con filtros</h2>
       <p>
         El <code>useEffect</code> construye la URL dinámicamente con los filtros activos
         y se re-ejecuta cada vez que cambia alguno:
@@ -166,7 +166,7 @@ const url = `https://jscamp-api.vercel.app/api/jobs?${params.toString()}`</code>
 
       <hr />
 
-      <h3>🔄 ¿Qué pasa cuando el usuario cambia un filtro?</h3>
+      <h2>🔄 ¿Qué pasa cuando el usuario cambia un filtro?</h2>
 
       <pre><code>// Flujo con filtros activos:
 
@@ -190,7 +190,7 @@ const url = `https://jscamp-api.vercel.app/api/jobs?${params.toString()}`</code>
 
       <hr />
 
-      <h3>🚫 Manejo del caso sin resultados</h3>
+      <h2>🚫 Manejo del caso sin resultados</h2>
       <p>
         Cuando la combinación de filtros no encuentra nada, necesitás dar feedback al usuario.
         Sin esto, la pantalla queda vacía sin explicación:
@@ -212,7 +212,7 @@ const url = `https://jscamp-api.vercel.app/api/jobs?${params.toString()}`</code>
 
       <hr />
 
-      <h3>📋 Comprobación en acción</h3>
+      <h2>📋 Comprobación en acción</h2>
 
       <pre><code>// Pruebas que deberían funcionar:
 
@@ -227,7 +227,7 @@ const url = `https://jscamp-api.vercel.app/api/jobs?${params.toString()}`</code>
 
       <hr />
 
-      <h3>📦 Componente completo con todo integrado</h3>
+      <h2>📦 Componente completo con todo integrado</h2>
 
       <pre><code class="language-jsx">function JobSearch({ filters, textToFilter }) {
   const [jobs, setJobs] = useState([])
@@ -284,7 +284,7 @@ const url = `https://jscamp-api.vercel.app/api/jobs?${params.toString()}`</code>
   <article id="exercises" class="tab-content">
     <div class="description">
 
-      <h3>🐛 Error clásico: filtro seleccionado pero nada cambia</h3>
+      <h2>🐛 Error clásico: filtro seleccionado pero nada cambia</h2>
       <p>
         El síntoma: el usuario selecciona un filtro y la lista no se actualiza.
         La causa casi siempre es el array de dependencias vacío o incompleto.
@@ -304,7 +304,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>🐛 Error: advertencia del linter sobre dependencias faltantes</h3>
+      <h2>🐛 Error: advertencia del linter sobre dependencias faltantes</h2>
       <p>
         Si ves <em>"React Hook useEffect has missing dependencies: 'filters.technology'"</em>,
         no lo ignorés con un <code>// eslint-disable-next-line</code>. El linter tiene razón —
@@ -318,7 +318,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>🐛 Error: loop infinito al agregar objeto como dependencia</h3>
+      <h2>🐛 Error: loop infinito al agregar objeto como dependencia</h2>
       <p>
         Si ponés el objeto <code>filters</code> completo como dependencia en lugar de sus propiedades,
         podés generar un loop infinito:
@@ -342,7 +342,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>✅ Buenas prácticas y ❌ qué evitar</h3>
+      <h2>✅ Buenas prácticas y ❌ qué evitar</h2>
 
       <p><strong>✅ Hacer siempre:</strong></p>
       <ul>
@@ -363,7 +363,7 @@ useEffect(() => {
 
       <hr />
 
-      <h3>🚀 Próximos pasos</h3>
+      <h2>🚀 Próximos pasos</h2>
       <p>Con los filtros integrados, lo que sigue es:</p>
       <ul>
         <li><strong>Paginación real:</strong> agregar <code>limit</code> y <code>offset</code> como dependencias también</li>

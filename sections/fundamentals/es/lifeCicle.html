@@ -6,7 +6,7 @@
       Para dominar React, es fundamental entender cómo funciona el Virtual DOM y el proceso de renderizado.
     </p>
 
-    <h3>🧱 ¿Qué es el DOM?</h3>
+    <h2>🧱 ¿Qué es el DOM?</h2>
     <p>
       Cuando una página web se carga por primera vez, el navegador crea una estructura en memoria llamada <strong>DOM (Document Object Model)</strong>.
     </p>
@@ -22,7 +22,7 @@
          ├── h1
          └── button</code></pre>
 
-    <h3>⚡ El problema del DOM tradicional</h3>
+    <h2>⚡ El problema del DOM tradicional</h2>
     <p>Si cada cambio en la interfaz modificara directamente el DOM:</p>
     <ul>
       <li>❌ Sería lento</li>
@@ -31,7 +31,7 @@
     </ul>
     <p><strong>Aquí es donde entra React.</strong></p>
 
-    <h3>🪞 ¿Qué es el Virtual DOM?</h3>
+    <h2>🪞 ¿Qué es el Virtual DOM?</h2>
     <p>
       El Virtual DOM es una <strong>copia ligera del DOM real</strong>, mantenida en memoria por React.
     </p>
@@ -43,16 +43,16 @@
       React trabaja primero con el Virtual DOM y solo toca el DOM real cuando es necesario.
     </p>
 
-    <h3>🔁 Proceso de renderizado en React (paso a paso)</h3>
+    <h2>🔁 Proceso de renderizado en React (paso a paso)</h2>
 
-    <h4>1️⃣ Renderizado inicial</h4>
+    <h3>1️⃣ Renderizado inicial</h3>
     <ul>
       <li>React crea el Virtual DOM</li>
       <li>Se genera el DOM real y se pinta la UI</li>
     </ul>
     <pre><code>Virtual DOM  →  DOM Real  →  Pantalla</code></pre>
 
-    <h4>2️⃣ Cambio de estado (state o props)</h4>
+    <h3>2️⃣ Cambio de estado (state o props)</h3>
     <p>Cuando cambia algo en la aplicación:</p>
     <ul>
       <li>React no toca el DOM real directamente</li>
@@ -61,13 +61,13 @@
     <pre><code>Virtual DOM (anterior)
 Virtual DOM (nuevo)</code></pre>
 
-    <h4>3️⃣ Diffing (comparación)</h4>
+    <h3>3️⃣ Diffing (comparación)</h3>
     <p>React compara ambas versiones:</p>
     <pre><code>ANTES: &lt;h1&gt;Hola&lt;/h1&gt;
 DESPUÉS: &lt;h1&gt;Hola Roge&lt;/h1&gt;</code></pre>
     <p>👉 Solo detecta qué cambió</p>
 
-    <h4>4️⃣ Actualización eficiente</h4>
+    <h3>4️⃣ Actualización eficiente</h3>
     <ul>
       <li>React actualiza solo ese nodo</li>
       <li>El resto del DOM queda intacto</li>
@@ -78,7 +78,7 @@ DESPUÉS: &lt;h1&gt;Hola Roge&lt;/h1&gt;</code></pre>
       <li>✅ Mejor rendimiento</li>
     </ul>
 
-    <h3>🧠 ¿Por qué React es tan rápido?</h3>
+    <h2>🧠 ¿Por qué React es tan rápido?</h2>
     <p>Porque:</p>
     <ul>
       <li>Minimiza accesos al DOM real</li>
@@ -87,14 +87,14 @@ DESPUÉS: &lt;h1&gt;Hola Roge&lt;/h1&gt;</code></pre>
     </ul>
     <p>Este proceso es lo que se conoce como <strong>diffing + reconciliation</strong>.</p>
 
-    <h3>🔥 Tip avanzado</h3>
+    <h2>🔥 Tip avanzado</h2>
     <p>
       Aunque solemos hablar de "Virtual DOM", internamente React utiliza un sistema de
       <strong>reconciliación basado en Fiber</strong>, que permite pausar, priorizar y
       reanudar renderizados para mejorar la experiencia del usuario.
     </p>
 
-    <h3>🎯 Conclusión</h3>
+    <h2>🎯 Conclusión</h2>
     <p>
       <strong>React no actualiza la interfaz directamente. Primero piensa, compara y decide.</strong><br>
       Solo después modifica el DOM real, y únicamente donde hace falta.
@@ -103,7 +103,7 @@ DESPUÉS: &lt;h1&gt;Hola Roge&lt;/h1&gt;</code></pre>
 
   <h2>Ejemplos de Código – Virtual DOM y Renderizado en React</h2>
 
-  <h3>1️⃣ Renderizado inicial con createRoot</h3>
+  <h2>1️⃣ Renderizado inicial con createRoot</h2>
   <pre><code class="language-jsx">
 // index.js
 import React from 'react';
@@ -121,7 +121,7 @@ root.render(&lt;App /&gt;);
     <li>La UI se pinta por primera vez en pantalla</li>
   </ul>
 
-  <h3>2️⃣ Definición de componentes</h3>
+  <h2>2️⃣ Definición de componentes</h2>
   <pre><code class="language-jsx">
 // App.js
 import VideoList from './VideoList';
@@ -171,7 +171,7 @@ export default VideoItem;
 
   <p>🔹 Cada componente contribuye a crear el árbol del Virtual DOM.</p>
 
-  <h3>3️⃣ Re-render provocado por cambio de estado</h3>
+  <h2>3️⃣ Re-render provocado por cambio de estado</h2>
   <pre><code class="language-jsx">
 // index.js
 import { useState, useEffect } from 'react';
@@ -203,7 +203,7 @@ root.render(&lt;Root /&gt;);
     <li>→ lo compara con el anterior</li>
   </ul>
 
-  <h3>4️⃣ ¿Qué pasa internamente? (Virtual DOM)</h3>
+  <h2>4️⃣ ¿Qué pasa internamente? (Virtual DOM)</h2>
   <p>⚠️ Esto NO es código real de React, es una representación conceptual:</p>
   <pre><code class="language-jsx">
 const virtualDOM = {
@@ -224,7 +224,7 @@ const virtualDOM = {
 
   <p>🔹 Y solo actualiza las diferencias en el DOM real<br>(Este proceso se llama <strong>diffing</strong>).</p>
 
-  <h3>5️⃣ Patrón básico de componente</h3>
+  <h2>5️⃣ Patrón básico de componente</h2>
   <pre><code class="language-jsx">
 import ComponentA from "./ComponentA";
 
@@ -267,7 +267,7 @@ export default function App() {
       <strong>⚠️ Importante:</strong> render no significa "pintar en el DOM". Render es calcular el resultado. El DOM se toca en la fase de commit.
     </p>
 
-    <h3>🟢 Mounting (Montaje)</h3>
+    <h2>🟢 Mounting (Montaje)</h2>
     <ul>
       <li>React ejecuta el componente por primera vez.</li>
       <li>Se genera el árbol "virtual" (representación de la UI).</li>
@@ -275,7 +275,7 @@ export default function App() {
       <li>Después del commit, corre <code>useEffect(() => { ... }, [])</code> (si existe).</li>
     </ul>
 
-    <h3>🔄 Updating (Actualización)</h3>
+    <h2>🔄 Updating (Actualización)</h2>
     <p>Ocurre cuando cambian state, props, o el padre re-renderiza:</p>
     <ul>
       <li>React vuelve a ejecutar el componente (nuevo árbol).</li>
@@ -293,7 +293,7 @@ export default function App() {
       </li>
     </ul>
 
-    <h3>🔴 Unmounting (Desmontaje)</h3>
+    <h2>🔴 Unmounting (Desmontaje)</h2>
     <ul>
       <li>React elimina el componente del árbol.</li>
       <li>En el commit, quita sus nodos del DOM real.</li>
@@ -367,24 +367,24 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(&lt;VideoList /&gt;);
     </code></pre>
 
-    <h3>📊 Qué verás en consola (idea mental rápida)</h3>
+    <h2>📊 Qué verás en consola (idea mental rápida)</h2>
 
-    <h4>Al cargar:</h4>
+    <h3>Al cargar:</h3>
     <pre><code>[Render] ...
 [Effect mount] ...
 [Effect] duration changed ... (primera vez también cuenta)</code></pre>
 
-    <h4>Al cambiar duration:</h4>
+    <h3>Al cambiar duration:</h3>
     <pre><code>[Render] ...
 [Cleanup] before next duration effect ...
 [Effect] duration changed ...</code></pre>
 
-    <h4>Al ocultar:</h4>
+    <h3>Al ocultar:</h3>
     <pre><code>[Effect cleanup] VideoItem unmounted ...</code></pre>
   </section>
 
   <div class="links">
-    <h3>Enlaces Relacionados:</h3>
+    <h2>Enlaces Relacionados:</h2>
     <a
       href="https://chatgpt.com/c/670c59c3-c770-8008-add4-1e745b1a1f0a"
       target="_blank"

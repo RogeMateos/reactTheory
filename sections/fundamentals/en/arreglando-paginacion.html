@@ -12,7 +12,7 @@
   <article id="concepts" class="tab-content active">
     <div class="description">
 
-      <h3>🧠 What problem does this solve?</h3>
+      <h2>🧠 What problem does this solve?</h2>
       <p>
         Before, the <code>/search</code> route always looked the same no matter what the user did:
       </p>
@@ -51,7 +51,7 @@ search Vue
 
       <hr />
 
-      <h3>✅ What we want to achieve</h3>
+      <h2>✅ What we want to achieve</h2>
       <p>
         The URL should <strong>represent the state of the app</strong>. For example:
       </p>
@@ -83,7 +83,7 @@ search Vue
 
       <hr />
 
-      <h3>🚀 The REAL benefit</h3>
+      <h2>🚀 The REAL benefit</h2>
       <p>With this change, the app:</p>
 
       <pre><code>✅ Remembers state
@@ -92,7 +92,7 @@ search Vue
 ✅ Works properly with browser history
 ✅ Has professional URLs</code></pre>
 
-      <h3>📌 The MOST important idea</h3>
+      <h2>📌 The MOST important idea</h2>
       <p>The URL becomes <strong>THE SOURCE OF TRUTH</strong>. Not just React state. The URL now also stores the application state.</p>
 
     </div>
@@ -102,7 +102,7 @@ search Vue
   <article id="code-examples" class="tab-content">
     <div class="description">
 
-      <h3>🔥 What does <code>URLSearchParams</code> do?</h3>
+      <h2>🔥 What does <code>URLSearchParams</code> do?</h2>
       <p>
         It helps you read and modify URL parameters easily, without breaking the existing ones.
       </p>
@@ -119,7 +119,7 @@ searchParams.set('page', '2')
 
       <hr />
 
-      <h3>🎯 What does <code>buildPageURL</code> achieve?</h3>
+      <h2>🎯 What does <code>buildPageURL</code> achieve?</h2>
       <p>
         Building pagination links correctly so each button has a real URL:
       </p>
@@ -136,7 +136,7 @@ searchParams.set('page', '2')
 
       <hr />
 
-      <h3>💻 Implementation</h3>
+      <h2>💻 Implementation</h2>
 
       <pre><code class="language-jsx">function buildPageURL(search, page) {
   // Grab the current URL parameters
@@ -168,7 +168,7 @@ function Pagination({ search, currentPage, totalPages }) {
 
       <hr />
 
-      <h3>📥 Reading URL parameters in the component</h3>
+      <h2>📥 Reading URL parameters in the component</h2>
 
       <pre><code class="language-jsx">import { useSearchParams } from 'react-router-dom'
 
@@ -188,7 +188,7 @@ function SearchPage() {
   <article id="exercises" class="tab-content">
     <div class="description">
 
-      <h3>🧩 Visual mental flow</h3>
+      <h2>🧩 Visual mental flow</h2>
 
       <pre><code>User searches "React"
         ↓
@@ -206,7 +206,7 @@ The app knows:
 
       <hr />
 
-      <h3>⚠️ Common mistakes</h3>
+      <h2>⚠️ Common mistakes</h2>
 
       <table>
         <thead>
@@ -242,7 +242,7 @@ The app knows:
 
       <hr />
 
-      <h3>🎯 Exercise</h3>
+      <h2>🎯 Exercise</h2>
       <p>
         Modify your search component so that:
       </p>
@@ -260,7 +260,7 @@ The app knows:
   <article id="improvements" class="tab-content">
     <div class="description">
 
-      <h3>🔧 Block 1: simplifying <code>buildPageURL</code></h3>
+      <h2>🔧 Block 1: simplifying <code>buildPageURL</code></h2>
 
       <p><strong>Problem detected:</strong> the code works, but using <code>window.location.href</code> inside the component makes it less testable and more coupled to the browser.</p>
 
@@ -281,7 +281,7 @@ const buildPageURL = (pageNumber) => {
 
       <hr />
 
-      <h3>🔧 Block 2: previous and next pages</h3>
+      <h2>🔧 Block 2: previous and next pages</h2>
 
       <p><strong>Problem detected:</strong> without guards, you can generate invalid URLs:</p>
 
@@ -297,7 +297,7 @@ const nextPage = Math.min(currentPage + 1, totalPages)</code></pre>
 
       <hr />
 
-      <h3>🔧 Block 3: readability with <code>isFirstPage</code> / <code>isLastPage</code></h3>
+      <h2>🔧 Block 3: readability with <code>isFirstPage</code> / <code>isLastPage</code></h2>
 
       <p><strong>Problem detected:</strong> <code>aria-disabled</code> only helps accessibility but doesn't disable the link. Also, repeating <code>currentPage === 1</code> in multiple places clutters the code.</p>
 
@@ -317,7 +317,7 @@ const isLastPage = currentPage === totalPages
 
       <hr />
 
-      <h3>✅ Complete final improved version</h3>
+      <h2>✅ Complete final improved version</h2>
 
       <pre><code class="language-jsx">function Pagination({ currentPage, totalPages }) {
   const buildPageURL = (pageNumber) => {
@@ -375,7 +375,7 @@ const isLastPage = currentPage === totalPages
 
       <hr />
 
-      <h3>📌 Summary of improvements</h3>
+      <h2>📌 Summary of improvements</h2>
 
       <table>
         <thead>

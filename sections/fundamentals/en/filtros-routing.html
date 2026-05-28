@@ -11,7 +11,7 @@
   <article id="concepts" class="tab-content active">
     <div class="description">
 
-      <h3>😤 The problem: filters that don't filter on their own</h3>
+      <h2>😤 The problem: filters that don't filter on their own</h2>
       <p>
         Think about the typical user experience: user changes a select → nothing happens.
         Changes another select → nothing happens. Types in the input → nothing happens. Finally
@@ -30,7 +30,7 @@
 
       <hr />
 
-      <h3>🎯 event.target vs event.currentTarget — the difference that matters</h3>
+      <h2>🎯 event.target vs event.currentTarget — the difference that matters</h2>
 
       <pre><code>&lt;form onChange={handleChange}&gt;   ← has the listener
   &lt;input name="search" /&gt;        ← can fire the event
@@ -54,7 +54,7 @@ event.currentTarget = the element that HAS the listener (always the form)</code>
 
       <hr />
 
-      <h3>🗂️ Manual routing: pages without React Router</h3>
+      <h2>🗂️ Manual routing: pages without React Router</h2>
       <p>
         A real app needs multiple pages: Home (<code>/</code>), Search (<code>/search</code>),
         404. Without React Router, we can use <code>window.location.pathname</code> — a native
@@ -77,7 +77,7 @@ window.location.pathname  →  "/anything-else"</code></pre>
 
       <hr />
 
-      <h3>📁 Separating pages from components</h3>
+      <h2>📁 Separating pages from components</h2>
       <p>
         The architectural difference is important:
       </p>
@@ -103,7 +103,7 @@ window.location.pathname  →  "/anything-else"</code></pre>
 
       <hr />
 
-      <h3>⚠️ The limitation of manual routing</h3>
+      <h2>⚠️ The limitation of manual routing</h2>
       <p>
         Let's be honest: links with <code>&lt;a href="..."&gt;</code> cause a full page reload. This:
       </p>
@@ -131,7 +131,7 @@ Production           ❌ No            ✅ Recommended</code></pre>
   <article id="code-examples" class="tab-content">
     <div class="description">
 
-      <h3>🔧 SearchForm without a button: onChange on the form</h3>
+      <h2>🔧 SearchForm without a button: onChange on the form</h2>
 
       <pre><code class="language-jsx">import { useId } from 'react'
 
@@ -175,7 +175,7 @@ export function SearchForm({ onSearch }) {
 
       <hr />
 
-      <h3>🔍 target vs currentTarget in action</h3>
+      <h2>🔍 target vs currentTarget in action</h2>
 
       <pre><code class="language-jsx">// ❌ WRONG — target is the &lt;select&gt; that changed
 const handleChange = (event) => {
@@ -193,7 +193,7 @@ const handleChange = (event) => {
 
       <hr />
 
-      <h3>🏠 Manual router in App.jsx</h3>
+      <h2>🏠 Manual router in App.jsx</h2>
 
       <pre><code class="language-jsx">import { Header } from './components/Header'
 import { Footer } from './components/Footer'
@@ -226,7 +226,7 @@ export default App</code></pre>
 
       <hr />
 
-      <h3>🔄 Alternative version with &amp;&amp;</h3>
+      <h2>🔄 Alternative version with &amp;&amp;</h2>
 
       <pre><code class="language-jsx">function App() {
   const { pathname } = window.location
@@ -250,7 +250,7 @@ export default App</code></pre>
 
       <hr />
 
-      <h3>🚫 404 Page</h3>
+      <h2>🚫 404 Page</h2>
 
       <pre><code class="language-jsx">// src/pages/NotFound.jsx
 export function NotFound() {
@@ -266,7 +266,7 @@ export function NotFound() {
 
       <hr />
 
-      <h3>⚠️ Common mistakes: HTML → JSX</h3>
+      <h2>⚠️ Common mistakes: HTML → JSX</h2>
 
       <pre><code>// 1. Unclosed inputs
 ❌  &lt;input type="text"&gt;
@@ -295,7 +295,7 @@ export function NotFound() {
   <article id="exercises" class="tab-content">
     <div class="description">
 
-      <h3>🐛 The target bug</h3>
+      <h2>🐛 The target bug</h2>
 
       <pre><code class="language-jsx">// ❌ Problem: FormData of the field, not the form
 &lt;form onChange={handleChange}&gt;
@@ -318,7 +318,7 @@ const handleChange = (event) => {
 
       <hr />
 
-      <h3>🐛 Submit button left by accident</h3>
+      <h2>🐛 Submit button left by accident</h2>
 
       <pre><code class="language-jsx">// ❌ If you leave the button, the form submits and reloads the page
 &lt;form onChange={handleChange}&gt;
@@ -334,7 +334,7 @@ const handleChange = (event) => {
 
       <hr />
 
-      <h3>💪 Exercise</h3>
+      <h2>💪 Exercise</h2>
 
       <pre><code>1. Transform the SearchForm:
    □ Remove the "Search" button
@@ -356,7 +356,7 @@ const handleChange = (event) => {
 
       <hr />
 
-      <h3>✅ Summary</h3>
+      <h2>✅ Summary</h2>
 
       <pre><code>onChange on &lt;form&gt;       — captures changes from all child fields
 event.currentTarget      — always the element with the listener (the form)

@@ -11,7 +11,7 @@
   <article id="concepts" class="tab-content active">
     <div class="description">
 
-      <h3>📦 El problema: datos estáticos vs datos dinámicos</h3>
+      <h2>📦 El problema: datos estáticos vs datos dinámicos</h2>
       <p>
         Hasta ahora, los datos venían de un archivo local (<code>.json</code>) que nunca cambia.
         En aplicaciones reales, los datos viven en un servidor: se actualizan, se filtran en el
@@ -48,7 +48,7 @@ function App() {
 
       <hr />
 
-      <h3>🚫 ¿Por qué NO se puede hacer fetch directamente en el render?</h3>
+      <h2>🚫 ¿Por qué NO se puede hacer fetch directamente en el render?</h2>
       <p>
         React ejecuta el cuerpo del componente en cada render. Si ponés <code>fetch()</code>
         ahí directamente, causás un <strong>loop infinito</strong>:
@@ -74,7 +74,7 @@ function JobSearch() {
 
       <hr />
 
-      <h3>✅ La solución: useEffect con dependencias vacías</h3>
+      <h2>✅ La solución: useEffect con dependencias vacías</h2>
       <p>
         <code>useEffect</code> con un array de dependencias vacío <code>[]</code>
         solo se ejecuta <strong>una vez</strong>, cuando el componente se monta.
@@ -95,7 +95,7 @@ function JobSearch() {
 
       <hr />
 
-      <h3>🧠 Preparando los estados necesarios</h3>
+      <h2>🧠 Preparando los estados necesarios</h2>
       <p>
         Para manejar una llamada a la API correctamente, necesitás al menos tres estados:
       </p>
@@ -119,7 +119,7 @@ function JobSearch() {
 
       <hr />
 
-      <h3>🔎 La API que usaremos</h3>
+      <h2>🔎 La API que usaremos</h2>
       <p>
         En este módulo consumimos una API real de empleos:
         <code>GET https://jscamp-api.vercel.app/api/jobs</code>
@@ -174,7 +174,7 @@ function JobSearch() {
   <article id="code-examples" class="tab-content">
     <div class="description">
 
-      <h3>🏗️ Implementación completa del fetch</h3>
+      <h2>🏗️ Implementación completa del fetch</h2>
       <p>
         Así se ve la llamada a la API implementada correctamente con <code>async/await</code>,
         manejo de errores y estado de carga:
@@ -220,7 +220,7 @@ function JobSearch() {
 
       <hr />
 
-      <h3>📦 Estructura de la respuesta de la API</h3>
+      <h2>📦 Estructura de la respuesta de la API</h2>
       <pre><code class="language-jsx">// La API devuelve ESTO:
 {
   "total": 34,      // total de empleos disponibles
@@ -252,7 +252,7 @@ setJobs(json) // ❌ guardás el objeto completo → jobs.map() falla</code></pr
 
       <hr />
 
-      <h3>🔄 El ciclo completo de carga</h3>
+      <h2>🔄 El ciclo completo de carga</h2>
       <pre><code>// Flujo paso a paso:
 
 1. Componente se monta
@@ -277,7 +277,7 @@ setJobs(json) // ❌ guardás el objeto completo → jobs.map() falla</code></pr
 
       <hr />
 
-      <h3>⏱️ Simulando una conexión lenta (solo en desarrollo)</h3>
+      <h2>⏱️ Simulando una conexión lenta (solo en desarrollo)</h2>
       <p>
         Agregá un delay artificial para ver bien el estado de carga.
         Acordate de sacarlo antes de ir a producción.
@@ -308,7 +308,7 @@ setJobs(json) // ❌ guardás el objeto completo → jobs.map() falla</code></pr
 
       <hr />
 
-      <h3>💅 UX: mostrar un indicador de carga real</h3>
+      <h2>💅 UX: mostrar un indicador de carga real</h2>
       <pre><code class="language-jsx">if (loading) {
   return (
     &lt;div className="loading"&gt;
@@ -332,7 +332,7 @@ return &lt;JobListing jobs={jobs} total={total} /&gt;</code></pre>
   <article id="exercises" class="tab-content">
     <div class="description">
 
-      <h3>🐛 Error clásico: <code>jobs.map is not a function</code></h3>
+      <h2>🐛 Error clásico: <code>jobs.map is not a function</code></h2>
       <p>
         Es el error más común al consumir una API por primera vez. Aparece cuando guardás
         el objeto completo de la respuesta en lugar del array.
@@ -359,7 +359,7 @@ setTotal(json.total) // el total por separado</code></pre>
 
       <hr />
 
-      <h3>🔍 Verificando con DevTools</h3>
+      <h2>🔍 Verificando con DevTools</h2>
       <p>Para confirmar que los datos vienen de la API correctamente:</p>
       <ul>
         <li>Abrí DevTools → pestaña <strong>Network</strong></li>
@@ -375,7 +375,7 @@ setTotal(json.total) // el total por separado</code></pre>
 
       <hr />
 
-      <h3>🧠 Reflexión: ¿qué lógica va en qué custom hook?</h3>
+      <h2>🧠 Reflexión: ¿qué lógica va en qué custom hook?</h2>
       <p>
         Un hook debe representar algo <strong>concreto y cohesivo</strong>.
         No mezclés lógicas no relacionadas:
@@ -415,7 +415,7 @@ function useFilters() {
 
       <hr />
 
-      <h3>✅ Buenas prácticas y ❌ qué evitar</h3>
+      <h2>✅ Buenas prácticas y ❌ qué evitar</h2>
 
       <p><strong>✅ Hacer siempre:</strong></p>
       <ul>
@@ -437,7 +437,7 @@ function useFilters() {
 
       <hr />
 
-      <h3>🚀 Próximos pasos</h3>
+      <h2>🚀 Próximos pasos</h2>
       <p>Con la llamada a la API funcionando, lo que sigue es:</p>
       <ul>
         <li><strong>Filtros dinámicos:</strong> enviar parámetros a la API según lo que seleccionó el usuario</li>

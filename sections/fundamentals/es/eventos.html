@@ -19,7 +19,7 @@
     <p>Todo eso se maneja con <strong>eventos</strong>.</p>
     <p>En esta clase aprenderás a escuchar eventos en React y ejecutar código cuando ocurren.</p>
 
-    <h3>1️⃣ ¿Qué son los eventos?</h3>
+    <h2>1️⃣ ¿Qué son los eventos?</h2>
     <p>Un evento es una acción que ocurre en el navegador.</p>
 
     <p>Ejemplos comunes:</p>
@@ -33,7 +33,7 @@
 
     <p>React permite escuchar esos eventos y reaccionar a ellos.</p>
 
-    <h3>2️⃣ Nuestro ejemplo: botón "Aplicar"</h3>
+    <h2>2️⃣ Nuestro ejemplo: botón "Aplicar"</h2>
     <p>Vamos a actualizar nuestro componente JobCard para que el botón Aplicar responda a clicks.</p>
 
     <pre><code class="language-jsx">function JobCard({ titulo, empresa, ubicacion, descripcion }) {
@@ -68,7 +68,7 @@
 
     <p>Ahora el botón ejecuta una función cuando hacemos click.</p>
 
-    <h3>3️⃣ Función manejadora de eventos</h3>
+    <h2>3️⃣ Función manejadora de eventos</h2>
     <p>Primero definimos una función que se ejecutará cuando ocurra el evento.</p>
 
     <pre><code class="language-jsx">const handleAplicar = () => {
@@ -94,7 +94,7 @@
 
     <p>Esto hace el código más claro.</p>
 
-    <h3>4️⃣ Conectar la función al evento</h3>
+    <h2>4️⃣ Conectar la función al evento</h2>
     <p>Luego conectamos la función al botón.</p>
 
     <pre><code class="language-jsx">&lt;button onClick={handleAplicar}&gt;
@@ -107,10 +107,10 @@
       <li>React → ejecuta handleAplicar()</li>
     </ul>
 
-    <h3>5️⃣ Sintaxis de eventos en React</h3>
+    <h2>5️⃣ Sintaxis de eventos en React</h2>
     <p>Los eventos en React tienen dos reglas importantes.</p>
 
-    <h4>1. Usan camelCase</h4>
+    <h3>1. Usan camelCase</h3>
 
     <p><strong>❌ Incorrecto:</strong></p>
     <pre><code>onclick
@@ -122,7 +122,7 @@ onChange
 onSubmit
 onMouseEnter</code></pre>
 
-    <h4>2. Se pasa la referencia a la función</h4>
+    <h3>2. Se pasa la referencia a la función</h3>
 
     <p><strong>✅ Correcto:</strong></p>
     <pre><code class="language-jsx">&lt;button onClick={handleAplicar}&gt;</code></pre>
@@ -133,7 +133,7 @@ onMouseEnter</code></pre>
     <p><strong>¿Por qué?</strong></p>
     <p>Porque esto ejecutaría la función inmediatamente al renderizar, no cuando hacemos click.</p>
 
-    <h3>6️⃣ Alternativa: funciones inline</h3>
+    <h2>6️⃣ Alternativa: funciones inline</h2>
     <p>También puedes escribir la función directamente.</p>
 
     <pre><code class="language-jsx">&lt;button onClick={() => alert('¡Click!')}&gt;
@@ -142,7 +142,7 @@ onMouseEnter</code></pre>
 
     <p>Esto se llama <strong>función inline</strong>.</p>
 
-    <h4>¿Cuándo usar cada opción?</h4>
+    <h3>¿Cuándo usar cada opción?</h3>
 
     <p><strong>Función separada (recomendado)</strong></p>
     <pre><code class="language-jsx">const handleClick = () => {
@@ -170,7 +170,7 @@ onMouseEnter</code></pre>
       <li>es algo muy simple</li>
     </ul>
 
-    <h3>7️⃣ Acceso a las props dentro del evento</h3>
+    <h2>7️⃣ Acceso a las props dentro del evento</h2>
     <p>Los manejadores de eventos pueden usar todas las props del componente.</p>
 
     <pre><code class="language-jsx">function JobCard({ titulo, empresa, ubicacion }) {
@@ -194,7 +194,7 @@ onMouseEnter</code></pre>
     <p><strong>Closures</strong></p>
     <p>La función recuerda las variables del contexto donde fue creada.</p>
 
-    <h3>8️⃣ Comparación con JavaScript Vanilla</h3>
+    <h2>8️⃣ Comparación con JavaScript Vanilla</h2>
 
     <p><strong>Antes (JavaScript tradicional):</strong></p>
     <pre><code class="language-javascript">const jobsListingSection = document.querySelector('.jobs-listings')
@@ -238,19 +238,19 @@ jobsListingSection.addEventListener('click', function (event) {
       <li>✅ acceso directo a props</li>
     </ul>
 
-    <h3>9️⃣ Eventos comunes en React</h3>
+    <h2>9️⃣ Eventos comunes en React</h2>
 
-    <h4>Click</h4>
+    <h3>Click</h3>
     <pre><code class="language-jsx">&lt;button onClick={() => console.log('¡Click!')}&gt;
   Click
 &lt;/button&gt;</code></pre>
 
-    <h4>Change (inputs)</h4>
+    <h3>Change (inputs)</h3>
     <pre><code class="language-jsx">&lt;input
   onChange={(e) => console.log(e.target.value)}
 /&gt;</code></pre>
 
-    <h4>Submit (formularios)</h4>
+    <h3>Submit (formularios)</h3>
     <pre><code class="language-jsx">&lt;form
   onSubmit={(e) => {
     e.preventDefault()
@@ -260,7 +260,7 @@ jobsListingSection.addEventListener('click', function (event) {
   &lt;button type="submit"&gt;Enviar&lt;/button&gt;
 &lt;/form&gt;</code></pre>
 
-    <h4>Hover</h4>
+    <h3>Hover</h3>
     <pre><code class="language-jsx">&lt;div
   onMouseEnter={() => console.log('Entrando')}
   onMouseLeave={() => console.log('Saliendo')}
@@ -268,12 +268,12 @@ jobsListingSection.addEventListener('click', function (event) {
   Pasa el ratón
 &lt;/div&gt;</code></pre>
 
-    <h4>Teclas</h4>
+    <h3>Teclas</h3>
     <pre><code class="language-jsx">&lt;input
   onKeyDown={(e) => console.log(e.key)}
 /&gt;</code></pre>
 
-    <h3>🔟 El objeto evento</h3>
+    <h2>🔟 El objeto evento</h2>
     <p>Los eventos reciben un objeto event.</p>
 
     <pre><code class="language-jsx">const handleClick = (event) => {
@@ -289,7 +289,7 @@ jobsListingSection.addEventListener('click', function (event) {
       <li><code>event.stopPropagation()</code> - detener propagación de evento</li>
     </ul>
 
-    <h3>1️⃣1️⃣ Ejemplo con preventDefault</h3>
+    <h2>1️⃣1️⃣ Ejemplo con preventDefault</h2>
     <p>Cuando enviamos un formulario el navegador recarga la página.</p>
     <p>Podemos evitarlo.</p>
 
@@ -309,7 +309,7 @@ jobsListingSection.addEventListener('click', function (event) {
   )
 }</code></pre>
 
-    <h3>1️⃣2️⃣ Pasar argumentos a eventos</h3>
+    <h2>1️⃣2️⃣ Pasar argumentos a eventos</h2>
     <p>A veces necesitas pasar datos extra.</p>
 
     <p>Ejemplo:</p>
@@ -326,7 +326,7 @@ jobsListingSection.addEventListener('click', function (event) {
   )
 }</code></pre>
 
-    <h3>1️⃣3️⃣ Múltiples eventos en un componente</h3>
+    <h2>1️⃣3️⃣ Múltiples eventos en un componente</h2>
     <p>Un componente puede tener varios manejadores.</p>
 
     <pre><code class="language-jsx">function JobCard({ titulo }) {
@@ -364,7 +364,7 @@ jobsListingSection.addEventListener('click', function (event) {
   )
 }</code></pre>
 
-    <h3>1️⃣4️⃣ Limitación actual</h3>
+    <h2>1️⃣4️⃣ Limitación actual</h2>
     <p>Cuando hacemos click en Aplicar:</p>
     <ul>
       <li>✔ se ejecuta la función</li>
@@ -381,9 +381,9 @@ jobsListingSection.addEventListener('click', function (event) {
     <p><strong>¿Por qué?</strong></p>
     <p>Porque todavía no usamos <strong>estado</strong>.</p>
 
-    <h3>1️⃣5️⃣ Errores típicos que cometen los juniors</h3>
+    <h2>1️⃣5️⃣ Errores típicos que cometen los juniors</h2>
 
-    <h4>Error 1: Ejecutar la función en lugar de pasarla</h4>
+    <h3>Error 1: Ejecutar la función en lugar de pasarla</h3>
 
     <p><strong>❌ Incorrecto:</strong></p>
     <pre><code class="language-jsx">&lt;button onClick={handleClick()}&gt;</code></pre>
@@ -391,7 +391,7 @@ jobsListingSection.addEventListener('click', function (event) {
     <p><strong>✅ Correcto:</strong></p>
     <pre><code class="language-jsx">&lt;button onClick={handleClick}&gt;</code></pre>
 
-    <h4>Error 2: Usar onclick en vez de onClick</h4>
+    <h3>Error 2: Usar onclick en vez de onClick</h3>
 
     <p><strong>❌ Incorrecto:</strong></p>
     <pre><code>onclick</code></pre>
@@ -399,13 +399,13 @@ jobsListingSection.addEventListener('click', function (event) {
     <p><strong>✅ Correcto:</strong></p>
     <pre><code>onClick</code></pre>
 
-    <h4>Error 3: Olvidar preventDefault en formularios</h4>
+    <h3>Error 3: Olvidar preventDefault en formularios</h3>
     <p>Esto provoca recarga de página.</p>
 
-    <h4>Error 4: Usar funciones inline enormes</h4>
+    <h3>Error 4: Usar funciones inline enormes</h3>
     <p>Esto dificulta el mantenimiento.</p>
 
-    <h3>📋 Lo que aprendiste</h3>
+    <h2>📋 Lo que aprendiste</h2>
     <p>En esta clase aprendiste:</p>
     <ul>
       <li>🎯 Qué son los eventos en React</li>
@@ -417,7 +417,7 @@ jobsListingSection.addEventListener('click', function (event) {
       <li>🔀 Manejar múltiples eventos en un componente</li>
     </ul>
 
-    <h3>🎯 Próximo paso</h3>
+    <h2>🎯 Próximo paso</h2>
     <p  class="callout-info">
       En la próxima clase aprenderemos el concepto <strong>más importante de React:</strong><br>
       <strong>useState</strong><br><br>

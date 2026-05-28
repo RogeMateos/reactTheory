@@ -12,7 +12,7 @@
   <article id="concepts" class="tab-content active">
     <div class="description">
 
-      <h3>🧠 What does this pattern solve?</h3>
+      <h2>🧠 What does this pattern solve?</h2>
       <p>
         Making the search state (text, filters, and current page) synchronize with the URL so the search is:
       </p>
@@ -46,7 +46,7 @@
 
       <hr />
 
-      <h3>🎯 The goal</h3>
+      <h2>🎯 The goal</h2>
       <p>You have two sources of information that must always have the same data:</p>
 
       <pre><code>React State           URL
@@ -57,7 +57,7 @@ page = 2              &page=2</code></pre>
 
       <hr />
 
-      <h3>⚠️ The initial problem</h3>
+      <h2>⚠️ The initial problem</h2>
       <p>The search engine only updated results but <strong>never touched the URL</strong>:</p>
 
       <pre><code class="language-jsx">useEffect(() => {
@@ -72,7 +72,7 @@ page = 2              &page=2</code></pre>
 
       <hr />
 
-      <h3>🔄 Two separate synchronizations</h3>
+      <h2>🔄 Two separate synchronizations</h2>
       <p>The pattern actually implements two separate flows:</p>
 
       <pre><code>1. React → URL
@@ -92,7 +92,7 @@ page = 2              &page=2</code></pre>
   <article id="code-examples" class="tab-content">
     <div class="description">
 
-      <h3>🔧 Block 1: writing to the URL (React → URL)</h3>
+      <h2>🔧 Block 1: writing to the URL (React → URL)</h2>
       <p>Every time filters, text or page change, a <code>useEffect</code> updates the URL:</p>
 
       <pre><code class="language-jsx">useEffect(() => {
@@ -120,7 +120,7 @@ page = 2              &page=2</code></pre>
 
       <hr />
 
-      <h3>✅ Why use <code>URLSearchParams</code> instead of concatenation</h3>
+      <h2>✅ Why use <code>URLSearchParams</code> instead of concatenation</h2>
 
       <pre><code class="language-jsx">// ✅ Correct — URLSearchParams encodes automatically
 const params = new URLSearchParams()
@@ -132,7 +132,7 @@ const url = '/search?text=' + text + '&technology=' + technology</code></pre>
 
       <hr />
 
-      <h3>🔧 Block 4: input synchronized with state</h3>
+      <h2>🔧 Block 4: input synchronized with state</h2>
       <p>This is the easiest detail to forget. If React has <code>textToFilter = 'React'</code> but the input starts empty:</p>
 
       <pre><code class="language-jsx">// ❌ Desynced input — shows results for "React" but the field is empty
@@ -154,7 +154,7 @@ Everything shows the same value.</code></pre>
   <article id="exercises" class="tab-content">
     <div class="description">
 
-      <h3>🔧 Block 2: reading the URL on startup (URL → React)</h3>
+      <h2>🔧 Block 2: reading the URL on startup (URL → React)</h2>
       <p>
         If you always initialize state to <code>1</code>, you're ignoring what the URL says:
       </p>
@@ -171,7 +171,7 @@ const [currentPage, setCurrentPage] = useState(() => {
 
       <hr />
 
-      <h3>⚡ Important React concept: Lazy Initialization</h3>
+      <h2>⚡ Important React concept: Lazy Initialization</h2>
       <p>Many people don't understand the difference between these two forms:</p>
 
       <pre><code class="language-jsx">// Form 1 — runs on EVERY render (even if the value doesn't change)
@@ -187,7 +187,7 @@ const [page, setPage] = useState(() => getPageFromURL())</code></pre>
 
       <hr />
 
-      <h3>🛡️ Block 3: URL validation</h3>
+      <h2>🛡️ Block 3: URL validation</h2>
       <p>Great practice. Someone could manually type in the URL:</p>
 
       <pre><code>?page=hello   → Number('hello') = NaN → breaks logic
@@ -204,7 +204,7 @@ const [page, setPage] = useState(() => getPageFromURL())</code></pre>
 
       <hr />
 
-      <h3>💡 Improvement: reusable helper</h3>
+      <h2>💡 Improvement: reusable helper</h2>
       <p>The tutorial repeats <code>new URLSearchParams(window.location.search)</code> several times. It could be extracted:</p>
 
       <pre><code class="language-jsx">// Before — repeated in multiple places
@@ -225,7 +225,7 @@ const params = getSearchParams()</code></pre>
   <article id="summary" class="tab-content">
     <div class="description">
 
-      <h3>🗺️ Complete flow diagram</h3>
+      <h2>🗺️ Complete flow diagram</h2>
 
       <pre><code>— When the user interacts —
 
@@ -255,7 +255,7 @@ User changes filter / text / page
 
       <hr />
 
-      <h3>🎯 The interview answer</h3>
+      <h2>🎯 The interview answer</h2>
       <p>If in an interview you're asked: <em>"How would you sync filters and pagination with the URL?"</em></p>
 
       <ol>
@@ -269,7 +269,7 @@ User changes filter / text / page
 
       <hr />
 
-      <h3>📌 Key concepts summary</h3>
+      <h2>📌 Key concepts summary</h2>
 
       <table>
         <thead>

@@ -15,7 +15,7 @@
 
   <article id="concepts" class="tab-content active">
     <div class="description">
-      <h3>¿Qué es un custom hook?</h3>
+      <h2>¿Qué es un custom hook?</h2>
       <p>
         Los custom hooks son una de las características más poderosas de React. Te permiten extraer lógica de componentes
         y reutilizarla en múltiples lugares de tu aplicación, mejorando la organización, mantenibilidad y composición del código.
@@ -42,9 +42,9 @@ function useWindowWidth() {
   return width
 }</code></pre>
 
-      <h3>¿Por qué crear custom hooks?</h3>
+      <h2>¿Por qué crear custom hooks?</h2>
 
-      <h4>Problema: Lógica duplicada</h4>
+      <h3>Problema: Lógica duplicada</h3>
       <p>Imagina que tienes varios componentes que necesitan detectar el ancho de la ventana:</p>
 
       <pre><code class="language-jsx">function Header() {
@@ -79,7 +79,7 @@ function Sidebar() {
         <li>Difícil de testear la lógica de forma aislada</li>
       </ul>
 
-      <h4>Solución: Custom hook</h4>
+      <h3>Solución: Custom hook</h3>
 
       <pre><code class="language-jsx">// hooks/useWindowWidth.js
 function useWindowWidth() {
@@ -114,10 +114,10 @@ function Sidebar() {
         <li>🔄 <strong>Composición:</strong> Un hook puede usar otros hooks</li>
       </ul>
 
-      <h3>Ejemplo práctico: Creando useRouter</h3>
+      <h2>Ejemplo práctico: Creando useRouter</h2>
       <p>Vamos a transformar la lógica de un router casero en un custom hook reutilizable.</p>
 
-      <h4>Antes: Componente con lógica mezclada</h4>
+      <h3>Antes: Componente con lógica mezclada</h3>
 
       <pre><code class="language-jsx">function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname)
@@ -163,7 +163,7 @@ function Sidebar() {
         <li>Difícil de mantener y testear</li>
       </ul>
 
-      <h4>Paso 1: Extraer la lógica a un custom hook</h4>
+      <h3>Paso 1: Extraer la lógica a un custom hook</h3>
 
       <pre><code class="language-jsx">// hooks/useRouter.js
 import { useState, useEffect } from 'react'
@@ -200,7 +200,7 @@ export function useRouter() {
   }
 }</code></pre>
 
-      <h4>Paso 2: Usar el hook en el componente</h4>
+      <h3>Paso 2: Usar el hook en el componente</h3>
 
       <pre><code class="language-jsx">import { useRouter } from './hooks/useRouter'
 
@@ -228,7 +228,7 @@ function App() {
         <strong>✅ ¡Mucho mejor!</strong> El componente ahora solo se preocupa de la UI.
       </p>
 
-      <h4>Paso 3: Reutilizar el hook en otros componentes</h4>
+      <h3>Paso 3: Reutilizar el hook en otros componentes</h3>
 
       <pre><code class="language-jsx">function Navigation() {
   const { currentPath, navigateTo } = useRouter()
@@ -261,7 +261,7 @@ function Breadcrumbs() {
   )
 }</code></pre>
 
-      <h3>Anatomía de un custom hook</h3>
+      <h2>Anatomía de un custom hook</h2>
       <p>Un custom hook típico tiene esta estructura:</p>
 
       <pre><code class="language-jsx">import { useState, useEffect } from 'react'
@@ -290,7 +290,7 @@ export function useMyCustomHook(parameters) {
   }
 }</code></pre>
 
-      <h3>Composición de hooks</h3>
+      <h2>Composición de hooks</h2>
       <p>Una de las mayores ventajas de los custom hooks es que pueden usar otros hooks, incluidos otros custom hooks:</p>
 
       <pre><code class="language-jsx">// Hook base: useLocalStorage
@@ -324,9 +324,9 @@ function useDarkMode() {
   return { isDark, toggle }
 }</code></pre>
 
-      <h3>Reglas de los custom hooks</h3>
+      <h2>Reglas de los custom hooks</h2>
 
-      <h4>1. El nombre DEBE empezar con "use"</h4>
+      <h3>1. El nombre DEBE empezar con "use"</h3>
 
       <pre><code class="language-jsx">// ✅ Bien
 function useCounter() {}
@@ -340,7 +340,7 @@ function apiHook() {}</code></pre>
 
       <p><strong>¿Por qué?</strong> React necesita identificar los hooks para aplicar sus reglas internas.</p>
 
-      <h4>2. Solo llamar hooks en el nivel superior</h4>
+      <h3>2. Solo llamar hooks en el nivel superior</h3>
       <p>No puedes llamar hooks dentro de condiciones, loops o funciones anidadas:</p>
 
       <pre><code class="language-jsx">// ❌ Mal
@@ -365,7 +365,7 @@ function MyComponent() {
   }, [condition])
 }</code></pre>
 
-      <h4>3. Solo llamar hooks desde componentes o custom hooks</h4>
+      <h3>3. Solo llamar hooks desde componentes o custom hooks</h3>
 
       <pre><code class="language-jsx">// ✅ Bien: Desde un componente
 function MyComponent() {
@@ -382,7 +382,7 @@ function helperFunction() {
   const value = useMyHook() // ¡Error!
 }</code></pre>
 
-      <h3>Cuándo crear un custom hook</h3>
+      <h2>Cuándo crear un custom hook</h2>
 
       <p><strong>Crea un custom hook cuando:</strong></p>
       <ul>
@@ -401,7 +401,7 @@ function helperFunction() {
         <li>❌ Es solo una función helper normal</li>
       </ul>
 
-      <h3>Estructura de carpetas recomendada</h3>
+      <h2>Estructura de carpetas recomendada</h2>
 
       <pre><code>src/
 ├── components/
@@ -420,7 +420,7 @@ function helperFunction() {
 │   └── Contact.jsx
 └── App.jsx</code></pre>
 
-      <h3>Ventajas de los custom hooks</h3>
+      <h2>Ventajas de los custom hooks</h2>
 
       <table>
         <thead>
@@ -457,7 +457,7 @@ function helperFunction() {
         </tbody>
       </table>
 
-      <h3>Conclusión</h3>
+      <h2>Conclusión</h2>
       <p>Los custom hooks son una herramienta fundamental en React moderno:</p>
 
       <ul>

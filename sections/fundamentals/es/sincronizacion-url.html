@@ -12,7 +12,7 @@
   <article id="concepts" class="tab-content active">
     <div class="description">
 
-      <h3>🧠 ¿Qué resuelve este patrón?</h3>
+      <h2>🧠 ¿Qué resuelve este patrón?</h2>
       <p>
         Hacer que el estado del buscador (texto, filtros y página actual) se sincronice con la URL para que la búsqueda sea:
       </p>
@@ -46,7 +46,7 @@
 
       <hr />
 
-      <h3>🎯 El objetivo</h3>
+      <h2>🎯 El objetivo</h2>
       <p>Tenés dos fuentes de información que siempre deben tener los mismos datos:</p>
 
       <pre><code>Estado React          URL
@@ -57,7 +57,7 @@ pagina = 2            &page=2</code></pre>
 
       <hr />
 
-      <h3>⚠️ El problema inicial</h3>
+      <h2>⚠️ El problema inicial</h2>
       <p>El buscador solo actualizaba los resultados, pero <strong>nunca tocaba la URL</strong>:</p>
 
       <pre><code class="language-jsx">useEffect(() => {
@@ -72,7 +72,7 @@ pagina = 2            &page=2</code></pre>
 
       <hr />
 
-      <h3>🔄 Dos sincronizaciones distintas</h3>
+      <h2>🔄 Dos sincronizaciones distintas</h2>
       <p>El patrón en realidad implementa dos flujos separados:</p>
 
       <pre><code>1. React → URL
@@ -92,7 +92,7 @@ pagina = 2            &page=2</code></pre>
   <article id="code-examples" class="tab-content">
     <div class="description">
 
-      <h3>🔧 Bloque 1: escribir en la URL (React → URL)</h3>
+      <h2>🔧 Bloque 1: escribir en la URL (React → URL)</h2>
       <p>Cada vez que cambian filtros, texto o página, un <code>useEffect</code> actualiza la URL:</p>
 
       <pre><code class="language-jsx">useEffect(() => {
@@ -120,7 +120,7 @@ pagina = 2            &page=2</code></pre>
 
       <hr />
 
-      <h3>✅ Por qué usar <code>URLSearchParams</code> y no concatenación</h3>
+      <h2>✅ Por qué usar <code>URLSearchParams</code> y no concatenación</h2>
 
       <pre><code class="language-jsx">// ✅ Correcto — URLSearchParams codifica automáticamente
 const params = new URLSearchParams()
@@ -132,7 +132,7 @@ const url = '/search?text=' + text + '&technology=' + technology</code></pre>
 
       <hr />
 
-      <h3>🔧 Bloque 4: input sincronizado con el estado</h3>
+      <h2>🔧 Bloque 4: input sincronizado con el estado</h2>
       <p>Este es el detalle más fácil de olvidar. Si React tiene <code>textToFilter = 'React'</code> pero el input arranca vacío:</p>
 
       <pre><code class="language-jsx">// ❌ Input desincronizado — muestra resultados de "React" pero el campo está vacío
@@ -154,7 +154,7 @@ Todo muestra el mismo valor.</code></pre>
   <article id="exercises" class="tab-content">
     <div class="description">
 
-      <h3>🔧 Bloque 2: leer la URL al arrancar (URL → React)</h3>
+      <h2>🔧 Bloque 2: leer la URL al arrancar (URL → React)</h2>
       <p>
         Si siempre arrancás el estado en <code>1</code>, ignorás lo que dice la URL:
       </p>
@@ -171,7 +171,7 @@ const [currentPage, setCurrentPage] = useState(() => {
 
       <hr />
 
-      <h3>⚡ Concepto React importante: Lazy Initialization</h3>
+      <h2>⚡ Concepto React importante: Lazy Initialization</h2>
       <p>Mucha gente no entiende la diferencia entre estas dos formas:</p>
 
       <pre><code class="language-jsx">// Forma 1 — se ejecuta en CADA render (aunque el valor no cambie)
@@ -187,7 +187,7 @@ const [page, setPage] = useState(() => getPageFromURL())</code></pre>
 
       <hr />
 
-      <h3>🛡️ Bloque 3: validación de la URL</h3>
+      <h2>🛡️ Bloque 3: validación de la URL</h2>
       <p>Muy buena práctica. Alguien podría escribir manualmente en la URL:</p>
 
       <pre><code>?page=hola   → Number('hola') = NaN → rompe la lógica
@@ -204,7 +204,7 @@ const [page, setPage] = useState(() => getPageFromURL())</code></pre>
 
       <hr />
 
-      <h3>💡 Mejora: helper reutilizable</h3>
+      <h2>💡 Mejora: helper reutilizable</h2>
       <p>El tutorial repite varias veces <code>new URLSearchParams(window.location.search)</code>. Podría extraerse:</p>
 
       <pre><code class="language-jsx">// Antes — repetido en varios lugares
@@ -225,7 +225,7 @@ const params = getSearchParams()</code></pre>
   <article id="summary" class="tab-content">
     <div class="description">
 
-      <h3>🗺️ Diagrama completo del flujo</h3>
+      <h2>🗺️ Diagrama completo del flujo</h2>
 
       <pre><code>— Cuando el usuario interactúa —
 
@@ -255,7 +255,7 @@ Usuario cambia filtro / texto / página
 
       <hr />
 
-      <h3>🎯 La respuesta de entrevista</h3>
+      <h2>🎯 La respuesta de entrevista</h2>
       <p>Si en una entrevista te preguntan: <em>"¿Cómo sincronizarías filtros y paginación con la URL?"</em></p>
 
       <ol>
@@ -269,7 +269,7 @@ Usuario cambia filtro / texto / página
 
       <hr />
 
-      <h3>📌 Resumen de conceptos clave</h3>
+      <h2>📌 Resumen de conceptos clave</h2>
 
       <table>
         <thead>

@@ -11,7 +11,7 @@
   <article id="concepts" class="tab-content active">
     <div class="description">
 
-      <h3>🎁 What are Props?</h3>
+      <h2>🎁 What are Props?</h2>
       <p>
         <strong>Props</strong> (short for <em>properties</em>) are arguments you pass to a React component,
         the same way you pass arguments to a function.
@@ -37,7 +37,7 @@ function Greeting({ name }) {
 
       <hr />
 
-      <h3>⬇️ One-Way Data Flow</h3>
+      <h2>⬇️ One-Way Data Flow</h2>
       <p>Props always flow from parent to child. The flow is unidirectional:</p>
 
       <pre><code>App (parent)
@@ -56,7 +56,7 @@ JobCard (child)
 
       <hr />
 
-      <h3>🔓 Destructuring Props</h3>
+      <h2>🔓 Destructuring Props</h2>
       <p>There are two ways to receive props. The second one is recommended:</p>
 
       <pre><code class="language-jsx">// ❌ Without destructuring — repetitive and verbose
@@ -86,7 +86,7 @@ function JobCard({ title, company }) {
 
       <hr />
 
-      <h3>🎯 Default Props</h3>
+      <h2>🎯 Default Props</h2>
       <p>You can assign a default value when a prop is not provided:</p>
 
       <pre><code class="language-jsx">function JobCard({ title, company, location = 'Remote' }) {
@@ -107,7 +107,7 @@ function JobCard({ title, company }) {
 
       <hr />
 
-      <h3>❓ Conditional Rendering</h3>
+      <h2>❓ Conditional Rendering</h2>
       <p>You can use props to show or hide content. Two approaches:</p>
 
       <p><strong><code>&&</code> operator</strong> — renders if <code>true</code>, renders nothing if <code>false</code>:</p>
@@ -129,7 +129,7 @@ function JobCard({ title, company }) {
 
       <hr />
 
-      <h3>🧩 Fragments — Group Without Polluting the DOM</h3>
+      <h2>🧩 Fragments — Group Without Polluting the DOM</h2>
       <p>
         React has a rule: a component can only return <strong>one root element</strong>.
         The traditional solution is wrapping in a <code>&lt;div&gt;</code>, but that adds unnecessary nodes to the DOM.
@@ -174,7 +174,7 @@ Just grouping elements, no wrapper needed     → &lt;&gt;&lt;/&gt;</code></pre>
   <article id="code-examples" class="tab-content">
     <div class="description">
 
-      <h3>📦 Types of Values You Can Pass as Props</h3>
+      <h2>📦 Types of Values You Can Pass as Props</h2>
 
       <pre><code class="language-jsx">// String
 &lt;JobCard title="Frontend Developer" location="Madrid" /&gt;
@@ -203,7 +203,7 @@ Just grouping elements, no wrapper needed     → &lt;&gt;&lt;/&gt;</code></pre>
 
       <hr />
 
-      <h3>🏗️ Nested Destructuring</h3>
+      <h2>🏗️ Nested Destructuring</h2>
       <p>When you pass an object as a prop, you can destructure its content in two ways:</p>
 
       <pre><code class="language-jsx">// Option 1: destructure inside the component (more readable)
@@ -236,7 +236,7 @@ function JobCard({ job: { title, company, location } }) {
 
       <hr />
 
-      <h3>🧩 Component Composition</h3>
+      <h2>🧩 Component Composition</h2>
       <p>
         Props let you build complex components from simple ones.
         This is one of the most powerful patterns in React:
@@ -266,7 +266,7 @@ function JobCard({ title, isRemote, isFeatured }) {
 
       <hr />
 
-      <h3>❓ Conditional Rendering with Fragments</h3>
+      <h2>❓ Conditional Rendering with Fragments</h2>
 
       <pre><code class="language-jsx">function JobCard({ job, showDetails }) {
   return (
@@ -291,13 +291,13 @@ function JobCard({ title, isRemote, isFeatured }) {
   <article id="exercises" class="tab-content">
     <div class="description">
 
-      <h3>💪 Exercise: Full JobCard with Props</h3>
+      <h2>💪 Exercise: Full JobCard with Props</h2>
       <p>
         Now we put it all together. You'll build a <code>JobCard</code> component that receives
         different types of props and conditionally renders badges and details.
       </p>
 
-      <h4>JobCard.jsx</h4>
+      <h3>JobCard.jsx</h3>
       <pre><code class="language-jsx">function JobCard({ job, isRemote, isFeatured, isNew }) {
   const { title, company, location, salary, description, tags } = job
 
@@ -332,7 +332,7 @@ function JobCard({ title, isRemote, isFeatured }) {
 
 export default JobCard</code></pre>
 
-      <h4>App.jsx — usage with real data</h4>
+      <h3>App.jsx — usage with real data</h3>
       <pre><code class="language-jsx">function App() {
   return (
     &lt;main&gt;
@@ -389,7 +389,7 @@ export default JobCard</code></pre>
 
       <hr />
 
-      <h3>🎯 Things to Practice</h3>
+      <h2>🎯 Things to Practice</h2>
       <pre><code>1. Add an "applyUrl" prop (string) and make the "Apply"
    button open that link in a new tab.
 
@@ -403,7 +403,7 @@ export default JobCard</code></pre>
 
       <hr />
 
-      <h3>✅ Class Summary</h3>
+      <h2>✅ Class Summary</h2>
       <pre><code>🎁 Props         — arguments you pass to components
 ⬇️ Flow          — always parent to child, never the reverse
 🔓 Destructure   — { title, company } in the parameters

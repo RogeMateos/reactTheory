@@ -11,7 +11,7 @@
   <article id="concepts" class="tab-content active">
     <div class="description">
 
-      <h3>😰 The problem: where do form values live?</h3>
+      <h2>😰 The problem: where do form values live?</h2>
       <p>
         When App renders <code>JobList</code> and <code>SearchForm</code> as sibling components,
         <code>SearchForm</code> can't directly communicate its values to <code>JobList</code>
@@ -31,7 +31,7 @@ Data flows up via callbacks → App stores it → App passes it down as props</c
 
       <hr />
 
-      <h3>📋 FormData: read a form all at once</h3>
+      <h2>📋 FormData: read a form all at once</h2>
       <p>
         Instead of creating a <code>useState</code> for every field (location, level, etc.),
         the native <strong>FormData</strong> API lets you read <em>all</em> fields at once
@@ -57,7 +57,7 @@ data.get("level")     → "senior"</code></pre>
 
       <hr />
 
-      <h3>🔗 Callback: the bridge between child and parent</h3>
+      <h2>🔗 Callback: the bridge between child and parent</h2>
       <p>
         The pattern is always the same: the parent <strong>creates</strong> the function
         (<code>handleSearch</code>) and passes it as a prop to the child. The child
@@ -80,7 +80,7 @@ props.onSearch({ location: "remote", level: "senior" })
 
       <hr />
 
-      <h3>🔍 Cascading filters: order matters</h3>
+      <h2>🔍 Cascading filters: order matters</h2>
       <p>
         The key insight: we don't filter the original array multiple times independently.
         We filter <strong>in sequence</strong>: first by dropdowns, then by text search on
@@ -103,7 +103,7 @@ paginatedResults   ← this goes to JobList</code></pre>
 
       <hr />
 
-      <h3>⌨️ Real-time text filter (onChange)</h3>
+      <h2>⌨️ Real-time text filter (onChange)</h2>
       <p>
         Unlike the form submit (which fires once), the text search uses <code>onChange</code>
         and fires on <strong>every keystroke</strong>. It updates the <code>textToFilter</code>
@@ -122,7 +122,7 @@ paginatedResults   ← this goes to JobList</code></pre>
   <article id="code-examples" class="tab-content">
     <div class="description">
 
-      <h3>🔧 SearchForm with FormData and useId</h3>
+      <h2>🔧 SearchForm with FormData and useId</h2>
       <p>
         The SearchForm component uses <code>useId</code> to generate accessible IDs and
         <code>FormData</code> to read all fields on submit.
@@ -173,7 +173,7 @@ export function SearchForm({ onSearch }) {
 
       <hr />
 
-      <h3>🏠 App.jsx: centralized state</h3>
+      <h2>🏠 App.jsx: centralized state</h2>
       <p>
         App is the single owner of state. It centralizes the three states and applies the
         filters in cascade before passing the results to JobList.
@@ -253,7 +253,7 @@ export function App() {
 
       <hr />
 
-      <h3>🗺️ Full data flow diagram</h3>
+      <h2>🗺️ Full data flow diagram</h2>
 
       <pre><code>App.jsx
 ├── state: filters       { location: '', experienceLevel: '' }
@@ -278,7 +278,7 @@ export function App() {
 
       <hr />
 
-      <h3>🔎 How the text filter works</h3>
+      <h2>🔎 How the text filter works</h2>
 
       <pre><code class="language-jsx">const jobsWithTextFilter = jobsFilteredByDropdowns.filter((job) =&gt; {
   if (!textToFilter) return true   // no text → everything passes
@@ -301,7 +301,7 @@ export function App() {
   <article id="exercises" class="tab-content">
     <div class="description">
 
-      <h3>🐛 Common mistakes</h3>
+      <h2>🐛 Common mistakes</h2>
 
       <p><strong>Mistake 1: Forgetting the <code>name</code> attribute on selects</strong></p>
 
@@ -347,7 +347,7 @@ const handleSearch = (filters) =&gt; {
 
       <hr />
 
-      <h3>💪 Exercise</h3>
+      <h2>💪 Exercise</h2>
 
       <pre><code>Implement the full search system:
 
@@ -370,7 +370,7 @@ const handleSearch = (filters) =&gt; {
 
       <hr />
 
-      <h3>✅ Class summary</h3>
+      <h2>✅ Class summary</h2>
 
       <pre><code>📋 FormData          — reads all form fields at once with data.get('name')
 🔗 Lifting state     — parent stores, child notifies via callbacks

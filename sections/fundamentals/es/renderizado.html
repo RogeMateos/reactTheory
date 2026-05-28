@@ -15,7 +15,7 @@
 
   <article id="concepts" class="tab-content active">
     <div class="description">
-      <h3>1️⃣ ¿Qué Significa "Renderizar"?</h3>
+      <h2>1️⃣ ¿Qué Significa "Renderizar"?</h2>
       <p>
         <strong>Renderizar</strong> significa que React toma tu JSX y lo convierte en HTML real que aparece en el navegador.
       </p>
@@ -37,7 +37,7 @@ function App() {
 // React lo convierte en HTML
 &lt;h1&gt;Hola Mundo&lt;/h1&gt;</code></pre>
 
-      <h3>2️⃣ ¿Cuándo Renderiza React?</h3>
+      <h2>2️⃣ ¿Cuándo Renderiza React?</h2>
       <p>React renderiza (o re-renderiza) tu componente en estas situaciones:</p>
 
       <pre><code>┌─────────────────────────────────────┐
@@ -49,7 +49,7 @@ function App() {
 │  4. El componente padre re-renderiza│
 └─────────────────────────────────────┘</code></pre>
 
-      <h4>🎯 Situación 1: Montaje Inicial</h4>
+      <h3>🎯 Situación 1: Montaje Inicial</h3>
       <p>Cuando React renderiza tu componente por primera vez.</p>
 
       <pre><code class="language-jsx">const root = ReactDOM.createRoot(document.getElementById('root'))
@@ -57,7 +57,7 @@ root.render(&lt;App /&gt;)
 
 // React dice: "Ok, primera vez, voy a renderizar App"</code></pre>
 
-      <h4>🔄 Situación 2: El State Cambia</h4>
+      <h3>🔄 Situación 2: El State Cambia</h3>
       <p><strong>Esta es la más importante.</strong></p>
 
       <pre><code class="language-jsx">function Counter() {
@@ -86,7 +86,7 @@ setCount(1) se ejecuta
        ↓
 Botón ahora muestra: "Clicks: 1"</code></pre>
 
-      <h3>3️⃣ ¿Por Qué el State No Se Pierde?</h3>
+      <h2>3️⃣ ¿Por Qué el State No Se Pierde?</h2>
       <p>Muchos desarrolladores se preguntan:</p>
       <p  class="callout-warning">
         <strong>"Si React vuelve a ejecutar la función del componente, ¿por qué el state no se resetea?"</strong>
@@ -94,7 +94,7 @@ Botón ahora muestra: "Clicks: 1"</code></pre>
 
       <p><strong>Respuesta:</strong> Porque React guarda el state FUERA del componente.</p>
 
-      <h4>🧠 Modelo Mental</h4>
+      <h3>🧠 Modelo Mental</h3>
 
       <pre><code>┌─────────────────────────────────────────┐
 │  COMPONENTE (tu código)                 │
@@ -113,7 +113,7 @@ Botón ahora muestra: "Clicks: 1"</code></pre>
 │  └─────────────────────────────────┘    │
 └─────────────────────────────────────────┘</code></pre>
 
-      <h4>📊 Paso a Paso</h4>
+      <h3>📊 Paso a Paso</h3>
 
       <pre><code>1. Primera ejecución
    ├─ useState(0) crea state
@@ -134,7 +134,7 @@ Botón ahora muestra: "Clicks: 1"</code></pre>
         <strong>💡 Clave:</strong> React mantiene el state entre renders. No se pierde porque no está dentro de tu función, está en la memoria interna de React.
       </p>
 
-      <h3>4️⃣ El Ciclo de Vida de un Render</h3>
+      <h2>4️⃣ El Ciclo de Vida de un Render</h2>
 
       <pre><code>┌──────────────────────────────────────────────────┐
 │          CICLO DE VIDA DEL RENDERIZADO           │
@@ -168,7 +168,7 @@ Botón ahora muestra: "Clicks: 1"</code></pre>
 │                                                  │
 └──────────────────────────────────────────────────┘</code></pre>
 
-      <h4>Ejemplo con Código</h4>
+      <h3>Ejemplo con Código</h3>
 
       <pre><code class="language-jsx">function Counter() {
   const [count, setCount] = React.useState(0)
@@ -189,14 +189,14 @@ Botón ahora muestra: "Clicks: 1"</code></pre>
 // (usuario hace click)
 // 🎨 Renderizando... count = 2  (re-render)</code></pre>
 
-      <h3>5️⃣ Virtual DOM: La Magia Detrás de React</h3>
+      <h2>5️⃣ Virtual DOM: La Magia Detrás de React</h2>
 
       <p><strong>¿Qué es el Virtual DOM?</strong></p>
       <p>
         Es una copia del DOM real que React mantiene en memoria. Es una representación ligera (en JavaScript) de tu interfaz.
       </p>
 
-      <h4>🌳 Analogía: El Plano de una Casa</h4>
+      <h3>🌳 Analogía: El Plano de una Casa</h3>
 
       <pre><code>PLANO (Virtual DOM)        CASA REAL (DOM Real)
      📋                           🏠
@@ -212,7 +212,7 @@ Solo papel               Madera, cemento, etc.</code></pre>
         <li>Solo actualiza lo necesario en la "casa real" (DOM) → eficiente</li>
       </ul>
 
-      <h4>📊 Comparación Visual</h4>
+      <h3>📊 Comparación Visual</h3>
 
       <pre><code>SIN VIRTUAL DOM (Vanilla JS):
 ┌──────────────────────────────────┐
@@ -239,13 +239,13 @@ CON VIRTUAL DOM (React):
 │  🚀 Muy rápido                   │
 └──────────────────────────────────┘</code></pre>
 
-      <h3>6️⃣ El Algoritmo de Diffing</h3>
+      <h2>6️⃣ El Algoritmo de Diffing</h2>
 
       <p><strong>Diffing = Encontrar las diferencias</strong></p>
 
       <p>React compara el Virtual DOM anterior con el nuevo para saber qué cambió.</p>
 
-      <h4>🔍 Ejemplo Visual</h4>
+      <h3>🔍 Ejemplo Visual</h3>
 
       <pre><code>ANTES (Virtual DOM anterior):
 ┌─────────────────────────┐
@@ -274,7 +274,7 @@ RESULTADO:
 React solo actualiza el texto del &lt;h1&gt;
 ¡No toca el resto del DOM!</code></pre>
 
-      <h4>Código con Console.log</h4>
+      <h3>Código con Console.log</h3>
 
       <pre><code class="language-jsx">function Counter() {
   const [count, setCount] = React.useState(0)
@@ -295,7 +295,7 @@ React solo actualiza el texto del &lt;h1&gt;
 // Pero en el DOM real, React SOLO actualiza el texto del h1
 // No reconstruye todo el componente</code></pre>
 
-      <h3>7️⃣ Reconciliación: El Proceso Completo</h3>
+      <h2>7️⃣ Reconciliación: El Proceso Completo</h2>
 
       <p><strong>Reconciliación</strong> es el proceso que React usa para decidir qué actualizar en el DOM real.</p>
 
@@ -336,7 +336,7 @@ React solo actualiza el texto del &lt;h1&gt;
 │                                                       │
 └───────────────────────────────────────────────────────┘</code></pre>
 
-      <h4>Ejemplo Comparativo</h4>
+      <h3>Ejemplo Comparativo</h3>
 
       <pre><code class="language-jsx">// Estado 1: applied = false
 &lt;button className="button-apply-job"&gt;
@@ -359,11 +359,11 @@ React solo actualiza el texto del &lt;h1&gt;
 
 // React aplica SOLO esos 3 cambios al DOM real</code></pre>
 
-      <h3>8️⃣ Batch Updates: React es Inteligente</h3>
+      <h2>8️⃣ Batch Updates: React es Inteligente</h2>
 
       <p>React NO re-renderiza inmediatamente después de cada setState. Agrupa (batch) múltiples cambios.</p>
 
-      <h4>Ejemplo con Múltiples Estados</h4>
+      <h3>Ejemplo con Múltiples Estados</h3>
 
       <pre><code class="language-jsx">function Form() {
   const [name, setName] = React.useState('')
@@ -387,7 +387,7 @@ React solo actualiza el texto del &lt;h1&gt;
   )
 }</code></pre>
 
-      <h4>🔄 Flujo de Batch Updates</h4>
+      <h3>🔄 Flujo de Batch Updates</h3>
 
       <pre><code>Usuario hace click
        ↓
@@ -403,7 +403,7 @@ console.log ejecuta UNA vez</code></pre>
         <strong>💡 Optimización automática:</strong> React agrupa automáticamente múltiples setState en un solo re-render para mejor rendimiento.
       </p>
 
-      <h3>9️⃣ ¿Cuándo NO Re-renderiza React?</h3>
+      <h2>9️⃣ ¿Cuándo NO Re-renderiza React?</h2>
 
       <p>React es inteligente y NO re-renderiza en estas situaciones:</p>
 
@@ -415,7 +415,7 @@ console.log ejecuta UNA vez</code></pre>
 │  3. Props no cambian                   │
 └────────────────────────────────────────┘</code></pre>
 
-      <h4>Caso 1: setState con Mismo Valor</h4>
+      <h3>Caso 1: setState con Mismo Valor</h3>
 
       <pre><code class="language-jsx">function Counter() {
   const [count, setCount] = React.useState(0)
@@ -436,7 +436,7 @@ console.log ejecuta UNA vez</code></pre>
 // (usuario hace click)
 // (nada en consola - no re-renderiza)</code></pre>
 
-      <h4>Caso 2: Variables Locales</h4>
+      <h3>Caso 2: Variables Locales</h3>
 
       <pre><code class="language-jsx">function Counter() {
   const [count, setCount] = React.useState(0)
@@ -459,11 +459,11 @@ console.log ejecuta UNA vez</code></pre>
         <strong>⚠️ Regla importante:</strong> Solo los cambios en STATE y PROPS causan re-renderizado. Variables locales no.
       </p>
 
-      <h3>🔟 Re-renderizado por Props</h3>
+      <h2>🔟 Re-renderizado por Props</h2>
 
       <p>Cuando un componente padre re-renderiza, sus hijos también re-renderizan (por defecto).</p>
 
-      <h4>Ejemplo</h4>
+      <h3>Ejemplo</h3>
 
       <pre><code class="language-jsx">function Parent() {
   const [count, setCount] = React.useState(0)
@@ -492,7 +492,7 @@ function Child() {
 // 🎨 Parent renderizando  ← Parent re-renderiza
 // 🎨 Child renderizando   ← Child también re-renderiza</code></pre>
 
-      <h4>🔍 Flujo Visual</h4>
+      <h3>🔍 Flujo Visual</h3>
 
       <pre><code>Parent re-renderiza
        ↓
@@ -506,9 +506,9 @@ Child re-renderiza también</code></pre>
 
       <p><strong>Aunque las props de Child no cambien, React re-renderiza por defecto.</strong></p>
 
-      <h3>1️⃣1️⃣ Comparación: Vanilla JS vs React</h3>
+      <h2>1️⃣1️⃣ Comparación: Vanilla JS vs React</h2>
 
-      <h4>❌ Vanilla JavaScript (Imperativo)</h4>
+      <h3>❌ Vanilla JavaScript (Imperativo)</h3>
 
       <pre><code class="language-javascript">// Debes decir CÓMO hacer cada cambio
 const button = document.querySelector('#myButton')
@@ -536,7 +536,7 @@ button.addEventListener('click', () => {
 // ❌ Difícil de mantener
 // ❌ Propenso a errores</code></pre>
 
-      <h4>✅ React (Declarativo)</h4>
+      <h3>✅ React (Declarativo)</h3>
 
       <pre><code class="language-jsx">// Solo describes QUÉ quieres mostrar
 function Counter() {
@@ -563,7 +563,7 @@ function Counter() {
 // ✅ Fácil de leer y mantener
 // ✅ Menos propenso a errores</code></pre>
 
-      <h4>📊 Tabla Comparativa</h4>
+      <h3>📊 Tabla Comparativa</h3>
 
       <pre><code>┌───────────────────┬────────────────┬────────────────┐
 │                   │  Vanilla JS    │     React      │
@@ -576,7 +576,7 @@ function Counter() {
 │ Escalabilidad     │  Difícil       │  Fácil         │
 └───────────────────┴────────────────┴────────────────┘</code></pre>
 
-      <h3>1️⃣2️⃣ Resumen Visual del Proceso Completo</h3>
+      <h2>1️⃣2️⃣ Resumen Visual del Proceso Completo</h2>
 
       <pre><code>🎬 INICIO: Usuario hace click
        ↓
@@ -607,7 +607,7 @@ function Counter() {
 
 ✅ FIN: Usuario ve el cambio</code></pre>
 
-      <h3>📋 Lo Que Debes Recordar</h3>
+      <h2>📋 Lo Que Debes Recordar</h2>
 
       <ul>
         <li><strong>Renderizar</strong> = React convierte JSX a HTML real</li>
@@ -620,7 +620,7 @@ function Counter() {
         <li>Variables locales NO causan re-renderizado</li>
       </ul>
 
-      <h3>1️⃣3️⃣ Pregunta de Entrevista Típica</h3>
+      <h2>1️⃣3️⃣ Pregunta de Entrevista Típica</h2>
 
       <p  class="callout-warning">
         <strong>❓ "¿Por qué React usa Virtual DOM?"</strong>
@@ -643,7 +643,7 @@ function Counter() {
         Solo cuando sabes exactamente qué cambiar, modificas la construcción real."
       </p>
 
-      <h3>🎯 Próximos Pasos</h3>
+      <h2>🎯 Próximos Pasos</h2>
       <p  class="callout-info">
         Ahora que entiendes cómo React renderiza, el siguiente paso es aprender sobre
         <strong>useEffect</strong>, que te permite ejecutar código después de que el renderizado termine.

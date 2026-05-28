@@ -11,7 +11,7 @@
   <article id="concepts" class="tab-content active">
     <div class="description">
 
-      <h3>😰 El Problema: CSS Global se Rompe Solo</h3>
+      <h2>😰 El Problema: CSS Global se Rompe Solo</h2>
       <p>
         Cuando escribís CSS de forma global, todos los estilos viven en el mismo espacio.
         Eso significa que si dos archivos distintos usan el mismo nombre de clase, uno pisa al otro.
@@ -32,7 +32,7 @@
 
       <hr />
 
-      <h3>💡 La Solución: Estilos con Ámbito Local</h3>
+      <h2>💡 La Solución: Estilos con Ámbito Local</h2>
       <p>
         CSS Modules resuelve esto de forma elegante: cada archivo de estilos tiene su propio
         <strong>ámbito local</strong>. Las clases que escribís solo existen dentro del componente
@@ -50,7 +50,7 @@ Pagination.module.css → CSS Module (solo Pagination lo ve)</code></pre>
 
       <hr />
 
-      <h3>🔒 Encapsulación: Cada Componente es una Isla</h3>
+      <h2>🔒 Encapsulación: Cada Componente es una Isla</h2>
       <p>
         Con CSS Modules podés usar el mismo nombre de clase en distintos componentes
         sin que se interfieran:
@@ -68,7 +68,7 @@ Modal.module.css    → .button  (el botón verde del Modal)</code></pre>
 
       <hr />
 
-      <h3>🗂️ Convención: Un Módulo por Componente</h3>
+      <h2>🗂️ Convención: Un Módulo por Componente</h2>
       <p>
         Los archivos de CSS Modules van <strong>junto al componente</strong> que los usa,
         con el mismo nombre:
@@ -91,7 +91,7 @@ Modal.module.css    → .button  (el botón verde del Modal)</code></pre>
 
       <hr />
 
-      <h3>⚖️ ¿Cuándo CSS Modules vs CSS Global?</h3>
+      <h2>⚖️ ¿Cuándo CSS Modules vs CSS Global?</h2>
 
       <pre><code>Usá CSS Modules para:
   ✅ Estilos propios de un componente
@@ -114,7 +114,7 @@ Usá CSS global para:
   <article id="code-examples" class="tab-content">
     <div class="description">
 
-      <h3>📁 Crear el Archivo .module.css</h3>
+      <h2>📁 Crear el Archivo .module.css</h2>
 
       <pre><code class="language-css">/* src/components/Pagination.module.css */
 
@@ -160,7 +160,7 @@ Usá CSS global para:
 
       <hr />
 
-      <h3>📥 Importar y Usar en el Componente</h3>
+      <h2>📥 Importar y Usar en el Componente</h2>
 
       <pre><code class="language-jsx">// src/components/Pagination.jsx
 import styles from './Pagination.module.css'
@@ -194,7 +194,7 @@ function Pagination({ currentPage = 1, totalPages = 5, onPageChange = () => {} }
 
       <hr />
 
-      <h3>🔍 Qué Pasa Por Dentro</h3>
+      <h2>🔍 Qué Pasa Por Dentro</h2>
       <p>
         Cuando importás un CSS Module, recibís un objeto JavaScript donde cada clave
         es el nombre de tu clase y el valor es el nombre único generado:
@@ -222,7 +222,7 @@ styles = {
 
       <hr />
 
-      <h3>🎨 Múltiples Clases</h3>
+      <h2>🎨 Múltiples Clases</h2>
 
       <pre><code class="language-jsx">// Template literal — la forma más común
 &lt;a className={`${styles.link} ${styles.active}`}&gt;Link&lt;/a&gt;
@@ -242,7 +242,7 @@ styles = {
 
       <hr />
 
-      <h3>🌐 Escapar al Ámbito Global: <code>:global()</code></h3>
+      <h2>🌐 Escapar al Ámbito Global: <code>:global()</code></h2>
       <p>
         Dentro de un CSS Module podés marcar una clase como global cuando necesitás
         estilar elementos de librerías externas que inyectan su propio HTML:
@@ -271,13 +271,13 @@ styles = {
   <article id="exercises" class="tab-content">
     <div class="description">
 
-      <h3>🐛 Errores Comunes</h3>
+      <h2>🐛 Errores Comunes</h2>
 
-      <h4>1. Olvidar .module en el nombre del archivo</h4>
+      <h3>1. Olvidar .module en el nombre del archivo</h3>
       <pre><code>Pagination.css        ❌ CSS global — no tiene ámbito local
 Pagination.module.css ✅ CSS Module — ámbito local garantizado</code></pre>
 
-      <h4>2. Usar guiones en los nombres de clase</h4>
+      <h3>2. Usar guiones en los nombres de clase</h3>
       <pre><code class="language-jsx">/* ❌ Con guiones — acceso incómodo */
 .is-active { color: white; }
 
@@ -289,7 +289,7 @@ Pagination.module.css ✅ CSS Module — ámbito local garantizado</code></pre>
 
 &lt;a className={styles.isActive}&gt;Link&lt;/a&gt;</code></pre>
 
-      <h4>3. Intentar usar la clase como string</h4>
+      <h3>3. Intentar usar la clase como string</h3>
       <pre><code class="language-jsx">// ❌ La clase real es "Pagination_pagination__a1b2c", no "pagination"
 &lt;nav className="pagination"&gt;
 
@@ -298,15 +298,15 @@ Pagination.module.css ✅ CSS Module — ámbito local garantizado</code></pre>
 
       <hr />
 
-      <h3>💪 Ejercicio: Agregar Estilos a JobCard</h3>
+      <h2>💪 Ejercicio: Agregar Estilos a JobCard</h2>
       <p>Creá un CSS Module para el componente <code>JobCard</code>.</p>
 
-      <h4>Paso 1 — Crear el archivo</h4>
+      <h3>Paso 1 — Crear el archivo</h3>
       <pre><code>src/components/
   JobCard.jsx
   JobCard.module.css   ← crear este archivo</code></pre>
 
-      <h4>Paso 2 — Escribir los estilos</h4>
+      <h3>Paso 2 — Escribir los estilos</h3>
       <pre><code class="language-css">/* JobCard.module.css */
 .card {
   border: 1px solid #e2e8f0;
@@ -342,7 +342,7 @@ Pagination.module.css ✅ CSS Module — ámbito local garantizado</code></pre>
   border-left: 4px solid #667eea;
 }</code></pre>
 
-      <h4>Paso 3 — Aplicar en el componente</h4>
+      <h3>Paso 3 — Aplicar en el componente</h3>
       <pre><code class="language-jsx">import styles from './JobCard.module.css'
 
 export function JobCard({ job, isRemote, isFeatured }) {
@@ -357,7 +357,7 @@ export function JobCard({ job, isRemote, isFeatured }) {
 
       <hr />
 
-      <h3>✅ Resumen de la Clase</h3>
+      <h2>✅ Resumen de la Clase</h2>
       <pre><code>📦 CSS Modules      — CSS con ámbito local, sin colisiones
 🏷️ .module.css      — la extensión que activa el ámbito local
 🔒 Encapsulación    — los estilos no se filtran a otros componentes

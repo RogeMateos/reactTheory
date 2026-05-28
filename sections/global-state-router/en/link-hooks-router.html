@@ -12,7 +12,7 @@
   <article id="concepts" class="tab-content active">
     <div class="description">
 
-      <h3>🔗 Modernizing our Link component</h3>
+      <h2>🔗 Modernizing our Link component</h2>
       <p>
         We're going to modernize our app's routing completely. The goal:
         replace manual implementations with React Router's native tools
@@ -26,7 +26,7 @@
 
       <hr />
 
-      <h3>The Link we had before</h3>
+      <h2>The Link we had before</h2>
       <p>Our old Link was doing everything manually:</p>
 
       <pre><code class="language-jsx">export function Link({ to, children, ...props }) {
@@ -47,7 +47,7 @@
 
       <hr />
 
-      <h3>What we do now</h3>
+      <h2>What we do now</h2>
       <p>We keep our Link, but change its internals:</p>
 
       <pre><code class="language-jsx">import { Link as RRLink } from 'react-router'
@@ -65,7 +65,7 @@ export function Link(props) {
 
       <hr />
 
-      <h3>🏗️ Abstraction Pattern</h3>
+      <h2>🏗️ Abstraction Pattern</h2>
       <p>This technique is called the <strong>abstraction pattern</strong> or <strong>dependency abstraction pattern</strong>.</p>
 
       <table>
@@ -102,12 +102,12 @@ centralize all imports of that library in one place.</code></pre>
   <article id="code-examples" class="tab-content">
     <div class="description">
 
-      <h3>🧭 Replacing navigateTo with useNavigate</h3>
+      <h2>🧭 Replacing navigateTo with useNavigate</h2>
       <p>We had a custom router with a <code>navigateTo</code> method doing navigation manually. React Router offers its own hook: <code>useNavigate</code>.</p>
 
       <hr />
 
-      <h3>The problem with our manual implementation</h3>
+      <h2>The problem with our manual implementation</h2>
 
       <pre><code class="language-jsx">function useRouter() {
   const navigateTo = (path) => {
@@ -129,7 +129,7 @@ centralize all imports of that library in one place.</code></pre>
 
       <hr />
 
-      <h3>The solution with useNavigate</h3>
+      <h2>The solution with useNavigate</h2>
 
       <pre><code class="language-jsx">import { useNavigate } from 'react-router'
 
@@ -143,7 +143,7 @@ export function useRouter() {
   return { navigateTo }
 }</code></pre>
 
-      <h3>What we gain</h3>
+      <h2>What we gain</h2>
 
       <pre><code>✅ No need to manually implement pushState — React Router does it better
 ✅ Components keep calling navigateTo — external API doesn't change
@@ -156,7 +156,7 @@ export function useRouter() {
   <article id="exercises" class="tab-content">
     <div class="description">
 
-      <h3>📍 Replacing manual currentPath with useLocation</h3>
+      <h2>📍 Replacing manual currentPath with useLocation</h2>
       <p>
         Before, we had a <code>currentPath</code> state, a <code>useEffect</code> listening to history events,
         and our own logic to detect URL changes. React Router includes <code>useLocation</code>, which gives us:
@@ -191,7 +191,7 @@ export function useRouter() {
 
       <hr />
 
-      <h3>The manual code we had before</h3>
+      <h2>The manual code we had before</h2>
 
       <pre><code class="language-jsx">function useRouter() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname)
@@ -217,7 +217,7 @@ export function useRouter() {
 
       <hr />
 
-      <h3>The solution with useLocation</h3>
+      <h2>The solution with useLocation</h2>
 
       <pre><code class="language-jsx">import { useLocation } from 'react-router'
 
@@ -241,7 +241,7 @@ export function useRouter() {
   <article id="summary" class="tab-content">
     <div class="description">
 
-      <h3>🔧 The complete useRouter hook</h3>
+      <h2>🔧 The complete useRouter hook</h2>
       <p>Putting it all together:</p>
 
       <pre><code class="language-jsx">import { useNavigate, useLocation } from 'react-router'
@@ -268,7 +268,7 @@ export function useRouter() {
 
       <hr />
 
-      <h3>📊 Before vs After</h3>
+      <h2>📊 Before vs After</h2>
 
       <pre><code class="language-jsx">// ❌ Before — Link.jsx (manual)
 export function Link({ to, children, ...props }) {
@@ -316,7 +316,7 @@ export function useRouter() {
 
       <hr />
 
-      <h3>🚀 Extending the pattern</h3>
+      <h2>🚀 Extending the pattern</h2>
       <p>Once you have this abstraction layer, extending it is trivial:</p>
 
       <pre><code class="language-jsx">export function useRouter() {
@@ -347,7 +347,7 @@ export function useRouter() {
 
       <hr />
 
-      <h3>📌 Summary</h3>
+      <h2>📌 Summary</h2>
 
       <table>
         <thead>

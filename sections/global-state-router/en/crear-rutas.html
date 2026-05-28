@@ -12,7 +12,7 @@
   <article id="concepts" class="tab-content active">
     <div class="description">
 
-      <h3>🚀 Introduction</h3>
+      <h2>🚀 Introduction</h2>
       <p>
         We're going to migrate our homemade router to a professional, robust solution.
         Up to this point, our custom router worked but had important limitations:
@@ -33,13 +33,13 @@
 
       <hr />
 
-      <h3>📦 Installation</h3>
+      <h2>📦 Installation</h2>
 
       <pre><code class="language-jsx">npm install react-router</code></pre>
 
       <hr />
 
-      <h3>Step 1: wrap the app with <code>&lt;BrowserRouter&gt;</code></h3>
+      <h2>Step 1: wrap the app with <code>&lt;BrowserRouter&gt;</code></h2>
       <p>
         The first step is to wrap the entire application with <code>BrowserRouter</code>.
         This component provides the routing context that React Router needs to work throughout the app.
@@ -57,7 +57,7 @@ createRoot(document.getElementById('root')).render(
 
       <hr />
 
-      <h3>🔀 Other Router types</h3>
+      <h2>🔀 Other Router types</h2>
 
       <table>
         <thead>
@@ -89,7 +89,7 @@ createRoot(document.getElementById('root')).render(
   <article id="code-examples" class="tab-content">
     <div class="description">
 
-      <h3>Step 2: define routes with <code>&lt;Routes&gt;</code> and <code>&lt;Route&gt;</code></h3>
+      <h2>Step 2: define routes with <code>&lt;Routes&gt;</code> and <code>&lt;Route&gt;</code></h2>
       <p>In <code>App.jsx</code>, import the components and define your routes:</p>
 
       <pre><code class="language-jsx">import { Routes, Route } from 'react-router-dom'
@@ -102,7 +102,7 @@ createRoot(document.getElementById('root')).render(
 
       <hr />
 
-      <h3>🧩 Anatomy of a route</h3>
+      <h2>🧩 Anatomy of a route</h2>
       <p>Each <code>&lt;Route&gt;</code> has two fundamental props:</p>
 
       <table>
@@ -142,7 +142,7 @@ createRoot(document.getElementById('root')).render(
   <article id="exercises" class="tab-content">
     <div class="description">
 
-      <h3>🔍 How route matching works</h3>
+      <h2>🔍 How route matching works</h2>
       <p>
         React Router evaluates routes <strong>top to bottom</strong> inside <code>&lt;Routes&gt;</code>.
         When it finds a match, it renders that component and <strong>stops searching</strong>.
@@ -160,7 +160,7 @@ Remaining routes are NOT evaluated</code></pre>
 
       <hr />
 
-      <h3>Result with our routes</h3>
+      <h2>Result with our routes</h2>
 
       <table>
         <thead>
@@ -187,7 +187,7 @@ Remaining routes are NOT evaluated</code></pre>
 
       <hr />
 
-      <h3>⚠️ The <code>*</code> wildcard as a 404 page</h3>
+      <h2>⚠️ The <code>*</code> wildcard as a 404 page</h2>
       <p>
         <code>path="*"</code> matches any route not captured before.
         That's why it <strong>must always go last</strong>:
@@ -218,9 +218,9 @@ Remaining routes are NOT evaluated</code></pre>
   <article id="summary" class="tab-content">
     <div class="description">
 
-      <h3>🚫 Common mistakes when setting up routes</h3>
+      <h2>🚫 Common mistakes when setting up routes</h2>
 
-      <h4>1. Forgetting to wrap with <code>&lt;BrowserRouter&gt;</code></h4>
+      <h3>1. Forgetting to wrap with <code>&lt;BrowserRouter&gt;</code></h3>
       <p>Without the wrapper in <code>main.jsx</code>, React Router throws an error saying its components must be inside a Router.</p>
 
       <pre><code class="language-jsx">// ❌ Without BrowserRouter — fails
@@ -235,7 +235,7 @@ createRoot(document.getElementById('root')).render(
 
       <hr />
 
-      <h4>2. Using <code>component</code> instead of <code>element</code></h4>
+      <h3>2. Using <code>component</code> instead of <code>element</code></h3>
 
       <pre><code class="language-jsx">// ❌ Old syntax
 &lt;Route path="/" component={HomePage} /&gt;
@@ -245,7 +245,7 @@ createRoot(document.getElementById('root')).render(
 
       <hr />
 
-      <h4>3. Forgetting the wildcard for 404</h4>
+      <h3>3. Forgetting the wildcard for 404</h3>
       <p>Without <code>path="*"</code>, unmatched URLs render nothing — a blank page.</p>
 
       <pre><code class="language-jsx">// ✅ Always include at the end
@@ -253,7 +253,7 @@ createRoot(document.getElementById('root')).render(
 
       <hr />
 
-      <h4>4. Paths without <code>/</code></h4>
+      <h3>4. Paths without <code>/</code></h3>
 
       <pre><code class="language-jsx">// ❌ Missing leading slash
 &lt;Route path="search" element={&lt;SearchPage /&gt;} /&gt;
@@ -263,7 +263,7 @@ createRoot(document.getElementById('root')).render(
 
       <hr />
 
-      <h3>📌 Summary</h3>
+      <h2>📌 Summary</h2>
 
       <table>
         <thead>
