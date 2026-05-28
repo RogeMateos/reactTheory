@@ -1,0 +1,324 @@
+<section class="box">
+  <h1>URL Synchronization with the Search Engine</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">The Problem</button>
+    <button class="tab-button" data-tab="code-examples">React ↔ URL</button>
+    <button class="tab-button" data-tab="exercises">Lazy Init & Validation</button>
+    <button class="tab-button" data-tab="summary">Final Diagram</button>
+  </div>
+
+  <!-- ===================== CONCEPTS ===================== -->
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+
+      <h3>🧠 What does this pattern solve?</h3>
+      <p>
+        Making the search state (text, filters, and current page) synchronize with the URL so the search is:
+      </p>
+
+      <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+        <thead>
+          <tr style="background: #f5f5f5;">
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Benefit</th>
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">What it means</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Shareable</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">You can send the URL and the other person sees exactly the same thing</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Persistent after F5</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Reloading the page doesn't clear the filters</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Multi-tab compatible</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Each tab can have its own search state</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Browser history</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">The back button works as expected</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <hr />
+
+      <h3>🎯 The goal</h3>
+      <p>You have two sources of information that must always have the same data:</p>
+
+      <pre><code>React State           URL
+──────────────        ────────────────────────────────
+text = React          /search?text=React
+filter = JavaScript   &technology=javascript
+page = 2              &page=2</code></pre>
+
+      <hr />
+
+      <h3>⚠️ The initial problem</h3>
+      <p>The search engine only updated results but <strong>never touched the URL</strong>:</p>
+
+      <pre><code class="language-jsx">useEffect(() => {
+  fetchJobs({ filters, textToFilter, currentPage })
+}, [filters, textToFilter, currentPage])</code></pre>
+
+      <p>This works for loading data, but:</p>
+
+      <pre><code>❌ Doesn't update the URL
+❌ If you press F5, you lose everything
+❌ You can't share the search</code></pre>
+
+      <hr />
+
+      <h3>🔄 Two separate synchronizations</h3>
+      <p>The pattern actually implements two separate flows:</p>
+
+      <pre><code>1. React → URL
+   User types "React"
+   → State changes
+   → URL changes
+
+2. URL → React
+   URL contains ?text=React&page=2
+   → React reads the URL
+   → Initializes the state</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== CODE EXAMPLES ===================== -->
+  <article id="code-examples" class="tab-content">
+    <div class="description">
+
+      <h3>🔧 Block 1: writing to the URL (React → URL)</h3>
+      <p>Every time filters, text or page change, a <code>useEffect</code> updates the URL:</p>
+
+      <pre><code class="language-jsx">useEffect(() => {
+  const params = new URLSearchParams()
+
+  if (textToFilter) params.set('text', textToFilter)
+  if (filters.technology) params.set('technology', filters.technology)
+  if (currentPage > 1) params.set('page', String(currentPage))
+
+  const newURL = `${window.location.pathname}?${params.toString()}`
+  window.history.pushState({}, '', newURL)
+}, [filters, textToFilter, currentPage])</code></pre>
+
+      <p>Visually:</p>
+
+      <pre><code>User changes filter
+        ↓
+   filters changes
+        ↓
+  useEffect fires
+        ↓
+  URLSearchParams builds
+        ↓
+  /search?technology=javascript</code></pre>
+
+      <hr />
+
+      <h3>✅ Why use <code>URLSearchParams</code> instead of concatenation</h3>
+
+      <pre><code class="language-jsx">// ✅ Correct — URLSearchParams encodes automatically
+const params = new URLSearchParams()
+params.set('text', 'React &amp; TypeScript')
+// Result: text=React+%26+TypeScript
+
+// ❌ Dangerous — manual concatenation breaks with special characters
+const url = '/search?text=' + text + '&technology=' + technology</code></pre>
+
+      <hr />
+
+      <h3>🔧 Block 4: input synchronized with state</h3>
+      <p>This is the easiest detail to forget. If React has <code>textToFilter = 'React'</code> but the input starts empty:</p>
+
+      <pre><code class="language-jsx">// ❌ Desynced input — shows results for "React" but the field is empty
+const [text, setText] = useState('')
+
+// ✅ Synced input — the field shows the same value as state
+const [text, setText] = useState(initialTextToFilter)</code></pre>
+
+      <p>This way the complete flow is:</p>
+
+      <pre><code>URL → State → Input
+
+Everything shows the same value.</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== EXERCISES ===================== -->
+  <article id="exercises" class="tab-content">
+    <div class="description">
+
+      <h3>🔧 Block 2: reading the URL on startup (URL → React)</h3>
+      <p>
+        If you always initialize state to <code>1</code>, you're ignoring what the URL says:
+      </p>
+
+      <pre><code class="language-jsx">// ❌ Ignores the URL — always starts on page 1
+const [currentPage, setCurrentPage] = useState(1)
+
+// ✅ Reads the URL — starts on the correct page
+const [currentPage, setCurrentPage] = useState(() => {
+  const params = new URLSearchParams(window.location.search)
+  const page = Number(params.get('page'))
+  return Number.isNaN(page) || page &lt; 1 ? 1 : page
+})</code></pre>
+
+      <hr />
+
+      <h3>⚡ Important React concept: Lazy Initialization</h3>
+      <p>Many people don't understand the difference between these two forms:</p>
+
+      <pre><code class="language-jsx">// Form 1 — runs on EVERY render (even if the value doesn't change)
+const [page, setPage] = useState(getPageFromURL())
+
+// Form 2 — runs ONLY ONCE (lazy initialization)
+const [page, setPage] = useState(() => getPageFromURL())</code></pre>
+
+      <p>
+        When you pass a <strong>function</strong> to <code>useState</code>, React runs it only on the first render.
+        That's why it's called <strong>lazy initialization</strong>.
+      </p>
+
+      <hr />
+
+      <h3>🛡️ Block 3: URL validation</h3>
+      <p>Great practice. Someone could manually type in the URL:</p>
+
+      <pre><code>?page=hello   → Number('hello') = NaN → breaks logic
+?page=-500    → Invalid page → unexpected behavior</code></pre>
+
+      <pre><code class="language-jsx">function getPageFromURL() {
+  const params = new URLSearchParams(window.location.search)
+  const page = Number(params.get('page'))
+
+  if (Number.isNaN(page) || page &lt; 1) return 1
+
+  return page
+}</code></pre>
+
+      <hr />
+
+      <h3>💡 Improvement: reusable helper</h3>
+      <p>The tutorial repeats <code>new URLSearchParams(window.location.search)</code> several times. It could be extracted:</p>
+
+      <pre><code class="language-jsx">// Before — repeated in multiple places
+const params = new URLSearchParams(window.location.search)
+
+// After — a clean helper
+function getSearchParams() {
+  return new URLSearchParams(window.location.search)
+}
+
+// Usage
+const params = getSearchParams()</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== SUMMARY ===================== -->
+  <article id="summary" class="tab-content">
+    <div class="description">
+
+      <h3>🗺️ Complete flow diagram</h3>
+
+      <pre><code>— When the user interacts —
+
+User changes filter / text / page
+              ↓
+        React State changes
+              ↓
+          useEffect
+              ↓
+     URLSearchParams builds
+              ↓
+      window.history.pushState
+              ↓
+           URL updated
+
+— When the page loads / F5 —
+
+              URL
+              ↓
+    useState(() => { read URL })
+              ↓
+        React State initialized
+              ↓
+          API Call
+              ↓
+          Results</code></pre>
+
+      <hr />
+
+      <h3>🎯 The interview answer</h3>
+      <p>If in an interview you're asked: <em>"How would you sync filters and pagination with the URL?"</em></p>
+
+      <ol>
+        <li>Store filters, text and page in React State.</li>
+        <li>Use a <code>useEffect</code> to update the URL when state changes.</li>
+        <li>Use <code>URLSearchParams</code> to build query params without manual concatenation.</li>
+        <li>Initialize <code>useState</code> by reading URL parameters.</li>
+        <li>Validate values coming from the URL with <code>Number.isNaN</code> and ranges.</li>
+        <li>Keep inputs and filters synced with the correct initial state.</li>
+      </ol>
+
+      <hr />
+
+      <h3>📌 Key concepts summary</h3>
+
+      <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+        <thead>
+          <tr style="background: #f5f5f5;">
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Concept</th>
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Purpose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>URLSearchParams</code></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Build and read query params safely</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>window.history.pushState</code></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Update the URL without reloading the page</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Lazy initialization</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Initialize state from URL only once</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">URL validation</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Protect against invalid manually typed values</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Synced input</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Visual consistency between URL, state and input</td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </article>
+
+  <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; text-align: center;">
+    <strong style="color: white; font-size: 1.1em; display: block; margin-bottom: 15px;">📚 Want to go deeper?</strong>
+    <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+      <a href="https://www.jscamp.dev/introduccion-a-react/sincronizacion-de-la-url"
+         target="_blank"
+         style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+        📖 Read about URL Synchronization on JSCamp →
+      </a>
+      <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633/c/6a189f1c-90e0-83eb-85f6-d9c32c36c8f7"
+         target="_blank"
+         style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+        💬 Ask ChatGPT about URL Synchronization →
+      </a>
+    </div>
+  </div>
+
+</section>

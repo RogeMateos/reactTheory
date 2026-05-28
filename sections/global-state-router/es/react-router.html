@@ -1,0 +1,247 @@
+<section class="box">
+  <h1>¿Qué es React Router?</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">Nuestro Router Casero</button>
+    <button class="tab-button" data-tab="code-examples">Qué es React Router</button>
+    <button class="tab-button" data-tab="exercises">Modos de Uso</button>
+    <button class="tab-button" data-tab="summary">Qué Vamos a Conseguir</button>
+  </div>
+
+  <!-- ===================== CONCEPTS ===================== -->
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+
+      <h3>🏠 Punto de partida: nuestro router casero</h3>
+      <p>Hasta ahora hemos hecho algo muy potente:</p>
+
+      <pre><code>✅ La URL sincronizada con todos los filtros de la aplicación
+✅ Nuestro propio router en App.jsx con muy pocas líneas</code></pre>
+
+      <p>Esto está genial por dos motivos:</p>
+      <ol>
+        <li>Nos obliga a entender cómo funciona el enrutado <strong>por debajo</strong>.</li>
+        <li>Nos da confianza para no ver React Router como magia negra.</li>
+      </ol>
+
+      <p>Pero también tiene una pega importante:</p>
+
+      <pre><code>ni tú ni yo vamos a hacer un router mejor que el equipo
+que lleva años manteniendo React Router.</code></pre>
+
+      <hr />
+
+      <h3>⚠️ Limitaciones del router que hemos creado</h3>
+      <p>Nuestro router casero funciona, pero tiene muchas cosas pendientes que en una app real vas a necesitar:</p>
+
+      <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+        <thead>
+          <tr style="background: #f5f5f5;">
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Limitación</th>
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Qué implica</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Página 404</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Si el usuario escribe una ruta incorrecta, la experiencia no es la ideal</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Rutas protegidas</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Toda la lógica de redirección y tokens hay que montarla a mano</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Code splitting</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Cargar rutas bajo demanda requiere combinar a mano <code>lazy</code> + <code>Suspense</code></td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Carga de datos</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Loading states, manejo de errores y cuándo cargar no están resueltos</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p style="margin-top: 16px;">
+        Todo esto no está resuelto en nuestro router actual, y es precisamente el tipo de problemas que <strong>React Router lleva años trabajando</strong>.
+      </p>
+
+    </div>
+  </article>
+
+  <!-- ===================== CODE EXAMPLES ===================== -->
+  <article id="code-examples" class="tab-content">
+    <div class="description">
+
+      <h3>📦 Qué es React Router</h3>
+      <p>React Router es la <strong>biblioteca estándar de enrutado</strong> en el ecosistema React.</p>
+
+      <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+        <thead>
+          <tr style="background: #f5f5f5;">
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Dato</th>
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Valor</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Descargas en npm</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Miles de millones</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Estrellas en GitHub</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Decenas de miles</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Contribuidores</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Cientos</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Proyectos que dependen de ella</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Millones</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p style="margin-top: 16px;">
+        No es una librería random. Es una <strong>pieza crítica en el ecosistema React</strong>.
+      </p>
+
+      <hr />
+
+      <h3>🤔 Por qué usar una librería en lugar de la nuestra</h3>
+
+      <pre><code>✅ Ya ha resuelto la mayoría de problemas que tú aún ni sabés que existen
+✅ Está pensada para crecer con tu aplicación
+✅ Se actualiza para soportar nuevas features del navegador y de React
+✅ Tiene comunidad enorme, documentación, ejemplos, tutorials</code></pre>
+
+      <pre><code>Nuestro router casero → bien como ejercicio
+React Router         → hecho para proyectos de verdad</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== EXERCISES ===================== -->
+  <article id="exercises" class="tab-content">
+    <div class="description">
+
+      <h3>⚙️ Modos de uso de React Router</h3>
+      <p>React Router no es solo un <code>BrowserRouter</code> con un par de rutas. Tiene varios modos según lo que tu app necesite:</p>
+
+      <hr />
+
+      <h3>1. Modo Framework</h3>
+      <p>Te da un framework completo sobre React. Incluye:</p>
+
+      <pre><code>✅ Enrutado avanzado
+✅ Estrategias de renderizado
+✅ Carga de datos (loaders)
+✅ Actions para mutaciones
+✅ Navegaciones y formularios mejorados</code></pre>
+
+      <p>Tan grande que podrías hacer un curso entero solo de esto.</p>
+
+      <hr />
+
+      <h3>2. Data Mode</h3>
+      <p>Se centra en:</p>
+
+      <pre><code>✅ Carga de datos asociada a las rutas
+✅ Manejo de errores y estados de carga</code></pre>
+
+      <p>Punto intermedio entre el modo framework completo y el router más básico.</p>
+
+      <hr />
+
+      <h3>3. Modo Declarativo (el que usamos)</h3>
+      <p>La parte más sencilla y directa:</p>
+
+      <pre><code>✅ Declarar rutas
+✅ Navegar entre ellas</code></pre>
+
+      <p>Ideal para:</p>
+      <ul>
+        <li>Entender bien la base de React Router</li>
+        <li>No mezclar demasiados conceptos a la vez</li>
+        <li>Mejorar nuestro router casero con una API sólida</li>
+      </ul>
+
+      <p>
+        Aunque nos quedemos solo con el modo declarativo, ya vamos a ganar un montón de utilidades y mejoras respecto a lo que tenemos ahora.
+      </p>
+
+    </div>
+  </article>
+
+  <!-- ===================== SUMMARY ===================== -->
+  <article id="summary" class="tab-content">
+    <div class="description">
+
+      <h3>🎯 Qué vamos a conseguir con React Router</h3>
+      <p>A lo largo de las siguientes clases vamos a migrar progresivamente de nuestro router casero a React Router:</p>
+
+      <pre><code>✅ Mantener la sincronización con la URL que ya tenemos
+✅ Definir rutas de forma declarativa y más legible
+✅ Preparar:
+   → Página 404
+   → Rutas protegidas
+   → Carga bajo demanda de componentes
+   → Mejor manejo de estados de carga y errores</code></pre>
+
+      <p>Todo ello <strong>sin tener que reinventar la rueda</strong>.</p>
+
+      <hr />
+
+      <h3>📌 Objetivos de esta clase</h3>
+
+      <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+        <thead>
+          <tr style="background: #f5f5f5;">
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Concepto</th>
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Lo que te llevás</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Router casero</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Por qué tiene límites claros</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">React Router</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Qué problemas reales resuelve en producción</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Modos de uso</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Cuáles existen y por qué usamos el declarativo</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Perspectiva</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">React Router no es magia, es la evolución de lo que ya construiste</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <hr />
+
+      <h3>🚀 Próximo paso</h3>
+      <p>En la próxima clase empezamos con la parte práctica:</p>
+
+      <pre><code>→ Instalar React Router
+→ Configurar el router principal
+→ Migrar las rutas actuales para aprovechar todas sus ventajas</code></pre>
+
+    </div>
+  </article>
+
+  <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; text-align: center;">
+    <strong style="color: white; font-size: 1.1em; display: block; margin-bottom: 15px;">📚 ¿Querés profundizar más?</strong>
+    <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+      <a href="https://www.jscamp.dev/estado-global-y-react-router/que-es-react-router"
+         target="_blank"
+         style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+        📖 Lee sobre React Router en JSCamp →
+      </a>
+    </div>
+  </div>
+
+</section>

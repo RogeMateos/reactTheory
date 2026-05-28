@@ -1,0 +1,426 @@
+<section class="box">
+  <h1>Fixing Pagination: URL as State</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">The Problem</button>
+    <button class="tab-button" data-tab="code-examples">URLSearchParams</button>
+    <button class="tab-button" data-tab="exercises">Visual Flow</button>
+    <button class="tab-button" data-tab="improvements">Code Improvements</button>
+  </div>
+
+  <!-- ===================== CONCEPTS ===================== -->
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+
+      <h3>🧠 What problem does this solve?</h3>
+      <p>
+        Before, the <code>/search</code> route always looked the same no matter what the user did:
+      </p>
+
+      <pre><code>page 1
+page 2
+search React
+search Vue
+
+👉 The URL NEVER changed.</code></pre>
+
+      <p>So:</p>
+
+      <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+        <thead>
+          <tr style="background: #f5f5f5;">
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Situation</th>
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Result</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Reload the page</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">❌ Lose all state</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Share the URL</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">❌ Doesn't work</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Browser back button</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">❌ Weird behavior</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <hr />
+
+      <h3>✅ What we want to achieve</h3>
+      <p>
+        The URL should <strong>represent the state of the app</strong>. For example:
+      </p>
+
+      <pre><code>/search?page=3&text=react</code></pre>
+
+      <p>That URL says it all:</p>
+
+      <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+        <thead>
+          <tr style="background: #f5f5f5;">
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Parameter</th>
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Meaning</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>page=3</code></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">You are on page 3</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>text=react</code></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">You are searching for "React"</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>The URL now <strong>"tells the story"</strong> of the application.</p>
+
+      <hr />
+
+      <h3>🚀 The REAL benefit</h3>
+      <p>With this change, the app:</p>
+
+      <pre><code>✅ Remembers state
+✅ Can be reloaded without losing anything
+✅ Can be shared with anyone
+✅ Works properly with browser history
+✅ Has professional URLs</code></pre>
+
+      <h3>📌 The MOST important idea</h3>
+      <p>The URL becomes <strong>THE SOURCE OF TRUTH</strong>. Not just React state. The URL now also stores the application state.</p>
+
+    </div>
+  </article>
+
+  <!-- ===================== CODE EXAMPLES ===================== -->
+  <article id="code-examples" class="tab-content">
+    <div class="description">
+
+      <h3>🔥 What does <code>URLSearchParams</code> do?</h3>
+      <p>
+        It helps you read and modify URL parameters easily, without breaking the existing ones.
+      </p>
+
+      <pre><code class="language-jsx">const searchParams = new URLSearchParams(window.location.search)
+
+// If the URL is: /search?text=react
+searchParams.set('page', '2')
+// Now it is:    /search?text=react&page=2</code></pre>
+
+      <p>
+        👉 It <strong>keeps what was there</strong> and only adds or changes what's needed.
+      </p>
+
+      <hr />
+
+      <h3>🎯 What does <code>buildPageURL</code> achieve?</h3>
+      <p>
+        Building pagination links correctly so each button has a real URL:
+      </p>
+
+      <pre><code class="language-jsx">// BEFORE — all buttons pointed to "#"
+&lt;a href="#"&gt;1&lt;/a&gt;
+&lt;a href="#"&gt;2&lt;/a&gt;
+&lt;a href="#"&gt;3&lt;/a&gt;
+
+// AFTER — each button has its correct URL
+/search?page=1&text=react
+/search?page=2&text=react
+/search?page=3&text=react</code></pre>
+
+      <hr />
+
+      <h3>💻 Implementation</h3>
+
+      <pre><code class="language-jsx">function buildPageURL(search, page) {
+  // Grab the current URL parameters
+  const searchParams = new URLSearchParams(search)
+
+  // Only modify the "page" parameter
+  searchParams.set('page', page)
+
+  // Return the full query string
+  return `?${searchParams.toString()}`
+}
+
+// Usage in the pagination component:
+function Pagination({ search, currentPage, totalPages }) {
+  return (
+    &lt;nav&gt;
+      {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+        &lt;a
+          key={page}
+          href={buildPageURL(search, page)}
+          className={page === currentPage ? 'active' : ''}
+        &gt;
+          {page}
+        &lt;/a&gt;
+      ))}
+    &lt;/nav&gt;
+  )
+}</code></pre>
+
+      <hr />
+
+      <h3>📥 Reading URL parameters in the component</h3>
+
+      <pre><code class="language-jsx">import { useSearchParams } from 'react-router-dom'
+
+function SearchPage() {
+  const [searchParams] = useSearchParams()
+
+  const currentPage = Number(searchParams.get('page') ?? 1)
+  const searchText  = searchParams.get('text') ?? ''
+
+  // State comes from the URL — no need for useState here
+}</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== EXERCISES ===================== -->
+  <article id="exercises" class="tab-content">
+    <div class="description">
+
+      <h3>🧩 Visual mental flow</h3>
+
+      <pre><code>User searches "React"
+        ↓
+URL: /search?page=1&text=react
+        ↓
+Click on page 2
+        ↓
+buildPageURL(search, 2)
+        ↓
+New URL: /search?page=2&text=react
+        ↓
+The app knows:
+  - what to search → "react"
+  - which page     → 2</code></pre>
+
+      <hr />
+
+      <h3>⚠️ Common mistakes</h3>
+
+      <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+        <thead>
+          <tr style="background: #f5f5f5;">
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mistake</th>
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Problem</th>
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Solution</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Using <code>href="#"</code></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">URL never changes</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Use <code>buildPageURL()</code></td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Building URL manually</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Overwrites other params</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Use <code>URLSearchParams</code></td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>useState</code> only</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Doesn't survive reload</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Read from <code>useSearchParams</code></td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Not resetting page on search</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Page 5 on a brand new search</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">When <code>text</code> changes, reset <code>page=1</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <hr />
+
+      <h3>🎯 Exercise</h3>
+      <p>
+        Modify your search component so that:
+      </p>
+      <ol>
+        <li>The URL changes when the user types in the search input</li>
+        <li>The URL changes when the user clicks a page number</li>
+        <li>On page reload, both the search text and current page are restored</li>
+        <li>When the search text changes, the page automatically resets to 1</li>
+      </ol>
+
+    </div>
+  </article>
+
+  <!-- ===================== IMPROVEMENTS ===================== -->
+  <article id="improvements" class="tab-content">
+    <div class="description">
+
+      <h3>🔧 Block 1: simplifying <code>buildPageURL</code></h3>
+
+      <p><strong>Problem detected:</strong> the code works, but using <code>window.location.href</code> inside the component makes it less testable and more coupled to the browser.</p>
+
+      <pre><code class="language-jsx">// ❌ Over-coupled version — takes more than needed
+const url = new URL(window.location.href)
+
+// ✅ Improved version — only works with what it needs
+const buildPageURL = (pageNumber) => {
+  const searchParams = new URLSearchParams(window.location.search)
+  searchParams.set('page', String(pageNumber))
+  return `${window.location.pathname}?${searchParams.toString()}`
+}</code></pre>
+
+      <p>
+        The improvement is using <code>window.location.search</code> and <code>window.location.pathname</code>
+        instead of building a full <code>URL</code> object. You only work with what you need.
+      </p>
+
+      <hr />
+
+      <h3>🔧 Block 2: previous and next pages</h3>
+
+      <p><strong>Problem detected:</strong> without guards, you can generate invalid URLs:</p>
+
+      <pre><code class="language-jsx">// ❌ No limits — generates broken URLs
+previousPage = 0            → /search?page=0
+nextPage = totalPages + 1   → /search?page=11
+
+// ✅ With Math.max / Math.min — always valid
+const previousPage = Math.max(currentPage - 1, 1)
+const nextPage = Math.min(currentPage + 1, totalPages)</code></pre>
+
+      <p>Even if you block the click with <code>preventDefault</code>, the <code>href</code> was still pointing to an incorrect URL. With this, it's always valid.</p>
+
+      <hr />
+
+      <h3>🔧 Block 3: readability with <code>isFirstPage</code> / <code>isLastPage</code></h3>
+
+      <p><strong>Problem detected:</strong> <code>aria-disabled</code> only helps accessibility but doesn't disable the link. Also, repeating <code>currentPage === 1</code> in multiple places clutters the code.</p>
+
+      <pre><code class="language-jsx">// ✅ Descriptive variables for better readability
+const isFirstPage = currentPage === 1
+const isLastPage = currentPage === totalPages
+
+&lt;a
+  href={buildPageURL(previousPage)}
+  aria-disabled={isFirstPage}
+  onClick={(event) => {
+    if (isFirstPage) event.preventDefault()
+  }}
+&gt;
+  Previous
+&lt;/a&gt;</code></pre>
+
+      <hr />
+
+      <h3>✅ Complete final improved version</h3>
+
+      <pre><code class="language-jsx">function Pagination({ currentPage, totalPages }) {
+  const buildPageURL = (pageNumber) => {
+    const searchParams = new URLSearchParams(window.location.search)
+    searchParams.set('page', String(pageNumber))
+    return `${window.location.pathname}?${searchParams.toString()}`
+  }
+
+  const isFirstPage = currentPage === 1
+  const isLastPage  = currentPage === totalPages
+
+  const previousPage = Math.max(currentPage - 1, 1)
+  const nextPage     = Math.min(currentPage + 1, totalPages)
+
+  return (
+    &lt;nav aria-label="Pagination"&gt;
+      &lt;ul&gt;
+        &lt;li&gt;
+          &lt;a
+            href={buildPageURL(previousPage)}
+            aria-disabled={isFirstPage}
+            onClick={(event) => { if (isFirstPage) event.preventDefault() }}
+          &gt;
+            Previous
+          &lt;/a&gt;
+        &lt;/li&gt;
+
+        {Array.from({ length: totalPages }, (_, index) => {
+          const page = index + 1
+          return (
+            &lt;li key={page}&gt;
+              &lt;a
+                href={buildPageURL(page)}
+                aria-current={page === currentPage ? 'page' : undefined}
+              &gt;
+                {page}
+              &lt;/a&gt;
+            &lt;/li&gt;
+          )
+        })}
+
+        &lt;li&gt;
+          &lt;a
+            href={buildPageURL(nextPage)}
+            aria-disabled={isLastPage}
+            onClick={(event) => { if (isLastPage) event.preventDefault() }}
+          &gt;
+            Next
+          &lt;/a&gt;
+        &lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/nav&gt;
+  )
+}</code></pre>
+
+      <hr />
+
+      <h3>📌 Summary of improvements</h3>
+
+      <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+        <thead>
+          <tr style="background: #f5f5f5;">
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Problem</th>
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Solution</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>new URL(window.location.href)</code></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Use <code>location.search</code> + <code>location.pathname</code></td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Invalid pages (0 or totalPages+1)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>Math.max</code> / <code>Math.min</code> as guards</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Condition repeated in multiple places</td>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>isFirstPage</code> / <code>isLastPage</code> as variables</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>aria-disabled</code> doesn't block the click</td>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>onClick</code> with <code>preventDefault</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </article>
+
+  <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; text-align: center;">
+    <strong style="color: white; font-size: 1.1em; display: block; margin-bottom: 15px;">📚 Want to go deeper?</strong>
+    <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+      <a href="https://www.jscamp.dev/introduccion-a-react/arreglando-la-paginacion"
+         target="_blank"
+         style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+        📖 Read about Fixing Pagination on JSCamp →
+      </a>
+      <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633/c/6a185815-9284-83eb-8cc4-ccf26fa21c5b"
+         target="_blank"
+         style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+        💬 Ask ChatGPT about Fixing Pagination →
+      </a>
+    </div>
+  </div>
+
+</section>

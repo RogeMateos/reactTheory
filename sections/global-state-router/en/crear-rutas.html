@@ -1,0 +1,314 @@
+<section class="box">
+  <h1>How to Create Routes with React Router</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">Installation & Setup</button>
+    <button class="tab-button" data-tab="code-examples">Routes and Route</button>
+    <button class="tab-button" data-tab="exercises">Matching & Wildcard</button>
+    <button class="tab-button" data-tab="summary">Common Mistakes</button>
+  </div>
+
+  <!-- ===================== CONCEPTS ===================== -->
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+
+      <h3>🚀 Introduction</h3>
+      <p>
+        We're going to migrate our homemade router to a professional, robust solution.
+        Up to this point, our custom router worked but had important limitations:
+      </p>
+
+      <pre><code>❌ Not an industry standard
+❌ Doesn't include all the features we'll need in production
+❌ Less optimized
+❌ Reinventing the wheel instead of using a proven solution</code></pre>
+
+      <p>React Router gives us:</p>
+
+      <pre><code>✅ Declarative navigation between pages
+✅ Automatic browser history management
+✅ Specialized hooks for params, location and programmatic navigation
+✅ Robust error handling and not-found routes
+✅ Support for multiple routing modes</code></pre>
+
+      <hr />
+
+      <h3>📦 Installation</h3>
+
+      <pre><code class="language-jsx">npm install react-router</code></pre>
+
+      <hr />
+
+      <h3>Step 1: wrap the app with <code>&lt;BrowserRouter&gt;</code></h3>
+      <p>
+        The first step is to wrap the entire application with <code>BrowserRouter</code>.
+        This component provides the routing context that React Router needs to work throughout the app.
+      </p>
+
+      <p>In <code>main.jsx</code>:</p>
+
+      <pre><code class="language-jsx">import { BrowserRouter } from 'react-router-dom'
+
+createRoot(document.getElementById('root')).render(
+  &lt;BrowserRouter&gt;
+    &lt;App /&gt;
+  &lt;/BrowserRouter&gt;
+)</code></pre>
+
+      <hr />
+
+      <h3>🔀 Other Router types</h3>
+
+      <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+        <thead>
+          <tr style="background: #f5f5f5;">
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Router</th>
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">When to use it</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>BrowserRouter</code></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">The most common. Clean URLs: <code>/search</code></td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>HashRouter</code></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Uses <code>#</code> in the URL: <code>example.com/#/about</code>. Useful when you can't configure the server</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>MemoryRouter</code></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">History in memory, doesn't modify the URL. Ideal for testing and React Native</td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </article>
+
+  <!-- ===================== CODE EXAMPLES ===================== -->
+  <article id="code-examples" class="tab-content">
+    <div class="description">
+
+      <h3>Step 2: define routes with <code>&lt;Routes&gt;</code> and <code>&lt;Route&gt;</code></h3>
+      <p>In <code>App.jsx</code>, import the components and define your routes:</p>
+
+      <pre><code class="language-jsx">import { Routes, Route } from 'react-router-dom'
+
+&lt;Routes&gt;
+  &lt;Route path="/" element={&lt;HomePage /&gt;} /&gt;
+  &lt;Route path="/search" element={&lt;SearchPage /&gt;} /&gt;
+  &lt;Route path="*" element={&lt;NotFoundPage /&gt;} /&gt;
+&lt;/Routes&gt;</code></pre>
+
+      <hr />
+
+      <h3>🧩 Anatomy of a route</h3>
+      <p>Each <code>&lt;Route&gt;</code> has two fundamental props:</p>
+
+      <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+        <thead>
+          <tr style="background: #f5f5f5;">
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Prop</th>
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">What it does</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>path</code></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">The URL pattern that must match</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>element</code></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">The React component (as JSX) rendered when the route matches</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p style="margin-top: 16px;">
+        React Router uses <code>element</code> (receives JSX) instead of <code>component</code> (just a reference).
+        This gives more flexibility to pass props directly.
+      </p>
+
+      <pre><code class="language-jsx">// ❌ Old syntax (React Router v5)
+&lt;Route path="/" component={HomePage} /&gt;
+
+// ✅ Current syntax (React Router v6+)
+&lt;Route path="/" element={&lt;HomePage /&gt;} /&gt;</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== EXERCISES ===================== -->
+  <article id="exercises" class="tab-content">
+    <div class="description">
+
+      <h3>🔍 How route matching works</h3>
+      <p>
+        React Router evaluates routes <strong>top to bottom</strong> inside <code>&lt;Routes&gt;</code>.
+        When it finds a match, it renders that component and <strong>stops searching</strong>.
+      </p>
+
+      <pre><code>User navigates to /search
+        ↓
+React Router compares with path="/"       → no match
+        ↓
+React Router compares with path="/search" → ✅ match
+        ↓
+Renders &lt;SearchPage /&gt;
+        ↓
+Remaining routes are NOT evaluated</code></pre>
+
+      <hr />
+
+      <h3>Result with our routes</h3>
+
+      <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+        <thead>
+          <tr style="background: #f5f5f5;">
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">URL visited</th>
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Component rendered</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>/</code></td>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>&lt;HomePage /&gt;</code></td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>/search</code></td>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>&lt;SearchPage /&gt;</code></td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>/about</code>, <code>/xyz</code>, anything else</td>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>&lt;NotFoundPage /&gt;</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <hr />
+
+      <h3>⚠️ The <code>*</code> wildcard as a 404 page</h3>
+      <p>
+        <code>path="*"</code> matches any route not captured before.
+        That's why it <strong>must always go last</strong>:
+      </p>
+
+      <pre><code class="language-jsx">// ❌ Wrong — * catches everything, other routes are never reached
+&lt;Routes&gt;
+  &lt;Route path="*" element={&lt;NotFoundPage /&gt;} /&gt;
+  &lt;Route path="/" element={&lt;HomePage /&gt;} /&gt;
+  &lt;Route path="/search" element={&lt;SearchPage /&gt;} /&gt;
+&lt;/Routes&gt;
+
+// ✅ Correct — specific routes first, wildcard at the end
+&lt;Routes&gt;
+  &lt;Route path="/" element={&lt;HomePage /&gt;} /&gt;
+  &lt;Route path="/search" element={&lt;SearchPage /&gt;} /&gt;
+  &lt;Route path="*" element={&lt;NotFoundPage /&gt;} /&gt;
+&lt;/Routes&gt;</code></pre>
+
+      <p>
+        Order matters: <strong>specific routes first, wildcard at the end</strong>.
+      </p>
+
+    </div>
+  </article>
+
+  <!-- ===================== SUMMARY ===================== -->
+  <article id="summary" class="tab-content">
+    <div class="description">
+
+      <h3>🚫 Common mistakes when setting up routes</h3>
+
+      <h4>1. Forgetting to wrap with <code>&lt;BrowserRouter&gt;</code></h4>
+      <p>Without the wrapper in <code>main.jsx</code>, React Router throws an error saying its components must be inside a Router.</p>
+
+      <pre><code class="language-jsx">// ❌ Without BrowserRouter — fails
+createRoot(document.getElementById('root')).render(&lt;App /&gt;)
+
+// ✅ With BrowserRouter
+createRoot(document.getElementById('root')).render(
+  &lt;BrowserRouter&gt;
+    &lt;App /&gt;
+  &lt;/BrowserRouter&gt;
+)</code></pre>
+
+      <hr />
+
+      <h4>2. Using <code>component</code> instead of <code>element</code></h4>
+
+      <pre><code class="language-jsx">// ❌ Old syntax
+&lt;Route path="/" component={HomePage} /&gt;
+
+// ✅ Correct syntax (v6+)
+&lt;Route path="/" element={&lt;HomePage /&gt;} /&gt;</code></pre>
+
+      <hr />
+
+      <h4>3. Forgetting the wildcard for 404</h4>
+      <p>Without <code>path="*"</code>, unmatched URLs render nothing — a blank page.</p>
+
+      <pre><code class="language-jsx">// ✅ Always include at the end
+&lt;Route path="*" element={&lt;NotFoundPage /&gt;} /&gt;</code></pre>
+
+      <hr />
+
+      <h4>4. Paths without <code>/</code></h4>
+
+      <pre><code class="language-jsx">// ❌ Missing leading slash
+&lt;Route path="search" element={&lt;SearchPage /&gt;} /&gt;
+
+// ✅ With leading slash
+&lt;Route path="/search" element={&lt;SearchPage /&gt;} /&gt;</code></pre>
+
+      <hr />
+
+      <h3>📌 Summary</h3>
+
+      <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+        <thead>
+          <tr style="background: #f5f5f5;">
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Concept</th>
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">What you learned</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Installation</td>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>npm install react-router</code></td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>BrowserRouter</code></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Wraps the entire app in <code>main.jsx</code></td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>Routes</code> + <code>Route</code></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Declare routes in <code>App.jsx</code></td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Matching</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Top to bottom, stops at the first match</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>path="*"</code></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Wildcard for 404 — always at the end</td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </article>
+
+
+  <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; text-align: center;">
+    <strong style="color: white; font-size: 1.1em; display: block; margin-bottom: 15px;">📚 Want to go deeper?</strong>
+    <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+      <a href="https://www.jscamp.dev/estado-global-y-react-router/como-crear-rutas-con-react-router"
+         target="_blank"
+         style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+        📖 Read about creating routes on JSCamp →
+      </a>
+    </div>
+  </div>
+
+</section>

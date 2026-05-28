@@ -1,0 +1,352 @@
+<section class="box">
+  <h1>Managing &lt;title&gt; in React</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">The Problem & Solution</button>
+    <button class="tab-button" data-tab="code-examples">Dynamic Title</button>
+    <button class="tab-button" data-tab="exercises">Special Cases</button>
+  </div>
+
+  <!-- ===================== CONCEPTS ===================== -->
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+
+      <h3>🐛 The common approach (and its problems)</h3>
+      <p>
+        It's common to see code that updates the page title using <code>useEffect</code>:
+      </p>
+
+      <pre><code>// Works, but it's not the cleanest way
+useEffect(() => {
+  document.title = 'My React App'
+}, [])</code></pre>
+
+      <p>
+        Manually manipulating the DOM from an effect breaks React's declarative nature.
+        There's a more elegant alternative.
+      </p>
+
+      <hr />
+
+      <h3>✅ The solution: use &lt;title&gt; directly in JSX</h3>
+      <p>
+        React allows you to use SEO tags like <code>&lt;title&gt;</code> or <code>&lt;meta&gt;</code>
+        directly in JSX, without manually touching the DOM:
+      </p>
+
+      <pre><code class="language-jsx">function App() {
+  return (
+    &lt;&gt;
+      &lt;title&gt;My React App&lt;/title&gt;
+      &lt;div&gt;{/* Rest of your app */}&lt;/div&gt;
+    &lt;/&gt;
+  )
+}</code></pre>
+
+      <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+        <thead>
+          <tr style="background: #f5f5f5;">
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Advantage</th>
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">✅ Declarative</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">The title is part of the render, not a side effect</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">✅ Less code</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">No extra hook needed</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">✅ More React</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Everything is in JSX, where it belongs</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">✅ Automatic</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Updates with every render, no extra code</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <hr />
+
+      <h3>⚠️ The hidden problem: duplicate &lt;title&gt;</h3>
+      <p>
+        When you implement this solution, if you inspect the DOM in DevTools you'll see
+        <strong>two <code>&lt;title&gt;</code> tags in the <code>&lt;head&gt;</code></strong>.
+      </p>
+      <p>Why? Because:</p>
+      <ul>
+        <li>React renders its own <code>&lt;title&gt;</code> from the component</li>
+        <li>But <code>index.html</code> already has a default <code>&lt;title&gt;</code></li>
+      </ul>
+
+      <p style="padding: 15px; background: #fdecea; border-left: 4px solid #f44336; border-radius: 4px;">
+        <strong>Official React warning:</strong> You should only render a single
+        <code>&lt;title&gt;</code> at a time. If more than one component renders a
+        <code>&lt;title&gt;</code> simultaneously, React places all of them in the
+        <code>&lt;head&gt;</code> and the behavior of browsers and search engines is
+        <strong>undefined</strong>.
+      </p>
+
+      <hr />
+
+      <h3>🔧 Solution: remove &lt;title&gt; from index.html</h3>
+      <p>
+        Remove the <code>&lt;title&gt;</code> tag from the static HTML and let React
+        control the title entirely from your components:
+      </p>
+
+      <pre><code>&lt;!-- ❌ Before (index.html) --&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0" /&gt;
+  &lt;title&gt;Vite + React&lt;/title&gt;  &lt;!-- remove this line --&gt;
+&lt;/head&gt;
+
+&lt;!-- ✅ After (index.html) --&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0" /&gt;
+  &lt;!-- no title here — React manages it --&gt;
+&lt;/head&gt;</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== CODE EXAMPLES ===================== -->
+  <article id="code-examples" class="tab-content">
+    <div class="description">
+
+      <h3>🔄 Dynamic title based on state</h3>
+      <p>
+        The big advantage of managing the title from React is that it can depend on
+        application state. The tab title updates in real time:
+      </p>
+
+      <pre><code class="language-jsx">function App() {
+  const [jobs, setJobs]     = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError]   = useState(null)
+
+  return (
+    &lt;&gt;
+      &lt;title&gt;
+        {loading
+          ? 'Loading...'
+          : error
+          ? 'Error loading'
+          : `${jobs.length} jobs found`}
+      &lt;/title&gt;
+      &lt;div&gt;{/* Rest of the app */}&lt;/div&gt;
+    &lt;/&gt;
+  )
+}</code></pre>
+
+      <p style="padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;">
+        <strong>Important about interpolation:</strong> Children of <code>&lt;title&gt;</code>
+        must be a <em>single string</em>. Use template literals
+        (<code>`${jobs.length} jobs`</code>) to produce one string.
+        If you used <code>{jobs.length} jobs</code> without backticks, you'd be passing
+        an array of two elements (number + text), which causes an error.
+      </p>
+
+      <hr />
+
+      <h3>📋 Dynamic title use cases</h3>
+
+      <pre><code>// The tab title shows in real time:
+
+"Loading…"           ← while data is being fetched
+"Error loading"      ← if something goes wrong
+"25 jobs found"      ← when data arrives
+"No results found"   ← if the search returns nothing</code></pre>
+
+      <hr />
+
+      <h3>🏗️ Full example with a getTitle function</h3>
+
+      <pre><code class="language-jsx">function JobsApp() {
+  const [jobs, setJobs]     = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError]   = useState(null)
+
+  useEffect(() => {
+    fetch('https://jscamp-api.vercel.app/api/jobs')
+      .then((res) => res.json())
+      .then((data) => {
+        setJobs(data.data)
+        setLoading(false)
+      })
+      .catch((err) => {
+        setError(err)
+        setLoading(false)
+      })
+  }, [])
+
+  const getTitle = () => {
+    if (loading)           return 'Loading jobs...'
+    if (error)             return 'Error loading jobs'
+    if (jobs.length === 0) return 'No jobs found'
+    return `${jobs.length} jobs available - JSCamp`
+  }
+
+  return (
+    &lt;&gt;
+      &lt;title&gt;{getTitle()}&lt;/title&gt;
+      &lt;main&gt;
+        {loading &amp;&amp; &lt;p&gt;Loading...&lt;/p&gt;}
+        {error   &amp;&amp; &lt;p&gt;Error: {error.message}&lt;/p&gt;}
+        {!loading &amp;&amp; !error &amp;&amp; &lt;JobsList jobs={jobs} /&gt;}
+      &lt;/main&gt;
+    &lt;/&gt;
+  )
+}</code></pre>
+
+      <hr />
+
+      <h3>🚀 Advantages of dynamic titles</h3>
+
+      <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+        <thead>
+          <tr style="background: #f5f5f5;">
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Advantage</th>
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Detail</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Instant feedback</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">User sees progress in the tab even when not looking at the page</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Better UX</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">This is how modern apps work</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">SEO friendly</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Crawlers see the correct title for each state</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Maintainable</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">All title logic lives in the component, not scattered around</td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </article>
+
+  <!-- ===================== EXERCISES ===================== -->
+  <article id="exercises" class="tab-content">
+    <div class="description">
+
+      <h3>⚠️ Cases where &lt;title&gt; does NOT go to &lt;head&gt;</h3>
+      <p>
+        According to the official React docs, there are two exceptions where <code>&lt;title&gt;</code>
+        is not placed in the document <code>&lt;head&gt;</code>:
+      </p>
+
+      <hr />
+
+      <h3>1. Inside an &lt;svg&gt; component</h3>
+      <p>
+        In this context, <code>&lt;title&gt;</code> doesn't represent the document title —
+        it's an <strong>accessibility annotation</strong> for that SVG graphic:
+      </p>
+
+      <pre><code class="language-jsx">// ✅ Correct — SVG accessibility, does not affect &lt;head&gt;
+&lt;svg&gt;
+  &lt;title&gt;Sales chart&lt;/title&gt;
+  {/* SVG content */}
+&lt;/svg&gt;</code></pre>
+
+      <hr />
+
+      <h3>2. With the itemProp prop</h3>
+      <p>
+        If <code>&lt;title&gt;</code> has an <code>itemProp</code> attribute, it also has no special behavior.
+        It represents schema.org structured metadata about part of the page, not the document title:
+      </p>
+
+      <pre><code class="language-jsx">// ✅ Correct — structured metadata, does not affect &lt;head&gt;
+&lt;div itemScope itemType="https://schema.org/Movie"&gt;
+  &lt;title itemProp="name"&gt;The Godfather&lt;/title&gt;
+  {/* More structured metadata */}
+&lt;/div&gt;</code></pre>
+
+      <hr />
+
+      <h3>📚 Libraries for larger projects</h3>
+      <p>
+        In larger apps you can use dedicated libraries. The principle is the same:
+        manage SEO declaratively from React.
+      </p>
+
+      <pre><code class="language-jsx">// react-helmet
+import { Helmet } from 'react-helmet'
+
+function Page() {
+  return (
+    &lt;&gt;
+      &lt;Helmet&gt;
+        &lt;title&gt;My page - JSCamp&lt;/title&gt;
+        &lt;meta name="description" content="..." /&gt;
+      &lt;/Helmet&gt;
+      {/* Content */}
+    &lt;/&gt;
+  )
+}
+
+// Next.js
+import Head from 'next/head'
+
+function Page() {
+  return (
+    &lt;&gt;
+      &lt;Head&gt;
+        &lt;title&gt;My page - JSCamp&lt;/title&gt;
+      &lt;/Head&gt;
+      {/* Content */}
+    &lt;/&gt;
+  )
+}</code></pre>
+
+      <hr />
+
+      <h3>✅ Best practices and ❌ what to avoid</h3>
+
+      <p><strong>✅ Always do:</strong></p>
+      <ul>
+        <li>Use <code>&lt;title&gt;</code> in JSX instead of <code>document.title</code> in an effect</li>
+        <li>Remove the <code>&lt;title&gt;</code> from <code>index.html</code> to avoid duplicates</li>
+        <li>Use template literals to interpolate values in the title</li>
+        <li>Render only one <code>&lt;title&gt;</code> at a time</li>
+        <li>Reflect app state in the title (loading, error, results)</li>
+      </ul>
+
+      <p><strong>❌ Never do:</strong></p>
+      <ul>
+        <li>Keep a <code>&lt;title&gt;</code> in <code>index.html</code> and also render one from React</li>
+        <li>Use <code>document.title</code> directly when you can use JSX</li>
+        <li>Pass a node array as children of <code>&lt;title&gt;</code> (<code>{count} jobs</code> without template literal)</li>
+        <li>Render multiple <code>&lt;title&gt;</code> tags from different components at the same time</li>
+      </ul>
+
+      <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; text-align: center;">
+        <strong style="color: white; font-size: 1.1em; display: block; margin-bottom: 15px;">📚 Want to go deeper?</strong>
+        <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+          <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/69f3e60d-cb64-83eb-acb7-fb03c9d7670d"
+             target="_blank"
+             style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+            💬 Ask ChatGPT about &lt;title&gt; in React →
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </article>
+
+</section>

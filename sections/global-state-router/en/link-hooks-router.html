@@ -1,0 +1,393 @@
+<section class="box">
+  <h1>Link & React Router Hooks: useNavigate and useLocation</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">Link Component</button>
+    <button class="tab-button" data-tab="code-examples">useNavigate</button>
+    <button class="tab-button" data-tab="exercises">useLocation</button>
+    <button class="tab-button" data-tab="summary">Complete useRouter</button>
+  </div>
+
+  <!-- ===================== CONCEPTS ===================== -->
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+
+      <h3>🔗 Modernizing our Link component</h3>
+      <p>
+        We're going to modernize our app's routing completely. The goal:
+        replace manual implementations with React Router's native tools
+        while keeping the same external API our components already use.
+      </p>
+
+      <pre><code>✅ Keep our own Link component — but change its internals
+✅ Integrate useNavigate and useLocation
+✅ Apply the abstraction pattern to encapsulate React Router
+✅ Zero changes needed in the rest of the app</code></pre>
+
+      <hr />
+
+      <h3>The Link we had before</h3>
+      <p>Our old Link was doing everything manually:</p>
+
+      <pre><code class="language-jsx">export function Link({ to, children, ...props }) {
+  const handleClick = (e) => {
+    e.preventDefault()
+    window.history.pushState({}, '', to)
+    // Dispatch custom event to notify routing system...
+  }
+
+  return (
+    &lt;a href={to} onClick={handleClick} {...props}&gt;
+      {children}
+    &lt;/a&gt;
+  )
+}</code></pre>
+
+      <p>All of this manually… none of this is needed anymore because React Router already has a Link component.</p>
+
+      <hr />
+
+      <h3>What we do now</h3>
+      <p>We keep our Link, but change its internals:</p>
+
+      <pre><code class="language-jsx">import { Link as RRLink } from 'react-router'
+
+export function Link(props) {
+  return &lt;RRLink {...props} /&gt;
+}</code></pre>
+
+      <p>This way:</p>
+      <ul>
+        <li>The whole app keeps using our <code>&lt;Link&gt;</code></li>
+        <li>If tomorrow we want to use another routing library, we only change this one file</li>
+        <li>No need to go through every component one by one</li>
+      </ul>
+
+      <hr />
+
+      <h3>🏗️ Abstraction Pattern</h3>
+      <p>This technique is called the <strong>abstraction pattern</strong> or <strong>dependency abstraction pattern</strong>.</p>
+
+      <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+        <thead>
+          <tr style="background: #f5f5f5;">
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Advantage</th>
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">What it means</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">No coupling to React Router</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Your components don't know React Router exists</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Single place to change</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">One file instead of dozens if you switch libraries</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Stable public API</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Consumers never need to change</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <pre><code>The principle: expose your own stable API,
+hide the library's implementation details,
+centralize all imports of that library in one place.</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== CODE EXAMPLES ===================== -->
+  <article id="code-examples" class="tab-content">
+    <div class="description">
+
+      <h3>🧭 Replacing navigateTo with useNavigate</h3>
+      <p>We had a custom router with a <code>navigateTo</code> method doing navigation manually. React Router offers its own hook: <code>useNavigate</code>.</p>
+
+      <hr />
+
+      <h3>The problem with our manual implementation</h3>
+
+      <pre><code class="language-jsx">function useRouter() {
+  const navigateTo = (path) => {
+    window.history.pushState({}, '', path)
+    // Dispatch custom events
+    // Update state
+    // ... a lot of manual code
+  }
+
+  return { navigateTo }
+}</code></pre>
+
+      <p>This works, but:</p>
+      <ul>
+        <li>We have to maintain it ourselves</li>
+        <li>It can have bugs</li>
+        <li>We're reinventing the wheel</li>
+      </ul>
+
+      <hr />
+
+      <h3>The solution with useNavigate</h3>
+
+      <pre><code class="language-jsx">import { useNavigate } from 'react-router'
+
+export function useRouter() {
+  const navigate = useNavigate()
+
+  const navigateTo = (path) => {
+    navigate(path)
+  }
+
+  return { navigateTo }
+}</code></pre>
+
+      <h3>What we gain</h3>
+
+      <pre><code>✅ No need to manually implement pushState — React Router does it better
+✅ Components keep calling navigateTo — external API doesn't change
+✅ We changed the dependency without breaking anything</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== EXERCISES ===================== -->
+  <article id="exercises" class="tab-content">
+    <div class="description">
+
+      <h3>📍 Replacing manual currentPath with useLocation</h3>
+      <p>
+        Before, we had a <code>currentPath</code> state, a <code>useEffect</code> listening to history events,
+        and our own logic to detect URL changes. React Router includes <code>useLocation</code>, which gives us:
+      </p>
+
+      <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+        <thead>
+          <tr style="background: #f5f5f5;">
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Property</th>
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">What it contains</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>pathname</code></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">The current path: <code>/search</code></td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>search</code></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Query string: <code>?q=react</code></td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>hash</code></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">The hash: <code>#section</code></td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>state</code></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">State passed during navigation</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <hr />
+
+      <h3>The manual code we had before</h3>
+
+      <pre><code class="language-jsx">function useRouter() {
+  const [currentPath, setCurrentPath] = useState(window.location.pathname)
+
+  useEffect(() => {
+    const handleLocationChange = () => {
+      setCurrentPath(window.location.pathname)
+    }
+
+    window.addEventListener('popstate', handleLocationChange)
+    window.addEventListener('pushstate', handleLocationChange)
+
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange)
+      window.removeEventListener('pushstate', handleLocationChange)
+    }
+  }, [])
+
+  return { currentPath }
+}</code></pre>
+
+      <p>All this <code>useEffect</code> and event listeners — no longer needed.</p>
+
+      <hr />
+
+      <h3>The solution with useLocation</h3>
+
+      <pre><code class="language-jsx">import { useLocation } from 'react-router'
+
+export function useRouter() {
+  const location = useLocation()
+
+  const currentPath = location.pathname
+
+  return {
+    currentPath,
+    location,
+  }
+}</code></pre>
+
+      <p>Much cleaner. No side effects to manage.</p>
+
+    </div>
+  </article>
+
+  <!-- ===================== SUMMARY ===================== -->
+  <article id="summary" class="tab-content">
+    <div class="description">
+
+      <h3>🔧 The complete useRouter hook</h3>
+      <p>Putting it all together:</p>
+
+      <pre><code class="language-jsx">import { useNavigate, useLocation } from 'react-router'
+
+export function useRouter() {
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  function navigateTo(path) {
+    navigate(path)
+  }
+
+  const currentPath = location.pathname
+
+  return {
+    currentPath,
+    navigateTo,
+  }
+}</code></pre>
+
+      <pre><code>✅ Zero manual code — no pushState, no custom events, no useEffect
+✅ React Router does the heavy lifting — and does it better than us
+✅ Our API stays the same — components that used useRouter don't change</code></pre>
+
+      <hr />
+
+      <h3>📊 Before vs After</h3>
+
+      <pre><code class="language-jsx">// ❌ Before — Link.jsx (manual)
+export function Link({ to, children, ...props }) {
+  const handleClick = (e) => {
+    e.preventDefault()
+    window.history.pushState({}, '', to)
+    window.dispatchEvent(new Event('pushstate'))
+  }
+  return &lt;a href={to} onClick={handleClick} {...props}&gt;{children}&lt;/a&gt;
+}
+
+// ✅ After — Link.jsx (React Router)
+import { Link as RRLink } from 'react-router'
+export function Link(props) {
+  return &lt;RRLink {...props} /&gt;
+}</code></pre>
+
+      <pre><code class="language-jsx">// ❌ Before — useRouter.js (manual)
+export function useRouter() {
+  const [currentPath, setCurrentPath] = useState(window.location.pathname)
+  useEffect(() => {
+    const handler = () => setCurrentPath(window.location.pathname)
+    window.addEventListener('popstate', handler)
+    window.addEventListener('pushstate', handler)
+    return () => {
+      window.removeEventListener('popstate', handler)
+      window.removeEventListener('pushstate', handler)
+    }
+  }, [])
+  const navigateTo = (path) => {
+    window.history.pushState({}, '', path)
+    window.dispatchEvent(new Event('pushstate'))
+  }
+  return { currentPath, navigateTo }
+}
+
+// ✅ After — useRouter.js (React Router)
+import { useNavigate, useLocation } from 'react-router'
+export function useRouter() {
+  const navigate = useNavigate()
+  const location = useLocation()
+  function navigateTo(path) { navigate(path) }
+  return { currentPath: location.pathname, navigateTo }
+}</code></pre>
+
+      <hr />
+
+      <h3>🚀 Extending the pattern</h3>
+      <p>Once you have this abstraction layer, extending it is trivial:</p>
+
+      <pre><code class="language-jsx">export function useRouter() {
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  function navigateTo(path) {
+    navigate(path)
+  }
+
+  function goBack() {
+    navigate(-1)
+  }
+
+  return {
+    currentPath: location.pathname,
+    navigateTo,
+    goBack,
+    location,
+  }
+}</code></pre>
+
+      <p>All components get the new functionality automatically — without changing a single line in them:</p>
+
+      <pre><code class="language-jsx">const { goBack } = useRouter()
+
+&lt;button onClick={goBack}&gt;← Back&lt;/button&gt;</code></pre>
+
+      <hr />
+
+      <h3>📌 Summary</h3>
+
+      <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+        <thead>
+          <tr style="background: #f5f5f5;">
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Concept</th>
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">What you learned</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Abstraction pattern</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Wrap external deps in your own API to isolate them</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>useNavigate</code></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Replaces all manual <code>pushState</code> and custom events</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>useLocation</code></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Replaces manual <code>currentPath</code> state + <code>useEffect</code></td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Same external API</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Components keep using <code>useRouter</code> and <code>Link</code> unchanged</td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </article>
+
+  <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; text-align: center;">
+    <strong style="color: white; font-size: 1.1em; display: block; margin-bottom: 15px;">📚 Want to go deeper?</strong>
+    <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+      <a href="https://www.jscamp.dev/estado-global-y-react-router/link-y-hooks-usenavigate-uselocation-de-react-router"
+         target="_blank"
+         style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+        📖 Read about Link & hooks on JSCamp →
+      </a>
+    </div>
+  </div>
+
+</section>

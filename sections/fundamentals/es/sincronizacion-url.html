@@ -1,0 +1,324 @@
+<section class="box">
+  <h1>Sincronización de la URL con el Buscador</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">El Problema</button>
+    <button class="tab-button" data-tab="code-examples">React ↔ URL</button>
+    <button class="tab-button" data-tab="exercises">Lazy Init & Validación</button>
+    <button class="tab-button" data-tab="summary">Diagrama Final</button>
+  </div>
+
+  <!-- ===================== CONCEPTS ===================== -->
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+
+      <h3>🧠 ¿Qué resuelve este patrón?</h3>
+      <p>
+        Hacer que el estado del buscador (texto, filtros y página actual) se sincronice con la URL para que la búsqueda sea:
+      </p>
+
+      <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+        <thead>
+          <tr style="background: #f5f5f5;">
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Beneficio</th>
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Qué significa</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Compartible</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Podés enviar la URL y el otro ve exactamente lo mismo</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Persistente tras F5</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Recargar la página no borra los filtros</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Compatible con pestañas</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Cada pestaña puede tener su propio estado de búsqueda</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Historial del navegador</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">El botón atrás funciona como se espera</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <hr />
+
+      <h3>🎯 El objetivo</h3>
+      <p>Tenés dos fuentes de información que siempre deben tener los mismos datos:</p>
+
+      <pre><code>Estado React          URL
+──────────────        ────────────────────────────────
+texto = React         /search?text=React
+filtro = JavaScript   &technology=javascript
+pagina = 2            &page=2</code></pre>
+
+      <hr />
+
+      <h3>⚠️ El problema inicial</h3>
+      <p>El buscador solo actualizaba los resultados, pero <strong>nunca tocaba la URL</strong>:</p>
+
+      <pre><code class="language-jsx">useEffect(() => {
+  fetchJobs({ filters, textToFilter, currentPage })
+}, [filters, textToFilter, currentPage])</code></pre>
+
+      <p>Esto funciona para cargar datos, pero:</p>
+
+      <pre><code>❌ No actualiza la URL
+❌ Si hacés F5, perdés todo
+❌ No podés compartir la búsqueda</code></pre>
+
+      <hr />
+
+      <h3>🔄 Dos sincronizaciones distintas</h3>
+      <p>El patrón en realidad implementa dos flujos separados:</p>
+
+      <pre><code>1. React → URL
+   Usuario escribe "React"
+   → State cambia
+   → URL cambia
+
+2. URL → React
+   URL contiene ?text=React&page=2
+   → React lee la URL
+   → Inicializa el estado</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== CODE EXAMPLES ===================== -->
+  <article id="code-examples" class="tab-content">
+    <div class="description">
+
+      <h3>🔧 Bloque 1: escribir en la URL (React → URL)</h3>
+      <p>Cada vez que cambian filtros, texto o página, un <code>useEffect</code> actualiza la URL:</p>
+
+      <pre><code class="language-jsx">useEffect(() => {
+  const params = new URLSearchParams()
+
+  if (textToFilter) params.set('text', textToFilter)
+  if (filters.technology) params.set('technology', filters.technology)
+  if (currentPage > 1) params.set('page', String(currentPage))
+
+  const newURL = `${window.location.pathname}?${params.toString()}`
+  window.history.pushState({}, '', newURL)
+}, [filters, textToFilter, currentPage])</code></pre>
+
+      <p>Visualmente:</p>
+
+      <pre><code>Usuario cambia filtro
+        ↓
+   filters cambia
+        ↓
+  useEffect se ejecuta
+        ↓
+  URLSearchParams construye
+        ↓
+  /search?technology=javascript</code></pre>
+
+      <hr />
+
+      <h3>✅ Por qué usar <code>URLSearchParams</code> y no concatenación</h3>
+
+      <pre><code class="language-jsx">// ✅ Correcto — URLSearchParams codifica automáticamente
+const params = new URLSearchParams()
+params.set('text', 'React &amp; TypeScript')
+// Resultado: text=React+%26+TypeScript
+
+// ❌ Peligroso — concatenación manual rompe con caracteres especiales
+const url = '/search?text=' + text + '&technology=' + technology</code></pre>
+
+      <hr />
+
+      <h3>🔧 Bloque 4: input sincronizado con el estado</h3>
+      <p>Este es el detalle más fácil de olvidar. Si React tiene <code>textToFilter = 'React'</code> pero el input arranca vacío:</p>
+
+      <pre><code class="language-jsx">// ❌ Input desincronizado — muestra resultados de "React" pero el campo está vacío
+const [text, setText] = useState('')
+
+// ✅ Input sincronizado — el campo muestra el mismo valor que el estado
+const [text, setText] = useState(initialTextToFilter)</code></pre>
+
+      <p>Así el flujo completo queda:</p>
+
+      <pre><code>URL → State → Input
+
+Todo muestra el mismo valor.</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== EXERCISES ===================== -->
+  <article id="exercises" class="tab-content">
+    <div class="description">
+
+      <h3>🔧 Bloque 2: leer la URL al arrancar (URL → React)</h3>
+      <p>
+        Si siempre arrancás el estado en <code>1</code>, ignorás lo que dice la URL:
+      </p>
+
+      <pre><code class="language-jsx">// ❌ Ignora la URL — siempre arranca en página 1
+const [currentPage, setCurrentPage] = useState(1)
+
+// ✅ Lee la URL — arranca en la página correcta
+const [currentPage, setCurrentPage] = useState(() => {
+  const params = new URLSearchParams(window.location.search)
+  const page = Number(params.get('page'))
+  return Number.isNaN(page) || page &lt; 1 ? 1 : page
+})</code></pre>
+
+      <hr />
+
+      <h3>⚡ Concepto React importante: Lazy Initialization</h3>
+      <p>Mucha gente no entiende la diferencia entre estas dos formas:</p>
+
+      <pre><code class="language-jsx">// Forma 1 — se ejecuta en CADA render (aunque el valor no cambie)
+const [page, setPage] = useState(getPageFromURL())
+
+// Forma 2 — se ejecuta UNA SOLA VEZ (lazy initialization)
+const [page, setPage] = useState(() => getPageFromURL())</code></pre>
+
+      <p>
+        Cuando pasás una <strong>función</strong> a <code>useState</code>, React la ejecuta solo en el primer render.
+        Por eso se llama <strong>lazy initialization</strong>.
+      </p>
+
+      <hr />
+
+      <h3>🛡️ Bloque 3: validación de la URL</h3>
+      <p>Muy buena práctica. Alguien podría escribir manualmente en la URL:</p>
+
+      <pre><code>?page=hola   → Number('hola') = NaN → rompe la lógica
+?page=-500   → Página inválida → comportamiento inesperado</code></pre>
+
+      <pre><code class="language-jsx">function getPageFromURL() {
+  const params = new URLSearchParams(window.location.search)
+  const page = Number(params.get('page'))
+
+  if (Number.isNaN(page) || page &lt; 1) return 1
+
+  return page
+}</code></pre>
+
+      <hr />
+
+      <h3>💡 Mejora: helper reutilizable</h3>
+      <p>El tutorial repite varias veces <code>new URLSearchParams(window.location.search)</code>. Podría extraerse:</p>
+
+      <pre><code class="language-jsx">// Antes — repetido en varios lugares
+const params = new URLSearchParams(window.location.search)
+
+// Después — un helper limpio
+function getSearchParams() {
+  return new URLSearchParams(window.location.search)
+}
+
+// Uso
+const params = getSearchParams()</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== SUMMARY ===================== -->
+  <article id="summary" class="tab-content">
+    <div class="description">
+
+      <h3>🗺️ Diagrama completo del flujo</h3>
+
+      <pre><code>— Cuando el usuario interactúa —
+
+Usuario cambia filtro / texto / página
+              ↓
+        Estado React cambia
+              ↓
+          useEffect
+              ↓
+     URLSearchParams construye
+              ↓
+      window.history.pushState
+              ↓
+           URL actualizada
+
+— Cuando la página carga / F5 —
+
+              URL
+              ↓
+    useState(() => { leer URL })
+              ↓
+        Estado React inicializado
+              ↓
+          API Call
+              ↓
+          Resultados</code></pre>
+
+      <hr />
+
+      <h3>🎯 La respuesta de entrevista</h3>
+      <p>Si en una entrevista te preguntan: <em>"¿Cómo sincronizarías filtros y paginación con la URL?"</em></p>
+
+      <ol>
+        <li>Guardo filtros, texto y página en React State.</li>
+        <li>Uso un <code>useEffect</code> para actualizar la URL cuando cambie el estado.</li>
+        <li>Uso <code>URLSearchParams</code> para construir los query params sin concatenación manual.</li>
+        <li>Inicializo los <code>useState</code> leyendo los parámetros de la URL.</li>
+        <li>Valido los valores que vienen de la URL con <code>Number.isNaN</code> y rangos.</li>
+        <li>Mantengo inputs y filtros sincronizados con el estado inicial correcto.</li>
+      </ol>
+
+      <hr />
+
+      <h3>📌 Resumen de conceptos clave</h3>
+
+      <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+        <thead>
+          <tr style="background: #f5f5f5;">
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Concepto</th>
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Para qué sirve</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>URLSearchParams</code></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Construir y leer query params de forma segura</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><code>window.history.pushState</code></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Actualizar la URL sin recargar la página</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Lazy initialization</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Inicializar estado desde la URL solo una vez</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Validación de URL</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Proteger contra valores inválidos escritos manualmente</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Input sincronizado</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Consistencia visual entre URL, estado e input</td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </article>
+
+  <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; text-align: center;">
+    <strong style="color: white; font-size: 1.1em; display: block; margin-bottom: 15px;">📚 ¿Querés profundizar más?</strong>
+    <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+      <a href="https://www.jscamp.dev/introduccion-a-react/sincronizacion-de-la-url"
+         target="_blank"
+         style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+        📖 Lee sobre Sincronización de la URL en JSCamp →
+      </a>
+      <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633/c/6a189f1c-90e0-83eb-85f6-d9c32c36c8f7"
+         target="_blank"
+         style="color: #fff; text-decoration: underline; font-size: 1.05em;">
+        💬 Preguntarle a ChatGPT sobre Sincronización de la URL →
+      </a>
+    </div>
+  </div>
+
+</section>
