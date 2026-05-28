@@ -397,30 +397,33 @@ nav a.active {
 }
 
 .tab-button {
-  padding: 0.625rem 1rem;
-  background-color: #f0f0f0;
-  border: 1px solid var(--border-color);
-  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  background-color: var(--bg-hover);
+  border: 1px solid var(--border);
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 0.95rem;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: var(--fs-sm);
   font-weight: 500;
-  transition: all 0.3s ease;
+  color: var(--text-muted);
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
   white-space: nowrap;
 }
 
 .tab-button:hover {
-  background-color: #e0e0e0;
+  background-color: var(--border);
+  color: var(--text-primary);
 }
 
 .tab-button.active {
-  background-color: var(--primary-color);
-  color: white;
-  border-color: var(--primary-color);
+  background-color: var(--accent-dim);
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 600;
 }
 
 .tab-button.active:hover {
-  background-color: var(--primary-hover);
-  border-color: var(--primary-hover);
+  background-color: rgba(97, 218, 251, 0.2);
 }
 
 .tab-content {
@@ -429,6 +432,7 @@ nav a.active {
 
 .tab-content.active {
   display: block;
+  animation: fadeIn 150ms ease;
 }
 
 /* ==========================================
