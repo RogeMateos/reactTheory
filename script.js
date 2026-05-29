@@ -1,12 +1,15 @@
 document.addEventListener("DOMContentLoaded", () => {
   const content = document.getElementById("content");
-  const nav = document.querySelector("nav");
-  const navbar = document.getElementById("navbar");
+  const nav = document.getElementById("navbar");
+  const navbar = nav;
   const menuToggle = document.getElementById("menuToggle");
   const languageToggle = document.getElementById("languageToggle");
   const title = document.getElementById("title");
+  const pageToc = document.querySelector(".page-toc");
+  const pageTocList = document.getElementById("pageTocList");
 
   let currentLanguage = localStorage.getItem("language") || "en";
+  let headingObserver = null;
 
   // Menu toggle functionality
   menuToggle.addEventListener("click", () => {
@@ -83,13 +86,16 @@ document.addEventListener("DOMContentLoaded", () => {
       })
       .then((html) => {
         content.innerHTML = html;
+        setupLessonContext(section);
         Prism.highlightAll();
         setupCodeExecution();
         setupTabs();
+        setupOnThisPage();
       })
       .catch((error) => {
         console.error("Error loading content:", error);
         content.innerHTML = `<p>Error loading content for ${section}. Please try again later.</p>`;
+        setupOnThisPage();
       });
   }
 
@@ -98,6 +104,11 @@ document.addEventListener("DOMContentLoaded", () => {
       currentLanguage === "en" ? "&lt; React Theory /&gt;" : "&lt; Teoría de React /&gt;";
     languageToggle.textContent =
       currentLanguage === "en" ? "Español" : "English";
+    const pageTocTitle = document.getElementById("page-toc-title");
+    if (pageTocTitle) {
+      pageTocTitle.textContent =
+        currentLanguage === "en" ? "On This Page" : "En esta página";
+    }
 
     nav.querySelectorAll("a, .accordion-header").forEach((element) => {
       const key =
@@ -240,8 +251,194 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  function setupLessonContext(section) {
+    const activeLink = Array.from(nav.querySelectorAll("a[data-section]")).find(
+      (link) => link.getAttribute("data-section") === section
+    );
+
+    if (!activeLink) return;
+
+    const group = activeLink.closest(".accordion-content");
+    const groupLinks = group
+      ? Array.from(group.querySelectorAll("a[data-section]"))
+      : [];
+    const sectionTitle =
+      group?.previousElementSibling?.textContent.trim() ||
+      (currentLanguage === "en" ? "Course" : "Curso");
+    const lessonTitle = activeLink.textContent.trim();
+    const lessonIndex = groupLinks.indexOf(activeLink) + 1;
+    const lessonTotal = groupLinks.length;
+
+    const context = document.createElement("div");
+    context.className = "lesson-context";
+    context.setAttribute("aria-label", currentLanguage === "en" ? "Lesson context" : "Contexto de la lección");
+
+    const sectionEl = document.createElement("span");
+    sectionEl.className = "lesson-context__section";
+    sectionEl.textContent = sectionTitle;
+
+    const separatorEl = document.createElement("span");
+    separatorEl.className = "lesson-context__separator";
+    separatorEl.textContent = "›";
+
+    const currentEl = document.createElement("span");
+    currentEl.className = "lesson-context__current";
+    currentEl.textContent = lessonTitle;
+
+    context.append(sectionEl, separatorEl, currentEl);
+
+    if (lessonIndex > 0 && lessonTotal > 0) {
+      const metaSeparatorEl = document.createElement("span");
+      metaSeparatorEl.className = "lesson-context__separator";
+      metaSeparatorEl.textContent = "·";
+
+      const metaEl = document.createElement("span");
+      metaEl.className = "lesson-context__meta";
+      metaEl.textContent =
+        currentLanguage === "en"
+          ? `Lesson ${lessonIndex} of ${lessonTotal}`
+          : `Lección ${lessonIndex} de ${lessonTotal}`;
+
+      context.append(metaSeparatorEl, metaEl);
+    }
+
+    content.prepend(context);
+  }
+
+  function setupOnThisPage() {
+    if (!pageToc || !pageTocList) return;
+
+    if (headingObserver) {
+      headingObserver.disconnect();
+      headingObserver = null;
+    }
+
+    pageTocList.innerHTML = "";
+
+    const headings = Array.from(content.querySelectorAll("h2, h3")).filter(
+      (heading) => heading.textContent.trim().length > 0
+    );
+
+    pageToc.classList.toggle("is-empty", headings.length === 0);
+
+    if (headings.length === 0) {
+      return;
+    }
+
+    const headingSet = new Set(headings);
+    const usedIds = new Set(
+      Array.from(document.querySelectorAll("[id]"))
+        .filter((element) => !headingSet.has(element))
+        .map((element) => element.id)
+        .filter(Boolean)
+    );
+
+    headings.forEach((heading) => {
+      heading.id = getStableHeadingId(heading, usedIds);
+
+      const item = document.createElement("li");
+      item.className = `page-toc__item page-toc__item--${heading.tagName.toLowerCase()}`;
+
+      const link = document.createElement("a");
+      link.className = "page-toc__link";
+      link.href = `#${heading.id}`;
+      link.textContent = heading.textContent.trim();
+
+      link.addEventListener("click", (event) => {
+        event.preventDefault();
+        heading.scrollIntoView({ behavior: "smooth", block: "start" });
+        history.replaceState(null, "", `#${heading.id}`);
+        setActiveTocLink(link);
+      });
+
+      item.appendChild(link);
+      pageTocList.appendChild(item);
+    });
+
+    setupTocActiveState(headings);
+  }
+
+  function getStableHeadingId(heading, usedIds) {
+    const existingId = heading.getAttribute("id");
+
+    if (existingId && !usedIds.has(existingId)) {
+      usedIds.add(existingId);
+      return existingId;
+    }
+
+    const baseId =
+      slugify(heading.textContent) ||
+      `section-${heading.tagName.toLowerCase()}`;
+    let id = baseId;
+    let counter = 2;
+
+    while (usedIds.has(id)) {
+      id = `${baseId}-${counter}`;
+      counter += 1;
+    }
+
+    usedIds.add(id);
+    return id;
+  }
+
+  function slugify(text) {
+    return text
+      .trim()
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/&/g, " and ")
+      .replace(/[^a-z0-9\s-]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "");
+  }
+
+  function setupTocActiveState(headings) {
+    const links = Array.from(pageTocList.querySelectorAll(".page-toc__link"));
+
+    if (!("IntersectionObserver" in window)) {
+      setActiveTocLink(links[0]);
+      return;
+    }
+
+    headingObserver = new IntersectionObserver(
+      (entries) => {
+        const visibleEntry = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+
+        if (!visibleEntry) return;
+
+        const activeLink = Array.from(
+          pageTocList.querySelectorAll(".page-toc__link")
+        ).find(
+          (link) => link.getAttribute("href") === `#${visibleEntry.target.id}`
+        );
+
+        setActiveTocLink(activeLink);
+      },
+      {
+        rootMargin: "-20% 0px -65% 0px",
+        threshold: 0.01,
+      }
+    );
+
+    headings.forEach((heading) => headingObserver.observe(heading));
+    setActiveTocLink(links[0]);
+  }
+
+  function setActiveTocLink(activeLink) {
+    if (!activeLink || !pageTocList) return;
+
+    pageTocList
+      .querySelectorAll(".page-toc__link")
+      .forEach((link) => link.classList.toggle("active", link === activeLink));
+  }
+
   // Initial setup
   updateLanguage();
   setupCodeExecution();
   setupTabs();
+  setupOnThisPage();
 });

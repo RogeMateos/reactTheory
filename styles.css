@@ -14,6 +14,12 @@
   --text-heading: #ffffff;
   --border: #30363d;
   --border-accent: #61dafb;
+  --header-height: 60px;
+  --sidebar-width: 272px;
+  --toc-width: 184px;
+  --content-width: 1120px;
+  --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
 
   /* Legacy aliases kept for content files that reference these */
   --primary-color: #61dafb;
@@ -26,14 +32,18 @@
 
   /* Typography scale */
   --fs-body: 1rem;
+  --fs-xs: 0.75rem;
   --fs-sm: 0.875rem;
+  --fs-h4: 1rem;
   --fs-h3: 1.125rem;
-  --fs-h2: 1.5rem;
-  --fs-h1: 2rem;
+  --fs-h2: 1.625rem;
+  --fs-h1: 2.25rem;
 
   /* Line Heights */
-  --lh-tight: 1.2;
-  --lh-normal: 1.6;
+  --lh-tight: 1.12;
+  --lh-heading: 1.2;
+  --lh-normal: 1.65;
+  --lh-copy: 1.75;
   --lh-relaxed: 1.75;
 }
 
@@ -56,7 +66,7 @@ body {
 }
 
 body {
-  font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-sans);
   color: var(--text-primary);
   background-color: var(--bg-primary);
   line-height: var(--lh-normal);
@@ -72,16 +82,19 @@ body {
 
 h1,
 h2,
-h3 {
-  font-family: "JetBrains Mono", monospace;
+h3,
+h4 {
+  font-family: var(--font-sans);
   color: var(--text-heading);
-  line-height: var(--lh-tight);
+  line-height: var(--lh-heading);
   font-weight: 700;
-  margin: 1.5rem 0 0.75rem;
+  margin: 1.75rem 0 0.85rem;
+  text-wrap: balance;
 }
 
 h1 {
   font-size: var(--fs-h1);
+  line-height: var(--lh-tight);
   margin-top: 0;
 }
 
@@ -94,9 +107,15 @@ h3 {
   font-weight: 600;
 }
 
+h4 {
+  font-size: var(--fs-h4);
+  font-weight: 700;
+}
+
 p {
-  margin: 0 0 1rem;
+  margin: 0 0 1.2rem;
   color: var(--text-primary);
+  line-height: var(--lh-copy);
 }
 
 /* ==========================================
@@ -111,14 +130,14 @@ header {
   justify-content: space-between;
   align-items: center;
   padding: 0 1.5rem;
-  height: 60px;
+  height: var(--header-height);
   background-color: var(--bg-sidebar);
   border-bottom: 1px solid var(--border);
 }
 
 header h1 {
   margin: 0;
-  font-family: "JetBrains Mono", monospace;
+  font-family: var(--font-mono);
   font-size: 1.125rem;
   font-weight: 600;
   color: var(--text-heading);
@@ -138,7 +157,7 @@ header h1 {
   padding: 0.375rem 0.875rem;
   border-radius: 6px;
   cursor: pointer;
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: var(--font-sans);
   font-size: var(--fs-sm);
   font-weight: 500;
   transition: border-color 0.2s ease, color 0.2s ease;
@@ -155,18 +174,21 @@ header h1 {
 
 .container {
   display: grid;
-  grid-template-columns: 280px 1fr;
-  min-height: calc(100vh - 60px);
-  max-width: 1400px;
+  grid-template-columns: var(--sidebar-width) minmax(0, var(--content-width)) var(--toc-width);
+  gap: clamp(1.75rem, 2.6vw, 2.85rem);
+  align-items: start;
+  min-height: calc(100vh - var(--header-height));
+  max-width: 1700px;
   margin: 0 auto;
+  padding-right: clamp(1rem, 1.8vw, 1.75rem);
 }
 
 .box {
-  background-color: var(--bg-sidebar);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 1.5rem 2rem;
-  margin: 1.5rem 0;
+  background-color: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  margin: 0;
   animation: fadeIn 150ms ease;
 }
 
@@ -176,8 +198,189 @@ header h1 {
 
 #content {
   min-height: 300px;
-  padding: 2rem 3rem;
-  max-width: 860px;
+  width: 100%;
+  max-width: var(--content-width);
+  padding: clamp(3.15rem, 5vw, 4.75rem) 0 clamp(4.5rem, 7.5vw, 6.5rem);
+}
+
+.lesson-context {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  align-items: center;
+  margin-bottom: clamp(2.15rem, 3.5vw, 3rem);
+  color: rgba(139, 148, 158, 0.76);
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.lesson-context__section,
+.lesson-context__meta {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.075em;
+  text-transform: uppercase;
+}
+
+.lesson-context__current {
+  color: rgba(230, 237, 243, 0.86);
+}
+
+.lesson-context__separator {
+  color: rgba(139, 148, 158, 0.45);
+}
+
+.lesson-context__meta {
+  color: rgba(97, 218, 251, 0.62);
+}
+
+#content > .box > h1:first-child,
+#content > .box > .description > h1:first-child {
+  margin-top: 0;
+}
+
+#content h1 {
+  max-width: 21ch;
+  margin-bottom: clamp(2.65rem, 4.75vw, 3.65rem);
+  font-size: clamp(2.125rem, 4vw, var(--fs-h1));
+  font-weight: 700;
+  line-height: 1.06;
+  letter-spacing: -0.055em;
+}
+
+#content h1 + .tab-buttons {
+  margin-top: -0.85rem;
+}
+
+#content h2 {
+  margin-top: 3.85rem;
+  margin-bottom: 1.15rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(48, 54, 61, 0.65);
+  font-weight: 700;
+  line-height: 1.18;
+  letter-spacing: -0.035em;
+}
+
+#content h3 {
+  margin-top: 2.5rem;
+  margin-bottom: 0.85rem;
+  font-weight: 700;
+  line-height: 1.28;
+  letter-spacing: -0.025em;
+}
+
+#content h4 {
+  margin-top: 2rem;
+  margin-bottom: 0.7rem;
+  color: var(--text-heading);
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+}
+
+#content p,
+#content li {
+  max-width: 80ch;
+}
+
+#content p {
+  color: rgba(230, 237, 243, 0.92);
+}
+
+#content strong {
+  color: var(--text-heading);
+  font-weight: 700;
+}
+
+#content pre,
+#content table,
+#content .state-table,
+#content .resource-box,
+#content .code-runner,
+#content .tab-buttons,
+#content .tab-content,
+#content .callout-warning,
+#content .callout-danger,
+#content .callout-success,
+#content .callout-info,
+#content .callout-neutral,
+#content .callout-code {
+  max-width: 100%;
+}
+
+#content :is(h1, h2, h3, h4) {
+  scroll-margin-top: calc(var(--header-height) + 1.25rem);
+}
+
+/* ==========================================
+   ON THIS PAGE
+   ========================================== */
+
+.page-toc {
+  position: sticky;
+  top: var(--header-height);
+  height: calc(100vh - var(--header-height));
+  padding: clamp(3.15rem, 5vw, 4.75rem) 0 2rem;
+  overflow-y: auto;
+}
+
+.page-toc__inner {
+  border-left: 1px solid rgba(48, 54, 61, 0.42);
+  padding-left: 0.75rem;
+}
+
+.page-toc__title {
+  margin: 0 0 0.7rem;
+  color: rgba(139, 148, 158, 0.58);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.085em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.page-toc__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  line-height: 1.4;
+}
+
+.page-toc__item {
+  margin: 0;
+}
+
+.page-toc__item--h3 {
+  padding-left: 0.6rem;
+}
+
+.page-toc__link {
+  display: block;
+  padding: 0.27rem 0;
+  color: rgba(139, 148, 158, 0.62);
+  font-size: 0.7rem;
+  font-weight: 500;
+  line-height: 1.32;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.page-toc__link:hover {
+  color: rgba(230, 237, 243, 0.74);
+  text-decoration: none;
+}
+
+.page-toc__link.active {
+  color: rgba(97, 218, 251, 0.66);
+  font-weight: 600;
+}
+
+.page-toc.is-empty {
+  visibility: hidden;
 }
 
 /* ==========================================
@@ -211,23 +414,37 @@ pre {
   border-radius: 6px;
   padding: 1rem;
   overflow-x: auto;
-  font-size: 0.85rem;
-  line-height: 1.5;
+  font-size: 0.875rem;
+  line-height: 1.6;
   white-space: pre-wrap;
   word-wrap: break-word;
   overflow-wrap: break-word;
   max-width: 100%;
-  margin: 1rem 0;
+  margin: 1.35rem 0 1.6rem;
 }
 
 code {
-  font-family: "JetBrains Mono", "Courier New", monospace;
+  font-family: var(--font-mono);
   font-size: 0.875em;
+  font-weight: 500;
+}
+
+*:not(pre) > code {
+  padding: 0.1rem 0.32rem;
+  border: 1px solid rgba(48, 54, 61, 0.9);
+  border-radius: 0.35rem;
+  background-color: rgba(97, 218, 251, 0.08);
+  color: var(--accent);
+  font-size: 0.82em;
 }
 
 pre code {
   display: block;
   color: var(--text-primary);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: inherit;
 }
 
 /* ==========================================
@@ -238,19 +455,19 @@ ul,
 ol {
   list-style: none;
   padding-left: 0;
-  margin-bottom: 1.25rem;
-  line-height: var(--lh-relaxed);
+  margin: 0 0 1.75rem;
+  line-height: var(--lh-copy);
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
 
 li {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.7rem;
 }
 
 li ul,
 li ol {
-  margin: 0.5rem 0;
+  margin: 0.65rem 0 0.2rem;
 }
 
 /* ==========================================
@@ -287,49 +504,50 @@ li ol {
   transform: rotate(-45deg) translate(5px, -7px);
 }
 
-nav,
-.navbar {
-  background-color: var(--bg-sidebar);
-  border-right: 1px solid var(--border);
-  padding: 1.25rem 0;
+#navbar {
+  background: linear-gradient(180deg, rgba(22, 27, 34, 0.56), rgba(13, 17, 23, 0.26));
+  border-right: 1px solid rgba(48, 54, 61, 0.42);
+  padding: 1.65rem 0.65rem 1.65rem 0;
   overflow-y: auto;
-  height: calc(100vh - 60px);
+  height: calc(100vh - var(--header-height));
   position: sticky;
-  top: 60px;
+  top: var(--header-height);
 }
 
-nav ul {
+#navbar ul {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-nav li {
+#navbar li {
   margin: 0;
 }
 
-nav a {
+#navbar a {
   display: block;
-  padding: 0.375rem 1.25rem;
-  color: var(--text-muted);
-  font-size: var(--fs-sm);
+  padding: 0.4rem 1rem 0.4rem 1.25rem;
+  color: rgba(139, 148, 158, 0.8);
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
   font-weight: 500;
+  line-height: 1.45;
   text-decoration: none;
   border-left: 2px solid transparent;
-  transition: color 0.2s ease, background-color 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+  border-radius: 0 8px 8px 0;
+  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
 }
 
-nav a:hover {
-  color: var(--text-primary);
-  background-color: var(--bg-hover);
-  transform: translateX(4px);
+#navbar a:hover {
+  color: rgba(230, 237, 243, 0.88);
+  background-color: rgba(33, 38, 45, 0.42);
   text-decoration: none;
 }
 
-nav a.active {
-  color: var(--accent);
-  border-left-color: var(--border-accent);
-  background-color: var(--accent-dim);
+#navbar a.active {
+  color: rgba(97, 218, 251, 0.82);
+  border-left-color: rgba(97, 218, 251, 0.68);
+  background-color: rgba(97, 218, 251, 0.055);
   font-weight: 600;
 }
 
@@ -344,18 +562,18 @@ nav a.active {
 }
 
 .accordion > li {
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.72rem;
 }
 
 .accordion-header {
   display: block;
-  padding: 0.625rem 1.25rem;
-  font-family: "JetBrains Mono", monospace;
-  font-size: 0.7rem;
+  padding: 0.78rem 1rem 0.48rem 1.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.095em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: rgba(97, 218, 251, 0.68);
   cursor: pointer;
   margin: 0;
   transition: color 0.2s ease;
@@ -363,11 +581,11 @@ nav a.active {
 
 .accordion-header::before {
   content: "> ";
-  opacity: 0.7;
+  opacity: 0.42;
 }
 
 .accordion-header:hover {
-  color: var(--text-heading);
+  color: rgba(230, 237, 243, 0.82);
 }
 
 .accordion-content {
@@ -395,7 +613,7 @@ nav a.active {
    ========================================== */
 
 .tab-buttons {
-  margin-bottom: 1.5rem;
+  margin: 1rem 0 3.1rem;
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
@@ -407,7 +625,7 @@ nav a.active {
   border: 1px solid var(--border);
   border-radius: 6px;
   cursor: pointer;
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: var(--font-sans);
   font-size: var(--fs-sm);
   font-weight: 500;
   color: var(--text-muted);
@@ -429,6 +647,16 @@ nav a.active {
 
 .tab-button.active:hover {
   background-color: rgba(97, 218, 251, 0.2);
+}
+
+.badge,
+.label,
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .tab-content {
@@ -461,7 +689,7 @@ table th {
   background-color: var(--bg-hover);
   color: var(--accent);
   font-weight: 700;
-  font-family: "JetBrains Mono", monospace;
+  font-family: var(--font-mono);
   font-size: 0.75rem;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -502,8 +730,9 @@ table tr:hover {
 
 .resource-box__title {
   color: var(--text-heading);
-  font-size: 1.05rem;
-  font-weight: 600;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  line-height: 1.35;
   display: block;
   margin-bottom: 1rem;
 }
@@ -531,7 +760,7 @@ table tr:hover {
 
 .loading-state {
   color: var(--text-muted);
-  font-family: "JetBrains Mono", monospace;
+  font-family: var(--font-mono);
   font-size: var(--fs-sm);
   padding: 2rem 0;
   opacity: 0.6;
@@ -564,8 +793,9 @@ table tr:hover {
 .callout-code {
   padding: 1rem 1.25rem;
   border-radius: 6px;
-  margin: 1rem 0;
+  margin: 1.35rem 0 1.6rem;
   border-left: 4px solid;
+  line-height: var(--lh-copy);
 }
 
 .callout-warning {
@@ -603,7 +833,7 @@ table tr:hover {
   border: 1px solid var(--border);
   border-left: 4px solid var(--border);
   color: var(--text-primary);
-  font-family: "JetBrains Mono", monospace;
+  font-family: var(--font-mono);
 }
 
 /* ==========================================
@@ -620,6 +850,7 @@ table tr:hover {
     width: 100%;
     max-width: 100%;
     overflow-x: hidden;
+    padding-right: 0;
   }
 
   header {
@@ -627,45 +858,53 @@ table tr:hover {
   }
 
   #content {
-    padding: 1.25rem 1rem;
+    padding: 2rem 1rem;
     width: 100%;
     max-width: 100%;
     overflow-x: hidden;
+  }
+
+  .lesson-context {
+    margin-bottom: 1.75rem;
+    font-size: 0.75rem;
   }
 
   .menu-toggle {
     display: flex;
   }
 
-  nav,
-  .navbar {
+  #navbar {
     display: none;
     position: fixed;
-    top: 60px;
+    top: var(--header-height);
     left: 0;
     right: 0;
-    height: calc(100vh - 60px);
+    height: calc(100vh - var(--header-height));
     border-right: none;
     border-bottom: 1px solid var(--border);
     z-index: 100;
     overflow-y: auto;
   }
 
-  nav.active,
-  .navbar.active {
+  #navbar.active {
     display: block;
   }
 
   .box {
-    padding: 1rem;
+    padding: 0;
     margin: 1rem 0;
     border-radius: 0;
     border-left: none;
     border-right: none;
   }
 
+  .page-toc {
+    display: none;
+  }
+
   .tab-buttons {
     gap: 0.25rem;
+    margin-bottom: 2.4rem;
   }
 
   .tab-button {
@@ -692,10 +931,25 @@ table tr:hover {
 @media (min-width: 768px) {
   :root {
     --fs-body: 1rem;
+    --fs-xs: 0.75rem;
     --fs-sm: 0.875rem;
-    --fs-h3: 1.25rem;
-    --fs-h2: 1.625rem;
-    --fs-h1: 2.125rem;
+    --fs-h4: 1.0625rem;
+    --fs-h3: 1.3125rem;
+    --fs-h2: 1.75rem;
+    --fs-h1: 2.75rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1279px) {
+  .container {
+    grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+    gap: clamp(1.5rem, 4vw, 3rem);
+    max-width: 1280px;
+    padding-right: clamp(1.5rem, 4vw, 3rem);
+  }
+
+  .page-toc {
+    display: none;
   }
 }
 
@@ -703,12 +957,14 @@ table tr:hover {
   :root {
     --fs-body: 1.0625rem;
     --fs-sm: 0.9375rem;
-    --fs-h3: 1.3125rem;
-    --fs-h2: 1.75rem;
-    --fs-h1: 2.25rem;
+    --fs-h4: 1.125rem;
+    --fs-h3: 1.375rem;
+    --fs-h2: 1.875rem;
+    --fs-h1: 3.125rem;
   }
 
   #content {
-    padding: 2.5rem 3.5rem;
+    padding-top: clamp(2.5rem, 4vw, 3.5rem);
+    padding-bottom: clamp(4rem, 7vw, 6rem);
   }
 }
