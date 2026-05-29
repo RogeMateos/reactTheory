@@ -60,8 +60,8 @@ document.addEventListener("DOMContentLoaded", () => {
     content.innerHTML = '<div class="loading-state">Loading...</div>';
     const lang = currentLanguage === "es" ? "es" : "en";
     const hooks = ["useState", "useEffect", "useEffect2midu", "useEffect3midu", "useContext", "useRef", "useReducer", "globalSwitch", "useId", "customHooks", "customHooks2"];
-    const fundamentals = ["componentes", "componentesVsFunciones", "jobCard", "props", "modulos", "paginacion", "callbacks", "listas", "paginacion-final", "css-modules", "eventos", "renderizado", "spa", "vite-bundlers", "vite-install", "fast-refresh", "bareBonesMethod", "lifeCicle", "formularios", "filtros-routing", "formulario-navegacion", "componente-route", "llamada-api", "filtros-api", "paginacion-api", "arreglando-paginacion", "sincronizacion-url"];
-    const globalStateAndRouter = ["react-router", "crear-rutas"];
+    const fundamentals = ["componentes", "componentesVsFunciones", "jobCard", "props", "modulos", "paginacion", "callbacks", "listas", "paginacion-final", "css-modules", "eventos", "renderizado", "spa", "vite-bundlers", "vite-install", "fast-refresh", "document-title", "bareBonesMethod", "lifeCicle", "formularios", "filtros-routing", "formulario-navegacion", "componente-route", "llamada-api", "filtros-api", "paginacion-api", "arreglando-paginacion", "sincronizacion-url"];
+    const globalStateAndRouter = ["routerBrowser", "react-router", "crear-rutas", "link-hooks-router"];
     const interview = ["interviewQuestions", "react-hooks-rules-and-order", "react-hooks-masterclass"];
 
     let folder = "";
@@ -152,8 +152,9 @@ document.addEventListener("DOMContentLoaded", () => {
       "vite-bundlers": { en: "Vite & Bundlers", es: "Vite y Bundlers" },
       "vite-install": { en: "Installing Vite", es: "Instalación de Vite" },
       "fast-refresh": { en: "Fast Refresh & State Updates", es: "Fast Refresh y Actualizaciones de Estado" },
+      "document-title": { en: "Managing <title> in React", es: "Gestión del <title> en React" },
       useState: { en: "State with useState", es: "Estado con useState" },
-      lifeCycle: { en: "LifeCycle", es: "Ciclo de Vida" },
+      lifeCicle: { en: "LifeCycle", es: "Ciclo de Vida" },
       bareBonesMethod: { en: "The Bare Bones Method", es: "The Bare Bones Method" },
       routerBrowser: {
         en: "Router Browser Navigation",
@@ -161,10 +162,13 @@ document.addEventListener("DOMContentLoaded", () => {
       },
       useContext: { en: "useContext", es: "useContext" },
       useEffect: { en: "useEffect", es: "useEffect" },
+      useRef: { en: "useRef", es: "useRef" },
+      useReducer: { en: "useReducer", es: "useReducer" },
       fundamentals: { en: "Fundamentals", es: "Fundamentos" },
-      globalStateAndRouter: { en: "Global State & React Router", es: "Estado Global y React Router" },
+      globalStateAndRouter: { en: "React Router & Global State", es: "React Router y Estado Global" },
       "react-router": { en: "What is React Router?", es: "¿Qué es React Router?" },
       "crear-rutas": { en: "How to Create Routes", es: "Cómo Crear Rutas" },
+      "link-hooks-router": { en: "Link & Router Hooks", es: "Link y Hooks del Router" },
       hooks: { en: "Hooks", es: "Hooks" },
       routing: { en: "Routing", es: "Enrutamiento" },
       globalSwitch: { en: "Global Switch (useContext)", es: "Global Switch (useContext)" },
@@ -177,6 +181,14 @@ document.addEventListener("DOMContentLoaded", () => {
       interviewQuestions: {
         en: "Accessing Previous State/Props",
         es: "Acceder al Estado/Props Anterior",
+      },
+      "react-hooks-rules-and-order": {
+        en: "React Hooks Rules & Order",
+        es: "Reglas y Orden de React Hooks",
+      },
+      "react-hooks-masterclass": {
+        en: "React Hooks Masterclass",
+        es: "Masterclass de React Hooks",
       },
       interviewQuestionsHeader: {
         en: "Interview Questions",
