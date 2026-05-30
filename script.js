@@ -259,6 +259,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (activeContent) {
           activeContent.classList.add("active");
         }
+
+        setupOnThisPage();
       });
     });
   }
@@ -328,7 +330,8 @@ document.addEventListener("DOMContentLoaded", () => {
     pageTocList.innerHTML = "";
 
     const headings = Array.from(content.querySelectorAll("h2, h3")).filter(
-      (heading) => heading.textContent.trim().length > 0
+      (heading) =>
+        heading.textContent.trim().length > 0 && isHeadingInActiveContent(heading)
     );
 
     pageToc.classList.toggle("is-empty", headings.length === 0);
@@ -368,6 +371,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     setupTocActiveState(headings);
+  }
+
+  function isHeadingInActiveContent(heading) {
+    const tabContent = heading.closest(".tab-content");
+    return !tabContent || tabContent.classList.contains("active");
   }
 
   function getStableHeadingId(heading, usedIds) {
