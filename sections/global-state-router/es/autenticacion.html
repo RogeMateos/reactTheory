@@ -1,0 +1,309 @@
+<section class="box">
+  <h1>Autenticación y el Inicio del Prop Drilling</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="problem">El Problema</button>
+    <button class="tab-button" data-tab="simulation">Simulación</button>
+    <button class="tab-button" data-tab="drilling">Prop Drilling</button>
+    <button class="tab-button" data-tab="conclusion">Conclusión</button>
+  </div>
+
+  <!-- ===================== EL PROBLEMA ===================== -->
+  <article id="problem" class="tab-content active">
+    <div class="description">
+
+      <h2>El inicio del problema</h2>
+      <p>Imaginá que estás construyendo una web de empleo:</p>
+
+      <pre><code>🏠 Home
+🔍 Buscar trabajos
+📄 Detalle de trabajo
+👤 Usuario</code></pre>
+
+      <p>Ahora aparece una nueva necesidad:</p>
+
+      <pre><code>❓ ¿Cómo sabe la aplicación si el usuario ha iniciado sesión?</code></pre>
+
+      <h2>Objetivo real de esta clase</h2>
+      <p>No estamos aprendiendo autenticación real todavía. Estamos <strong>simulando</strong> esto:</p>
+
+      <pre><code>👤 Usuario NO logueado
+        ↓
+   [Iniciar sesión]
+        ↓
+👤 Usuario logueado</code></pre>
+
+      <p>Y queremos que <strong>diferentes partes de la aplicación reaccionen automáticamente</strong>.</p>
+
+      <h2>¿Dónde guardamos el estado de login?</h2>
+      <p>Como toda la aplicación necesita saberlo, lo guardamos en el componente raíz:</p>
+
+      <pre><code class="language-jsx">// App.jsx
+const [isLoggedIn, setIsLoggedIn] = useState(false)</code></pre>
+
+      <pre><code>isLoggedIn = false
+     ↓
+🚫 Usuario NO autenticado
+
+isLoggedIn = true
+     ↓
+✅ Usuario autenticado</code></pre>
+
+      <h2>¿Quién necesita esta información?</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Componente</th>
+            <th>Necesita saber</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>Header</code></td><td>¿Mostrar "Iniciar sesión" o "Cerrar sesión"?</td></tr>
+          <tr><td><code>JobDetailPage</code></td><td>¿Puede el usuario aplicar al trabajo?</td></tr>
+        </tbody>
+      </table>
+
+      <pre><code>          App
+           │
+           │ isLoggedIn
+           ▼
+ ┌─────────────────┐
+ │     Header      │
+ └─────────────────┘
+
+           │
+           │ isLoggedIn
+           ▼
+ ┌─────────────────┐
+ │ JobDetailPage   │
+ └─────────────────┘</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== SIMULACIÓN ===================== -->
+  <article id="simulation" class="tab-content">
+    <div class="description">
+
+      <h2>Simulación de Login y Logout</h2>
+
+      <pre><code class="language-jsx">const login  = () => setIsLoggedIn(true)
+const logout = () => setIsLoggedIn(false)</code></pre>
+
+      <pre><code>[Iniciar sesión]
+       ↓
+login()
+       ↓
+isLoggedIn = true
+       ↓
+✅ Usuario logueado
+
+[Cerrar sesión]
+       ↓
+logout()
+       ↓
+isLoggedIn = false
+       ↓
+🚫 Usuario desconectado</code></pre>
+
+      <h2>Header funcionando</h2>
+
+      <pre><code class="language-jsx">{isLoggedIn ? (
+  &lt;button onClick={onLogout}&gt;
+    Cerrar sesión
+  &lt;/button&gt;
+) : (
+  &lt;button onClick={onLogin}&gt;
+    Iniciar sesión
+  &lt;/button&gt;
+)}</code></pre>
+
+      <pre><code>NO logueado:
+┌─────────────┐
+│ Iniciar     │
+│ sesión      │
+└─────────────┘
+
+Logueado:
+┌─────────────┐
+│ Cerrar      │
+│ sesión      │
+└─────────────┘</code></pre>
+
+      <h2>Página de detalle</h2>
+
+      <pre><code class="language-jsx">&lt;button disabled={!isLoggedIn}&gt;
+  {isLoggedIn
+    ? 'Aplicar ahora'
+    : 'Inicia sesión para aplicar'}
+&lt;/button&gt;</code></pre>
+
+      <pre><code>NO logueado:
+Frontend Developer
+🔒 Inicia sesión para aplicar
+
+Logueado:
+Frontend Developer
+✅ Aplicar ahora</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== PROP DRILLING ===================== -->
+  <article id="drilling" class="tab-content">
+    <div class="description">
+
+      <h2>La aplicación crece — aparece el problema</h2>
+      <p>Cuando organizás mejor el código, <code>JobDetailPage</code> se divide en componentes más pequeños:</p>
+
+      <pre><code>JobDetailPage
+│
+├─ JobDetailHeader
+├─ JobDetailInfo
+├─ JobDetailSalary
+└─ JobDetailApplyButton  ← este necesita isLoggedIn</code></pre>
+
+      <p>Pero <code>isLoggedIn</code> está en <code>App</code>. La prop tiene que viajar por todos los niveles:</p>
+
+      <pre><code class="language-jsx">&lt;JobDetailPage isLoggedIn={isLoggedIn} /&gt;
+  ↓
+&lt;JobDetailHeader isLoggedIn={isLoggedIn} /&gt;
+  ↓
+&lt;JobDetailApplyButton isLoggedIn={isLoggedIn} /&gt;
+  ↓
+if (isLoggedIn) ...</code></pre>
+
+      <h2>Esto es Prop Drilling</h2>
+
+      <pre><code>Prop Drilling = pasar props por componentes
+que realmente no las necesitan
+
+App
+ │
+ ▼
+JobDetailPage     ❌ no la usa
+ │
+ ▼
+JobDetailHeader   ❌ no la usa
+ │
+ ▼
+JobDetailApplyButton  ✅ la usa
+
+Los de arriba actúan como "tuberías".</code></pre>
+
+      <h2>Problema 1: Código difícil de mantener</h2>
+
+      <pre><code class="language-jsx">// Si mañana añadís más datos globales...
+&lt;JobDetailPage
+  user={user}
+  isLoggedIn={isLoggedIn}
+  theme={theme}
+  language={language}
+  permissions={permissions}
+/&gt;
+
+😵 Empieza el caos</code></pre>
+
+      <h2>Problema 2: Componentes acoplados</h2>
+
+      <pre><code class="language-jsx">function JobDetailHeader({ isLoggedIn }) {
+  return (
+    &lt;JobDetailApplyButton isLoggedIn={isLoggedIn} /&gt;
+  )
+}
+
+// ¿JobDetailHeader necesita isLoggedIn?
+// ❌ No — solo la está reenviando</code></pre>
+
+      <h2>Problema 3: Renders innecesarios</h2>
+      <p>Cuando cambia <code>isLoggedIn</code>, React vuelve a renderizar todos los componentes que reciben esa prop, aunque no la usen:</p>
+
+      <pre><code>Al hacer login:
+
+App
+ ├─ Header      🔄
+ ├─ Home        🔄
+ ├─ Search      🔄
+ ├─ JobDetail   🔄
+ └─ Otros       🔄
+
+💥 Toda la pantalla parpadea
+= Muchos renders innecesarios</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== CONCLUSIÓN ===================== -->
+  <article id="conclusion" class="tab-content">
+    <div class="description">
+
+      <h2>La lección real de esta clase</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Tamaño</th>
+            <th>Estructura</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Pequeña</td>
+            <td><code>App → Header, JobDetail</code></td>
+            <td>✅ Props normales</td>
+          </tr>
+          <tr>
+            <td>Mediana</td>
+            <td><code>App → Page → Header → Button</code></td>
+            <td>⚠️ Empieza el Prop Drilling</td>
+          </tr>
+          <tr>
+            <td>Grande</td>
+            <td><code>App → … → … → … → Button</code></td>
+            <td>😱 Prop Drilling severo</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>La solución que aprenderás después</h2>
+      <p>La solución moderna es usar un estado global con <strong>Zustand</strong>:</p>
+
+      <pre><code>              Zustand
+                 │
+      ┌──────────┼──────────┐
+      │          │          │
+      ▼          ▼          ▼
+
+   Header    JobDetail   Profile</code></pre>
+
+      <pre><code class="language-jsx">// Cualquier componente puede leer directamente
+const isLoggedIn = useAuthStore(
+  state => state.isLoggedIn
+)</code></pre>
+
+      <pre><code>❌ Prop Drilling
+❌ Props infinitas
+❌ Renders innecesarios
+
+✅ Estado global
+✅ Código más limpio
+✅ Mejor rendimiento</code></pre>
+
+      <div class="callout-success">
+        <strong>La verdadera misión de esta clase no es la autenticación — es que veas por qué el Prop Drilling se vuelve un problema cuando una aplicación React empieza a crecer.</strong>
+      </div>
+
+      <div class="resource-box">
+        <span class="resource-box__title">📚 Seguir aprendiendo</span>
+        <div class="resource-box__links">
+          <a href="https://www.jscamp.dev/estado-global-y-react-router/prop-drilling" target="_blank" rel="noreferrer noopener" class="resource-box__link">JSCamp — Prop Drilling →</a>
+          <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/6a1cac99-b9f0-83eb-9eed-dafda7d6c320" target="_blank" rel="noreferrer noopener" class="resource-box__link">Practicar con MiduFrontend GPT →</a>
+        </div>
+      </div>
+
+    </div>
+  </article>
+
+</section>

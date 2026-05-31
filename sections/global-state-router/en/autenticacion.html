@@ -1,0 +1,307 @@
+<section class="box">
+  <h1>Authentication and the Start of Prop Drilling</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="problem">The Problem</button>
+    <button class="tab-button" data-tab="simulation">Simulation</button>
+    <button class="tab-button" data-tab="drilling">Prop Drilling</button>
+    <button class="tab-button" data-tab="conclusion">Conclusion</button>
+  </div>
+
+  <!-- ===================== THE PROBLEM ===================== -->
+  <article id="problem" class="tab-content active">
+    <div class="description">
+
+      <h2>The start of the problem</h2>
+      <p>Imagine you're building a job board web app:</p>
+
+      <pre><code>🏠 Home
+🔍 Search jobs
+📄 Job detail
+👤 User</code></pre>
+
+      <p>A new requirement appears:</p>
+
+      <pre><code>❓ How does the app know if the user is logged in?</code></pre>
+
+      <h2>The real goal of this lesson</h2>
+      <p>We're not learning real authentication yet. We're <strong>simulating</strong> this:</p>
+
+      <pre><code>👤 User NOT logged in
+        ↓
+   [Sign in]
+        ↓
+👤 User logged in</code></pre>
+
+      <p>And we want <strong>different parts of the app to react automatically</strong>.</p>
+
+      <h2>Where do we store the login state?</h2>
+      <p>Since the whole app needs to know, we store it at the root component:</p>
+
+      <pre><code class="language-jsx">// App.jsx
+const [isLoggedIn, setIsLoggedIn] = useState(false)</code></pre>
+
+      <pre><code>isLoggedIn = false
+     ↓
+🚫 User NOT authenticated
+
+isLoggedIn = true
+     ↓
+✅ User authenticated</code></pre>
+
+      <h2>Who needs this information?</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Component</th>
+            <th>Needs to know</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>Header</code></td><td>Show "Sign in" or "Sign out"?</td></tr>
+          <tr><td><code>JobDetailPage</code></td><td>Can the user apply to the job?</td></tr>
+        </tbody>
+      </table>
+
+      <pre><code>          App
+           │
+           │ isLoggedIn
+           ▼
+ ┌─────────────────┐
+ │     Header      │
+ └─────────────────┘
+
+           │
+           │ isLoggedIn
+           ▼
+ ┌─────────────────┐
+ │ JobDetailPage   │
+ └─────────────────┘</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== SIMULATION ===================== -->
+  <article id="simulation" class="tab-content">
+    <div class="description">
+
+      <h2>Simulating Login and Logout</h2>
+
+      <pre><code class="language-jsx">const login  = () => setIsLoggedIn(true)
+const logout = () => setIsLoggedIn(false)</code></pre>
+
+      <pre><code>[Sign in]
+       ↓
+login()
+       ↓
+isLoggedIn = true
+       ↓
+✅ User logged in
+
+[Sign out]
+       ↓
+logout()
+       ↓
+isLoggedIn = false
+       ↓
+🚫 User signed out</code></pre>
+
+      <h2>Header in action</h2>
+
+      <pre><code class="language-jsx">{isLoggedIn ? (
+  &lt;button onClick={onLogout}&gt;
+    Sign out
+  &lt;/button&gt;
+) : (
+  &lt;button onClick={onLogin}&gt;
+    Sign in
+  &lt;/button&gt;
+)}</code></pre>
+
+      <pre><code>NOT logged in:
+┌─────────────┐
+│ Sign in     │
+└─────────────┘
+
+Logged in:
+┌─────────────┐
+│ Sign out    │
+└─────────────┘</code></pre>
+
+      <h2>Detail page</h2>
+
+      <pre><code class="language-jsx">&lt;button disabled={!isLoggedIn}&gt;
+  {isLoggedIn
+    ? 'Apply now'
+    : 'Sign in to apply'}
+&lt;/button&gt;</code></pre>
+
+      <pre><code>NOT logged in:
+Frontend Developer
+🔒 Sign in to apply
+
+Logged in:
+Frontend Developer
+✅ Apply now</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== PROP DRILLING ===================== -->
+  <article id="drilling" class="tab-content">
+    <div class="description">
+
+      <h2>The app grows — the problem appears</h2>
+      <p>When you organise the code better, <code>JobDetailPage</code> splits into smaller components:</p>
+
+      <pre><code>JobDetailPage
+│
+├─ JobDetailHeader
+├─ JobDetailInfo
+├─ JobDetailSalary
+└─ JobDetailApplyButton  ← this one needs isLoggedIn</code></pre>
+
+      <p>But <code>isLoggedIn</code> lives in <code>App</code>. The prop has to travel down every level:</p>
+
+      <pre><code class="language-jsx">&lt;JobDetailPage isLoggedIn={isLoggedIn} /&gt;
+  ↓
+&lt;JobDetailHeader isLoggedIn={isLoggedIn} /&gt;
+  ↓
+&lt;JobDetailApplyButton isLoggedIn={isLoggedIn} /&gt;
+  ↓
+if (isLoggedIn) ...</code></pre>
+
+      <h2>This is Prop Drilling</h2>
+
+      <pre><code>Prop Drilling = passing props through components
+that don't actually need them
+
+App
+ │
+ ▼
+JobDetailPage     ❌ doesn't use it
+ │
+ ▼
+JobDetailHeader   ❌ doesn't use it
+ │
+ ▼
+JobDetailApplyButton  ✅ uses it
+
+The ones above act as "pipes".</code></pre>
+
+      <h2>Problem 1: Hard to maintain</h2>
+
+      <pre><code class="language-jsx">// If tomorrow you add more global data...
+&lt;JobDetailPage
+  user={user}
+  isLoggedIn={isLoggedIn}
+  theme={theme}
+  language={language}
+  permissions={permissions}
+/&gt;
+
+😵 Chaos begins</code></pre>
+
+      <h2>Problem 2: Coupled components</h2>
+
+      <pre><code class="language-jsx">function JobDetailHeader({ isLoggedIn }) {
+  return (
+    &lt;JobDetailApplyButton isLoggedIn={isLoggedIn} /&gt;
+  )
+}
+
+// Does JobDetailHeader need isLoggedIn?
+// ❌ No — it's just forwarding it</code></pre>
+
+      <h2>Problem 3: Unnecessary renders</h2>
+      <p>When <code>isLoggedIn</code> changes, React re-renders every component that receives that prop, even if they don't use it:</p>
+
+      <pre><code>On login:
+
+App
+ ├─ Header      🔄
+ ├─ Home        🔄
+ ├─ Search      🔄
+ ├─ JobDetail   🔄
+ └─ Others      🔄
+
+💥 The whole screen flickers
+= Many unnecessary renders</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== CONCLUSION ===================== -->
+  <article id="conclusion" class="tab-content">
+    <div class="description">
+
+      <h2>The real lesson of this class</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>App size</th>
+            <th>Structure</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Small</td>
+            <td><code>App → Header, JobDetail</code></td>
+            <td>✅ Normal props</td>
+          </tr>
+          <tr>
+            <td>Medium</td>
+            <td><code>App → Page → Header → Button</code></td>
+            <td>⚠️ Prop Drilling starts</td>
+          </tr>
+          <tr>
+            <td>Large</td>
+            <td><code>App → … → … → … → Button</code></td>
+            <td>😱 Severe Prop Drilling</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>The solution you'll learn next</h2>
+      <p>The modern solution is global state with <strong>Zustand</strong>:</p>
+
+      <pre><code>              Zustand
+                 │
+      ┌──────────┼──────────┐
+      │          │          │
+      ▼          ▼          ▼
+
+   Header    JobDetail   Profile</code></pre>
+
+      <pre><code class="language-jsx">// Any component can read directly
+const isLoggedIn = useAuthStore(
+  state => state.isLoggedIn
+)</code></pre>
+
+      <pre><code>❌ Prop Drilling
+❌ Infinite props
+❌ Unnecessary renders
+
+✅ Global state
+✅ Cleaner code
+✅ Better performance</code></pre>
+
+      <div class="callout-success">
+        <strong>The real mission of this lesson is not authentication — it's showing you why Prop Drilling becomes a problem as a React app grows.</strong>
+      </div>
+
+      <div class="resource-box">
+        <span class="resource-box__title">📚 Continue learning</span>
+        <div class="resource-box__links">
+          <a href="https://www.jscamp.dev/estado-global-y-react-router/prop-drilling" target="_blank" rel="noreferrer noopener" class="resource-box__link">JSCamp — Prop Drilling →</a>
+          <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/6a1cac99-b9f0-83eb-9eed-dafda7d6c320" target="_blank" rel="noreferrer noopener" class="resource-box__link">Practice with MiduFrontend GPT →</a>
+        </div>
+      </div>
+
+    </div>
+  </article>
+
+</section>
