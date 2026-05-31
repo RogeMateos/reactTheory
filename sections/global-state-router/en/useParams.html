@@ -1,0 +1,386 @@
+<section class="box">
+  <h1>Route Parameters with useParams</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">The Problem</button>
+    <button class="tab-button" data-tab="code-examples">useParams in Action</button>
+    <button class="tab-button" data-tab="advanced">Advanced Patterns</button>
+    <button class="tab-button" data-tab="summary">Summary</button>
+  </div>
+
+  <!-- ===================== CONCEPTS ===================== -->
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+
+      <h2>What's missing from our app</h2>
+      <p>We have a working job listings page with React Router, but there's one critical piece missing: we can't navigate to the detail of a specific offer.</p>
+
+      <pre><code>✅ We see a list of jobs
+✅ We can navigate between some routes
+❌ There is no detail page for each individual offer</code></pre>
+
+      <p>We have the <code>id</code> of each job, but we're not using it in the URL to load the specific data for that offer.</p>
+
+      <p>In this lesson we will:</p>
+      <ul>
+        <li>Create a detail page for an offer</li>
+        <li>Define a dynamic route that receives a parameter (the id)</li>
+        <li>Use the <code>useParams</code> hook from React Router to read that id from the URL</li>
+      </ul>
+
+      <h2>What are route parameters?</h2>
+      <p>In a URL like <code>/jobs/1234</code>:</p>
+      <ul>
+        <li><code>/jobs</code> is the base route</li>
+        <li><code>1234</code> is a <strong>dynamic parameter</strong>: the offer's id</li>
+      </ul>
+
+      <p>React Router lets us define routes that aren't fixed but include variable segments we can read later:</p>
+
+      <pre><code class="language-jsx">/jobs/:id</code></pre>
+
+      <table>
+        <thead>
+          <tr>
+            <th>URL visited</th>
+            <th>Value of <code>id</code></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>/jobs/abc</code></td>
+            <td><code>"abc"</code></td>
+          </tr>
+          <tr>
+            <td><code>/jobs/42</code></td>
+            <td><code>"42"</code></td>
+          </tr>
+          <tr>
+            <td><code>/jobs/frontend-dev</code></td>
+            <td><code>"frontend-dev"</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>The goal is to capture that value in order to:</p>
+      <ul>
+        <li>Request the details from the API</li>
+        <li>Display the specific content for that offer</li>
+      </ul>
+
+      <h2>Why this matters</h2>
+      <p>Imagine you find an offer you like. If the URL is <code>/jobs/1234</code>, you can:</p>
+      <ul>
+        <li>Copy it and send it on WhatsApp</li>
+        <li>Bookmark it</li>
+        <li>Reload the page without losing context</li>
+      </ul>
+
+      <p>If the information were only in React state (not in the URL), reloading the page would lose everything. This is what <strong>deep linking</strong> means — and it's a core feature of any professional web app.</p>
+
+    </div>
+  </article>
+
+  <!-- ===================== CODE EXAMPLES ===================== -->
+  <article id="code-examples" class="tab-content">
+    <div class="description">
+
+      <h2>Creating the detail page</h2>
+      <p>First, we create a new component for the job detail.</p>
+
+      <pre><code class="language-jsx">// src/pages/JobDetail.jsx
+
+export function JobDetail() {
+  return &lt;h1&gt;Job detail&lt;/h1&gt;
+}</code></pre>
+
+      <p>For now it just shows generic text. We'll improve it with the id and real data next.</p>
+
+      <h2>Defining a dynamic route with <code>:id</code></h2>
+      <p>Now we create a route that receives a dynamic id. In the file where we define routes (<code>App.jsx</code> or <code>router.jsx</code>):</p>
+
+      <pre><code class="language-jsx">import { Route, Routes } from 'react-router'
+import { JobDetail } from './pages/JobDetail'
+
+export function App() {
+  return (
+    &lt;Routes&gt;
+      {/* Other routes */}
+      &lt;Route path="/jobs/:id" element={&lt;JobDetail /&gt;} /&gt;
+    &lt;/Routes&gt;
+  )
+}</code></pre>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Key point</th>
+            <th>Explanation</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>path="/jobs/:id"</code></td>
+            <td><code>:id</code> signals that this URL segment is a dynamic parameter</td>
+          </tr>
+          <tr>
+            <td><code>element={&lt;JobDetail /&gt;}</code></td>
+            <td>When the URL matches <code>/jobs/anything</code>, <code>JobDetail</code> is rendered</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Reading parameters with <code>useParams</code></h2>
+      <p>React Router gives us the <code>useParams</code> hook to read the id from the URL:</p>
+
+      <pre><code class="language-jsx">// src/pages/JobDetail.jsx
+import { useParams } from 'react-router'
+
+export function JobDetail() {
+  const params = useParams()
+  console.log(params)
+
+  return (
+    &lt;&gt;
+      &lt;h1&gt;Job detail&lt;/h1&gt;
+      &lt;pre&gt;{JSON.stringify(params, null, 2)}&lt;/pre&gt;
+    &lt;/&gt;
+  )
+}</code></pre>
+
+      <p>If you visit <code>/jobs/jajajata</code>, you'll see in the console:</p>
+      <pre><code class="language-jsx">{ "id": "jajajata" }</code></pre>
+
+      <h2>Destructuring the parameter</h2>
+      <p>In practice, we always destructure directly:</p>
+
+      <pre><code class="language-jsx">import { useParams } from 'react-router'
+
+export function JobDetail() {
+  const { id } = useParams()
+
+  return (
+    &lt;&gt;
+      &lt;h1&gt;Job detail&lt;/h1&gt;
+      &lt;h2&gt;ID: {id}&lt;/h2&gt;
+    &lt;/&gt;
+  )
+}</code></pre>
+
+      <h2>⚠️ The parameter name is what YOU define in the route</h2>
+      <p>This is a very common mistake. The parameter name is NOT always <code>id</code> — it depends on what you put in the route path.</p>
+
+      <pre><code class="language-jsx">// Route defined with :jobId
+&lt;Route path="/jobs/:jobId" element={&lt;JobDetail /&gt;} /&gt;</code></pre>
+
+      <pre><code class="language-jsx">// Component MUST use jobId, not id
+export function JobDetail() {
+  const { jobId } = useParams()  // ✅ matches the route
+  // const { id } = useParams()  // ❌ would be undefined
+}</code></pre>
+
+      <p>The parameter name must match exactly between the path and <code>useParams()</code>.</p>
+
+      <h2>Using the id to fetch real data</h2>
+      <p>The natural next step is using the id to request real data from an API:</p>
+
+      <pre><code class="language-jsx">import { useEffect, useState } from 'react'
+import { useParams } from 'react-router'
+
+export function JobDetail() {
+  const { id } = useParams()
+  const [job, setJob] = useState(null)
+
+  useEffect(() => {
+    if (!id) return
+
+    fetch(`/api/jobs/${id}`)
+      .then((res) => res.json())
+      .then((data) => setJob(data))
+      .catch((error) => console.error('Error loading job', error))
+  }, [id])
+
+  if (!job) return &lt;p&gt;Loading offer...&lt;/p&gt;
+
+  return (
+    &lt;section&gt;
+      &lt;h1&gt;{job.title}&lt;/h1&gt;
+      &lt;p&gt;{job.description}&lt;/p&gt;
+      &lt;p&gt;Location: {job.location}&lt;/p&gt;
+    &lt;/section&gt;
+  )
+}</code></pre>
+
+      <div class="callout-info">
+        <strong>Key concept:</strong> The id comes from the URL, not from props. This makes the component independent — if the user reloads the page, the id is still in the URL.
+      </div>
+
+    </div>
+  </article>
+
+  <!-- ===================== ADVANCED ===================== -->
+  <article id="advanced" class="tab-content">
+    <div class="description">
+
+      <h2>Multiple parameters in the URL</h2>
+      <p>React Router supports more than one parameter in a route:</p>
+
+      <pre><code class="language-jsx">&lt;Route path="/jobs/:id/page/:page" element={&lt;JobDetail /&gt;} /&gt;</code></pre>
+
+      <pre><code class="language-jsx">import { useParams } from 'react-router'
+
+export function JobDetail() {
+  const { id, page } = useParams()
+
+  return (
+    &lt;&gt;
+      &lt;h1&gt;Job detail&lt;/h1&gt;
+      &lt;p&gt;ID: {id}&lt;/p&gt;
+      &lt;p&gt;Page: {page}&lt;/p&gt;
+    &lt;/&gt;
+  )
+}</code></pre>
+
+      <p>Visiting <code>/jobs/1234/page/2</code> gives:</p>
+      <pre><code class="language-jsx">{ "id": "1234", "page": "2" }</code></pre>
+
+      <h2>Route params vs Query strings</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Use route params when…</th>
+            <th>Use query strings when…</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>The value identifies a specific resource</td>
+            <td>They are optional filters</td>
+          </tr>
+          <tr>
+            <td>The page doesn't make sense without it</td>
+            <td>The page works without them</td>
+          </tr>
+          <tr>
+            <td>You want clean, semantic URLs</td>
+            <td>You have many optional parameters</td>
+          </tr>
+          <tr>
+            <td><code>/jobs/1234</code></td>
+            <td><code>/jobs?keyword=react&page=2</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Converting the id to a number</h2>
+      <p><code>useParams()</code> always returns strings. If you need a number:</p>
+
+      <pre><code class="language-jsx">export function JobDetail() {
+  const { id } = useParams()
+  const numericId = Number(id)
+  const jobId = parseInt(id, 10)  // alternative
+
+  console.log(typeof id)        // "string"
+  console.log(typeof numericId) // "number"
+}</code></pre>
+
+      <h2>Validating parameters</h2>
+      <p>It's good practice to validate that the parameter has the expected format:</p>
+
+      <pre><code class="language-jsx">import { useParams, Navigate } from 'react-router'
+
+export function JobDetail() {
+  const { id } = useParams()
+
+  // If id is not a number, redirect to 404
+  if (isNaN(Number(id))) {
+    return &lt;Navigate to="/404" replace /&gt;
+  }
+
+  // Rest of the component...
+}</code></pre>
+
+      <p>Or show an error message inline:</p>
+
+      <pre><code class="language-jsx">export function JobDetail() {
+  const { id } = useParams()
+
+  if (!id || isNaN(Number(id))) {
+    return (
+      &lt;div&gt;
+        &lt;h1&gt;Error&lt;/h1&gt;
+        &lt;p&gt;Invalid offer ID&lt;/p&gt;
+      &lt;/div&gt;
+    )
+  }
+
+  // Rest of the component...
+}</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== SUMMARY ===================== -->
+  <article id="summary" class="tab-content">
+    <div class="description">
+
+      <h2>What we covered</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Concept</th>
+            <th>Key point</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Dynamic routes</td>
+            <td>Use <code>:paramName</code> in the path to define a variable segment</td>
+          </tr>
+          <tr>
+            <td><code>useParams()</code></td>
+            <td>Returns an object with all parameters from the current URL</td>
+          </tr>
+          <tr>
+            <td>Parameter names</td>
+            <td>Must match exactly between the route path and <code>useParams()</code></td>
+          </tr>
+          <tr>
+            <td>Values are always strings</td>
+            <td>Convert with <code>Number()</code> or <code>parseInt()</code> if needed</td>
+          </tr>
+          <tr>
+            <td>Deep linking</td>
+            <td>URL params make apps shareable and reload-safe</td>
+          </tr>
+          <tr>
+            <td>Multiple params</td>
+            <td><code>/jobs/:id/page/:page</code> → <code>{ id, page }</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>The mental model</h2>
+      <pre><code>Route defined as:   /jobs/:id
+URL visited:        /jobs/1234
+useParams() gives:  { id: "1234" }
+
+Route defined as:   /jobs/:jobId
+URL visited:        /jobs/1234
+useParams() gives:  { jobId: "1234" }</code></pre>
+
+      <div class="callout-success">
+        <strong>With this, you have everything you need to build detail pages, user profiles, blog posts with slugs, and any resource-based navigation pattern in React Router.</strong>
+      </div>
+
+      <div class="resource-box">
+        <span class="resource-box__title">🤖 Practice useParams with AI</span>
+        <div class="resource-box__links">
+          <a href="https://chatgpt.com/g/g-p-696fbea2755481919c8258fb23e8f822-react" target="_blank" rel="noreferrer noopener" class="resource-box__link">Open React GPT →</a>
+        </div>
+      </div>
+
+    </div>
+  </article>
+
+</section>
