@@ -1,0 +1,296 @@
+<section class="box">
+  <h1>Navegando al Detalle</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">La Idea</button>
+    <button class="tab-button" data-tab="code-examples">Link vs useNavigate</button>
+    <button class="tab-button" data-tab="advanced">Card Completa + CSS</button>
+    <button class="tab-button" data-tab="summary">Resumen</button>
+  </div>
+
+  <!-- ===================== CONCEPTS ===================== -->
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+
+      <h2>Lo que tenemos vs lo que queremos</h2>
+      <p>Ahora mismo cada tarjeta de oferta es solo un elemento de display — no se puede clicar para ir a ningún lado.</p>
+
+      <pre><code>Antes:
+
+Listado de ofertas
+┌─────────────────────┐
+│ Frontend Developer  │   ❌ No se puede clicar
+│ Acme Corp           │
+│ London              │
+└─────────────────────┘</code></pre>
+
+      <pre><code>Después:
+
+Listado de ofertas
+┌─────────────────────┐
+│ Frontend Developer  │   ✅ Click
+│ Acme Corp           │      ↓
+│ London              │   /jobs/123
+└─────────────────────┘</code></pre>
+
+      <h2>La mejor solución: usar &lt;Link&gt;</h2>
+      <p>Cuando una tarjeta lleva a otra página, debe ser un <strong>enlace</strong>, no un <code>onClick</code>. Es HTML semántico y hace diferencia en accesibilidad.</p>
+
+      <pre><code class="language-jsx">import { Link } from 'react-router'
+import styles from './JobCard.module.css'
+
+export function JobCard({ job }) {
+  return (
+    &lt;Link
+      to={`/jobs/${job.id}`}
+      className={styles.cardLink}
+      aria-label={`Ver detalles de ${job.title} en ${job.company}`}
+    &gt;
+      &lt;article className={styles.card}&gt;
+        &lt;h3&gt;{job.title}&lt;/h3&gt;
+        &lt;p&gt;{job.company}&lt;/p&gt;
+        &lt;p&gt;{job.location}&lt;/p&gt;
+      &lt;/article&gt;
+    &lt;/Link&gt;
+  )
+}</code></pre>
+
+      <p>Visualmente, toda la tarjeta se convierte en zona clickeable:</p>
+
+      <pre><code>&lt;Link to="/jobs/123"&gt;
+  ┌─────────────────────┐
+  │ Frontend Developer  │
+  │ Acme Corp           │
+  │ London              │
+  └─────────────────────┘
+&lt;/Link&gt;</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== LINK VS NAVIGATE ===================== -->
+  <article id="code-examples" class="tab-content">
+    <div class="description">
+
+      <h2>&lt;Link&gt; es para navegación normal</h2>
+      <p>Usalo cuando el usuario quiere ir a otra página — es así de simple.</p>
+
+      <pre><code class="language-jsx">&lt;Link to={`/jobs/${job.id}`}&gt;
+  Ver detalles
+&lt;/Link&gt;</code></pre>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Ventaja</th>
+            <th>Por qué importa</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Click normal</td><td>Funciona como se espera</td></tr>
+          <tr><td>Click derecho → abrir en nueva pestaña</td><td>Los usuarios lo esperan de los enlaces</td></tr>
+          <tr><td>Cmd/Ctrl + click</td><td>Feature de power user, gratis con &lt;Link&gt;</td></tr>
+          <tr><td>Accesible con teclado</td><td>Tab + Enter funciona</td></tr>
+          <tr><td>Amigable con screen readers</td><td>Se anuncia correctamente</td></tr>
+        </tbody>
+      </table>
+
+      <h2>useNavigate es para navegación después de una acción</h2>
+      <p>Usalo cuando primero pasa algo y <em>después</em> navegás.</p>
+
+      <pre><code class="language-jsx">const navigate = useNavigate()
+
+function handleSubmit() {
+  saveData()           // primero la acción
+  navigate('/success') // después la navegación
+}</code></pre>
+
+      <pre><code>Usuario envía formulario
+        ↓
+Guardás datos
+        ↓
+Navegás a /success</code></pre>
+
+      <p>No uses <code>useNavigate</code> para una tarjeta simple que solo es un enlace. Es la herramienta incorrecta y perdés todos los comportamientos nativos del browser listados arriba.</p>
+
+      <h2>Árbol de decisión</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Situación</th>
+            <th>Usá</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Tarjeta que va a una página de detalle</td><td><code>&lt;Link&gt;</code></td></tr>
+          <tr><td>Ítem de menú de navegación</td><td><code>&lt;Link&gt;</code></td></tr>
+          <tr><td>Botón "Ver más"</td><td><code>&lt;Link&gt;</code></td></tr>
+          <tr><td>Redirigir después de enviar un formulario</td><td><code>useNavigate()</code></td></tr>
+          <tr><td>Redirigir después de login</td><td><code>useNavigate()</code></td></tr>
+          <tr><td>Navegar programáticamente según una condición</td><td><code>useNavigate()</code></td></tr>
+        </tbody>
+      </table>
+
+      <h2>⚠️ No metas un botón dentro de un &lt;Link&gt;</h2>
+      <p>Si la tarjeta tiene una acción secundaria (como "guardar en favoritos"), no anides un botón dentro del Link:</p>
+
+      <pre><code class="language-jsx">// ❌ Problema de HTML y accesibilidad
+&lt;Link to={`/jobs/${job.id}`}&gt;
+  &lt;article&gt;
+    &lt;h3&gt;{job.title}&lt;/h3&gt;
+    &lt;button&gt;Guardar&lt;/button&gt;  ← elemento interactivo anidado
+  &lt;/article&gt;
+&lt;/Link&gt;
+
+// ✅ Correcto
+&lt;article className={styles.card}&gt;
+  &lt;Link to={`/jobs/${job.id}`} className={styles.cardContent}&gt;
+    &lt;h3&gt;{job.title}&lt;/h3&gt;
+    &lt;p&gt;{job.company}&lt;/p&gt;
+  &lt;/Link&gt;
+
+  &lt;button onClick={handleSaveFavorite}&gt;
+    Guardar
+  &lt;/button&gt;
+&lt;/article&gt;</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== FULL CARD ===================== -->
+  <article id="advanced" class="tab-content">
+    <div class="description">
+
+      <h2>CSS recomendado</h2>
+
+      <pre><code class="language-jsx">/* JobCard.module.css */
+
+.cardLink {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: all 0.2s ease;
+}
+
+.cardLink:hover .card {
+  border-color: #0066cc;
+  box-shadow: 0 8px 16px rgba(0, 102, 204, 0.1);
+  transform: translateY(-2px);
+}
+
+.cardLink:focus-visible {
+  outline: 2px solid #0066cc;
+  outline-offset: 4px;
+  border-radius: 12px;
+}</code></pre>
+
+      <pre><code>Normal:
+┌─────────────────────┐
+│ Frontend Developer  │
+└─────────────────────┘
+
+Hover:
+┌─────────────────────┐  ↑ sube un poco
+│ Frontend Developer  │  sombra azul suave
+└─────────────────────┘
+
+Focus con teclado:
+╔═════════════════════╗
+║ Frontend Developer  ║  outline visible
+╚═════════════════════╝</code></pre>
+
+      <h2>Versión completa recomendada</h2>
+
+      <pre><code class="language-jsx">import { Link } from 'react-router'
+import styles from './JobCard.module.css'
+
+export function JobCard({ job }) {
+  return (
+    &lt;Link
+      to={`/jobs/${job.id}`}
+      className={styles.cardLink}
+      aria-label={`Ver detalles de ${job.title} en ${job.company}`}
+    &gt;
+      &lt;article className={styles.card}&gt;
+        &lt;header className={styles.header}&gt;
+          &lt;h3 className={styles.title}&gt;{job.title}&lt;/h3&gt;
+          {job.isNew &amp;&amp; &lt;span className={styles.badge}&gt;Nuevo&lt;/span&gt;}
+        &lt;/header&gt;
+
+        &lt;div className={styles.meta}&gt;
+          &lt;p&gt;🏢 {job.company}&lt;/p&gt;
+          &lt;p&gt;📍 {job.location}&lt;/p&gt;
+        &lt;/div&gt;
+
+        {job.tags?.length &gt; 0 &amp;&amp; (
+          &lt;div className={styles.tags}&gt;
+            {job.tags.map((tag) =&gt; (
+              &lt;span key={tag} className={styles.tag}&gt;
+                {tag}
+              &lt;/span&gt;
+            ))}
+          &lt;/div&gt;
+        )}
+
+        &lt;footer className={styles.footer}&gt;
+          &lt;span&gt;{job.salary || 'Salario a convenir'}&lt;/span&gt;
+          &lt;span&gt;Ver más →&lt;/span&gt;
+        &lt;/footer&gt;
+      &lt;/article&gt;
+    &lt;/Link&gt;
+  )
+}</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== SUMMARY ===================== -->
+  <article id="summary" class="tab-content">
+    <div class="description">
+
+      <h2>Referencia rápida</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Pregunta</th>
+            <th>Respuesta</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>¿Es un enlace a otra página?</td><td>Usá <code>&lt;Link&gt;</code></td></tr>
+          <tr><td>¿Primero hago una acción y luego navego?</td><td>Usá <code>useNavigate()</code></td></tr>
+          <tr><td>¿Quiero que toda la tarjeta sea clickeable?</td><td>Envolvé con <code>&lt;Link&gt;</code></td></tr>
+          <tr><td>¿Quiero un botón de favorito dentro?</td><td>No lo metas dentro del Link</td></tr>
+        </tbody>
+      </table>
+
+      <h2>La solución más profesional</h2>
+
+      <pre><code class="language-jsx">&lt;Link to={`/jobs/${job.id}`}&gt;
+  &lt;article&gt;...&lt;/article&gt;
+&lt;/Link&gt;</code></pre>
+
+      <div class="callout-success">
+        <strong>Usar &lt;Link&gt; te da click derecho, Ctrl+click, navegación por teclado y soporte para screen readers de forma gratuita. Un onClick no te daría nada de eso.</strong>
+      </div>
+
+      <div class="resource-box">
+        <span class="resource-box__title">📚 Seguir aprendiendo</span>
+        <div class="resource-box__links">
+          <a href="https://www.jscamp.dev/estado-global-y-react-router/trabajando-en-los-estilos-del-detalle-de-cada-empleo" target="_blank" rel="noreferrer noopener" class="resource-box__link">JSCamp — Lección de navegación →</a>
+          <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633/c/6a1c8b26-91c0-83eb-b1d5-cb7eb99427a0" target="_blank" rel="noreferrer noopener" class="resource-box__link">Practicar con MiduFrontend GPT →</a>
+        </div>
+      </div>
+
+    </div>
+  </article>
+
+</section>
