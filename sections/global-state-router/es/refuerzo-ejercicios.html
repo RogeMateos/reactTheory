@@ -1,0 +1,282 @@
+<section class="box">
+  <h1>Ejercicios de Refuerzo: Detalle, Paginación y Filtros</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="context">Contexto</button>
+    <button class="tab-button" data-tab="ex1-2">Ej. 1 y 2</button>
+    <button class="tab-button" data-tab="ex3-4">Ej. 3 y 4</button>
+    <button class="tab-button" data-tab="checklist">Checklist</button>
+  </div>
+
+  <!-- ===================== CONTEXTO ===================== -->
+  <article id="context" class="tab-content active">
+    <div class="description">
+
+      <h2>¿De qué se trata esta clase?</h2>
+      <p>En esta clase no añadimos una gran pieza nueva, sino que dejamos ejercicios de refuerzo para consolidar todo lo que hemos visto hasta ahora:</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Ejercicio</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>Página de detalle de trabajo — pulir estilos</td></tr>
+          <tr><td>2</td><td>Navegación y estado activo en los enlaces</td></tr>
+          <tr><td>3</td><td>Paginación de resultados sincronizada con URL</td></tr>
+          <tr><td>4</td><td>Inicializar todos los filtros desde la URL</td></tr>
+        </tbody>
+      </table>
+
+      <p>Al acabar estos ejercicios, tu aplicación se va a sentir mucho más pulida y coherente con lo que ya construimos.</p>
+
+      <h2>Por qué estos ejercicios importan</h2>
+
+      <pre><code>✅ Entendés cómo se combinan router, URL y estado
+✅ Pulís la experiencia de usuario de la app
+✅ Te acostumbrás a pensar en estado inicial a partir
+   de la URL en lugar de inventártelo dentro del componente
+
+La URL como fuente de verdad es un patrón
+fundamental en aplicaciones web modernas.</code></pre>
+
+      <div class="callout-success">
+        <strong>En la próxima clase voy a dar por hecho que esto está hecho. Cuanto más mimes estos detalles, más se va a parecer tu proyecto a una app real y menos a un ejercicio de clase.</strong>
+      </div>
+
+    </div>
+  </article>
+
+  <!-- ===================== EJ 1 Y 2 ===================== -->
+  <article id="ex1-2" class="tab-content">
+    <div class="description">
+
+      <h2>Ejercicio 1 — Mejorar la página de detalle</h2>
+      <p>La página de detalle "está bastante bien, pero hay que arreglarle los estilos totalmente". El objetivo es que deje de parecer un prototipo y se convierta en una vista que puedas enseñar sin pedir perdón.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Área</th>
+            <th>Qué trabajar</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Jerarquía visual</td><td>Título destacado, subtítulo con empresa/ubicación, secciones claras</td></tr>
+          <tr><td>Layout</td><td>Columna principal (descripción) + columna lateral (salario, botón aplicar)</td></tr>
+          <tr><td>Tipografía</td><td>Márgenes y paddings para que el contenido respire</td></tr>
+          <tr><td>Botones</td><td>"Aplicar" muy visible; acciones secundarias que no compitan</td></tr>
+          <tr><td>Responsive</td><td>Legible en móvil sin zoom, sin scroll horizontal raro</td></tr>
+        </tbody>
+      </table>
+
+      <pre><code>💡 Técnica de revisión de diseño:
+
+Mirá la página durante 5 segundos.
+Preguntate:
+  ¿Qué se entiende primero?
+  ¿Qué sobra?
+  ¿Qué falta?</code></pre>
+
+      <h2>Ejercicio 2.1 — Breadcrumbs (opcional pero recomendable)</h2>
+      <p>Que el usuario sepa en qué parte de la aplicación está:</p>
+
+      <pre><code class="language-jsx">&lt;nav aria-label="Ruta de navegación"&gt;
+  &lt;ol&gt;
+    &lt;li&gt;{/* Enlace a la lista de ofertas */}&lt;/li&gt;
+    &lt;li aria-current="page"&gt;{/* Título del trabajo */}&lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/nav&gt;</code></pre>
+
+      <pre><code>Puntos importantes:
+
+✅ Muestra la jerarquía de navegación
+✅ Usá aria-label y aria-current para accesibilidad
+✅ El último elemento NO debería ser un enlace</code></pre>
+
+      <h2>Ejercicio 2.2 — Marcar el enlace activo</h2>
+      <p>Usá la información de la URL para marcar como "activo" el enlace correspondiente del menú.</p>
+
+      <pre><code>Necesitás:
+
+1. Obtener la ruta actual
+   (pensá en hooks del router que ya usaste)
+
+2. Comparar la ruta actual con la ruta del enlace
+
+3. Aplicar una clase CSS diferente cuando coincidan
+
+4. Añadir aria-current="page" para accesibilidad</code></pre>
+
+      <pre><code class="language-jsx">// Un patrón común es crear un componente NavLink
+// que envuelva tu Link y añada esta lógica
+
+&lt;NavLink
+  to="/jobs"
+  className={({ isActive }) =>
+    isActive ? "nav-link active" : "nav-link"
+  }
+&gt;
+  Empleos
+&lt;/NavLink&gt;</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== EJ 3 Y 4 ===================== -->
+  <article id="ex3-4" class="tab-content">
+    <div class="description">
+
+      <h2>Ejercicio 3 — Implementar la paginación correctamente</h2>
+      <p>No es solo mostrar botones de "Siguiente" y "Anterior", sino que funcione bien en combinación con filtros y URL.</p>
+
+      <pre><code class="language-jsx">function Pagination({ currentPage, totalPages, onPageChange }) {
+  // ¿Cuándo se puede ir a la página anterior?
+  // ¿Cuándo se puede ir a la siguiente?
+
+  return (
+    &lt;nav aria-label="Paginación de resultados"&gt;
+      {/* Botón anterior */}
+      {/* Indicador de página actual */}
+      {/* Botón siguiente */}
+    &lt;/nav&gt;
+  )
+}</code></pre>
+
+      <h2>Integración con la URL</h2>
+
+      <pre><code>1. Guardá la página actual en la query string
+   ?page=2
+
+2. Al cambiar de página → actualizá la URL
+
+3. Al cargar → leé page de la URL como estado inicial</code></pre>
+
+      <pre><code class="language-jsx">// Leer la página de la URL
+const searchParams = new URLSearchParams(window.location.search)
+const pageFromUrl = searchParams.get('page') // string o null
+
+// Actualizar sin recargar
+// Opción A: window.history.pushState()
+// Opción B (mejor): hooks de React Router</code></pre>
+
+      <h2>Ejercicio 4 — Inicializar todos los filtros desde la URL</h2>
+      <p>Los filtros "funcionan, pero cuando recargás, no se están inicializando correctamente". Ya vimos cómo hacerlo con el buscador de texto. Ahora aplicalo al resto.</p>
+
+      <pre><code>Para cada filtro (modalidad, contrato, salario...):
+
+Al cambiar el filtro en la UI:
+  → Actualizar estado en React
+  → Actualizar la URL con el nuevo valor
+
+Al cargar o refrescar:
+  → Leer el parámetro de la URL
+  → Inicializar el estado del filtro con ese valor</code></pre>
+
+      <pre><code class="language-jsx">// Custom hook por filtro
+function useModeFilter() {
+  const [mode, setMode] = useState('')
+
+  // useEffect para leer la URL al montar
+  // función para actualizar mode y URL
+
+  return { mode, updateMode }
+}
+
+// Función para actualizar un filtro
+const updateFilter = (name, value) => {
+  const params = new URLSearchParams(window.location.search)
+
+  if (value) params.set(name, value)
+  else params.delete(name)
+
+  // actualizar URL
+}</code></pre>
+
+      <pre><code class="language-jsx">// Ejemplo en componente
+function Filters() {
+  const { mode, updateMode } = useModeFilter()
+
+  return (
+    &lt;select value={mode} onChange={(e) =&gt; updateMode(e.target.value)}&gt;
+      &lt;option value=""&gt;Cualquiera&lt;/option&gt;
+      &lt;option value="remote"&gt;Remoto&lt;/option&gt;
+      &lt;option value="hybrid"&gt;Híbrido&lt;/option&gt;
+      &lt;option value="onsite"&gt;Presencial&lt;/option&gt;
+    &lt;/select&gt;
+  )
+}</code></pre>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Filtro</th>
+            <th>Parámetro URL sugerido</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Modalidad</td><td><code>mode</code></td></tr>
+          <tr><td>Tipo de contrato</td><td><code>contract</code></td></tr>
+          <tr><td>Salario mínimo</td><td><code>salaryMin</code></td></tr>
+          <tr><td>Salario máximo</td><td><code>salaryMax</code></td></tr>
+          <tr><td>Página actual</td><td><code>page</code></td></tr>
+        </tbody>
+      </table>
+
+    </div>
+  </article>
+
+  <!-- ===================== CHECKLIST ===================== -->
+  <article id="checklist" class="tab-content">
+    <div class="description">
+
+      <h2>Checklist de ejercicios</h2>
+      <p>Antes de dar por terminada esta clase, verificá:</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>¿Listo?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>La página de detalle tiene un diseño visual pulido y profesional</td><td>☐</td></tr>
+          <tr><td>Los breadcrumbs (si los implementás) muestran la ruta de navegación</td><td>☐</td></tr>
+          <tr><td>Los enlaces del menú principal se marcan como activos correctamente</td><td>☐</td></tr>
+          <tr><td>La paginación funciona y se sincroniza con la URL</td><td>☐</td></tr>
+          <tr><td>Todos los filtros se inicializan correctamente desde la URL</td><td>☐</td></tr>
+          <tr><td>Al refrescar la página se mantiene el estado de filtros y paginación</td><td>☐</td></tr>
+          <tr><td>Las URLs son compartibles (contienen toda la información necesaria)</td><td>☐</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Recapitulación</h2>
+
+      <pre><code>Estos ejercicios no introducen conceptos nuevos,
+pero te obligan a aplicar de verdad lo que hemos visto.
+
+Son perfectos para:
+
+✅ Entender cómo se combinan router, URL y estado
+✅ Pulir la UX de la app
+✅ Acostumbrarte a pensar en estado inicial
+   a partir de la URL</code></pre>
+
+      <div class="callout-success">
+        <strong>La URL como fuente de verdad es un patrón fundamental en aplicaciones web modernas. Cuanto más lo practiques ahora, más natural te va a salir en proyectos reales.</strong>
+      </div>
+
+      <div class="resource-box">
+        <span class="resource-box__title">📚 Seguir aprendiendo</span>
+        <div class="resource-box__links">
+          <a href="https://www.jscamp.dev/estado-global-y-react-router/ejercicios-detalle-paginacion-filtros" target="_blank" rel="noreferrer noopener" class="resource-box__link">JSCamp — Ejercicios: Detalle, Paginación y Filtros →</a>
+        </div>
+      </div>
+
+    </div>
+  </article>
+
+</section>

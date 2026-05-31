@@ -1,0 +1,282 @@
+<section class="box">
+  <h1>Reinforcement Exercises: Detail, Pagination and Filters</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="context">Context</button>
+    <button class="tab-button" data-tab="ex1-2">Ex. 1 &amp; 2</button>
+    <button class="tab-button" data-tab="ex3-4">Ex. 3 &amp; 4</button>
+    <button class="tab-button" data-tab="checklist">Checklist</button>
+  </div>
+
+  <!-- ===================== CONTEXT ===================== -->
+  <article id="context" class="tab-content active">
+    <div class="description">
+
+      <h2>What this lesson is about</h2>
+      <p>In this lesson we're not adding a big new feature. Instead, we leave reinforcement exercises to consolidate everything we've seen so far:</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Exercise</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>Job detail page — polish the styles</td></tr>
+          <tr><td>2</td><td>Navigation and active state on links</td></tr>
+          <tr><td>3</td><td>Paginate results synchronized with the URL</td></tr>
+          <tr><td>4</td><td>Initialize all filters from the URL</td></tr>
+        </tbody>
+      </table>
+
+      <p>By the end of these exercises, your app will feel much more polished and consistent with everything we've already built.</p>
+
+      <h2>Why these exercises matter</h2>
+
+      <pre><code>✅ You understand how router, URL and state combine
+✅ You polish the user experience of the app
+✅ You get used to thinking about initial state from
+   the URL instead of making it up inside the component
+
+URL as the source of truth is a fundamental
+pattern in modern web applications.</code></pre>
+
+      <div class="callout-success">
+        <strong>In the next lesson I'll assume all of this is done. The more you care about these details, the more your project will look like a real app and less like a class exercise.</strong>
+      </div>
+
+    </div>
+  </article>
+
+  <!-- ===================== EX 1 & 2 ===================== -->
+  <article id="ex1-2" class="tab-content">
+    <div class="description">
+
+      <h2>Exercise 1 — Improve the job detail page</h2>
+      <p>The detail page "is pretty good, but the styles need to be completely fixed." The goal is to make it stop looking like a prototype and become a view you could show to someone without apologising.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Area</th>
+            <th>What to work on</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Visual hierarchy</td><td>Prominent title, subtitle with company/location, clear sections</td></tr>
+          <tr><td>Layout</td><td>Main column (description) + sidebar (salary, apply button)</td></tr>
+          <tr><td>Typography</td><td>Margins and paddings so the content can breathe</td></tr>
+          <tr><td>Buttons</td><td>"Apply" highly visible; secondary actions shouldn't compete</td></tr>
+          <tr><td>Responsive</td><td>Readable on mobile without zoom, no weird horizontal scroll</td></tr>
+        </tbody>
+      </table>
+
+      <pre><code>💡 Design review technique:
+
+Look at the page for 5 seconds.
+Ask yourself:
+  What do I understand first?
+  What's unnecessary?
+  What's missing?</code></pre>
+
+      <h2>Exercise 2.1 — Breadcrumbs (optional but recommended)</h2>
+      <p>Let the user know which part of the app they're in:</p>
+
+      <pre><code class="language-jsx">&lt;nav aria-label="Navigation path"&gt;
+  &lt;ol&gt;
+    &lt;li&gt;{/* Link to jobs list */}&lt;/li&gt;
+    &lt;li aria-current="page"&gt;{/* Current job title */}&lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/nav&gt;</code></pre>
+
+      <pre><code>Key points:
+
+✅ Shows the navigation hierarchy
+✅ Use aria-label and aria-current for accessibility
+✅ The last element should NOT be a link</code></pre>
+
+      <h2>Exercise 2.2 — Mark the active link</h2>
+      <p>Use the URL information to mark the corresponding menu link as "active".</p>
+
+      <pre><code>You need:
+
+1. Get the current route
+   (think about router hooks you've already used)
+
+2. Compare the current route with the link's route
+
+3. Apply a different CSS class when they match
+
+4. Add aria-current="page" for accessibility</code></pre>
+
+      <pre><code class="language-jsx">// A common pattern is a NavLink component
+// that wraps your Link and adds this logic
+
+&lt;NavLink
+  to="/jobs"
+  className={({ isActive }) =>
+    isActive ? "nav-link active" : "nav-link"
+  }
+&gt;
+  Jobs
+&lt;/NavLink&gt;</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== EX 3 & 4 ===================== -->
+  <article id="ex3-4" class="tab-content">
+    <div class="description">
+
+      <h2>Exercise 3 — Implement pagination correctly</h2>
+      <p>It's not just about showing "Next" and "Previous" buttons — it needs to work well in combination with filters and the URL.</p>
+
+      <pre><code class="language-jsx">function Pagination({ currentPage, totalPages, onPageChange }) {
+  // When can the user go to the previous page?
+  // When can they go to the next?
+
+  return (
+    &lt;nav aria-label="Results pagination"&gt;
+      {/* Previous button */}
+      {/* Current page indicator */}
+      {/* Next button */}
+    &lt;/nav&gt;
+  )
+}</code></pre>
+
+      <h2>URL integration</h2>
+
+      <pre><code>1. Save the current page in the query string
+   ?page=2
+
+2. When changing page → update the URL
+
+3. On load → read page from the URL as initial state</code></pre>
+
+      <pre><code class="language-jsx">// Read page from URL
+const searchParams = new URLSearchParams(window.location.search)
+const pageFromUrl = searchParams.get('page') // string or null
+
+// Update without reload
+// Option A: window.history.pushState()
+// Option B (better): React Router hooks</code></pre>
+
+      <h2>Exercise 4 — Initialize all filters from the URL</h2>
+      <p>Filters "work, but when you refresh, they're not initializing correctly." We've already seen how to do it with the text search filter. Now apply the same logic to the rest.</p>
+
+      <pre><code>For each filter (mode, contract, salary...):
+
+When the filter changes in the UI:
+  → Update React state
+  → Update the URL with the new value
+
+On load or refresh:
+  → Read the URL parameter
+  → Initialize the filter state with that value</code></pre>
+
+      <pre><code class="language-jsx">// Custom hook per filter
+function useModeFilter() {
+  const [mode, setMode] = useState('')
+
+  // useEffect to read URL on mount
+  // function to update mode and URL
+
+  return { mode, updateMode }
+}
+
+// Function to update a filter
+const updateFilter = (name, value) => {
+  const params = new URLSearchParams(window.location.search)
+
+  if (value) params.set(name, value)
+  else params.delete(name)
+
+  // update URL
+}</code></pre>
+
+      <pre><code class="language-jsx">// Example in a component
+function Filters() {
+  const { mode, updateMode } = useModeFilter()
+
+  return (
+    &lt;select value={mode} onChange={(e) =&gt; updateMode(e.target.value)}&gt;
+      &lt;option value=""&gt;Any&lt;/option&gt;
+      &lt;option value="remote"&gt;Remote&lt;/option&gt;
+      &lt;option value="hybrid"&gt;Hybrid&lt;/option&gt;
+      &lt;option value="onsite"&gt;On-site&lt;/option&gt;
+    &lt;/select&gt;
+  )
+}</code></pre>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Filter</th>
+            <th>Suggested URL param</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Work mode</td><td><code>mode</code></td></tr>
+          <tr><td>Contract type</td><td><code>contract</code></td></tr>
+          <tr><td>Min salary</td><td><code>salaryMin</code></td></tr>
+          <tr><td>Max salary</td><td><code>salaryMax</code></td></tr>
+          <tr><td>Current page</td><td><code>page</code></td></tr>
+        </tbody>
+      </table>
+
+    </div>
+  </article>
+
+  <!-- ===================== CHECKLIST ===================== -->
+  <article id="checklist" class="tab-content">
+    <div class="description">
+
+      <h2>Exercise checklist</h2>
+      <p>Before calling this lesson done, verify:</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Done?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>The detail page has a polished, professional visual design</td><td>☐</td></tr>
+          <tr><td>Breadcrumbs (if implemented) show the navigation path</td><td>☐</td></tr>
+          <tr><td>Main menu links are marked as active correctly</td><td>☐</td></tr>
+          <tr><td>Pagination works and is synchronized with the URL</td><td>☐</td></tr>
+          <tr><td>All filters initialize correctly from the URL</td><td>☐</td></tr>
+          <tr><td>Refreshing the page keeps filter and pagination state</td><td>☐</td></tr>
+          <tr><td>URLs are shareable (contain all necessary information)</td><td>☐</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Recap</h2>
+
+      <pre><code>These exercises don't introduce new concepts,
+but they force you to truly apply what we've seen.
+
+They're perfect for:
+
+✅ Understanding how router, URL and state combine
+✅ Polishing the app's UX
+✅ Getting used to thinking about initial state
+   from the URL</code></pre>
+
+      <div class="callout-success">
+        <strong>URL as the source of truth is a fundamental pattern in modern web applications. The more you practise it now, the more natural it will feel in real projects.</strong>
+      </div>
+
+      <div class="resource-box">
+        <span class="resource-box__title">📚 Continue learning</span>
+        <div class="resource-box__links">
+          <a href="https://www.jscamp.dev/estado-global-y-react-router/ejercicios-detalle-paginacion-filtros" target="_blank" rel="noreferrer noopener" class="resource-box__link">JSCamp — Exercises: Detail, Pagination and Filters →</a>
+        </div>
+      </div>
+
+    </div>
+  </article>
+
+</section>
