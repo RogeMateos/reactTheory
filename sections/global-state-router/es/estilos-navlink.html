@@ -1,0 +1,268 @@
+<section class="box">
+  <h1>Estilos Activos con NavLink</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="problem">El Problema</button>
+    <button class="tab-button" data-tab="how">Cómo Funciona</button>
+    <button class="tab-button" data-tab="css">CSS y Accesibilidad</button>
+    <button class="tab-button" data-tab="summary">Resumen</button>
+  </div>
+
+  <!-- ===================== EL PROBLEMA ===================== -->
+  <article id="problem" class="tab-content active">
+    <div class="description">
+
+      <h2>¿Qué problema resuelve NavLink?</h2>
+      <p>Imaginá que estás en una web de empleo:</p>
+
+      <pre><code>🏠 Inicio     💼 Empleos     📞 Contacto</code></pre>
+
+      <p>Entrás en Empleos. Pero el menú sigue viéndose igual:</p>
+
+      <pre><code>🏠 Inicio     💼 Empleos     📞 Contacto</code></pre>
+
+      <pre><code>❌ No sabés visualmente dónde estás
+❌ Podés seguir pulsando "Empleos" una y otra vez
+❌ Mala experiencia de usuario</code></pre>
+
+      <h2>La solución: NavLink</h2>
+      <p><code>NavLink</code> es un <code>Link</code> inteligente. Además de navegar, sabe: <em>"¿Estoy actualmente en esta página?"</em></p>
+
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>Link normal</th>
+            <th>NavLink</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Navegar</td><td>✅</td><td>✅</td></tr>
+          <tr><td>Detectar página actual</td><td>❌</td><td>✅</td></tr>
+          <tr><td><code>isActive</code></td><td>❌</td><td>✅</td></tr>
+          <tr><td>Estilos activos</td><td>❌</td><td>✅</td></tr>
+          <tr><td><code>aria-current</code> automático</td><td>❌</td><td>✅</td></tr>
+          <tr><td>Menús de navegación</td><td>😐</td><td>⭐</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Visualmente</h2>
+
+      <pre><code>Estamos en Home (URL: /)
+
+🏠 Inicio
+💼 Empleos
+📞 Contacto
+
+Estamos en Jobs (URL: /jobs)
+
+🏠 Inicio
+💼 Empleos  ← ACTIVO
+📞 Contacto
+
+Ahora el usuario sabe exactamente dónde está.</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== CÓMO FUNCIONA ===================== -->
+  <article id="how" class="tab-content">
+    <div class="description">
+
+      <h2>¿Cómo sabe NavLink si está activo?</h2>
+      <p>React Router te da una variable llamada <code>isActive</code>:</p>
+
+      <pre><code class="language-jsx">// Cuando NO estamos en /jobs
+isActive = false
+// &lt;a class="header-nav-link"&gt;Empleos&lt;/a&gt;
+
+// Cuando SÍ estamos en /jobs
+isActive = true
+// &lt;a class="header-nav-link navLinkActive"&gt;Empleos&lt;/a&gt;</code></pre>
+
+      <p>NavLink añade una clase extra <code>navLinkActive</code> cuando la ruta coincide.</p>
+
+      <h2>El código</h2>
+
+      <pre><code class="language-jsx">&lt;NavLink
+  to="/jobs"
+  className={({ isActive }) =>
+    isActive
+      ? "header-nav-link navLinkActive"
+      : "header-nav-link"
+  }
+&gt;
+  Empleos
+&lt;/NavLink&gt;</code></pre>
+
+      <h2>Flujo mental completo</h2>
+
+      <pre><code>Usuario entra en /jobs
+            │
+            ▼
+NavLink compara:
+"/jobs" === URL actual?
+            │
+            ▼
+         TRUE
+            │
+            ▼
+Añade clase: navLinkActive
+            │
+            ▼
+CSS aplica estilos especiales</code></pre>
+
+      <h2>Regla fácil para entrevistas</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Usá <code>Link</code> cuando</th>
+            <th>Usá <code>NavLink</code> cuando</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              Voy a otra página y no necesito saber si estoy ahí.<br><br>
+              Ejemplos: Ver detalle, Leer más, Comprar, Perfil
+            </td>
+            <td>
+              Estoy construyendo un menú de navegación.<br><br>
+              Ejemplos: 🏠 Inicio, 💼 Empleos, 📞 Contacto, ⚙️ Config
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </article>
+
+  <!-- ===================== CSS Y ACCESIBILIDAD ===================== -->
+  <article id="css" class="tab-content">
+    <div class="description">
+
+      <h2>CSS para el estado activo</h2>
+
+      <pre><code class="language-css">.header-nav-link.navLinkActive {
+  color: yellow;
+  font-weight: bold;
+  border-bottom: 2px solid yellow;
+}</code></pre>
+
+      <pre><code>Sin estilos activos:
+🏠 Inicio
+💼 Empleos
+📞 Contacto
+
+Con estilos activos (en /jobs):
+🏠 Inicio
+💼 EMPLEOS
+──────────
+📞 Contacto</code></pre>
+
+      <h2>Desactivar el enlace actual</h2>
+      <p>Si ya estás en Jobs, ¿para qué volver a pulsar Jobs? Podés bloquear el clic:</p>
+
+      <pre><code class="language-css">.header-nav-link.navLinkActive {
+  pointer-events: none;
+}</code></pre>
+
+      <pre><code>Antes:
+💼 Empleos
+(click)
+(click)  ← redundante
+
+Después:
+💼 Empleos (actual)
+🚫 No clicable</code></pre>
+
+      <h2>Bonus oculto: Accesibilidad</h2>
+      <p>Cuando el link está activo, React Router añade automáticamente:</p>
+
+      <pre><code class="language-html">&lt;a
+  class="navLinkActive"
+  aria-current="page"
+&gt;
+  Empleos
+&lt;/a&gt;</code></pre>
+
+      <p>Esto ayuda a:</p>
+
+      <pre><code>✅ Lectores de pantalla
+✅ Navegación por teclado
+✅ Accesibilidad
+
+No tenés que hacer nada.
+NavLink lo hace por vos.</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== RESUMEN ===================== -->
+  <article id="summary" class="tab-content">
+    <div class="description">
+
+      <h2>Link vs NavLink</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Característica</th>
+            <th>Link</th>
+            <th>NavLink</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Navegar</td><td>✅</td><td>✅</td></tr>
+          <tr><td>Detectar página actual</td><td>❌</td><td>✅</td></tr>
+          <tr><td><code>isActive</code></td><td>❌</td><td>✅</td></tr>
+          <tr><td>Estilos activos</td><td>❌</td><td>✅</td></tr>
+          <tr><td><code>aria-current</code> automático</td><td>❌</td><td>✅</td></tr>
+          <tr><td>Menús de navegación</td><td>😐</td><td>⭐</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Referencia rápida</h2>
+
+      <pre><code class="language-jsx">import { NavLink } from 'react-router'
+
+&lt;NavLink
+  to="/jobs"
+  className={({ isActive }) =>
+    isActive
+      ? "header-nav-link navLinkActive"
+      : "header-nav-link"
+  }
+&gt;
+  Empleos
+&lt;/NavLink&gt;</code></pre>
+
+      <pre><code>Link
+│
+└── Solo navega
+
+NavLink
+│
+├── Navega
+├── Detecta ruta activa
+├── Tiene isActive
+├── Añade aria-current
+└── Permite estilos visuales</code></pre>
+
+      <div class="callout-success">
+        <strong>NavLink = Link + "sé dónde está el usuario actualmente". Usalo siempre en menús de navegación.</strong>
+      </div>
+
+      <div class="resource-box">
+        <span class="resource-box__title">📚 Seguir aprendiendo</span>
+        <div class="resource-box__links">
+          <a href="https://www.jscamp.dev/estado-global-y-react-router/estilos-activos-navlink" target="_blank" rel="noreferrer noopener" class="resource-box__link">JSCamp — Estilos Activos con NavLink →</a>
+          <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/6a1caa1c-38f4-83eb-acf3-faf04453e853" target="_blank" rel="noreferrer noopener" class="resource-box__link">Practicar con MiduFrontend GPT →</a>
+        </div>
+      </div>
+
+    </div>
+  </article>
+
+</section>
