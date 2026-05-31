@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const lang = currentLanguage === "es" ? "es" : "en";
     const hooks = ["useState", "useEffect", "useEffect2midu", "useEffect3midu", "useContext", "useRef", "useReducer", "globalSwitch", "useId", "customHooks", "customHooks2"];
     const fundamentals = ["componentes", "componentesVsFunciones", "jobCard", "props", "modulos", "paginacion", "callbacks", "listas", "paginacion-final", "css-modules", "eventos", "renderizado", "spa", "vite-bundlers", "vite-install", "fast-refresh", "document-title", "bareBonesMethod", "lifeCicle", "formularios", "filtros-routing", "formulario-navegacion", "componente-route", "llamada-api", "filtros-api", "paginacion-api", "arreglando-paginacion", "sincronizacion-url"];
-    const globalStateAndRouter = ["routerBrowser", "react-router", "crear-rutas", "link-hooks-router", "useParams", "trabajando-estilos", "navegacion-detalle", "terminar-estilar", "useSearchParams", "lazy-load", "estilos-navlink", "refuerzo-ejercicios", "autenticacion"];
+    const globalStateAndRouter = ["routerBrowser", "react-router", "crear-rutas", "link-hooks-router", "useParams", "trabajando-estilos", "navegacion-detalle", "terminar-estilar", "useSearchParams", "lazy-load", "estilos-navlink", "refuerzo-ejercicios", "autenticacion", "react-context"];
     const interview = ["interviewQuestions", "react-hooks-rules-and-order", "react-hooks-masterclass"];
 
     let folder = "";
@@ -176,6 +176,7 @@ document.addEventListener("DOMContentLoaded", () => {
       "estilos-navlink": { en: "Active Styles with NavLink", es: "Estilos con NavLink" },
       "refuerzo-ejercicios": { en: "Reinforcement Exercises", es: "Refuerzo: Ejercicios" },
       autenticacion: { en: "Authentication & Prop Drilling", es: "Autenticación y Prop Drilling" },
+      "react-context": { en: "React Context", es: "React Context" },
       "crear-rutas": { en: "How to Create Routes", es: "Cómo Crear Rutas" },
       "link-hooks-router": { en: "Link & Router Hooks", es: "Link y Hooks del Router" },
       hooks: { en: "Hooks", es: "Hooks" },

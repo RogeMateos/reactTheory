@@ -1,0 +1,304 @@
+<section class="box">
+  <h1>React Context</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="problem">The Problem</button>
+    <button class="tab-button" data-tab="context">createContext &amp; Provider</button>
+    <button class="tab-button" data-tab="usecontext">useContext</button>
+    <button class="tab-button" data-tab="summary">Summary</button>
+  </div>
+
+  <!-- ===================== THE PROBLEM ===================== -->
+  <article id="problem" class="tab-content active">
+    <div class="description">
+
+      <h2>Prop Drilling: the real problem</h2>
+      <p>Imagine you have a logged-in user:</p>
+
+      <pre><code class="language-jsx">const [isLogin, setIsLogin] = useState(false)</code></pre>
+
+      <p>And the button that needs it is deep in the tree:</p>
+
+      <pre><code>App
+ └── Header
+      └── Navbar
+           └── UserMenu
+                └── UserButton  ← needs isLogin</code></pre>
+
+      <p>But the state lives in <code>App</code>. Without Context you have to do this:</p>
+
+      <pre><code class="language-jsx">&lt;App isLogin={isLogin}&gt;
+  ↓
+&lt;Header isLogin={isLogin}&gt;
+  ↓
+&lt;Navbar isLogin={isLogin}&gt;
+  ↓
+&lt;UserMenu isLogin={isLogin}&gt;
+  ↓
+&lt;UserButton isLogin={isLogin}&gt;</code></pre>
+
+      <pre><code>Header    ❌ doesn't use it
+Navbar    ❌ doesn't use it
+UserMenu  ❌ doesn't use it
+UserButton ✅ uses it
+
+All of them receive it anyway.</code></pre>
+
+      <p>This is called <strong>Prop Drilling</strong> — you're "drilling" props through components that don't need them.</p>
+
+      <h2>React Context to the rescue</h2>
+      <p>Context creates a kind of <strong>global WiFi</strong>.</p>
+
+      <pre><code>Without Context:          With Context:
+
+App                            📡 AuthContext
+ ↓                          /        |        \
+Header                  Header     Home     Detail
+ ↓
+Navbar                  Everyone accesses directly.
+ ↓
+UserMenu
+ ↓
+UserButton</code></pre>
+
+      <p>Think of the difference between an ethernet cable and WiFi in your home.</p>
+
+    </div>
+  </article>
+
+  <!-- ===================== CREATECONTEXT & PROVIDER ===================== -->
+  <article id="context" class="tab-content">
+    <div class="description">
+
+      <h2>createContext()</h2>
+
+      <pre><code class="language-jsx">const AuthContext = createContext()</code></pre>
+
+      <p><strong>It doesn't store data. It has no state. It just creates a channel.</strong></p>
+
+      <pre><code>createContext()
+      ↓
+AuthContext
+      ↓
+Channel created
+
+It's like buying a router.
+There's no internet yet — we need the Provider.</code></pre>
+
+      <h2>The Provider</h2>
+      <p>The Provider is what broadcasts the data. Everything inside it can access it:</p>
+
+      <pre><code class="language-jsx">function AuthProvider({ children }) {
+  const [isLogin, setIsLogin] = useState(false)
+
+  function login()  { setIsLogin(true)  }
+  function logout() { setIsLogin(false) }
+
+  const value = { isLogin, login, logout }
+
+  return (
+    &lt;AuthContext value={value}&gt;
+      {children}
+    &lt;/AuthContext&gt;
+  )
+}</code></pre>
+
+      <pre><code>┌───────────────────────┐
+│ AuthProvider          │
+│                       │
+│ isLogin = false       │
+│ login()               │
+│ logout()              │
+└───────────┬───────────┘
+            │
+            ▼
+          value
+            │
+            ▼
+    Available throughout the app</code></pre>
+
+      <h2>Wrapping the application</h2>
+      <p>Typically in <code>main.jsx</code>:</p>
+
+      <pre><code class="language-jsx">&lt;AuthProvider&gt;
+  &lt;App /&gt;
+&lt;/AuthProvider&gt;</code></pre>
+
+      <pre><code>AuthProvider
+      │
+      ▼
+     App
+   /  |  \
+Header Home Detail
+
+All have access to the context.</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== USECONTEXT ===================== -->
+  <article id="usecontext" class="tab-content">
+    <div class="description">
+
+      <h2>useContext()</h2>
+      <p>Now any component can connect directly:</p>
+
+      <pre><code class="language-jsx">const { isLogin } = useContext(AuthContext)</code></pre>
+
+      <pre><code>Before:
+
+&lt;App isLogin={isLogin} login={login} logout={logout} /&gt;
+  ↓
+&lt;Header isLogin={isLogin} login={login} logout={logout} /&gt;
+  ↓
+&lt;Nav isLogin={isLogin} login={login} logout={logout} /&gt;
+  ↓
+&lt;UserButton isLogin={isLogin} login={login} logout={logout} /&gt;
+
+After:
+
+&lt;App /&gt;
+&lt;Header /&gt;
+&lt;Nav /&gt;
+&lt;UserButton /&gt;
+
+// Inside UserButton:
+const { isLogin } = useContext(AuthContext)</code></pre>
+
+      <h2>⚠️ Important optimisation</h2>
+      <p>When the Context changes, React re-renders every component that consumes it. So <strong>where</strong> you call <code>useContext</code> matters:</p>
+
+      <pre><code class="language-jsx">// ❌ Bad — Header re-renders on every login change
+function Header() {
+  const { isLogin } = useContext(AuthContext)
+  return (...)
+}
+
+// ✅ Better — only UserButton re-renders
+function Header() {
+  return (
+    &lt;&gt;
+      &lt;Logo /&gt;
+      &lt;Nav /&gt;
+      &lt;UserButton /&gt;
+    &lt;/&gt;
+  )
+}
+
+function UserButton() {
+  const { isLogin } = useContext(AuthContext)
+}</code></pre>
+
+      <pre><code>On login change:
+
+❌ Bad:               ✅ Better:
+Header    🔄          Logo       ⚪
+                      Nav        ⚪
+                      Header     ⚪
+                      UserButton 🔄</code></pre>
+
+      <h2>Rule for interviews</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Use props when</th>
+            <th>Use Context when</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Data travels a few levels (parent → child)</td>
+            <td>Many components need the same data</td>
+          </tr>
+          <tr>
+            <td>The data is specific to that relationship</td>
+            <td>Auth user, theme, language, cart, global config</td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </article>
+
+  <!-- ===================== SUMMARY ===================== -->
+  <article id="summary" class="tab-content">
+    <div class="description">
+
+      <h2>Final visual summary</h2>
+
+      <pre><code>PROBLEM — Prop Drilling:
+
+App → Header → Nav → UserMenu → UserButton
+😫 All receive a prop that only the last one uses
+
+SOLUTION — React Context:
+
+           AuthProvider
+                │
+       ┌────────┼────────┐
+       │        │        │
+     Header   Home    Detail
+       │
+       ▼
+   UserButton
+   useContext()
+
+😎 Direct access with no middlemen</code></pre>
+
+      <h2>The three steps</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Step</th>
+            <th>What it does</th>
+            <th>Code</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>Create the channel</td><td><code>createContext()</code></td></tr>
+          <tr><td>2</td><td>Broadcast the data</td><td><code>&lt;AuthContext value={value}&gt;</code></td></tr>
+          <tr><td>3</td><td>Consume the data</td><td><code>useContext(AuthContext)</code></td></tr>
+        </tbody>
+      </table>
+
+      <h2>Quick reference</h2>
+
+      <pre><code class="language-jsx">// 1. Create
+const AuthContext = createContext()
+
+// 2. Provider
+function AuthProvider({ children }) {
+  const [isLogin, setIsLogin] = useState(false)
+  const value = {
+    isLogin,
+    login:  () => setIsLogin(true),
+    logout: () => setIsLogin(false),
+  }
+  return (
+    &lt;AuthContext value={value}&gt;{children}&lt;/AuthContext&gt;
+  )
+}
+
+// 3. Consume
+function UserButton() {
+  const { isLogin, login, logout } = useContext(AuthContext)
+}</code></pre>
+
+      <div class="callout-success">
+        <strong>React Context is a way to create global state so that any component can access it without having to pass props through the entire application.</strong>
+      </div>
+
+      <div class="resource-box">
+        <span class="resource-box__title">📚 Continue learning</span>
+        <div class="resource-box__links">
+          <a href="https://www.jscamp.dev/estado-global-y-react-router/react-context" target="_blank" rel="noreferrer noopener" class="resource-box__link">JSCamp — React Context →</a>
+          <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/6a1cc8db-b950-83eb-afed-d32dc59e559b" target="_blank" rel="noreferrer noopener" class="resource-box__link">Practice with MiduFrontend GPT →</a>
+        </div>
+      </div>
+
+    </div>
+  </article>
+
+</section>
