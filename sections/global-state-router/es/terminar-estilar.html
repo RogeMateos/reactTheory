@@ -1,0 +1,370 @@
+<section class="box">
+  <h1>Ejercicio: Terminar de Estilar la Página de Detalle</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="problem">El Problema</button>
+    <button class="tab-button" data-tab="prose">Estilos de Prosa</button>
+    <button class="tab-button" data-tab="details">Detalles que Importan</button>
+    <button class="tab-button" data-tab="exercise">Ejercicio</button>
+  </div>
+
+  <!-- ===================== EL PROBLEMA ===================== -->
+  <article id="problem" class="tab-content active">
+    <div class="description">
+
+      <h2>Funciona, pero no se ve profesional</h2>
+      <p>Ahora mismo tu página de detalle funciona perfectamente a nivel técnico:</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Estado</th>
+            <th>¿Listo?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Hace fetch de los datos</td><td>✅</td></tr>
+          <tr><td>Muestra el contenido</td><td>✅</td></tr>
+          <tr><td>Renderiza el Markdown correctamente</td><td>✅</td></tr>
+          <tr><td>Tiene estados de loading y error</td><td>✅</td></tr>
+        </tbody>
+      </table>
+
+      <p>Pero hay un problema: se ve un poco… básica.</p>
+
+      <p>El contenido de Markdown se renderiza con los estilos por defecto del navegador, y eso hace que:</p>
+
+      <pre><code>Estilos por defecto del navegador
+
+La tipografía parece aburrida
+Las listas son genéricas
+No hay jerarquía visual clara
+Falta ese "cariño" que hace que un proyecto
+se vea profesional</code></pre>
+
+      <p>Este es un punto muy típico en proyectos reales: <em>"La funcionalidad ya está, pero el diseño aún no transmite el nivel de calidad que queremos."</em></p>
+
+      <h2>El concepto de "estilos de prosa"</h2>
+      <p>Cuando renderizás contenido rico (markdown, texto largo, artículos), necesitás una capa de estilos específica para ese tipo de contenido. A esto se le llama <strong>estilos de prosa</strong> (prose styles).</p>
+
+      <h2>¿Por qué necesitamos esto?</h2>
+      <p>Porque el contenido generado por markdown tiene:</p>
+
+      <pre><code>Múltiples niveles de títulos (h1, h2, h3)
+Párrafos largos
+Listas con viñetas
+Posibles enlaces
+Código inline</code></pre>
+
+      <p>Y todos estos elementos necesitan:</p>
+
+      <pre><code>Jerarquía visual clara
+Espaciado consistente
+Tipografía legible
+Ancho de línea adecuado</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== ESTILOS DE PROSA ===================== -->
+  <article id="prose" class="tab-content">
+    <div class="description">
+
+      <h2>Añadiendo los estilos de prosa en index.css</h2>
+      <p>Al final de tu <code>index.css</code>, añadí un bloque de estilos para manejar todo el contenido de prosa:</p>
+
+      <pre><code class="language-css">/* Estilos de prosa para contenido de detalle */
+.prose {
+  max-width: 70ch;
+  line-height: 1.7;
+  font-size: 1rem;
+  color: #111827;
+}
+
+.prose h1,
+.prose h2,
+.prose h3 {
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  margin-top: 1.5rem;
+  color: #111827;
+}
+
+.prose h2 {
+  font-size: 1.5rem;
+}
+
+.prose h3 {
+  font-size: 1.25rem;
+}
+
+.prose p {
+  margin-bottom: 1rem;
+}
+
+.prose ul,
+.prose ol {
+  margin-left: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.prose ul {
+  list-style: disc;
+}
+
+.prose ol {
+  list-style: decimal;
+}
+
+.prose li {
+  margin-bottom: 0.5rem;
+}
+
+.prose a {
+  color: #0066cc;
+  text-decoration: underline;
+}
+
+.prose a:hover {
+  color: #0052a3;
+}
+
+.prose code {
+  background: #f3f4f6;
+  padding: 0.125rem 0.25rem;
+  border-radius: 4px;
+  font-size: 0.875em;
+  font-family: 'Courier New', monospace;
+}</code></pre>
+
+      <p>Lo ponemos al final para que estos estilos sobreescriban los estilos más genéricos. CSS funciona en cascada — el orden importa.</p>
+
+      <h2>Aplicando los estilos en el componente</h2>
+      <p>En el contenedor donde renderizás el contenido markdown, añadí la clase <code>prose</code>:</p>
+
+      <pre><code class="language-jsx">export function JobDetail() {
+  const { id } = useParams()
+  const [job, setJob] = useState(null)
+
+  // ... lógica de fetch
+
+  return (
+    &lt;div className={styles.container}&gt;
+      {/* Header, breadcrumb, etc. */}
+
+      &lt;article className="prose"&gt;
+        &lt;div dangerouslySetInnerHTML={{ __html: htmlContent }} /&gt;
+      &lt;/article&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Punto clave</th>
+            <th>Detalle</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Dónde va <code>prose</code></td><td>En el contenedor del contenido generado por markdown</td></tr>
+          <tr><td>Qué hereda</td><td>Todo lo que salga del markdown (p, h2, h3, ul, etc.)</td></tr>
+          <tr><td>Qué no hace falta tocar</td><td>El HTML generado — los estilos se aplican automáticamente</td></tr>
+        </tbody>
+      </table>
+
+    </div>
+  </article>
+
+  <!-- ===================== DETALLES ===================== -->
+  <article id="details" class="tab-content">
+    <div class="description">
+
+      <h2>Pequeños detalles que marcan la diferencia</h2>
+
+      <h2>1. Espaciado vertical</h2>
+
+      <pre><code class="language-css">.prose h2 {
+  margin-top: 2rem;    /* Más espacio arriba */
+  margin-bottom: 0.75rem; /* Menos espacio abajo */
+}</code></pre>
+
+      <pre><code>Checklist de espaciado:
+
+✅ Hay suficiente espacio entre párrafos
+✅ Los títulos tienen más margen arriba que abajo
+✅ El contenido respira y no está apretado</code></pre>
+
+      <h2>2. Ancho de línea</h2>
+      <p>Las líneas demasiado largas son difíciles de leer.</p>
+
+      <pre><code class="language-css">.prose {
+  max-width: 70ch; /* 70 caracteres es el estándar */
+}</code></pre>
+
+      <p>La unidad <code>ch</code> representa el ancho del carácter <code>"0"</code>. Es perfecta para medir longitud de línea porque se adapta al tamaño de fuente.</p>
+
+      <h2>3. Listas con iconos</h2>
+      <p>Si querés listas con íconos en lugar de viñetas:</p>
+
+      <pre><code class="language-css">.prose ul.check {
+  list-style: none;
+  padding-left: 0;
+}
+
+.prose ul.check li {
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.prose ul.check li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: #16a34a;
+  font-weight: bold;
+}</code></pre>
+
+      <h2>4. Contraste y legibilidad</h2>
+
+      <pre><code class="language-css">.prose {
+  color: #111827;   /* Casi negro, buen contraste */
+  line-height: 1.7; /* Espaciado cómodo */
+  font-size: 1rem;  /* 16px, tamaño legible */
+}</code></pre>
+
+      <h2>Bonus: Hover mejorado en enlaces</h2>
+
+      <pre><code class="language-css">.prose a {
+  color: #0066cc;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.prose a:hover {
+  color: #0052a3;
+  text-decoration: none;
+}</code></pre>
+
+      <h2>Bonus: Responsive typography</h2>
+
+      <pre><code class="language-css">@media (max-width: 640px) {
+  .prose {
+    font-size: 0.9375rem; /* 15px en móviles */
+  }
+
+  .prose h2 {
+    font-size: 1.25rem;
+  }
+
+  .prose h3 {
+    font-size: 1.125rem;
+  }
+}</code></pre>
+
+      <h2>Bonus: Dark mode</h2>
+
+      <pre><code class="language-css">@media (prefers-color-scheme: dark) {
+  .prose {
+    color: #e5e7eb;
+  }
+
+  .prose h1,
+  .prose h2,
+  .prose h3 {
+    color: #f9fafb;
+  }
+
+  .prose a {
+    color: #60a5fa;
+  }
+
+  .prose a:hover {
+    color: #93c5fd;
+  }
+
+  .prose code {
+    background: #374151;
+    color: #e5e7eb;
+  }
+}</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== EJERCICIO ===================== -->
+  <article id="exercise" class="tab-content">
+    <div class="description">
+
+      <h2>Tu objetivo</h2>
+      <p>Que la página de detalle quede exactamente igual que la del diseño de referencia. No "más o menos". No "parecido". <strong>Exactamente igual.</strong></p>
+
+      <h2>Método de comparación</h2>
+
+      <pre><code>Paso 1: Abrí dos ventanas lado a lado
+  ┌─────────────────┬─────────────────┐
+  │ Diseño de       │ Tu aplicación   │
+  │ referencia      │                 │
+  └─────────────────┴─────────────────┘
+
+Paso 2: Detectá diferencias
+  ¿Los títulos tienen el mismo tamaño?
+  ¿Las listas tienen el mismo estilo?
+  ¿El texto tiene el mismo espaciado?
+  ¿Los colores son iguales?
+
+Paso 3: Iterar
+  Ajustá un detalle → recargá → comparé → repetí</code></pre>
+
+      <h2>Diferencias típicas que encontrarás</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Problema</th>
+            <th>Solución</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Títulos más pequeños de lo que deberían</td><td>Ajustá <code>font-size</code></td></tr>
+          <tr><td>Texto muy pegado al borde</td><td>Añadí <code>padding</code> al contenedor</td></tr>
+          <tr><td>Listas con viñetas diferentes</td><td>Cambiá <code>list-style</code></td></tr>
+          <tr><td>Colores no exactos</td><td>Usá un color picker</td></tr>
+          <tr><td>Espaciado inconsistente</td><td>Revisá <code>margin</code> y <code>padding</code></td></tr>
+        </tbody>
+      </table>
+
+      <h2>Checklist de QA</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>¿Listo?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Los títulos H2 y H3 tienen el tamaño correcto</td><td>☐</td></tr>
+          <tr><td>Los párrafos tienen suficiente espaciado entre ellos</td><td>☐</td></tr>
+          <tr><td>Las listas se ven igual que en el diseño</td><td>☐</td></tr>
+          <tr><td>El ancho de línea es cómodo de leer (no más de 70-80 chars)</td><td>☐</td></tr>
+          <tr><td>Los colores coinciden con el diseño</td><td>☐</td></tr>
+          <tr><td>El espaciado general respeta el del diseño original</td><td>☐</td></tr>
+          <tr><td>Los enlaces se distinguen del texto normal</td><td>☐</td></tr>
+          <tr><td>El hover de los enlaces funciona correctamente</td><td>☐</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout-success">
+        <strong>La diferencia entre un proyecto amateur y uno profesional está muchas veces en estos detalles: el espaciado perfecto, la tipografía cuidada, los colores exactos.</strong>
+      </div>
+
+      <div class="resource-box">
+        <span class="resource-box__title">📚 Seguir aprendiendo</span>
+        <div class="resource-box__links">
+          <a href="https://www.jscamp.dev/estado-global-y-react-router/ejercicio-terminar-de-estilar-pagina-detalle" target="_blank" rel="noreferrer noopener" class="resource-box__link">JSCamp — Ejercicio: Estilar Página de Detalle →</a>
+        </div>
+      </div>
+
+    </div>
+  </article>
+
+</section>
