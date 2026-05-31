@@ -1,0 +1,435 @@
+<section class="box">
+  <h1>Trabajando con Estilos: Renderizado de Markdown</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="overview">Qué Construimos</button>
+    <button class="tab-button" data-tab="state-fetch">Estado y Fetch</button>
+    <button class="tab-button" data-tab="markdown">Markdown y HTML</button>
+    <button class="tab-button" data-tab="summary">Arquitectura Completa</button>
+  </div>
+
+  <!-- ===================== OVERVIEW ===================== -->
+  <article id="overview" class="tab-content active">
+    <div class="description">
+
+      <h2>Qué estamos construyendo</h2>
+      <p>Antes, en <code>/jobs/123</code> solo obteníamos el <code>jobId</code>. Ahora queremos la experiencia completa:</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Paso</th>
+            <th>Qué ocurre</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>Leer el <code>id</code> de la URL</td></tr>
+          <tr><td>2</td><td>Consultar la API</td></tr>
+          <tr><td>3</td><td>Mostrar loading</td></tr>
+          <tr><td>4</td><td>Mostrar error si falla</td></tr>
+          <tr><td>5</td><td>Mostrar el empleo si existe</td></tr>
+          <tr><td>6</td><td>Renderizar la descripción en Markdown</td></tr>
+          <tr><td>7</td><td>UI profesional</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Flujo visual completo</h2>
+      <pre><code>Usuario entra en /jobs/123
+
+        ↓
+
+useParams()
+
+        ↓
+
+jobId = 123
+
+        ↓
+
+useEffect()
+
+        ↓
+
+fetch("/api/jobs/123")
+
+        ↓
+
+ ┌─────────────┬─────────────┐
+ │             │             │
+ ▼             ▼             ▼
+
+Loading      Error       Success
+
+"cargando"  "no existe"  Mostrar oferta</code></pre>
+
+      <h2>1. useParams() → Obtener el ID</h2>
+      <p>Cuando tenés una ruta como <code>/jobs/:jobId</code>, React Router captura el parámetro:</p>
+
+      <pre><code class="language-jsx">const { jobId } = useParams()</code></pre>
+
+      <p>Si visitás <code>/jobs/25</code>, obtenés <code>jobId = "25"</code>.</p>
+
+      <pre><code>URL
+│
+└── /jobs/25
+        │
+        ▼
+ useParams()
+        │
+        ▼
+ jobId = 25</code></pre>
+
+      <p>Es exactamente igual que leer <code>?id=25</code> desde una query string — pero usando parámetros de ruta limpios.</p>
+
+    </div>
+  </article>
+
+  <!-- ===================== STATE & FETCH ===================== -->
+  <article id="state-fetch" class="tab-content">
+    <div class="description">
+
+      <h2>2. Los tres estados fundamentales</h2>
+      <p>Esto es <strong>muy importante</strong>. Todo fetch async en React sigue el mismo patrón:</p>
+
+      <pre><code class="language-jsx">const [job, setJob] = useState(null)
+const [loading, setLoading] = useState(true)
+const [error, setError] = useState(null)</code></pre>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Estado</th>
+            <th>Valor</th>
+            <th>Qué significa</th>
+            <th>Mostrar</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Loading</td>
+            <td><code>loading = true</code></td>
+            <td>La API todavía no respondió</td>
+            <td><code>&lt;p&gt;Cargando...&lt;/p&gt;</code></td>
+          </tr>
+          <tr>
+            <td>Error</td>
+            <td><code>error = "not found"</code></td>
+            <td>La API respondió con error</td>
+            <td>Mensaje de error</td>
+          </tr>
+          <tr>
+            <td>Success</td>
+            <td><code>job = { title: ... }</code></td>
+            <td>Datos recibidos correctamente</td>
+            <td>Contenido del empleo</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>3. useEffect() para llamar a la API</h2>
+      <p>Cuando cambia el <code>jobId</code>, React ejecuta el efecto:</p>
+
+      <pre><code class="language-jsx">useEffect(() => {
+  // lógica del fetch
+}, [jobId])</code></pre>
+
+      <pre><code>/jobs/1  →  /jobs/2  →  nuevo fetch disparado</code></pre>
+
+      <h2>4. AbortController — muy importante</h2>
+      <p>Muchos juniors no entienden esto. Imaginá:</p>
+
+      <pre><code>Usuario entra en /jobs/1
+
+La petición tarda 3 segundos
+
+Antes de terminar, el usuario navega a /jobs/2
+
+❌ La petición vieja sigue viva y podría
+   sobrescribir los datos de /jobs/2</code></pre>
+
+      <p>La solución:</p>
+
+      <pre><code class="language-jsx">useEffect(() => {
+  const controller = new AbortController()
+
+  fetch(`/api/jobs/${jobId}`, { signal: controller.signal })
+    .then(...)
+    .catch((err) => {
+      if (err.name === 'AbortError') return  // ignorar peticiones canceladas
+    })
+
+  return () => controller.abort()  // cleanup al desmontar o cambiar jobId
+}, [jobId])</code></pre>
+
+      <pre><code>/jobs/1
+
+ fetch
+   │
+   │
+   ├──────────── X  cancelada (AbortController)
+   │
+Usuario navega a /jobs/2  →  nuevo fetch limpio</code></pre>
+
+      <h2>5. El error más común con fetch()</h2>
+      <p>Muchísima gente piensa que <code>fetch()</code> lanza error automáticamente con 404 o 500. <strong>No lo hace.</strong></p>
+
+      <pre><code class="language-jsx">// ❌ Esto NO lanza error con 404
+fetch('/api/jobs/999')
+  .then(res => res.json())  // ¡sigue ejecutándose aunque sea 404!
+
+// ✅ Correcto
+fetch('/api/jobs/999')
+  .then(res => {
+    if (!response.ok) {
+      throw new Error('Job not found')
+    }
+    return res.json()
+  })</code></pre>
+
+      <pre><code>Respuesta 404
+
+response.ok = false
+
+        ↓
+
+throw Error()
+
+        ↓
+
+.catch()    ← recién acá lo manejamos</code></pre>
+
+      <h2>6. Guard Clauses</h2>
+      <p>En vez de <code>if/else</code> anidado, React moderno usa guard clauses:</p>
+
+      <pre><code class="language-jsx">// ❌ Anidado (sucio)
+if (loading) {
+  return &lt;p&gt;Cargando...&lt;/p&gt;
+} else if (error) {
+  return &lt;p&gt;Error: {error}&lt;/p&gt;
+} else {
+  return &lt;JobContent job={job} /&gt;
+}
+
+// ✅ Guard clauses (limpio)
+if (loading) return &lt;p&gt;Cargando...&lt;/p&gt;
+if (error) return &lt;p&gt;Error: {error}&lt;/p&gt;
+
+return &lt;JobContent job={job} /&gt;</code></pre>
+
+      <pre><code>¿Loading?
+   │
+   ├─ Sí → retornar UI de loading
+   │
+   ▼ No
+
+¿Error?
+   │
+   ├─ Sí → retornar UI de error
+   │
+   ▼ No
+
+Retornar contenido</code></pre>
+
+      <h2>7. JobSection — componente reutilizable</h2>
+      <p>Sin componente repetís la misma estructura para cada sección:</p>
+
+      <pre><code class="language-jsx">// ❌ Repetitivo
+&lt;section&gt;&lt;h2&gt;Descripción&lt;/h2&gt; ... &lt;/section&gt;
+&lt;section&gt;&lt;h2&gt;Requisitos&lt;/h2&gt; ... &lt;/section&gt;
+&lt;section&gt;&lt;h2&gt;Empresa&lt;/h2&gt; ... &lt;/section&gt;
+
+// ✅ Reutilizable
+&lt;JobSection title="Descripción" content={job.content} /&gt;
+&lt;JobSection title="Requisitos" content={job.requirements} /&gt;
+&lt;JobSection title="Empresa" content={job.company} /&gt;</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== MARKDOWN ===================== -->
+  <article id="markdown" class="tab-content">
+    <div class="description">
+
+      <h2>8. El problema del Markdown</h2>
+      <p>Las APIs suelen devolver texto formateado en Markdown — no en HTML:</p>
+
+      <pre><code># React Developer
+
+## Responsibilities
+
+- Build apps
+- Create tests</code></pre>
+
+      <p>Si renderizás esto directamente en React, el usuario ve los símbolos <code>#</code> y guiones como texto plano. React no sabe qué es Markdown.</p>
+
+      <h2>9. snarkdown</h2>
+      <p><code>snarkdown</code> es una librería tiny que convierte Markdown a HTML:</p>
+
+      <pre><code class="language-jsx">import snarkdown from 'snarkdown'
+
+const html = snarkdown('# React Developer\n\n- React\n- TypeScript')</code></pre>
+
+      <p>Resultado:</p>
+      <pre><code class="language-jsx">&lt;h1&gt;React Developer&lt;/h1&gt;
+&lt;ul&gt;
+  &lt;li&gt;React&lt;/li&gt;
+  &lt;li&gt;TypeScript&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+
+      <pre><code>Markdown
+     │
+     ▼
+snarkdown()
+     │
+     ▼
+String HTML</code></pre>
+
+      <h2>10. dangerouslySetInnerHTML</h2>
+      <p>Este es probablemente el concepto más importante de toda la clase.</p>
+
+      <p>Normalmente React escapa todo:</p>
+
+      <pre><code class="language-jsx">const html = '&lt;h1&gt;Hola&lt;/h1&gt;'
+
+// ❌ Renderiza como texto: &lt;h1&gt;Hola&lt;/h1&gt;
+return &lt;div&gt;{html}&lt;/div&gt;
+
+// ✅ Renderiza como un H1 real
+return &lt;div dangerouslySetInnerHTML={{ __html: html }} /&gt;</code></pre>
+
+      <pre><code>String HTML
+
+      ↓
+
+dangerouslySetInnerHTML={{ __html: html }}
+
+      ↓
+
+Elemento DOM real</code></pre>
+
+      <h2>¿Por qué se llama "dangerously"?</h2>
+      <p>Por seguridad. Si contenido de usuarios llega a <code>dangerouslySetInnerHTML</code> sin filtrar:</p>
+
+      <pre><code class="language-jsx">// ❌ NUNCA hacer esto con input de usuarios
+const comentario = '&lt;script&gt;stealPasswords()&lt;/script&gt;'
+return &lt;div dangerouslySetInnerHTML={{ __html: comentario }} /&gt;</code></pre>
+
+      <p>Eso es un ataque <strong>XSS (Cross-Site Scripting)</strong>. El script se ejecutaría en el navegador de cada visitante.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Seguro ✅</th>
+            <th>No seguro ❌</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Datos de tu propia API</td>
+            <td>Comentarios de usuarios de un formulario público</td>
+          </tr>
+          <tr>
+            <td>Contenido creado por tu empresa</td>
+            <td>Cualquier texto que cualquiera puede escribir</td>
+          </tr>
+          <tr>
+            <td>CMS controlado</td>
+            <td>Fuentes externas no confiables</td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </article>
+
+  <!-- ===================== SUMMARY ===================== -->
+  <article id="summary" class="tab-content">
+    <div class="description">
+
+      <h2>La arquitectura completa</h2>
+
+      <pre><code>URL: /jobs/123
+
+      ↓
+
+useParams()  →  jobId
+
+      ↓
+
+useEffect()  (se ejecuta cuando cambia jobId)
+
+      ↓
+
+fetch()  +  AbortController
+
+      ↓
+
+Respuesta de la API
+
+      ↓
+
+Objeto job
+
+      ↓
+
+Componentes JobSection
+
+      ↓
+
+job.content (string Markdown)
+
+      ↓
+
+snarkdown()
+
+      ↓
+
+String HTML
+
+      ↓
+
+dangerouslySetInnerHTML
+
+      ↓
+
+Pantalla</code></pre>
+
+      <h2>Las 10 cosas que hay que recordar</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Concepto</th>
+            <th>Punto clave</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td><code>useParams()</code></td><td>Leer IDs de la URL</td></tr>
+          <tr><td>2</td><td><code>useEffect()</code></td><td>Llamar a la API cuando cambia el ID</td></tr>
+          <tr><td>3</td><td>loading / error / job</td><td>Patrón estándar para fetch async</td></tr>
+          <tr><td>4</td><td><code>response.ok</code></td><td>fetch NO falla con 404 — tenés que chequearlo</td></tr>
+          <tr><td>5</td><td>AbortController</td><td>Cancela peticiones obsoletas, evita memory leaks</td></tr>
+          <tr><td>6</td><td>Guard Clauses</td><td>Simplifican el render condicional</td></tr>
+          <tr><td>7</td><td>Componentes reutilizables</td><td><code>JobSection</code> evita la repetición</td></tr>
+          <tr><td>8</td><td>Markdown</td><td>Las APIs devuelven Markdown, no HTML — hay que convertirlo</td></tr>
+          <tr><td>9</td><td><code>snarkdown()</code></td><td>Convierte Markdown a string HTML</td></tr>
+          <tr><td>10</td><td><code>dangerouslySetInnerHTML</code></td><td>Renderiza HTML en React — seguro solo con datos confiables</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout-warning">
+        <strong>Recordá:</strong> <code>dangerouslySetInnerHTML</code> solo es seguro cuando controlás el origen del HTML. Nunca lo usés con input directo de usuarios.
+      </div>
+
+      <div class="resource-box">
+        <span class="resource-box__title">📚 Seguir aprendiendo</span>
+        <div class="resource-box__links">
+          <a href="https://www.jscamp.dev/estado-global-y-react-router/parametros-en-react-router-useparams" target="_blank" rel="noreferrer noopener" class="resource-box__link">JSCamp — useParams →</a>
+          <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/6a1c830e-e0cc-83eb-88f3-30dcc07f9d1b" target="_blank" rel="noreferrer noopener" class="resource-box__link">Practicar con MiduFrontend GPT →</a>
+        </div>
+      </div>
+
+    </div>
+  </article>
+
+</section>
