@@ -1,0 +1,318 @@
+<section class="box">
+  <h1>Lazy Load en las Rutas</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="problem">El Problema</button>
+    <button class="tab-button" data-tab="lazy">React.lazy</button>
+    <button class="tab-button" data-tab="suspense">Suspense</button>
+    <button class="tab-button" data-tab="summary">Resumen</button>
+  </div>
+
+  <!-- ===================== EL PROBLEMA ===================== -->
+  <article id="problem" class="tab-content active">
+    <div class="description">
+
+      <h2>El problema que tenemos</h2>
+      <p>Imaginá que tu aplicación tiene 4 páginas:</p>
+
+      <pre><code>🏠 Home
+🔍 Search
+📄 Detail
+❌ NotFound</code></pre>
+
+      <p>Cuando el usuario entra en <code>www.miapp.com</code> solo ve <strong>Home</strong>. Pero React está descargando esto:</p>
+
+      <pre><code>⬇️ Home
+⬇️ Search
+⬇️ Detail
+⬇️ NotFound
+⬇️ Pagination
+⬇️ CSS de Search
+⬇️ CSS de Detail</code></pre>
+
+      <p>Aunque el usuario <strong>NO los necesita todavía</strong>.</p>
+
+      <h2>Qué queremos conseguir</h2>
+
+      <pre><code>Entrada inicial
+      ↓
+🏠 Home   →  Solo descarga: Home
+
+Cuando pulsa Buscar
+      ↓
+🔍 Search →  Descarga: Search + Pagination + CSS
+
+Cuando entra en un empleo
+      ↓
+📄 Detail →  Descarga: Detail + Markdown + CSS</code></pre>
+
+      <h2>Antes vs Después</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>❌ Antes — todo de golpe</th>
+            <th>✅ Después — solo lo necesario</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <pre style="margin:0">APP
+├── Home
+├── Search
+├── Detail
+├── NotFound
+├── Pagination
+└── CSS</pre>
+            </td>
+            <td>
+              <pre style="margin:0">APP
+└── Home
+
+(el resto se descarga
+ cuando el usuario navega)</pre>
+            </td>
+          </tr>
+          <tr><td>🐢 Más JS, más descarga, inicio lento</td><td>⚡ Menos JS, menos descarga, inicio rápido</td></tr>
+        </tbody>
+      </table>
+
+      <h2>La regla de oro: piensá en Netflix</h2>
+
+      <pre><code>Cuando abrís Netflix:
+
+NO descarga todas las películas
+
+Descarga solamente:
+  La pantalla principal
+
+Y cuando elegís una película:
+  Descarga esa película
+
+React Lazy funciona exactamente igual.</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== REACT.LAZY ===================== -->
+  <article id="lazy" class="tab-content">
+    <div class="description">
+
+      <h2>Cómo funciona React.lazy</h2>
+
+      <p>Normalmente hacés:</p>
+
+      <pre><code class="language-jsx">import { HomePage } from './pages/Home'</code></pre>
+
+      <p>Eso significa: <strong>descárgalo YA</strong>.</p>
+
+      <p>Con lazy:</p>
+
+      <pre><code class="language-jsx">const HomePage = lazy(() => import('./pages/Home'))</code></pre>
+
+      <p>Eso significa:</p>
+
+      <pre><code>📦 No lo descargues todavía
+      ↓
+⏳ Espera
+      ↓
+👤 ¿El usuario lo necesita?
+
+  Sí → descárgalo ahora
+  No → no hagas nada</code></pre>
+
+      <h2>Import normal vs Import lazy</h2>
+
+      <pre><code class="language-jsx">// ❌ Import normal
+import SearchPage from './SearchPage'
+
+// React:
+// Inicio App → Descarga SearchPage (siempre)</code></pre>
+
+      <pre><code class="language-jsx">// ✅ Import lazy
+const SearchPage = lazy(() => import('./SearchPage'))
+
+// React:
+// Inicio App → NO descarga SearchPage
+//           → Usuario entra en /search
+//           → Ahora sí descarga SearchPage</code></pre>
+
+      <h2>⚠️ El error raro: export default</h2>
+      <p><code>React.lazy</code> espera un <code>export default</code>. Si usás named export, puede fallar:</p>
+
+      <pre><code class="language-jsx">// ❌ Puede dar problemas con lazy
+export function HomePage() {
+  // ...
+}
+// React recibe: { HomePage: function }
+// No es lo que espera</code></pre>
+
+      <pre><code class="language-jsx">// ✅ Funciona perfecto con lazy
+function HomePage() {
+  // ...
+}
+
+export default HomePage
+// React recibe: HomePage ← justo lo que espera</code></pre>
+
+      <p>Si ves algo parecido a:</p>
+
+      <pre><code>Cannot convert an object to a primitive value</code></pre>
+
+      <p>Fijate si el componente tiene <code>export default</code>.</p>
+
+    </div>
+  </article>
+
+  <!-- ===================== SUSPENSE ===================== -->
+  <article id="suspense" class="tab-content">
+    <div class="description">
+
+      <h2>¿Qué hace Suspense?</h2>
+      <p>Imaginate una conexión lenta.</p>
+
+      <pre><code>Sin Suspense:
+
+Click Search
+     ↓
+🤔 (silencio total)
+🤔
+🤔
+     ↓
+Aparece Search
+
+El usuario piensa: ¿Habrá funcionado?
+
+Con Suspense:
+
+Click Search
+     ↓
+⏳ Cargando...
+     ↓
+Search
+
+Mucho mejor UX.</code></pre>
+
+      <h2>Cómo se usa</h2>
+
+      <pre><code class="language-jsx">import { lazy, Suspense } from 'react'
+import { Routes, Route } from 'react-router'
+
+const HomePage   = lazy(() => import('./pages/Home'))
+const SearchPage = lazy(() => import('./pages/Search'))
+const DetailPage = lazy(() => import('./pages/Detail'))
+
+function App() {
+  return (
+    &lt;Suspense fallback={&lt;p&gt;Cargando...&lt;/p&gt;}&gt;
+      &lt;Routes&gt;
+        &lt;Route path="/"        element={&lt;HomePage /&gt;}   /&gt;
+        &lt;Route path="/search"  element={&lt;SearchPage /&gt;} /&gt;
+        &lt;Route path="/jobs/:id" element={&lt;DetailPage /&gt;} /&gt;
+      &lt;/Routes&gt;
+    &lt;/Suspense&gt;
+  )
+}</code></pre>
+
+      <h2>Flujo completo con Suspense</h2>
+
+      <pre><code>Usuario entra
+      ↓
+🏠 Home (descargada)
+
+Usuario pulsa Buscar
+      ↓
+⏳ Cargando...
+      ↓
+🔍 Search (descargada)
+
+Usuario pulsa una oferta
+      ↓
+⏳ Cargando...
+      ↓
+📄 Detail (descargada)</code></pre>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Prop</th>
+            <th>Qué hace</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>fallback</code></td><td>Lo que se muestra mientras carga el componente lazy</td></tr>
+        </tbody>
+      </table>
+
+    </div>
+  </article>
+
+  <!-- ===================== RESUMEN ===================== -->
+  <article id="summary" class="tab-content">
+    <div class="description">
+
+      <h2>Lo más importante para entrevistas</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Pregunta</th>
+            <th>Respuesta</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>¿Qué problema resuelve React.lazy?</td><td>Evita descargar código que el usuario todavía no necesita</td></tr>
+          <tr><td>¿Qué hace React.lazy?</td><td>Divide el bundle en trozos y carga cada página bajo demanda</td></tr>
+          <tr><td>¿Para qué sirve Suspense?</td><td>Mostrar un fallback mientras se descarga un componente lazy</td></tr>
+          <tr><td>¿Qué export necesita lazy?</td><td><code>export default</code> — no funciona con named exports</td></tr>
+        </tbody>
+      </table>
+
+      <h2>El impacto real</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>❌ Sin lazy</th>
+            <th>✅ Con lazy</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>JS al entrar</td><td>100 KB</td><td>35 KB</td></tr>
+          <tr><td>Tiempo de carga inicial</td><td>Lento</td><td>Rápido</td></tr>
+          <tr><td>Código de otras páginas</td><td>Se descarga siempre</td><td>Solo cuando se navega</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Referencia rápida</h2>
+
+      <pre><code class="language-jsx">import { lazy, Suspense } from 'react'
+
+// 1. Definir lazy imports
+const SearchPage = lazy(() => import('./pages/Search'))
+
+// 2. Envolver con Suspense
+&lt;Suspense fallback={&lt;p&gt;Cargando...&lt;/p&gt;}&gt;
+  &lt;Routes&gt;
+    &lt;Route path="/search" element={&lt;SearchPage /&gt;} /&gt;
+  &lt;/Routes&gt;
+&lt;/Suspense&gt;</code></pre>
+
+      <div class="callout-success">
+        <strong>React.lazy convierte tus rutas en capítulos de Netflix. No descargás toda la serie al abrir la app — descargás el episodio cuando realmente lo vas a ver.</strong>
+      </div>
+
+      <div class="resource-box">
+        <span class="resource-box__title">📚 Seguir aprendiendo</span>
+        <div class="resource-box__links">
+          <a href="https://www.jscamp.dev/estado-global-y-react-router/tecnica-de-lazy-load-en-las-rutas" target="_blank" rel="noreferrer noopener" class="resource-box__link">JSCamp — Lazy Load en las Rutas →</a>
+          <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/6a1ca870-a214-83eb-8400-78009e11b16f" target="_blank" rel="noreferrer noopener" class="resource-box__link">Practicar con MiduFrontend GPT →</a>
+        </div>
+      </div>
+
+    </div>
+  </article>
+
+</section>
