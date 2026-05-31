@@ -1,0 +1,270 @@
+<section class="box">
+  <h1>useSearchParams</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="idea">The Idea</button>
+    <button class="tab-button" data-tab="before-after">Before vs After</button>
+    <button class="tab-button" data-tab="updating">Updating Filters</button>
+    <button class="tab-button" data-tab="summary">Summary</button>
+  </div>
+
+  <!-- ===================== THE IDEA ===================== -->
+  <article id="idea" class="tab-content active">
+    <div class="description">
+
+      <h2>The hook that replaces everything manual</h2>
+      <p>Before, you did all this by hand:</p>
+
+      <pre><code class="language-javascript">window.location.search
+new URLSearchParams(...)
+navigate(`?${params.toString()}`)</code></pre>
+
+      <p>Now React Router gives you a dedicated hook:</p>
+
+      <pre><code class="language-jsx">const [searchParams, setSearchParams] = useSearchParams()</code></pre>
+
+      <h2>The complete flow</h2>
+
+      <pre><code>Input / filters
+      ↓
+React state
+      ↓
+useSearchParams
+      ↓
+URL updated
+      ↓
+?text=react&amp;technology=javascript</code></pre>
+
+      <h2>Reading values from the URL</h2>
+      <p>Given this URL:</p>
+
+      <pre><code>/jobs?text=react&amp;technology=javascript&amp;remote=true</code></pre>
+
+      <p>You can read each value like this:</p>
+
+      <pre><code class="language-jsx">searchParams.get('text')        // "react"
+searchParams.get('technology')  // "javascript"
+searchParams.get('remote')      // "true"</code></pre>
+
+      <p>It's as if the URL were an object:</p>
+
+      <pre><code class="language-javascript">{
+  text: 'react',
+  technology: 'javascript',
+  remote: 'true'
+}</code></pre>
+
+      <div class="callout-success">
+        <strong>useSearchParams is like useState, but for URL query parameters.</strong>
+      </div>
+
+    </div>
+  </article>
+
+  <!-- ===================== BEFORE VS AFTER ===================== -->
+  <article id="before-after" class="tab-content">
+    <div class="description">
+
+      <h2>Before: manual and repetitive</h2>
+
+      <pre><code class="language-javascript">// ❌ Before
+const params = new URLSearchParams(window.location.search)
+const text = params.get('text') ?? ''
+
+navigate(`?${params.toString()}`)</code></pre>
+
+      <pre><code>Problem — you do everything yourself:
+
+read URL
+  ↓
+create params
+  ↓
+modify params
+  ↓
+navigate manually</code></pre>
+
+      <h2>After: with React Router</h2>
+
+      <pre><code class="language-jsx">// ✅ After
+const [searchParams, setSearchParams] = useSearchParams()
+
+const text = searchParams.get('text') ?? ''</code></pre>
+
+      <pre><code>Better — React Router does the heavy lifting:
+
+read URL
+  ↓
+update URL
+  ↓
+keep navigation in sync</code></pre>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Before</th>
+            <th>After</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Read URL manually</td><td><code>searchParams.get()</code></td></tr>
+          <tr><td>Create <code>URLSearchParams</code> by hand</td><td><code>setSearchParams()</code></td></tr>
+          <tr><td>Call <code>navigate()</code> explicitly</td><td>React Router handles it</td></tr>
+          <tr><td>Lots of boilerplate</td><td>Clean, expressive code</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Lazy initialization explained simply</h2>
+      <p>This works, but the expression evaluates on every render:</p>
+
+      <pre><code class="language-jsx">// ⚠️ Evaluates on every render
+const [textToFilter, setTextToFilter] = useState(
+  searchParams.get('text') ?? ''
+)</code></pre>
+
+      <p>Better with a function:</p>
+
+      <pre><code class="language-jsx">// ✅ Only evaluates once
+const [textToFilter, setTextToFilter] = useState(() => {
+  return searchParams.get('text') ?? ''
+})</code></pre>
+
+      <pre><code>Without function:
+render 1 → reads URL
+render 2 → reads URL again
+render 3 → reads URL again
+
+With function:
+render 1 → reads URL
+render 2 → does NOT re-initialize
+render 3 → does NOT re-initialize</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== UPDATING FILTERS ===================== -->
+  <article id="updating" class="tab-content">
+    <div class="description">
+
+      <h2>Updating filters in the URL</h2>
+
+      <pre><code class="language-jsx">const updateFiltersInURL = ({ text, technology, remote }) => {
+  setSearchParams((prevParams) => {
+    const params = new URLSearchParams(prevParams)
+
+    if (text) params.set('text', text)
+    else params.delete('text')
+
+    if (technology) params.set('technology', technology)
+    else params.delete('technology')
+
+    if (remote) params.set('remote', 'true')
+    else params.delete('remote')
+
+    return params
+  })
+}</code></pre>
+
+      <pre><code>The logic:
+
+Has value    →  params.set()
+No value     →  params.delete()</code></pre>
+
+      <pre><code>text = "react"
+technology = "javascript"
+remote = true
+
+Result:
+/jobs?text=react&amp;technology=javascript&amp;remote=true
+
+If you clear text:
+/jobs?technology=javascript&amp;remote=true</code></pre>
+
+      <h2>⚠️ Important mistake: append vs set</h2>
+      <p>Don't use <code>append</code> for regular filters:</p>
+
+      <pre><code class="language-jsx">// ❌ Creates duplicates
+params.append('text', text)
+// ?text=react&amp;text=react&amp;text=react
+
+// ✅ Replaces the previous value
+params.set('text', text)
+// ?text=react</code></pre>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Method</th>
+            <th>When to use it</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>params.set()</code></td><td>Regular filters — replaces the value</td></tr>
+          <tr><td><code>params.append()</code></td><td>Multiple values with the same key</td></tr>
+          <tr><td><code>params.delete()</code></td><td>Remove empty filters from the URL</td></tr>
+        </tbody>
+      </table>
+
+    </div>
+  </article>
+
+  <!-- ===================== SUMMARY ===================== -->
+  <article id="summary" class="tab-content">
+    <div class="description">
+
+      <h2>What we achieve with useSearchParams</h2>
+      <p><code>useSearchParams</code> lets you sync your app's filters with the URL without writing manual code using <code>window.location.search</code> or <code>navigate</code>.</p>
+
+      <p>It makes things like this work correctly:</p>
+
+      <pre><code>/jobs?text=react&amp;technology=javascript</code></pre>
+
+      <p>And when you reload the page, the filters stay active.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Benefit</th>
+            <th>Result</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Cleaner</td><td>No manual <code>window.location.search</code></td></tr>
+          <tr><td>Easier to maintain</td><td>One hook instead of scattered logic</td></tr>
+          <tr><td>More professional</td><td>URL as the source of truth for filters</td></tr>
+          <tr><td>Less repetitive</td><td>No <code>URLSearchParams</code> boilerplate</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Quick reference</h2>
+
+      <pre><code class="language-jsx">import { useSearchParams } from 'react-router'
+
+const [searchParams, setSearchParams] = useSearchParams()
+
+// Read
+const text = searchParams.get('text') ?? ''
+
+// Write
+setSearchParams((prev) => {
+  const params = new URLSearchParams(prev)
+  if (text) params.set('text', text)
+  else params.delete('text')
+  return params
+})</code></pre>
+
+      <div class="callout-success">
+        <strong>useSearchParams is like useState, but for URL query parameters.</strong>
+      </div>
+
+      <div class="resource-box">
+        <span class="resource-box__title">📚 Continue learning</span>
+        <div class="resource-box__links">
+          <a href="https://www.jscamp.dev/estado-global-y-react-router/hook-use-search-params-react-router" target="_blank" rel="noreferrer noopener" class="resource-box__link">JSCamp — useSearchParams Hook →</a>
+          <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/6a1ca701-083c-83eb-9af4-8abdd0e9f9fe" target="_blank" rel="noreferrer noopener" class="resource-box__link">Practice with MiduFrontend GPT →</a>
+        </div>
+      </div>
+
+    </div>
+  </article>
+
+</section>

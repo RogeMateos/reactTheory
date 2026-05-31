@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const lang = currentLanguage === "es" ? "es" : "en";
     const hooks = ["useState", "useEffect", "useEffect2midu", "useEffect3midu", "useContext", "useRef", "useReducer", "globalSwitch", "useId", "customHooks", "customHooks2"];
     const fundamentals = ["componentes", "componentesVsFunciones", "jobCard", "props", "modulos", "paginacion", "callbacks", "listas", "paginacion-final", "css-modules", "eventos", "renderizado", "spa", "vite-bundlers", "vite-install", "fast-refresh", "document-title", "bareBonesMethod", "lifeCicle", "formularios", "filtros-routing", "formulario-navegacion", "componente-route", "llamada-api", "filtros-api", "paginacion-api", "arreglando-paginacion", "sincronizacion-url"];
-    const globalStateAndRouter = ["routerBrowser", "react-router", "crear-rutas", "link-hooks-router", "useParams", "trabajando-estilos", "navegacion-detalle", "terminar-estilar"];
+    const globalStateAndRouter = ["routerBrowser", "react-router", "crear-rutas", "link-hooks-router", "useParams", "trabajando-estilos", "navegacion-detalle", "terminar-estilar", "useSearchParams"];
     const interview = ["interviewQuestions", "react-hooks-rules-and-order", "react-hooks-masterclass"];
 
     let folder = "";
@@ -171,6 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
       "trabajando-estilos": { en: "Working with Styles", es: "Trabajando con Estilos" },
       "navegacion-detalle": { en: "Navigating to Detail", es: "Navegación al Detalle" },
       "terminar-estilar": { en: "Finishing the Styles", es: "Terminar de Estilar" },
+      useSearchParams: { en: "useSearchParams", es: "useSearchParams" },
       "crear-rutas": { en: "How to Create Routes", es: "Cómo Crear Rutas" },
       "link-hooks-router": { en: "Link & Router Hooks", es: "Link y Hooks del Router" },
       hooks: { en: "Hooks", es: "Hooks" },
