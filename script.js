@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function loadContent(section) {
     content.innerHTML = '<div class="loading-state">Loading...</div>';
     const lang = currentLanguage === "es" ? "es" : "en";
-    const hooks = ["useState", "useEffect", "useEffect2midu", "useEffect3midu", "useContext", "useRef", "useReducer", "globalSwitch", "useId", "customHooks", "customHooks2"];
+    const hooks = ["useState", "useEffect", "useEffect2midu", "useEffect3midu", "useContext", "useRef", "useReducer", "globalSwitch", "useId", "custom-hooks", "customHooks", "customHooks2", "use"];
     const fundamentals = ["componentes", "componentesVsFunciones", "jobCard", "props", "modulos", "paginacion", "callbacks", "listas", "paginacion-final", "css-modules", "eventos", "renderizado", "spa", "vite-bundlers", "vite-install", "fast-refresh", "document-title", "bareBonesMethod", "lifeCicle", "formularios", "filtros-routing", "formulario-navegacion", "componente-route", "llamada-api", "filtros-api", "paginacion-api", "arreglando-paginacion", "sincronizacion-url"];
     const globalStateAndRouter = ["routerBrowser", "react-router", "crear-rutas", "link-hooks-router", "useParams", "trabajando-estilos", "navegacion-detalle", "terminar-estilar", "useSearchParams", "lazy-load", "estilos-navlink", "refuerzo-ejercicios", "autenticacion", "react-context"];
     const interview = ["interviewQuestions", "react-hooks-rules-and-order", "react-hooks-masterclass"];
@@ -183,10 +183,12 @@ document.addEventListener("DOMContentLoaded", () => {
       routing: { en: "Routing", es: "Enrutamiento" },
       globalSwitch: { en: "Global Switch (useContext)", es: "Global Switch (useContext)" },
       useId: { en: "useId", es: "useId" },
+      "custom-hooks": { en: "Custom Hooks", es: "Custom Hooks" },
       customHooks: { en: "Custom Hooks", es: "Custom Hooks" },
       customHooks2: { en: "Custom Hooks II", es: "Custom Hooks II" },
       useEffect2midu: { en: 'useEffect II', es: 'useEffect II' },
       useEffect3midu: { en: 'useEffect III', es: 'useEffect III' },
+      use: { en: 'use() - React 19', es: 'use() - React 19' },
       virtualDOM: { en: "Virtual DOM", es: "DOM Virtual" },
       interviewQuestions: {
         en: "Accessing Previous State/Props",

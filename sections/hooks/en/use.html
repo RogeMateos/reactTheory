@@ -1,0 +1,755 @@
+<section class="box">
+  <h1>React 19 use() Hook: Reading Context and Promises</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">
+      Concepts
+    </button>
+    <button class="tab-button" data-tab="code-examples">
+      Code Examples
+    </button>
+    <button class="tab-button" data-tab="migration">
+      Migration Guide
+    </button>
+  </div>
+
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+    <p>
+      React 19 introduced the <strong>use()</strong> hook, a simple evolution that changes how we read Context and Promises in components.
+    </p>
+
+    <p>It's not a replacement. It's an evolution.</p>
+
+    <h2>🏢 Analogy: The Office Reception</h2>
+    <p>Imagine a company office:</p>
+
+    <pre><code>Reception Desk (Provider)
+       ↓
+      💬 "Here's shared information"
+       ↓
+Office Employees (Components)</code></pre>
+
+    <p><strong>The Old Way (useContext)</strong></p>
+    <p>The receptionist says: "Go find the information yourself from my desk."</p>
+
+    <pre><code class="language-jsx">const theme = useContext(ThemeContext)</code></pre>
+
+    <p><strong>The New Way (use)</strong></p>
+    <p>The receptionist says: "I'll give you the information directly."</p>
+
+    <pre><code class="language-jsx">const theme = use(ThemeContext)</code></pre>
+
+    <p>One word changes. That's it.</p>
+
+    <h2>1️⃣ What is use()?</h2>
+    <p>
+      <strong>use()</strong> is a hook that reads values from Context OR Promises.
+    </p>
+
+    <p>Think of it as the universal reader:</p>
+
+    <pre><code>use() can read:
+  ✅ Context values
+  ✅ Promises (with Suspense)
+  ❌ Not useRef
+  ❌ Not useState
+  ❌ Not other hooks</code></pre>
+
+    <p>It's specifically designed for:</p>
+    <ul>
+      <li>Reading shared state (Context)</li>
+      <li>Reading async data (Promises)</li>
+    </ul>
+
+    <h2>2️⃣ The Minimal Difference: useContext vs use()</h2>
+
+    <h3>useContext (React 16.8+)</h3>
+    <pre><code class="language-jsx">import { useContext } from 'react'
+
+function Card() {
+  const theme = useContext(ThemeContext)
+
+  return &lt;div style={{ color: theme.color }}&gt;...&lt;/div&gt;
+}</code></pre>
+
+    <h3>use() (React 19+)</h3>
+    <pre><code class="language-jsx">import { use } from 'react'
+
+function Card() {
+  const theme = use(ThemeContext)
+
+  return &lt;div style={{ color: theme.color }}&gt;...&lt;/div&gt;
+}</code></pre>
+
+    <p><strong>The change:</strong> One function name. That's literally it.</p>
+
+    <p><strong>But the big difference:</strong></p>
+
+    <h2>🔥 The Big Difference: Promises</h2>
+    <p>use() can read Promises. useContext cannot.</p>
+
+    <h3>With Promises (ONLY with use())</h3>
+    <pre><code class="language-jsx">import { use } from 'react'
+
+function UserProfile() {
+  const userPromise = fetchUser(userId)
+  const user = use(userPromise)  // ✅ Works!
+
+  return &lt;h1&gt;{user.name}&lt;/h1&gt;
+}</code></pre>
+
+    <p><strong>useContext cannot do this:</strong></p>
+    <pre><code class="language-jsx">function UserProfile() {
+  const userPromise = fetchUser(userId)
+  const user = useContext(userPromise)  // ❌ Error!
+}</code></pre>
+
+    <h2>📚 Three Things use() Reads</h2>
+
+    <h3>1. Context (Simple Case)</h3>
+    <pre><code class="language-jsx">// Create context
+const ThemeContext = React.createContext('light')
+
+// In a component
+const theme = use(ThemeContext)</code></pre>
+
+    <h3>2. Promises (Async Case)</h3>
+    <pre><code class="language-jsx">// Create a promise
+const userPromise = fetch('/api/user').then(r => r.json())
+
+// In a component (needs Suspense)
+const user = use(userPromise)</code></pre>
+
+    <h3>3. Conditionally Read (The Smart Part)</h3>
+    <pre><code class="language-jsx">function Card({ userId }) {
+  let user = null
+
+  // ✅ You CAN use in conditionals
+  if (userId) {
+    user = use(fetchUser(userId))
+  }
+
+  return &lt;div&gt;{user ? user.name : 'No user'}&lt;/div&gt;
+}</code></pre>
+
+    <p><strong>This is different from useState/useRef.</strong></p>
+    <p>Those CANNOT be conditional. use() CAN.</p>
+
+    <h2>🎬 How use() Works with Promises</h2>
+
+    <pre><code>1. Component renders
+   ↓
+2. use(promise) is called
+   ↓
+3. Promise is NOT resolved yet
+   ↓
+4. React throws the promise (Suspense catches it)
+   ↓
+5. React waits for the promise
+   ↓
+6. Promise resolves
+   ↓
+7. Component re-renders with data</code></pre>
+
+    <p><strong>This requires Suspense:</strong></p>
+
+    <pre><code class="language-jsx">&lt;Suspense fallback={&lt;Loading /&gt;}&gt;
+  &lt;UserProfile /&gt;
+&lt;/Suspense&gt;</code></pre>
+
+    <h2>🏗️ Real-World Analogy: Vending Machine vs Librarian</h2>
+
+    <h3>useContext: Vending Machine</h3>
+    <p>You interact with a machine:</p>
+    <pre><code>1. You insert money
+2. Machine gives you soda
+3. No waiting
+4. Instant response
+5. Limited interaction</code></pre>
+
+    <p>Direct, fast, simple. Works only for stored values.</p>
+
+    <h3>use(): Smart Librarian</h3>
+    <p>You ask a librarian:</p>
+    <pre><code>1. You ask for a book
+2. Librarian doesn't have it yet
+3. Librarian goes to get it
+4. You wait (Suspense shows loading)
+5. Librarian returns with book
+6. You get the book</code></pre>
+
+    <p>Flexible, can fetch information, handles waiting.</p>
+
+    <h2>🧠 When to Use use() vs useContext()</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Situation</th>
+          <th>Use useContext()</th>
+          <th>Use use()</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Reading context in React 18</td>
+          <td>✅ Only option</td>
+          <td>❌ Not available</td>
+        </tr>
+        <tr>
+          <td>Reading context in React 19</td>
+          <td>✅ Still works</td>
+          <td>✅ Also works</td>
+        </tr>
+        <tr>
+          <td>Reading a Promise</td>
+          <td>❌ Can't do it</td>
+          <td>✅ Yes!</td>
+        </tr>
+        <tr>
+          <td>Conditionally read context</td>
+          <td>❌ Rule of hooks</td>
+          <td>✅ Yes!</td>
+        </tr>
+        <tr>
+          <td>Server Components</td>
+          <td>❌ Not supported</td>
+          <td>✅ Supported</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>💡 The Key Rule: use() is More Flexible</h2>
+
+    <p>
+      useContext() is <strong>always at the top level</strong>. It must never be conditional.
+    </p>
+
+    <p>use() can be conditional because it works differently internally.</p>
+
+    <pre><code class="language-jsx">// ❌ This breaks the rules of hooks
+function Profile() {
+  if (someCondition) {
+    const theme = useContext(ThemeContext)
+  }
+}
+
+// ✅ This works fine with use()
+function Profile() {
+  if (someCondition) {
+    const theme = use(ThemeContext)
+  }
+}</code></pre>
+
+    <h2>🚀 React 19 New Feature: Client vs Server</h2>
+
+    <p><strong>useContext:</strong> Client Components only</p>
+    <p><strong>use():</strong> Client Components AND Server Components</p>
+
+    <pre><code class="language-jsx">// Server Component
+export async function UserCard() {
+  // ❌ useContext doesn't work here
+  // ✅ But use(promise) works here!
+  const user = use(fetchUser())
+  return &lt;h1&gt;{user.name}&lt;/h1&gt;
+}</code></pre>
+
+    <h2>🎯 Decision Rule: Simple Checklist</h2>
+
+    <h3>Are you on React 19?</h3>
+    <ul>
+      <li><strong>New project?</strong> → Use use()</li>
+      <li><strong>Existing project?</strong> → Use useContext() (don't break it)</li>
+    </ul>
+
+    <h3>Do you need to read a Promise?</h3>
+    <ul>
+      <li><strong>Yes?</strong> → Must use use()</li>
+      <li><strong>No?</strong> → Either works fine</li>
+    </ul>
+
+    <h3>Is the context conditional?</h3>
+    <ul>
+      <li><strong>Yes?</strong> → Must use use()</li>
+      <li><strong>No?</strong> → Either works fine</li>
+    </ul>
+
+    <h2>❌ What use() CANNOT Do</h2>
+
+    <pre><code>use() CANNOT read:
+  ❌ useState
+  ❌ useRef
+  ❌ useEffect
+  ❌ useReducer
+  ❌ useCallback
+  ❌ useMemo
+  ❌ Regular values</code></pre>
+
+    <p><strong>use() ONLY reads:</strong></p>
+    <pre><code>✅ Context
+✅ Promises</code></pre>
+
+    <h2>📖 The Important Truth</h2>
+
+    <p class="callout-info">
+      <strong>use() is NOT a replacement for useContext().</strong><br>
+      It's an evolution that adds new capabilities.
+    </p>
+
+    <p>Think of it like this:</p>
+
+    <pre><code>useContext() solves: "How do I read context?"
+use() solves: "How do I read context OR promises?"</code></pre>
+
+    <p>useContext is still there. It still works. Some teams won't migrate everything.</p>
+
+    <p>use() just gives you MORE options when you need them.</p>
+
+    <h2>🧠 The Senior's Perspective</h2>
+
+    <p>
+      A senior developer would say:
+    </p>
+
+    <pre><code>"For new React 19 projects, use use().
+It's simpler, more flexible.
+
+For existing projects with useContext?
+Leave it alone. Don't refactor.
+use() is for NEW code where it adds value."</code></pre>
+
+    <p>The goal is clarity, not fashion.</p>
+
+    <h2>🎓 What You Must Remember</h2>
+    <ul>
+      <li>use() reads Context or Promises</li>
+      <li>useContext() reads only Context</li>
+      <li>One word changes in the code</li>
+      <li>The big difference: use() can read Promises</li>
+      <li>use() can be conditional (unlike useState/useRef)</li>
+      <li>Promises need Suspense</li>
+      <li>use() is for React 19+</li>
+      <li>Don't refactor old useContext code</li>
+      <li>This is an evolution, not a revolution</li>
+    </ul>
+
+    </div>
+  </article>
+
+  <article id="code-examples" class="tab-content">
+    <h2>Code Examples</h2>
+
+    <h3>Example 1: Simple Context with use()</h3>
+    <pre><code class="language-jsx">
+// 1. Create context
+const ThemeContext = React.createContext('light')
+
+// 2. Provider in parent
+function App() {
+  return (
+    &lt;ThemeContext.Provider value="dark"&gt;
+      &lt;Card /&gt;
+    &lt;/ThemeContext.Provider&gt;
+  )
+}
+
+// 3. Read with use()
+function Card() {
+  const theme = use(ThemeContext)
+
+  return (
+    &lt;div style={{
+      background: theme === 'dark' ? '#333' : '#fff'
+    }}&gt;
+      Current theme: {theme}
+    &lt;/div&gt;
+  )
+}
+    </code></pre>
+
+    <h3>Example 2: Promise with use() (Server Component)</h3>
+    <pre><code class="language-jsx">
+async function fetchUser(id) {
+  const response = await fetch(`/api/users/${id}`)
+  return response.json()
+}
+
+// Client Component
+import { Suspense } from 'react'
+import { use } from 'react'
+
+function UserCard({ userId }) {
+  const userPromise = fetchUser(userId)
+  const user = use(userPromise)
+
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;{user.name}&lt;/h1&gt;
+      &lt;p&gt;Email: {user.email}&lt;/p&gt;
+    &lt;/div&gt;
+  )
+}
+
+// Wrap with Suspense
+export default function App({ userId }) {
+  return (
+    &lt;Suspense fallback={&lt;p&gt;Loading user...&lt;/p&gt;}&gt;
+      &lt;UserCard userId={userId} /&gt;
+    &lt;/Suspense&gt;
+  )
+}
+    </code></pre>
+
+    <h3>Example 3: Conditional Context with use()</h3>
+    <pre><code class="language-jsx">
+const NotificationContext = React.createContext(null)
+
+function NotificationBadge({ showNotifications }) {
+  // ✅ This is allowed with use()
+  let notifications = null
+  if (showNotifications) {
+    notifications = use(NotificationContext)
+  }
+
+  return (
+    &lt;div&gt;
+      {notifications ? (
+        &lt;span&gt;You have {notifications.count} notifications&lt;/span&gt;
+      ) : (
+        &lt;span&gt;Notifications disabled&lt;/span&gt;
+      )}
+    &lt;/div&gt;
+  )
+}
+    </code></pre>
+
+    <h3>Example 4: Before vs After (useContext to use)</h3>
+    <pre><code class="language-jsx">
+// BEFORE: useContext
+function LanguageSwitcher() {
+  const { language, setLanguage } = useContext(LanguageContext)
+
+  return (
+    &lt;div&gt;
+      Current: {language}
+      &lt;button onClick={() => setLanguage('es')}&gt;
+        Español
+      &lt;/button&gt;
+    &lt;/div&gt;
+  )
+}
+
+// AFTER: use()
+function LanguageSwitcher() {
+  const { language, setLanguage } = use(LanguageContext)
+
+  return (
+    &lt;div&gt;
+      Current: {language}
+      &lt;button onClick={() => setLanguage('es')}&gt;
+        Español
+      &lt;/button&gt;
+    &lt;/div&gt;
+  )
+}
+    </code></pre>
+
+    <h3>Example 5: Complex Data Fetching</h3>
+    <pre><code class="language-jsx">
+// Create a context for theme
+const ThemeContext = React.createContext('light')
+
+// Fetch user with theme-aware logic
+async function fetchUserWithTheme(userId, theme) {
+  const response = await fetch(
+    `/api/users/${userId}?theme=${theme}`
+  )
+  return response.json()
+}
+
+// Component that needs both context and promise
+function UserProfile({ userId }) {
+  const theme = use(ThemeContext)
+  const userPromise = fetchUserWithTheme(userId, theme)
+  const user = use(userPromise)
+
+  return (
+    &lt;div style={{
+      color: theme === 'dark' ? '#fff' : '#000'
+    }}&gt;
+      &lt;h1&gt;{user.name}&lt;/h1&gt;
+      &lt;p&gt;{user.bio}&lt;/p&gt;
+    &lt;/div&gt;
+  )
+}
+
+// Wrap with Suspense
+export default function App({ userId }) {
+  return (
+    &lt;ThemeContext.Provider value="dark"&gt;
+      &lt;Suspense fallback={&lt;p&gt;Loading...&lt;/p&gt;}&gt;
+        &lt;UserProfile userId={userId} /&gt;
+      &lt;/Suspense&gt;
+    &lt;/ThemeContext.Provider&gt;
+  )
+}
+    </code></pre>
+
+    <h3>Example 6: Multiple Contexts with use()</h3>
+    <pre><code class="language-jsx">
+const ThemeContext = React.createContext()
+const UserContext = React.createContext()
+
+function Dashboard() {
+  const theme = use(ThemeContext)
+  const user = use(UserContext)
+
+  return (
+    &lt;div style={{
+      background: theme === 'dark' ? '#333' : '#fff'
+    }}&gt;
+      &lt;h1&gt;Welcome, {user.name}!&lt;/h1&gt;
+      &lt;p&gt;Theme: {theme}&lt;/p&gt;
+    &lt;/div&gt;
+  )
+}
+
+function App() {
+  return (
+    &lt;ThemeContext.Provider value="dark"&gt;
+      &lt;UserContext.Provider value={{ name: 'Alice' }}&gt;
+        &lt;Dashboard /&gt;
+      &lt;/UserContext.Provider&gt;
+    &lt;/ThemeContext.Provider&gt;
+  )
+}
+    </code></pre>
+
+  </article>
+
+  <article id="migration" class="tab-content">
+    <h2>Migration Guide: useContext to use()</h2>
+
+    <h2>Should You Migrate?</h2>
+
+    <p><strong>Quick answer:</strong> If it works, don't touch it.</p>
+
+    <p>Migrate only if:</p>
+    <ul>
+      <li>You're starting a new React 19 project</li>
+      <li>You need to read Promises</li>
+      <li>You need conditional context reading</li>
+      <li>Your team agrees on the change</li>
+    </ul>
+
+    <p><strong>Don't migrate if:</strong></p>
+    <ul>
+      <li>Your project uses React 18 or earlier</li>
+      <li>Your team doesn't understand the difference</li>
+      <li>There's no clear benefit</li>
+      <li>You have large existing codebases with useContext</li>
+    </ul>
+
+    <h2>Step 1: Identify useContext Usage</h2>
+    <p>Find all useContext calls:</p>
+    <pre><code class="language-bash">grep -r "useContext" src/</code></pre>
+
+    <h2>Step 2: Replace Imports</h2>
+    <pre><code class="language-jsx">
+// BEFORE
+import { useContext } from 'react'
+
+// AFTER
+import { use } from 'react'
+    </code></pre>
+
+    <h2>Step 3: Replace Function Calls</h2>
+    <pre><code class="language-jsx">
+// BEFORE
+const theme = useContext(ThemeContext)
+
+// AFTER
+const theme = use(ThemeContext)
+    </code></pre>
+
+    <h2>Step 4: Test Everything</h2>
+    <p>After changing:</p>
+    <ul>
+      <li>Render components</li>
+      <li>Change context values</li>
+      <li>Verify UI updates</li>
+      <li>Check console for errors</li>
+    </ul>
+
+    <h2>Full Example: Before & After</h2>
+
+    <h3>Before (useContext)</h3>
+    <pre><code class="language-jsx">
+import { useContext } from 'react'
+
+const ThemeContext = React.createContext('light')
+
+function Button() {
+  const theme = useContext(ThemeContext)
+
+  return (
+    &lt;button style={{
+      background: theme === 'dark' ? '#333' : '#fff',
+      color: theme === 'dark' ? '#fff' : '#000'
+    }}&gt;
+      Click me
+    &lt;/button&gt;
+  )
+}
+
+function App() {
+  return (
+    &lt;ThemeContext.Provider value="dark"&gt;
+      &lt;Button /&gt;
+    &lt;/ThemeContext.Provider&gt;
+  )
+}
+    </code></pre>
+
+    <h3>After (use)</h3>
+    <pre><code class="language-jsx">
+import { use } from 'react'
+
+const ThemeContext = React.createContext('light')
+
+function Button() {
+  const theme = use(ThemeContext)
+
+  return (
+    &lt;button style={{
+      background: theme === 'dark' ? '#333' : '#fff',
+      color: theme === 'dark' ? '#fff' : '#000'
+    }}&gt;
+      Click me
+    &lt;/button&gt;
+  )
+}
+
+function App() {
+  return (
+    &lt;ThemeContext.Provider value="dark"&gt;
+      &lt;Button /&gt;
+    &lt;/ThemeContext.Provider&gt;
+  )
+}
+    </code></pre>
+
+    <p><strong>The only change:</strong> import and function name.</p>
+
+    <h2>Migration Checklist</h2>
+
+    <pre><code>✅ React 19 installed
+✅ All useContext found
+✅ Imports updated to use
+✅ Function calls updated
+✅ Components tested
+✅ No console errors
+✅ Team agreement</code></pre>
+
+    <h2>Common Pitfalls During Migration</h2>
+
+    <h3>Pitfall 1: Forgetting to Update Import</h3>
+    <pre><code class="language-jsx">
+// ❌ Will break
+import { useContext } from 'react'
+const value = use(MyContext)
+
+// ✅ Correct
+import { use } from 'react'
+const value = use(MyContext)
+    </code></pre>
+
+    <h3>Pitfall 2: Using use() in Class Components</h3>
+    <pre><code class="language-jsx">
+// ❌ Won't work
+class MyComponent extends React.Component {
+  render() {
+    const value = use(ThemeContext)
+    return ...
+  }
+}
+
+// ✅ Correct - use function components
+function MyComponent() {
+  const value = use(ThemeContext)
+  return ...
+}
+    </code></pre>
+
+    <h3>Pitfall 3: Not Testing After Migration</h3>
+    <p>Always test:</p>
+    <ul>
+      <li>Initial render with context</li>
+      <li>Context value changes</li>
+      <li>Multiple context consumers</li>
+      <li>Browser console</li>
+    </ul>
+
+    <h2>When NOT to Migrate</h2>
+
+    <h3>Reason 1: React 18 Codebase</h3>
+    <p>use() only works in React 19+. If you're on React 18:</p>
+    <pre><code>❌ Can't migrate yet
+⚠️ Upgrade React first
+✅ Then migrate</code></pre>
+
+    <h3>Reason 2: Large Team, No Consensus</h3>
+    <p>If the team doesn't understand or agree:</p>
+    <pre><code>❌ Don't force change
+📚 Educate first
+✅ Then decide together</code></pre>
+
+    <h3>Reason 3: No Clear Benefit</h3>
+    <p>If useContext works fine:</p>
+    <pre><code>❌ Don't change for change's sake
+✅ Leave it alone
+🚀 Focus on features</code></pre>
+
+    <h2>Migration Strategy: Gradual Approach</h2>
+
+    <p><strong>Option 1: New code only</strong></p>
+    <p>Use use() in new components. Leave old components with useContext.</p>
+
+    <p><strong>Option 2: Component by component</strong></p>
+    <p>Migrate one component, test, commit. Then next.</p>
+
+    <p><strong>Option 3: File by file</strong></p>
+    <p>Migrate all components in a file together.</p>
+
+    <p><strong>Option 4: Full migration</strong></p>
+    <p>Migrate everything at once. Only if team is confident.</p>
+
+    <h2>Final Advice</h2>
+
+    <p class="callout-warning">
+      <strong>The Golden Rule:</strong><br>
+      "If useContext works, don't break it. Use use() for NEW code."
+    </p>
+
+    <p>Prefer:</p>
+    <ul>
+      <li>New features → use use()</li>
+      <li>Old code → leave useContext alone</li>
+      <li>Big refactors → discuss with team first</li>
+    </ul>
+
+  </article>
+
+  <div class="resource-box">
+    <strong class="resource-box__title">📚 Want to go deeper?</strong>
+    <div class="resource-box__links">
+      <a href="https://www.jscamp.dev/estado-global-y-react-router/usar-use-en-lugar-de-usecontext" target="_blank" class="resource-box__link" rel="noreferrer noopener">
+        📖 Deep Dive: use() vs useContext →
+      </a>
+      <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/6a25e30b-2e08-83eb-89af-24a232a6e87a" target="_blank" class="resource-box__link" rel="noreferrer noopener">
+        💬 Practice on ChatGPT →
+      </a>
+    </div>
+  </div>
+</section>
