@@ -1,0 +1,641 @@
+<section class="box">
+  <h1>Zustand: Store de Favoritos — Un Ejemplo Real</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">
+      Conceptos
+    </button>
+    <button class="tab-button" data-tab="code-complete">
+      Código Completo
+    </button>
+    <button class="tab-button" data-tab="practical">
+      Ejemplo Práctico
+    </button>
+  </div>
+
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+
+    <h2>🎯 El Escenario: Tablón de Ofertas de Trabajo</h2>
+    <p>Imaginá una aplicación de búsqueda de empleo:</p>
+    <ul>
+      <li>Mirás ofertas de trabajo</li>
+      <li>Marcás jobs como favoritos (clickeás una ⭐)</li>
+      <li>Los desmaracás después</li>
+      <li>Ves cuántos favoritos tenés</li>
+      <li>Sabés si un job está en tus favoritos</li>
+    </ul>
+
+    <p><strong>Sin una store global:</strong> Pesadilla de prop drilling. Cada componente necesita favoritos pasados.</p>
+    <p><strong>Con Zustand:</strong> Un import, listo. Simple y limpio.</p>
+
+    <h2>📦 Parte 1: Entendiendo la Store</h2>
+    <p>Una store de Zustand es como una <strong>caja global 🎁 de datos</strong> que:</p>
+    <ul>
+      <li>Vive fuera de tus componentes</li>
+      <li>Se puede leer desde cualquier lado</li>
+      <li>Se puede modificar desde cualquier lado</li>
+      <li>Notifica a los componentes cuando cambia</li>
+    </ul>
+
+    <pre><code class="language-javascript">
+const useFavoritesStore = create((set, get) => ({
+  // Estado
+  favorites: [],
+
+  // Métodos (acciones)
+  addFavorite: (jobId) => { /* ... */ },
+  removeFavorite: (jobId) => { /* ... */ },
+  toggleFavorite: (jobId) => { /* ... */ },
+  isFavorite: (jobId) => { /* ... */ },
+  favoritesCount: () => { /* ... */ }
+}))
+    </code></pre>
+
+    <p>La función `create()` te devuelve tu hook. Usalo en cualquier componente:</p>
+    <pre><code class="language-javascript">
+const favorites = useFavoritesStore((state) => state.favorites)
+    </code></pre>
+
+    <h2>🔧 Parte 2: Funciones Clave Explicadas</h2>
+
+    <h3>1️⃣ set() → Cambia el Estado</h3>
+    <p><strong>set()</strong> es cómo modificás la store.</p>
+
+    <pre><code class="language-javascript">
+set((state) => ({
+  favorites: [...state.favorites, jobId]
+}))
+    </code></pre>
+
+    <p>Pensalo así: "Actualizar la caja 📦"</p>
+
+    <p>Reglas importantes:</p>
+    <ul>
+      <li>Siempre devolvé el nuevo estado</li>
+      <li>No mutés directamente (devolvé un array/objeto nuevo)</li>
+      <li>Zustand notifica automáticamente a los suscriptores</li>
+    </ul>
+
+    <h3>2️⃣ get() → Lee el Estado</h3>
+    <p><strong>get()</strong> te deja leer el estado actual dentro de una acción.</p>
+
+    <pre><code class="language-javascript">
+const current = get().favorites
+if (current.includes(jobId)) {
+  // Ya está en favoritos
+}
+    </code></pre>
+
+    <p>Pensalo así: "Mirar dentro de la caja 👀"</p>
+
+    <h3>3️⃣ addFavorite() → Agrega a Favoritos</h3>
+    <p><strong>Objetivo:</strong> Agregar un job ID a favoritos, pero sin duplicados.</p>
+
+    <pre><code class="language-javascript">
+addFavorite: (jobId) => {
+  const current = get().favorites
+
+  // ✅ Verificar si ya está en favoritos
+  if (!current.includes(jobId)) {
+    set({ favorites: [...current, jobId] })
+  }
+}
+    </code></pre>
+
+    <p><strong>Flujo visual:</strong></p>
+    <pre><code>
+Usuario clickea ⭐
+    ↓
+addFavorite(123) se ejecuta
+    ↓
+get() lee favoritos actuales [456, 789]
+    ↓
+¿123 ya está ahí? No.
+    ↓
+set() actualiza: [456, 789, 123]
+    ↓
+React ve el cambio → Re-renderiza componentes que usan favoritos
+    </code></pre>
+
+    <h3>4️⃣ removeFavorite() → Quita de Favoritos</h3>
+    <p><strong>Objetivo:</strong> Remover un job ID usando filter().</p>
+
+    <pre><code class="language-javascript">
+removeFavorite: (jobId) => {
+  set((state) => ({
+    favorites: state.favorites.filter(id => id !== jobId)
+  }))
+}
+    </code></pre>
+
+    <p><strong>Desglose visual de filter():</strong></p>
+    <pre><code>
+Original:     [456, 789, 123, 999]
+Quitar 789:        ↓
+Filtrado:     [456,      123, 999]
+              (mantuvo todos excepto 789)
+    </code></pre>
+
+    <p>filter() mantiene solo los items donde la condición es verdadera:</p>
+    <ul>
+      <li>456 !== 789 → ✅ mantener</li>
+      <li>789 !== 789 → ❌ quitar</li>
+      <li>123 !== 789 → ✅ mantener</li>
+      <li>999 !== 789 → ✅ mantener</li>
+    </ul>
+
+    <h3>5️⃣ isFavorite() → Verifica Si es Favorito</h3>
+    <p><strong>Objetivo:</strong> Respuesta simple sí/no.</p>
+
+    <pre><code class="language-javascript">
+isFavorite: (jobId) => {
+  return get().favorites.includes(jobId)
+}
+    </code></pre>
+
+    <p>Devuelve <code>true</code> o <code>false</code>.</p>
+
+    <p>Usalo en componentes:</p>
+    <pre><code class="language-javascript">
+const isFav = useFavoritesStore((s) => s.isFavorite(123))
+
+return (
+  &lt;button style={{ color: isFav ? '🟡' : '⚪' }}&gt;
+    {isFav ? 'Quitar' : 'Agregar'} Favorito
+  &lt;/button&gt;
+)
+    </code></pre>
+
+    <h3>6️⃣ toggleFavorite() → La Elegante</h3>
+    <p><strong>Objetivo:</strong> Función inteligente que decide: ¿agregar o quitar?</p>
+
+    <pre><code class="language-javascript">
+toggleFavorite: (jobId) => {
+  const isFav = get().isFavorite(jobId)
+
+  if (isFav) {
+    // Ya está en favoritos → quitalo
+    useFavoritesStore.getState().removeFavorite(jobId)
+  } else {
+    // No está en favoritos → agregalo
+    useFavoritesStore.getState().addFavorite(jobId)
+  }
+}
+    </code></pre>
+
+    <p><strong>Árbol de decisión visual:</strong></p>
+    <pre><code>
+Usuario clickea botón favorito
+    ↓
+toggleFavorite(123) se ejecuta
+    ↓
+¿123 está en favoritos?
+    ├─ SÍ → removeFavorite(123)
+    └─ NO → addFavorite(123)
+    </code></pre>
+
+    <h3>7️⃣ favoritesCount() → Calcula Sin Guardar</h3>
+    <p><strong>Objetivo:</strong> Devolver el count de favoritos.</p>
+
+    <pre><code class="language-javascript">
+favoritesCount: () => {
+  return get().favorites.length
+}
+    </code></pre>
+
+    <p><strong>¿Por qué NO guardar una variable count separada?</strong></p>
+    <ul>
+      <li>❌ Datos duplicados = responsabilidad duplicada</li>
+      <li>❌ Riesgo: count y array se desincronizar</li>
+      <li>✅ Calcular bajo demanda → siempre preciso</li>
+    </ul>
+
+    <p>Usalo:</p>
+    <pre><code class="language-javascript">
+const count = useFavoritesStore((s) => s.favoritesCount())
+return &lt;p&gt;Tenés {count} favoritos&lt;/p&gt;
+    </code></pre>
+
+    <h2>🎒 Parte 3: Usando en Componentes</h2>
+    <p><strong>Paso 1:</strong> Importar el hook</p>
+    <pre><code class="language-javascript">
+import { useFavoritesStore } from './store'
+    </code></pre>
+
+    <p><strong>Paso 2:</strong> Usalo en tu componente</p>
+    <pre><code class="language-javascript">
+function JobCard({ job }) {
+  const toggleFavorite = useFavoritesStore(s => s.toggleFavorite)
+  const isFav = useFavoritesStore(s => s.isFavorite(job.id))
+
+  return (
+    &lt;div&gt;
+      &lt;h3&gt;{job.title}&lt;/h3&gt;
+      &lt;button onClick={() => toggleFavorite(job.id)}&gt;
+        {isFav ? '⭐ Quitar' : '☆ Agregar a Favoritos'}
+      &lt;/button&gt;
+    &lt;/div&gt;
+  )
+}
+    </code></pre>
+
+    <p><strong>No necesitas Provider.</strong> No envuelves la app. Solo importá y usá.</p>
+
+    <h2>🔄 Parte 4: Cómo Fluye la Información</h2>
+    <pre><code>
+1. Usuario clickea botón
+   ↓
+2. onClick ejecuta toggleFavorite(123)
+   ↓
+3. toggleFavorite verifica: ¿123 ya está en favoritos?
+   ↓
+4. Llama a addFavorite(123) o removeFavorite(123)
+   ↓
+5. set() actualiza el estado de la store
+   ↓
+6. React AUTOMÁTICAMENTE detecta el cambio
+   ↓
+7. Componentes que usan ese dato de favoritos se re-renderizan
+   ↓
+8. UI se actualiza: el color del botón cambia, el contador sube
+    </code></pre>
+
+    <p><strong>La magia:</strong> React sabe exactamente qué componentes usan la store de favoritos, así que solo ESE se re-renderiza. No toda la app.</p>
+
+    <h2>⚖️ Parte 5: Zustand vs Context</h2>
+
+    <h3>Context (lo que aprendiste antes):</h3>
+    <pre><code class="language-javascript">
+const FavContext = createContext()
+
+function App() {
+  const [favorites, setFavorites] = useState([])
+
+  return (
+    &lt;FavContext.Provider value={{ favorites, setFavorites }}&gt;
+      &lt;TuApp /&gt;
+    &lt;/FavContext.Provider&gt;
+  )
+}
+
+// Después en componentes:
+const { favorites } = useContext(FavContext)
+    </code></pre>
+
+    <p><strong>Overhead:</strong> Necesitas un Provider que envuelva todo.</p>
+
+    <h3>Zustand:</h3>
+    <pre><code class="language-javascript">
+const useFavoritesStore = create(...)
+
+// En cualquier componente, en cualquier lado:
+const favorites = useFavoritesStore(s => s.favorites)
+    </code></pre>
+
+    <p><strong>Simplicidad:</strong> Solo importá y usá. Nada de wrappers.</p>
+
+    <h3>Comparación Visual:</h3>
+    <pre><code>
+Context:
+  App envuelve todo
+    └─ Provider
+         └─ Tu app adentro
+
+Zustand:
+  Store existe de manera independiente
+    └─ Componentes la importan directamente
+       (sin wrapper)
+    </code></pre>
+
+    <h2>🚀 Parte 6: La Regla de Oro</h2>
+
+    <p><strong>Zustand = una caja global inteligente 🎁 en el frontend.</strong></p>
+
+    <ul>
+      <li><code>set()</code> = Actualizar la caja</li>
+      <li><code>get()</code> = Leer de la caja</li>
+      <li><code>toggle()</code> = Lógica inteligente que decide</li>
+      <li>Componentes importan y usan directamente</li>
+      <li>Sin Providers, sin wrappers</li>
+      <li>Solo componentes que usan los datos se re-renderizan</li>
+    </ul>
+
+    <h2>📋 Resumen</h2>
+    <ul>
+      <li>✅ Crear una store con <code>create()</code></li>
+      <li>✅ Definir estado y acciones dentro</li>
+      <li>✅ Usar <code>set()</code> para cambiar, <code>get()</code> para leer</li>
+      <li>✅ Evitar duplicar datos (calcula counts, no los guardes)</li>
+      <li>✅ Importar el hook en componentes y usar</li>
+      <li>✅ Sin necesidad de Provider envolviendo</li>
+      <li>✅ Perfecto para: auth, favoritos, theme, settings</li>
+    </ul>
+
+    </div>
+  </article>
+
+  <article id="code-complete" class="tab-content">
+    <div class="description">
+
+    <h2>📁 Archivo: store.js (La Store)</h2>
+    <pre><code class="language-javascript">
+import { create } from 'zustand'
+
+export const useFavoritesStore = create((set, get) => ({
+  // ESTADO
+  favorites: [],
+
+  // ACCIONES
+  addFavorite: (jobId) => {
+    const current = get().favorites
+    if (!current.includes(jobId)) {
+      set({ favorites: [...current, jobId] })
+    }
+  },
+
+  removeFavorite: (jobId) => {
+    set((state) => ({
+      favorites: state.favorites.filter(id => id !== jobId)
+    }))
+  },
+
+  isFavorite: (jobId) => {
+    return get().favorites.includes(jobId)
+  },
+
+  toggleFavorite: (jobId) => {
+    const isFav = get().isFavorite(jobId)
+    if (isFav) {
+      get().removeFavorite(jobId)
+    } else {
+      get().addFavorite(jobId)
+    }
+  },
+
+  favoritesCount: () => {
+    return get().favorites.length
+  }
+}))
+    </code></pre>
+
+    <h2>📁 Archivo: JobCard.js (Componente de Job Individual)</h2>
+    <pre><code class="language-javascript">
+import { useFavoritesStore } from './store'
+
+export function JobCard({ job }) {
+  const { toggleFavorite, isFavorite } = useFavoritesStore()
+
+  const isFav = isFavorite(job.id)
+
+  return (
+    &lt;div className="job-card"&gt;
+      &lt;h3&gt;{job.title}&lt;/h3&gt;
+      &lt;p&gt;{job.company}&lt;/p&gt;
+      &lt;p&gt;💰 {job.salary}&lt;/p&gt;
+
+      &lt;button
+        className={isFav ? 'favorite-btn active' : 'favorite-btn'}
+        onClick={() => toggleFavorite(job.id)}
+      &gt;
+        {isFav ? '⭐ Quitar Favorito' : '☆ Agregar Favorito'}
+      &lt;/button&gt;
+    &lt;/div&gt;
+  )
+}
+    </code></pre>
+
+    <h2>📁 Archivo: JobList.js (Lista de Jobs)</h2>
+    <pre><code class="language-javascript">
+import { useFavoritesStore } from './store'
+import { JobCard } from './JobCard'
+
+export function JobList({ jobs }) {
+  const count = useFavoritesStore((state) => state.favoritesCount())
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;📌 Favoritos: {count}&lt;/p&gt;
+      &lt;div className="jobs-grid"&gt;
+        {jobs.map(job => (
+          &lt;JobCard key={job.id} job={job} /&gt;
+        ))}
+      &lt;/div&gt;
+    &lt;/div&gt;
+  )
+}
+    </code></pre>
+
+    <h2>📁 Archivo: App.js (Punto de Entrada)</h2>
+    <pre><code class="language-javascript">
+import { useState } from 'react'
+import { JobList } from './JobList'
+
+const MOCK_JOBS = [
+  { id: 1, title: 'React Dev', company: 'TechCorp', salary: '$120k' },
+  { id: 2, title: 'Senior Frontend', company: 'WebInc', salary: '$150k' },
+  { id: 3, title: 'Full Stack', company: 'StartUp', salary: '$110k' }
+]
+
+export function App() {
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;🔍 Tablón de Trabajo&lt;/h1&gt;
+      &lt;JobList jobs={MOCK_JOBS} /&gt;
+    &lt;/div&gt;
+  )
+}
+    </code></pre>
+
+    <p><strong>Nota:</strong> App no sabe de favoritos. JobList no lo pasa. Cada componente obtiene lo que necesita directamente de la store.</p>
+
+    </div>
+  </article>
+
+  <article id="practical" class="tab-content">
+    <div class="description">
+
+    <h2>🎬 Escenario Real: Flujo Completo</h2>
+
+    <h3>Escenario: Usuario Favoritea un Job</h3>
+
+    <p><strong>Estado Inicial:</strong></p>
+    <pre><code>
+Store favoritos: []
+Job #5: Senior Desarrollador React
+Botón muestra: ☆ Agregar a Favoritos
+Contador muestra: 0
+    </code></pre>
+
+    <p><strong>Usuario clickea ☆ en Job #5</strong></p>
+
+    <p><strong>Paso 1: toggleFavorite(5) se ejecuta</strong></p>
+    <pre><code class="language-javascript">
+toggleFavorite: (jobId) => {
+  const isFav = get().isFavorite(5)  // ¿5 está en favoritos?
+  // Verifica: [].includes(5) → false
+
+  if (isFav) { /* ... */ }
+  else {
+    get().addFavorite(5)  // Llama a addFavorite
+  }
+}
+    </code></pre>
+
+    <p><strong>Paso 2: addFavorite(5) verifica duplicados</strong></p>
+    <pre><code class="language-javascript">
+addFavorite: (jobId) => {
+  const current = get().favorites  // current = []
+  if (!current.includes(5)) {      // [] no incluye 5 ✓
+    set({ favorites: [...[], 5] }) // Set a [5]
+  }
+}
+    </code></pre>
+
+    <p><strong>Paso 3: La store se actualiza</strong></p>
+    <pre><code>
+ANTES: favoritos: []
+DESPUÉS: favoritos: [5]
+    </code></pre>
+
+    <p><strong>Paso 4: React re-renderiza componentes suscritos</strong></p>
+    <ul>
+      <li>JobCard para Job #5 → isFavorite(5) ahora devuelve true → botón se re-renderiza</li>
+      <li>JobList → favoritesCount() ahora devuelve 1 → contador se actualiza</li>
+    </ul>
+
+    <p><strong>Estado Final:</strong></p>
+    <pre><code>
+Store favoritos: [5]
+Job #5: Senior Desarrollador React
+Botón muestra: ⭐ Quitar Favorito (color cambia)
+Contador muestra: 1 favoritos
+    </code></pre>
+
+    <h2>🔁 Escenario 2: Usuario Favoritea Otro Job, Después Quita el Primero</h2>
+
+    <p><strong>Estado actual:</strong></p>
+    <pre><code>
+Store favoritos: [5]
+Usuario clickea ☆ en Job #8 (Consultor React)
+    </code></pre>
+
+    <p><strong>toggleFavorite(8) → addFavorite(8)</strong></p>
+    <pre><code>
+ANTES: [5]
+set({ favorites: [...[5], 8] })
+DESPUÉS: [5, 8]
+    </code></pre>
+
+    <p><strong>Ahora usuario clickea ⭐ en Job #5 para quitarlo</strong></p>
+
+    <p><strong>toggleFavorite(5) → removeFavorite(5)</strong></p>
+    <pre><code>
+ANTES: [5, 8]
+filter(id => id !== 5)
+DESPUÉS: [8]
+
+Proceso:
+  5 !== 5? NO  → quitar
+  8 !== 5? YES → mantener
+Resultado: [8]
+    </code></pre>
+
+    <p><strong>Estado Final:</strong></p>
+    <pre><code>
+Store favoritos: [8]
+Contador muestra: 1 favoritos
+Botón Job #5: ☆ Agregar a Favoritos (vuelve a normal)
+Botón Job #8: ⭐ Quitar Favorito (se mantiene favoritado)
+    </code></pre>
+
+    <h2>🧠 ¿Por Qué Esto es Mejor Que Prop Drilling?</h2>
+
+    <h3>❌ Sin Zustand (con prop drilling):</h3>
+    <pre><code class="language-javascript">
+function App() {
+  const [favorites, setFavorites] = useState([])
+
+  return (
+    &lt;JobList favorites={favorites} setFavorites={setFavorites} /&gt;
+  )
+}
+
+function JobList({ favorites, setFavorites }) {
+  return (
+    &lt;&gt;
+      {jobs.map(job => (
+        &lt;JobCard
+          job={job}
+          favorites={favorites}           {/* Drilling */}
+          setFavorites={setFavorites}     {/* Drilling */}
+        /&gt;
+      ))}
+    &lt;/&gt;
+  )
+}
+
+function JobCard({ job, favorites, setFavorites }) {
+  const toggle = () => {
+    // Lógica larga acá
+  }
+  return &lt;button onClick={toggle}&gt;...&lt;/button&gt;
+}
+    </code></pre>
+
+    <p>Cada componente en el medio tiene que saber de favoritos, aunque no los use.</p>
+
+    <h3>✅ Con Zustand:</h3>
+    <pre><code class="language-javascript">
+function App() {
+  return &lt;JobList /&gt;  {/* ¡Limpio! */}
+}
+
+function JobList() {
+  const count = useFavoritesStore(s => s.favoritesCount())
+  return (
+    &lt;&gt;
+      &lt;p&gt;{count} favoritos&lt;/p&gt;
+      {jobs.map(job => &lt;JobCard key={job.id} job={job} /&gt;)}
+    &lt;/&gt;
+  )
+}
+
+function JobCard({ job }) {
+  const toggle = useFavoritesStore(s => s.toggleFavorite)
+  const isFav = useFavoritesStore(s => s.isFavorite(job.id))
+
+  return (
+    &lt;button onClick={() => toggle(job.id)}&gt;
+      {isFav ? '⭐' : '☆'}
+    &lt;/button&gt;
+  )
+}
+    </code></pre>
+
+    <p>Limpio. Claro. Sin drilling. Cada componente obtiene lo que necesita.</p>
+
+    <h2>💡 Puntos Clave</h2>
+
+    <ul>
+      <li><strong>Una sola fuente de verdad:</strong> favoritos vive en un solo lugar (la store)</li>
+      <li><strong>Acceso directo:</strong> Componentes agarran lo que necesitan directamente</li>
+      <li><strong>Actualizaciones predecibles:</strong> set() siempre actualiza, get() siempre lee</li>
+      <li><strong>Sin duplicados:</strong> Nunca guardes count separado; calculalo</li>
+      <li><strong>Toggle inteligente:</strong> Una función que decide agregar o quitar</li>
+      <li><strong>Re-renders eficientes:</strong> Solo componentes que usan esos datos se actualizan</li>
+      <li><strong>Sin overhead de Provider:</strong> No necesitas wrapper en la app</li>
+    </ul>
+
+    </div>
+  </article>
+
+  <footer>
+    <p>📚 Recursos:</p>
+    <ul>
+      <li><a href="https://www.jscamp.dev/estado-global-y-react-router/store-favoritos-con-zustand" target="_blank">JSCamp — Store de Favoritos con Zustand</a></li>
+      <li><a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/6a25e98e-cf6c-83eb-8fc9-368c83e4503f" target="_blank">MiduFrontend GPT — Ayuda Zustand</a></li>
+    </ul>
+  </footer>
+
+</section>

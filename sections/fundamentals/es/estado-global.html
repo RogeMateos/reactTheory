@@ -1,0 +1,894 @@
+<section class="box">
+  <h1>Estado Global: Prop Drilling vs Context API</h1>
+
+  <div class="description">
+    <p>
+      Uno de los desafíos más grandes de React no es hacer componentes. Es manejar el estado cuando muchos componentes necesitan los mismos datos.
+    </p>
+
+    <p><strong>Acá está el problema:</strong></p>
+    <p>Imaginate que tenés una casa (tu app). Para hacer llegar una carta de la sala al dormitorio, tenés dos opciones:</p>
+
+    <h2>🏠 La Analogía de la Casa</h2>
+    <p>
+      Pensá en tu app de React como una casa con habitaciones:
+    </p>
+    <pre><code>App (Sala de estar)
+ ├── Layout
+ │    ├── Sidebar
+ │    │    └── Menu
+ │    │         └── UserAvatar  ← quiere datos del usuario
+ │    └── Header
+ │         └── UserProfile  ← quiere datos del usuario
+ └── MainContent
+      └── UserSettings  ← quiere datos del usuario</code></pre>
+
+    <p>Los datos del usuario están en la sala de estar (componente App), pero tres habitaciones diferentes los necesitan.</p>
+
+    <h2>📦 Opción 1: Prop Drilling (Pasar la carta de persona en persona)</h2>
+    <p>
+      Pasas los datos como props a través de cada componente, aunque no los usen.
+    </p>
+
+    <pre><code class="language-jsx">// App.js - la sala de estar
+function App() {
+  const [user, setUser] = useState({ name: 'Juan', role: 'admin' })
+
+  return &lt;Layout user={user} /&gt;
+}
+
+// Layout.js - primer pasillo
+function Layout({ user }) {
+  return (
+    &lt;div&gt;
+      &lt;Sidebar user={user} /&gt;
+      &lt;Header user={user} /&gt;
+    &lt;/div&gt;
+  )
+}
+
+// Sidebar.js - segundo pasillo
+function Sidebar({ user }) {
+  return (
+    &lt;div&gt;
+      &lt;Menu user={user} /&gt;
+    &lt;/div&gt;
+  )
+}
+
+// Menu.js - tercer pasillo
+function Menu({ user }) {
+  return &lt;UserAvatar user={user} /&gt;
+}
+
+// UserAvatar.js - por fin llegó al dormitorio
+function UserAvatar({ user }) {
+  return &lt;img src={user.avatar} alt={user.name} /&gt;
+}</code></pre>
+
+    <h3>¿Es malo el Prop Drilling? NO!</h3>
+    <p>
+      Esto es completamente normal y está bien cuando tenés <strong>1-3 niveles de anidamiento</strong>.
+    </p>
+    <p>
+      Muchas apps React usan prop drilling por años. No es una mala práctica — es React.
+    </p>
+
+    <h3>El Problema Real 🚨</h3>
+    <p>
+      El prop drilling se vuelve un quilombo cuando:
+    </p>
+    <ul>
+      <li><strong>Anidamiento profundo (7+ niveles)</strong> — Componentes que pasan datos que no usan</li>
+      <li><strong>Muchas ramas</strong> — El dato pasa por muchísimos componentes</li>
+      <li><strong>Refactoring duro</strong> — Cambiar la estructura = cambiar todos los componentes intermedios</li>
+      <li><strong>Fatiga mental</strong> — Necesitás seguir el camino de cada prop</li>
+    </ul>
+
+    <p class="callout-neutral">
+      <strong>📫 Analogía del Paquete:</strong> El prop drilling es como una carta que pasa de persona en persona:
+      Persona A la tiene → Persona B la pasa → Persona C la pasa → Persona D por fin la abre.
+      ¡Si hay 7 personas entre A y D, es un quilombo!
+    </p>
+
+    <h2>📢 Opción 2: Context API (El tablón de anuncios)</h2>
+    <p>
+      En vez de pasar props, creás un "tablón de anuncios" que cualquiera puede leer.
+    </p>
+
+    <pre><code class="language-jsx">// UserContext.js
+import { createContext, useState } from 'react'
+
+const UserContext = createContext()
+
+export function UserProvider({ children }) {
+  const [user, setUser] = useState({ name: 'Juan', role: 'admin' })
+
+  return (
+    &lt;UserContext.Provider value={{ user, setUser }}&gt;
+      {children}
+    &lt;/UserContext.Provider&gt;
+  )
+}
+
+export function useUser() {
+  return useContext(UserContext)
+}
+
+// App.js - envolvé toda la app
+function App() {
+  return (
+    &lt;UserProvider&gt;
+      &lt;Layout /&gt;
+    &lt;/UserProvider&gt;
+  )
+}
+
+// Layout.js - ¡sin props!
+function Layout() {
+  return (
+    &lt;div&gt;
+      &lt;Sidebar /&gt;
+      &lt;Header /&gt;
+    &lt;/div&gt;
+  )
+}
+
+// Sidebar.js - ¡todavía sin props!
+function Sidebar() {
+  return &lt;Menu /&gt;
+}
+
+// Menu.js - ¡limpio!
+function Menu() {
+  return &lt;UserAvatar /&gt;
+}
+
+// UserAvatar.js - lee del tablón de anuncios
+function UserAvatar() {
+  const { user } = useUser()
+  return &lt;img src={user.avatar} alt={user.name} /&gt;
+}</code></pre>
+
+    <p>
+      Fijate: <strong>Layout, Sidebar y Menu no necesitan saber de los datos del usuario.</strong>
+    </p>
+
+    <h3>Comparación Visual 👀</h3>
+    <pre><code>PROP DRILLING
+══════════════════════════════════════════════════════════════
+App (tiene datos del usuario)
+ ↓ pasa user prop
+Layout (recibe pero no usa)
+ ↓ pasa user prop
+Sidebar (recibe pero no usa)
+ ↓ pasa user prop
+Menu (recibe pero no usa)
+ ↓ pasa user prop
+UserAvatar (por fin lo usa) ✓
+
+
+CONTEXT API
+══════════════════════════════════════════════════════════════
+UserProvider (envuelve todo, tiene datos)
+ ├── Layout (no le importa user)
+ ├── Sidebar (no le importa user)
+ ├── Menu (no le importa user)
+ └── UserAvatar (lee directamente: useUser()) ✓</code></pre>
+
+    <h2>⚠️ El Problema Oculto del Context API</h2>
+    <p>
+      Context es poderoso, pero tiene una trampa:
+    </p>
+
+    <p><strong>Cuando el estado del Context cambia, TODOS los consumidores se re-renderean — aunque solo usen un campo.</strong></p>
+
+    <pre><code class="language-jsx">// UserContext.js
+const [user, setUser] = useState({
+  name: 'Juan',
+  email: 'juan@example.com',
+  avatar: 'juan.jpg',
+  preferences: { theme: 'dark', notifications: true },
+  // ...20 campos más
+})
+
+// Después, actualizás solo el tema
+setUser({ ...user, preferences: { ...user.preferences, theme: 'light' } })
+
+// PROBLEMA: UserAvatar se re-renderea aunque solo use avatar!
+// No le importa el tema, pero se re-renderea igual.
+</code></pre>
+
+    <h3>¿Cuándo es bueno el Context? ✅</h3>
+    <p>
+      Context es perfecto para estado que <strong>cambia pocas veces y se lee mucho</strong>:
+    </p>
+    <ul>
+      <li>🌙 <strong>Tema</strong> (claro/oscuro) — cambia una vez por sesión</li>
+      <li>🇪🇸 <strong>Idioma</strong> (EN/ES) — cambia una vez por sesión</li>
+      <li>👤 <strong>Usuario actual</strong> (logueado) — cambia al login/logout</li>
+      <li>🎫 <strong>Token de autenticación</strong> — cambia al login/logout</li>
+    </ul>
+
+    <h3>¿Cuándo es malo el Context? ❌</h3>
+    <p>
+      Context causa problemas de performance cuando estado <strong>cambia seguido y los consumidores necesitan campos diferentes</strong>:
+    </p>
+    <ul>
+      <li>🖱️ <strong>Posición del mouse</strong> — cambia en cada movimiento (60+ FPS)</li>
+      <li>✍️ <strong>Inputs de formulario</strong> — cambian en cada tecla</li>
+      <li>🎬 <strong>Animaciones</strong> — cambian múltiples veces por segundo</li>
+      <li>📜 <strong>Posición de scroll</strong> — cambia constantemente</li>
+      <li>⏱️ <strong>Timer/contador</strong> — se actualiza cada milisegundo</li>
+    </ul>
+
+    <p class="callout-neutral">
+      <strong>🏙️ Analogía de la Ciudad:</strong><br>
+      • Prop drilling = Carta de persona en persona<br>
+      • Context API = Tablón de anuncios en la plaza del pueblo (todos pueden leer)<br>
+      • Zustand/Redux = Almacén central (optimizado para búsquedas rápidas, sin re-renders innecesarios)
+    </p>
+
+    <h2>📊 Tabla Comparativa</h2>
+    <pre><code>┌────────────────────┬─────────────────────────┬──────────────────────────┐
+│ Feature            │ Prop Drilling           │ Context API              │
+├────────────────────┼─────────────────────────┼──────────────────────────┤
+│ Complejidad setup  │ Ninguna (pasá props)    │ Moderada (Provider, hook)│
+│ Performance        │ Excelente (sin re-.)    │ Buena (pero puede fallar)│
+│ Profundidad        │ OK hasta 3-4 niveles    │ Funciona a cualquier prof
+│ Refactor           │ Difícil si cambia árbol │ Fácil (sacá el uso)      │
+│ Bueno para...      │ 1-3 niveles, flujo claro│ Estado raro, global      │
+│ Malo para...       │ Árboles profundos       │ Datos que cambian mucho  │
+│ DX Developer       │ Cadena de props clara   │ Datos "mágicos" del aire │
+│ Testing            │ Fácil mockear props     │ Necesitás Provider       │
+└────────────────────┴─────────────────────────┴──────────────────────────┘</code></pre>
+
+    <h2>🏦 Cuándo entra Zustand en Escena</h2>
+    <p>
+      Hasta ahora tenemos dos opciones. Pero ¿qué pasa si necesitás:
+    </p>
+    <ul>
+      <li>Estado global que cambia <strong>seguido</strong></li>
+      <li>Muchos componentes leyendo <strong>campos diferentes</strong></li>
+      <li><strong>Sin re-renders</strong> cuando cambia estado no relacionado</li>
+      <li>Estado complejo con muchísimas acciones</li>
+    </ul>
+
+    <p><strong>Acá es donde entra Zustand (o Redux).</strong></p>
+
+    <pre><code class="language-jsx">// store.js (Zustand)
+import create from 'zustand'
+
+const useAppStore = create((set) => ({
+  user: { name: 'Juan' },
+  theme: 'dark',
+  notifications: [],
+  setUser: (user) => set({ user }),
+  setTheme: (theme) => set({ theme }),
+  addNotification: (notif) => set((state) => ({
+    notifications: [...state.notifications, notif]
+  }))
+}))
+
+// Componente A lee SOLO user
+function UserAvatar() {
+  const user = useAppStore((state) => state.user)
+  return &lt;img src={user.avatar} /&gt;
+}
+
+// Componente B lee SOLO theme
+function Header() {
+  const theme = useAppStore((state) => state.theme)
+  return &lt;div style={{ background: theme === 'dark' ? '#000' : '#fff' }}&gt;
+}
+
+// Cuando cambia user: solo Componente A se re-renderea
+// Cuando cambia theme: solo Componente B se re-renderea
+// ¡Sin re-renders innecesarios! ✓
+</code></pre>
+
+    <h2>🎓 La Regla del Senior Developer</h2>
+    <p><strong>Esto es lo que te separa de un junior:</strong></p>
+
+    <pre><code>¿El anidamiento es de 1-3 niveles?
+  ↓ SÍ → Usa Props (¡mantelo simple!)
+  ↓ NO
+
+¿El estado cambia pocas veces? (tema, idioma, auth)
+  ↓ SÍ → Usa Context API
+  ↓ NO
+
+¿El estado cambia seguido? (animaciones, inputs, etc)
+  ↓ SÍ → Usa Zustand / Redux
+
+Árbol de decisión completo ✓</code></pre>
+
+    <p class="callout-neutral">
+      <strong>💡 Qué hace un Junior:</strong> "Uso Context para todo" → Problemas de performance<br>
+      <strong>💡 Qué hace un Senior:</strong> "Déjame revisar la frecuencia de cambio y la profundidad" → Herramienta correcta siempre
+    </p>
+
+    <h2>🎤 La Respuesta para Entrevista</h2>
+    <p><strong>Si alguien te pregunta sobre prop drilling en una entrevista, decí esto:</strong></p>
+
+    <p>
+      "El prop drilling es normal y está bien para 1-3 niveles de anidamiento. Es explícito y fácil de testear.
+      Cuando tenés árboles más profundos o muchos componentes que pasan datos que no usan,
+      Context API es mejor — nos permite saltear componentes intermedios.
+      Pero Context tiene trampas: si el estado cambia seguido, los consumidores se re-renderean sin necesidad.
+      Para eso usamos Zustand o Redux, que nos dejan seleccionar campos específicos del estado."
+    </p>
+
+    <p>
+      Si preguntan "¿Cuándo usarías cada uno?", mostrá tu árbol de decisión de arriba.
+      <strong>Eso es la marca de un developer que piensa, no que solo code.</strong>
+    </p>
+
+  </div>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="code-examples">
+      Ejemplos de Código
+    </button>
+    <button class="tab-button" data-tab="architectural-decisions">
+      Decisiones Arquitectónicas
+    </button>
+  </div>
+
+  <article id="code-examples" class="tab-content active">
+    <h2>Ejemplos de Código Completos</h2>
+
+    <h3>Ejemplo 1: Prop Drilling (caso simple)</h3>
+    <pre><code class="language-jsx">
+// App.js
+import { useState } from 'react'
+
+function App() {
+  const [username, setUsername] = useState('Alice')
+
+  return &lt;Layout username={username} setUsername={setUsername} /&gt;
+}
+
+// Layout.js
+function Layout({ username, setUsername }) {
+  return (
+    &lt;div&gt;
+      &lt;Sidebar username={username} /&gt;
+      &lt;MainContent username={username} setUsername={setUsername} /&gt;
+    &lt;/div&gt;
+  )
+}
+
+// Sidebar.js
+function Sidebar({ username }) {
+  return &lt;Profile username={username} /&gt;
+}
+
+// Profile.js (por fin lo usa)
+function Profile({ username }) {
+  return &lt;h2&gt;Bienvenido {username}&lt;/h2&gt;
+}
+
+// MainContent.js
+function MainContent({ username, setUsername }) {
+  return (
+    &lt;form&gt;
+      &lt;input
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        placeholder="Actualizá tu nombre"
+      /&gt;
+    &lt;/form&gt;
+  )
+}
+
+export default App
+    </code></pre>
+
+    <h3>Ejemplo 2: Context API (lo mismo, sin prop drilling)</h3>
+    <pre><code class="language-jsx">
+// UserContext.js
+import { createContext, useContext, useState } from 'react'
+
+const UserContext = createContext()
+
+export function UserProvider({ children }) {
+  const [username, setUsername] = useState('Alice')
+
+  return (
+    &lt;UserContext.Provider value={{ username, setUsername }}&gt;
+      {children}
+    &lt;/UserContext.Provider&gt;
+  )
+}
+
+// Hook personalizado para acceso fácil
+export function useUser() {
+  return useContext(UserContext)
+}
+
+// App.js
+import { UserProvider } from './UserContext'
+
+function App() {
+  return (
+    &lt;UserProvider&gt;
+      &lt;Layout /&gt;
+    &lt;/UserProvider&gt;
+  )
+}
+
+// Layout.js (¡sin props!)
+function Layout() {
+  return (
+    &lt;div&gt;
+      &lt;Sidebar /&gt;
+      &lt;MainContent /&gt;
+    &lt;/div&gt;
+  )
+}
+
+// Sidebar.js (¡sin props!)
+function Sidebar() {
+  return &lt;Profile /&gt;
+}
+
+// Profile.js (lee del context)
+function Profile() {
+  const { username } = useUser()
+  return &lt;h2&gt;Bienvenido {username}&lt;/h2&gt;
+}
+
+// MainContent.js (lee Y escribe)
+function MainContent() {
+  const { username, setUsername } = useUser()
+  return (
+    &lt;form&gt;
+      &lt;input
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        placeholder="Actualizá tu nombre"
+      /&gt;
+    &lt;/form&gt;
+  )
+}
+
+export default App
+    </code></pre>
+
+    <h3>Ejemplo 3: El Problema de Performance (mal uso de Context)</h3>
+    <pre><code class="language-jsx">
+// AppContext.js
+import { createContext, useContext, useState } from 'react'
+
+const AppContext = createContext()
+
+export function AppProvider({ children }) {
+  // Montón de estado todo junto
+  const [state, setState] = useState({
+    user: { name: 'Juan', email: 'juan@example.com' },
+    theme: 'light',
+    notifications: [],
+    sidebarOpen: true,
+    // ... muchísimos campos más
+  })
+
+  // Acá está el problema:
+  // Cuando CUALQUIER campo cambia, TODOS los consumidores se re-renderean
+  const toggleTheme = () => {
+    setState({ ...state, theme: state.theme === 'light' ? 'dark' : 'light' })
+  }
+
+  return (
+    &lt;AppContext.Provider value={{ state, toggleTheme }}&gt;
+      {children}
+    &lt;/AppContext.Provider&gt;
+  )
+}
+
+export function useApp() {
+  return useContext(AppContext)
+}
+
+// Componente 1: Solo le importa el tema
+function DarkModeToggle() {
+  const { state, toggleTheme } = useApp()
+
+  return (
+    &lt;button onClick={toggleTheme}&gt;
+      Tema actual: {state.theme}
+    &lt;/button&gt;
+  )
+}
+
+// Componente 2: Solo le importa el usuario
+function UserProfile() {
+  const { state } = useApp()
+
+  return &lt;div&gt;¡Hola {state.user.name}!&lt;/div&gt;
+}
+
+// PROBLEMA: Cuando toggleTheme() es llamado:
+// 1. state cambia
+// 2. AppContext value se convierte en un objeto nuevo
+// 3. AMBOS DarkModeToggle Y UserProfile se re-renderean
+// 4. UserProfile no le importa el tema, ¡pero se re-renderea igual!
+    </code></pre>
+
+    <h3>Ejemplo 4: La Solución (Zustand para estado que cambia seguido)</h3>
+    <pre><code class="language-jsx">
+// store.js (Zustand)
+import create from 'zustand'
+
+const useAppStore = create((set) => ({
+  // Separar las responsabilidades
+  user: { name: 'Juan', email: 'juan@example.com' },
+  theme: 'light',
+  notifications: [],
+  sidebarOpen: true,
+
+  // Acciones
+  setTheme: (theme) => set({ theme }),
+  setUser: (user) => set({ user }),
+  addNotification: (notif) => set((state) => ({
+    notifications: [...state.notifications, notif]
+  }))
+}))
+
+// Componente 1: Solo se suscribe al tema
+function DarkModeToggle() {
+  const theme = useAppStore((state) => state.theme)
+  const setTheme = useAppStore((state) => state.setTheme)
+
+  return (
+    &lt;button onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}&gt;
+      Tema actual: {theme}
+    &lt;/button&gt;
+  )
+}
+
+// Componente 2: Solo se suscribe al usuario
+function UserProfile() {
+  const user = useAppStore((state) => state.user)
+
+  return &lt;div&gt;¡Hola {user.name}!&lt;/div&gt;
+}
+
+// SOLUCIÓN: Zustand usa el patrón de selector
+// Cuando cambia el tema:
+// 1. Solo DarkModeToggle se re-renderea (seleccionó theme)
+// 2. UserProfile NO se re-renderea (no seleccionó theme)
+// 3. ¡La performance está optimizada automáticamente! ✓
+
+// Uso en la app
+function App() {
+  return (
+    &lt;div&gt;
+      &lt;DarkModeToggle /&gt;
+      &lt;UserProfile /&gt;
+    &lt;/div&gt;
+  )
+}
+
+export default App
+    </code></pre>
+
+    <h3>Ejemplo 5: Estructura real en una app</h3>
+    <pre><code class="language-jsx">
+// contexts/ThemeContext.js
+// Propósito: El tema no cambia mucho (una vez por sesión)
+// Decisión: Context API está bien
+import { createContext, useContext, useState } from 'react'
+
+const ThemeContext = createContext()
+
+export function ThemeProvider({ children }) {
+  const [theme, setTheme] = useState('light')
+
+  const toggleTheme = () => {
+    setTheme(theme === 'light' ? 'dark' : 'light')
+  }
+
+  return (
+    &lt;ThemeContext.Provider value={{ theme, toggleTheme }}&gt;
+      {children}
+    &lt;/ThemeContext.Provider&gt;
+  )
+}
+
+export function useTheme() {
+  return useContext(ThemeContext)
+}
+
+// store/userStore.js
+// Propósito: Los datos del usuario cambian seguido (múltiples campos, animaciones)
+// Decisión: Zustand para optimizar performance
+import create from 'zustand'
+
+export const useUserStore = create((set) => ({
+  user: null,
+  isLoading: false,
+  error: null,
+
+  fetchUser: async (id) => {
+    set({ isLoading: true })
+    try {
+      const response = await fetch(`/api/users/${id}`)
+      const user = await response.json()
+      set({ user, error: null })
+    } catch (error) {
+      set({ error: error.message })
+    } finally {
+      set({ isLoading: false })
+    }
+  },
+
+  updateUser: (updates) => set((state) => ({
+    user: { ...state.user, ...updates }
+  }))
+}))
+
+// App.js
+import { ThemeProvider } from './contexts/ThemeContext'
+
+function App() {
+  return (
+    &lt;ThemeProvider&gt;
+      &lt;Layout /&gt;
+    &lt;/ThemeProvider&gt;
+  )
+}
+
+// pages/UserPage.js
+import { useUserStore } from '../store/userStore'
+import { useTheme } from '../contexts/ThemeContext'
+
+function UserPage() {
+  const { user, isLoading } = useUserStore()
+  const { theme } = useTheme()
+
+  const containerStyle = {
+    background: theme === 'dark' ? '#1a1a1a' : '#fff'
+  }
+
+  if (isLoading) return &lt;p&gt;Cargando...&lt;/p&gt;
+  if (!user) return &lt;p&gt;Usuario no encontrado&lt;/p&gt;
+
+  return (
+    &lt;div style={containerStyle}&gt;
+      &lt;h1&gt;{user.name}&lt;/h1&gt;
+      &lt;p&gt;{user.email}&lt;/p&gt;
+    &lt;/div&gt;
+  )
+}
+
+export default UserPage
+    </code></pre>
+
+  </article>
+
+  <article id="architectural-decisions" class="tab-content">
+    <h2>Cómo Elegir: Árbol de Decisión</h2>
+
+    <h3>Paso 1: ¿Qué profundidad tiene el anidamiento?</h3>
+    <pre><code>function App() {
+  &lt;Level1&gt;          ← 1 nivel
+    &lt;Level2&gt;        ← 2 niveles
+      &lt;Level3&gt;      ← 3 niveles
+        &lt;Level4&gt;    ← 4 niveles
+          &lt;Level5&gt;  ← 5 niveles (...)
+</code></pre>
+
+    <p>
+      <strong>Si es 1-3 niveles:</strong> Props están bien. Frená ahí. ✓
+    </p>
+
+    <h3>Paso 2: ¿Con qué frecuencia cambia el estado?</h3>
+
+    <p>
+      <strong>Pocas veces (una vez por sesión o menos):</strong>
+    </p>
+    <ul>
+      <li>Toggle de tema (claro/oscuro)</li>
+      <li>Cambio de idioma (EN/ES)</li>
+      <li>Login/logout del usuario</li>
+      <li>Feature flags</li>
+    </ul>
+
+    <p>
+      → Usa <strong>Context API</strong>. Es simple y funciona de diez para esto. ✓
+    </p>
+
+    <p>
+      <strong>Seguido (múltiples veces por segundo):</strong>
+    </p>
+    <ul>
+      <li>Inputs de formulario (onChange events)</li>
+      <li>Posición del mouse</li>
+      <li>Progreso de animación</li>
+      <li>Notificaciones en tiempo real</li>
+    </ul>
+
+    <p>
+      → Usa <strong>Zustand / Redux</strong>. Necesitás selectors para evitar re-renders innecesarios. ✓
+    </p>
+
+    <h3>Paso 3: La Matriz de Decisión Completa</h3>
+
+    <pre><code>┌─────────────────────────────────────────────────────────────────┐
+│                     MATRIZ DE DECISIÓN                          │
+├──────────────────────────┬──────────────┬──────────────────────┤
+│ Profundidad / Frecuencia │ Props        │ Context / Zustand    │
+├──────────────────────────┼──────────────┼──────────────────────┤
+│ 1-3 niveles / Cualquier  │ ✓ USA PROPS  │ ✗ Excesivo           │
+├──────────────────────────┼──────────────┼──────────────────────┤
+│ 4+ niveles / Cambios rare│ ✗ Tedioso    │ ✓ USA CONTEXT        │
+├──────────────────────────┼──────────────┼──────────────────────┤
+│ 4+ niveles / Cambios     │ ✗ Tedioso    │ ⚠ Context arriesgado │
+│ seguidos                 │              │ ✓ USA ZUSTAND       │
+├──────────────────────────┼──────────────┼──────────────────────┤
+│ Múltiples stores         │ ✗ No aplica  │ ✓ Múltiples contexts │
+│                          │              │ ✓ Múltiples Zustand  │
+└──────────────────────────┴──────────────┴──────────────────────┘</code></pre>
+
+    <h3>Ejemplo Real: Construyendo un Dashboard</h3>
+
+    <p><strong>Escenario:</strong> Dashboard con temas, autenticación del usuario y datos en tiempo real.</p>
+
+    <pre><code>1. Tema (claro/oscuro)
+   └─ Cambios: una vez por sesión
+   └─ Decisión: Context API ✓
+
+2. Idioma (EN/ES)
+   └─ Cambios: una vez por sesión
+   └─ Decisión: Context API ✓
+
+3. Usuario actual (logueado)
+   └─ Cambios: solo en login/logout
+   └─ Decisión: Context API ✓
+
+4. Notificaciones en vivo (llegando en tiempo real)
+   └─ Cambios: muchísimas veces por segundo
+   └─ Decisión: Zustand (evitar spam de re-renders) ✓
+
+5. Input de formulario (usuario escribiendo)
+   └─ Cambios: en cada tecla
+   └─ Decisión: Estado local (useState) ✓
+   └─ Razón: El dato está en ese componente solo
+
+6. Datos del gráfico (trae una vez al cargar)
+   └─ Cambios: una sola vez cuando la página carga
+   └─ Decisión: Estado local (useState) está bien, o Zustand si se comparte ✓
+</code></pre>
+
+    <h3>Errores Comunes (Los Juniors Hacen Esto)</h3>
+
+    <p><strong>Error 1: Context para todo</strong></p>
+    <pre><code>// ❌ MALO
+const AppContext = createContext()
+
+// Ponés TODO el estado en un Context:
+// - tema (cambia pocas veces)
+// - inputs de formulario (cambian todo el tiempo)
+// - notificaciones (llegan rapidísimo)
+
+// Resultado: Cada tecla causa que TODO se re-renderee
+</code></pre>
+
+    <p><strong>Mejor enfoque:</strong></p>
+    <pre><code>// ✓ BIEN
+const ThemeContext = createContext()  // Cambios raros
+const NotificationStore = Zustand()   // Cambios frecuentes
+const formState = useState()           // Local al componente
+</code></pre>
+
+    <p><strong>Error 2: Props para todo</strong></p>
+    <pre><code>// ❌ MALO - Prop drilling a través de 10 niveles
+&lt;App user={user}&gt;
+  &lt;Layout user={user}&gt;
+    &lt;Sidebar user={user}&gt;
+      &lt;Menu user={user}&gt;
+        &lt;UserAvatar user={user}&gt;
+          ...anidado 5 niveles más
+        &lt;/UserAvatar&gt;
+      &lt;/Menu&gt;
+    &lt;/Sidebar&gt;
+  &lt;/Layout&gt;
+&lt;/App&gt;
+
+// Es quilombo refactorizar y quilombo entender
+</code></pre>
+
+    <p><strong>Mejor enfoque:</strong></p>
+    <pre><code>// ✓ BIEN - Usa Context para estado global
+&lt;UserProvider&gt;
+  &lt;App /&gt;
+&lt;/UserProvider&gt;
+
+// Entonces cualquier componente puede useUser() sin cadenas de props
+</code></pre>
+
+    <p><strong>Error 3: Zustand para estado simple</strong></p>
+    <pre><code>// ❌ EXCESO
+const useFormStore = Zustand((set) => ({
+  email: '',
+  password: '',
+  setEmail: (e) => set({ email: e }),
+  setPassword: (p) => set({ password: p })
+}))
+
+// Este formulario se usa en UN SOLO componente
+// useState es más simple y más rápido
+</code></pre>
+
+    <p><strong>Mejor enfoque:</strong></p>
+    <pre><code>// ✓ BIEN - Mantelo local
+function LoginForm() {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+
+  return (
+    &lt;form&gt;
+      &lt;input value={email} onChange={(e) => setEmail(e.target.value)} /&gt;
+      &lt;input value={password} onChange={(e) => setPassword(e.target.value)} /&gt;
+    &lt;/form&gt;
+  )
+}
+</code></pre>
+
+    <h3>Pregunta de Entrevista: "¿Qué usarías acá?"</h3>
+
+    <p><strong>Escenario 1:</strong> Un dashboard que muestra el perfil del usuario en la esquina superior derecha.</p>
+    <pre><code>App
+ ├── Header (muestra nombre del usuario arriba a la derecha)
+ ├── Sidebar
+ └── MainContent
+      ├── Page1
+      ├── Page2
+      └── Page3
+
+App tiene los datos del usuario, Header los necesita.
+Profundidad: 1 nivel (App → Header)
+
+Respuesta: "Usaría props. Es poco profundo, claro y performante."
+</code></pre>
+
+    <p><strong>Escenario 2:</strong> Un menú multi-nivel donde cada item necesita el idioma actual (EN/ES).</p>
+    <pre><code>App
+ └── Layout
+      └── Sidebar
+           └── Menu (nivel 1)
+                └── Submenu (nivel 2)
+                     └── Submenu (nivel 3)
+                          └── MenuItem (nivel 4)
+                               └── ItemLabel (necesita idioma)
+
+Profundidad: 5 niveles. Idioma cambia una vez por sesión.
+
+Respuesta: "Usaría Context. Es profundo, el idioma es infrecuente,
+y no queremos pasar idioma a través de cada componente."
+</code></pre>
+
+    <p><strong>Escenario 3:</strong> Una app de chat con mensajes llegando (1 por segundo), inputs de formulario y tema.</p>
+    <pre><code>Para mensajes: Zustand (cambios frecuentes, selectores por campo)
+Para tema: Context (cambios raros)
+Para input: useState (local solo)
+
+Respuesta: "Separaría las responsabilidades. Los mensajes y el tema
+tienen patrones de cambio diferentes, así que necesitan soluciones distintas."
+</code></pre>
+
+  </article>
+
+  <div class="resource-box">
+    <strong class="resource-box__title">📚 ¿Querés profundizar?</strong>
+    <div class="resource-box__links">
+      <a href="https://www.jscamp.dev/estado-global-y-react-router/prop-drilling-vs-context-api" target="_blank" class="resource-box__link" rel="noreferrer noopener">
+        JSCamp: Prop Drilling vs Context API →
+      </a>
+      <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/6a25e578-2994-83eb-856a-1c712680c07e" target="_blank" class="resource-box__link" rel="noreferrer noopener">
+        💬 Debate con MiduFrontend GPT →
+      </a>
+    </div>
+  </div>
+</section>

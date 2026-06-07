@@ -1,0 +1,554 @@
+<section class="box">
+  <h1>Zustand: Global State Made Simple</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">Concepts</button>
+    <button class="tab-button" data-tab="code-examples">Code Examples</button>
+    <button class="tab-button" data-tab="when-to-use">When to Use Zustand</button>
+  </div>
+
+  <!-- ===================== CONCEPTS ===================== -->
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+
+      <h2>🏙️ The City Analogy: From Prop Drilling to Global State</h2>
+      <p>
+        Imagine a city with houses (components) that need information from the town hall (state).
+        As the city grows, information has to pass through many houses to reach the one that needs it.
+      </p>
+
+      <pre><code>Town Hall (Global State)
+   │
+   ├─ Information flows down through pipes
+   │
+   House 1
+   │
+   House 2
+   │
+   House 3 ✅ Finally gets the info, but it took 3 houses!
+
+This is PROP DRILLING — painful and inefficient.</code></pre>
+
+      <hr />
+
+      <h2>🚨 The Prop Drilling Problem</h2>
+      <p>
+        Without global state, you pass props through intermediate components that don't even use them:
+      </p>
+
+      <pre><code class="language-jsx">// ❌ Prop Drilling: App → Page → Card → Button
+function App() {
+  const [user, setUser] = useState({ name: 'Alex', isLoggedIn: true })
+  return &lt;Page user={user} /&gt;
+}
+
+function Page({ user }) {
+  return &lt;Card user={user} /&gt;  // doesn't use user!
+}
+
+function Card({ user }) {
+  return &lt;Button user={user} /&gt;  // doesn't use user!
+}
+
+function Button({ user }) {
+  return &lt;button&gt;Welcome, {user.name}&lt;/button&gt;  // finally uses it
+}</code></pre>
+
+      <p class="callout-warning">
+        <strong>⚠️ The pain:</strong> If you need to change where <code>user</code> comes from,
+        you have to update App, Page, Card, AND Button. Add 10 levels of nesting? Now it's a nightmare.
+      </p>
+
+      <hr />
+
+      <h2>🏪 Context API: A Central Supermarket</h2>
+      <p>
+        React's built-in solution is Context. You create a provider at the top that makes data available
+        to all children without passing props:
+      </p>
+
+      <pre><code class="language-jsx">// Create the context
+const UserContext = createContext()
+
+// Provider wraps the app
+function App() {
+  const [user, setUser] = useState({ name: 'Alex' })
+  return (
+    &lt;UserContext.Provider value={{ user, setUser }}&gt;
+      &lt;Page /&gt;
+    &lt;/UserContext.Provider&gt;
+  )
+}
+
+// Any child can consume it
+function Button() {
+  const { user } = useContext(UserContext)
+  return &lt;button&gt;Welcome, {user.name}&lt;/button&gt;  // ✅ Direct access!
+}</code></pre>
+
+      <p>Context solves prop drilling, BUT...</p>
+
+      <hr />
+
+      <h2>⚡ The Context Problem: Unnecessary Re-Renders</h2>
+      <p>
+        Context has a hidden cost. When ANY value in the provider changes, <strong>ALL components</strong>
+        that use that context re-render, even if they only use one small piece of data.
+      </p>
+
+      <pre><code>Context Logic:
+  1. User logs in
+  2. UserContext updates
+  3. MyComponent watches UserContext
+  4. MyComponent re-renders ✅
+  5. ThemeComponent watches UserContext
+  6. ThemeComponent re-renders ❌ (didn't need this!)
+  7. NotificationComponent watches UserContext
+  8. NotificationComponent re-renders ❌ (didn't need this either!)</code></pre>
+
+      <p class="callout-danger">
+        <strong>❌ The issue:</strong> If 100 components use the same Context, and one tiny value changes,
+        all 100 re-render. This kills performance on large apps.
+      </p>
+
+      <hr />
+
+      <h2>🔑 Zustand: The Smart Key</h2>
+      <p>
+        Here's where Zustand comes in. It's like replacing the receptionist (Context) with smart keys.
+        Each component only subscribes to the data it actually uses.
+      </p>
+
+      <pre><code>Context = Receptionist
+  "Who needs info?" she asks everyone
+  Everyone listens to her answer
+  Even if you don't need the info, you listen
+
+Zustand = Smart Key
+  You pick the exact info you need
+  Only you get notified when YOUR data changes
+  Nobody else cares</code></pre>
+
+      <p>
+        Zustand is a <strong>state management library</strong> that gives you global state
+        with minimal re-renders and zero boilerplate.
+      </p>
+
+      <hr />
+
+      <h2>📦 Key Differences at a Glance</h2>
+
+      <pre><code>PROPS
+└─ Unidirectional data flow (parent → child)
+└─ Fine for: Simple apps, single-level nesting
+└─ Problem: Prop drilling with deep nesting
+
+CONTEXT API
+└─ Global state with Provider/Consumer pattern
+└─ Fine for: Themes, languages, simple config
+└─ Problem: Unnecessary re-renders of all subscribers
+
+ZUSTAND ✅
+└─ Global state with subscriptions
+└─ Fine for: Any app, any size, complex state
+└─ Benefit: Granular updates (only affected components re-render)
+└─ Benefit: No Provider needed (optional)
+└─ Benefit: Tiny bundle size (2.3 kB)</code></pre>
+
+      <hr />
+
+      <h2>⚙️ How Zustand Works Under the Hood</h2>
+
+      <pre><code>1. You create a store with create()
+2. The store is a hook (useAuthStore, useCartStore, etc.)
+3. Your component calls that hook: const user = useAuthStore(...)
+4. Component subscribes to specific state
+5. When state changes, Zustand notifies ONLY subscribers of that part
+6. Component re-renders ONLY if its subscribed state changed
+
+This is way more efficient than Context.</code></pre>
+
+      <hr />
+
+      <h2>✅ Why Developers Choose Zustand</h2>
+
+      <pre><code>✨ Minimal boilerplate — fewer lines than Redux or Context
+⚡ Granular subscriptions — only re-render when you need to
+🔒 Type-safe — works beautifully with TypeScript
+🪶 Tiny bundle — 2.3 kB (smaller than Redux by far)
+💾 Persistent — easy to save to localStorage
+🧪 Easy to test — stores are just functions
+🎯 No Provider hell — optional, but you can wrap if needed</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== CODE EXAMPLES ===================== -->
+  <article id="code-examples" class="tab-content">
+    <div class="description">
+
+      <h2>🚀 Installation</h2>
+
+      <pre><code>npm install zustand</code></pre>
+
+      <p>That's it. No configuration, no providers required (unless you want them).</p>
+
+      <hr />
+
+      <h2>📖 Creating Your First Store (Step by Step)</h2>
+
+      <p>
+        Here's the simplest possible Zustand store. We'll build a user authentication store:
+      </p>
+
+      <pre><code class="language-jsx">import { create } from 'zustand'
+
+// Step 1: Use create() to define your store
+const useAuthStore = create((set) =&gt; ({
+  // Step 2: Define your initial state
+  user: null,
+  isLoggedIn: false,
+
+  // Step 3: Define actions (functions that change state)
+  login: (userData) =&gt; set({ user: userData, isLoggedIn: true }),
+  logout: () =&gt; set({ user: null, isLoggedIn: false }),
+}))
+
+// That's it! useAuthStore is now a React hook</code></pre>
+
+      <p>Breaking it down:</p>
+      <pre><code>create()           → Zustand function to create a store
+(set) =&gt; ({})      → Arrow function that receives the "set" function
+set                → How you update state (updates the whole store)
+user, isLoggedIn   → Your state
+login, logout      → Your actions</code></pre>
+
+      <hr />
+
+      <h2>🎣 Using the Store in a Component</h2>
+
+      <pre><code class="language-jsx">// ✅ Use it like a hook! No Provider needed
+function LoginButton() {
+  const { user, login, logout, isLoggedIn } = useAuthStore()
+
+  return (
+    &lt;div&gt;
+      {isLoggedIn ? (
+        &lt;&gt;
+          &lt;p&gt;Welcome, {user.name}&lt;/p&gt;
+          &lt;button onClick={logout}&gt;Logout&lt;/button&gt;
+        &lt;/&gt;
+      ) : (
+        &lt;button onClick={() =&gt; login({ name: 'Alex', email: 'alex@example.com' })}&gt;
+          Login
+        &lt;/button&gt;
+      )}
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+      <p>
+        <strong>🎯 Key insight:</strong> Notice that <code>LoginButton</code> is a regular component.
+        No Context.Provider, no complex setup. It just uses the hook.
+      </p>
+
+      <hr />
+
+      <h2>🎯 Selective Subscriptions (The Smart Part)</h2>
+
+      <p>
+        This is where Zustand shines. You can subscribe to ONLY the parts of state you need.
+        If you only need <code>isLoggedIn</code>, only re-render when THAT changes:
+      </p>
+
+      <pre><code class="language-jsx">// ❌ Subscribe to whole store (re-renders on ANY change)
+function MyComponent() {
+  const state = useAuthStore()  // Whole store
+  return &lt;div&gt;{state.isLoggedIn}&lt;/div&gt;
+}
+
+// ✅ Subscribe to specific slice (re-renders ONLY on this change)
+function MyComponent() {
+  const isLoggedIn = useAuthStore((state) =&gt; state.isLoggedIn)
+  return &lt;div&gt;{isLoggedIn}&lt;/div&gt;
+}
+
+// ✅ Subscribe to multiple specific slices
+function MyComponent() {
+  const { isLoggedIn, user } = useAuthStore(
+    (state) =&gt; ({ isLoggedIn: state.isLoggedIn, user: state.user })
+  )
+  return &lt;div&gt;{user.name} — {isLoggedIn}&lt;/div&gt;
+}</code></pre>
+
+      <p class="callout-info">
+        <strong>💡 This is performance magic:</strong> Component A only re-renders when <code>isLoggedIn</code> changes.
+        Component B only re-renders when <code>user</code> changes. They don't interfere with each other.
+      </p>
+
+      <hr />
+
+      <h2>🛒 Real-World Example: Shopping Cart Store</h2>
+
+      <pre><code class="language-jsx">import { create } from 'zustand'
+
+const useCartStore = create((set) =&gt; ({
+  // State
+  items: [],
+  totalPrice: 0,
+
+  // Actions
+  addItem: (product) =&gt; set((state) =&gt; ({
+    items: [...state.items, product],
+    totalPrice: state.totalPrice + product.price,
+  })),
+
+  removeItem: (productId) =&gt; set((state) =&gt; {
+    const removedProduct = state.items.find(item =&gt; item.id === productId)
+    return {
+      items: state.items.filter(item =&gt; item.id !== productId),
+      totalPrice: state.totalPrice - (removedProduct?.price || 0),
+    }
+  }),
+
+  clearCart: () =&gt; set({ items: [], totalPrice: 0 }),
+
+  getItemCount: () =&gt; set(
+    (state) =&gt; state.items.length
+  ),
+}))
+
+// Usage in components
+function CartWidget() {
+  const itemCount = useCartStore((state) =&gt; state.items.length)
+  return &lt;div&gt;Cart: {itemCount} items&lt;/div&gt;
+}
+
+function CartTotal() {
+  const totalPrice = useCartStore((state) =&gt; state.totalPrice)
+  return &lt;div&gt;Total: €{totalPrice}&lt;/div&gt;
+}</code></pre>
+
+      <hr />
+
+      <h2>🔄 Zustand vs Context Side-by-Side</h2>
+
+      <p><strong>Same feature, both solutions:</strong></p>
+
+      <pre><code class="language-jsx">// ============ CONTEXT VERSION ============
+const UserContext = createContext()
+
+function App() {
+  const [user, setUser] = useState(null)
+  return (
+    &lt;UserContext.Provider value={{ user, setUser }}&gt;
+      &lt;Page /&gt;
+    &lt;/UserContext.Provider&gt;
+  )
+}
+
+function MyComponent() {
+  const { user, setUser } = useContext(UserContext)
+  return &lt;div&gt;{user?.name}&lt;/div&gt;
+}
+
+// ============ ZUSTAND VERSION ============
+const useUserStore = create((set) =&gt; ({
+  user: null,
+  setUser: (userData) =&gt; set({ user: userData }),
+}))
+
+function App() {
+  return &lt;Page /&gt;  // No Provider needed!
+}
+
+function MyComponent() {
+  const { user } = useUserStore()
+  return &lt;div&gt;{user?.name}&lt;/div&gt;
+}</code></pre>
+
+      <p><strong>The Zustand version is cleaner, simpler, and more efficient.</strong></p>
+
+      <hr />
+
+      <h2>💾 Persist State to localStorage</h2>
+
+      <p>
+        Zustand has middleware for persistence. You can save your store to localStorage
+        and restore it on app reload:
+      </p>
+
+      <pre><code class="language-jsx">import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
+
+const useAuthStore = create(
+  persist(
+    (set) =&gt; ({
+      user: null,
+      login: (userData) =&gt; set({ user: userData }),
+      logout: () =&gt; set({ user: null }),
+    }),
+    {
+      name: 'auth-storage',  // localStorage key
+    }
+  )
+)
+
+// Now login/logout data persists across page refreshes!</code></pre>
+
+      <hr />
+
+      <h2>🧪 Zustand Stores are Easy to Test</h2>
+
+      <pre><code class="language-jsx">import { useAuthStore } from './stores/auth'
+
+describe('AuthStore', () =&gt; {
+  // Zustand stores are plain functions, so testing is straightforward
+  it('should login and update user', () =&gt; {
+    const store = useAuthStore.getState()
+    store.login({ name: 'Alex' })
+
+    expect(store.user.name).toBe('Alex')
+    expect(store.isLoggedIn).toBe(true)
+  })
+
+  it('should logout', () =&gt; {
+    const store = useAuthStore.getState()
+    store.logout()
+
+    expect(store.user).toBe(null)
+    expect(store.isLoggedIn).toBe(false)
+  })
+})</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== WHEN TO USE ZUSTAND ===================== -->
+  <article id="when-to-use" class="tab-content">
+    <div class="description">
+
+      <h2>🎯 Decision Tree: Which State Solution to Use</h2>
+
+      <pre><code>Does your state live in ONE component?
+├─ YES → useState ✅
+└─ NO, multiple components need it
+   │
+   ├─ Simple state (theme, language)?
+   │  └─ Context API ✅
+   │
+   └─ Complex state (user, cart, notifications)?
+      ├─ Many re-renders a concern?
+      │  └─ Zustand ✅✅
+      └─ Just a few consumers?
+         └─ Context API ⚠️ (works, but Zustand is simpler)</code></pre>
+
+      <hr />
+
+      <h2>✅ Use useState When:</h2>
+
+      <pre><code>• State lives in a single component
+• Only that component and immediate children use it
+
+Example: Toggle button state, form input state, modal open/close</code></pre>
+
+      <hr />
+
+      <h2>✅ Use Context API When:</h2>
+
+      <pre><code>• Simple, rarely-changing configuration
+• Theme (dark mode / light mode)
+• Language selection (EN / ES)
+• User's accessibility preferences
+• Small number of subscribers (5-10 components max)
+
+Why: Context is built into React, zero dependencies,
+     and overkill state is not a problem for simple data.</code></pre>
+
+      <hr />
+
+      <h2>✅✅ Use Zustand When:</h2>
+
+      <pre><code>• Complex application state
+  - Authenticated user info
+  - Shopping cart
+  - Notifications
+  - Favorites
+  - Filters & search
+
+• Performance matters
+  - Many components subscribe to state
+  - Frequent updates
+  - Need granular re-renders
+
+• You want clean code
+  - No Provider wrapper
+  - No useContext(...) everywhere
+  - Simple actions
+
+Why: Zustand is smaller, faster, and way cleaner
+     for anything beyond trivial state.</code></pre>
+
+      <hr />
+
+      <h2>📊 Comparison Table</h2>
+
+      <pre><code>                 useState   Context    Zustand
+──────────────────────────────────────────────────
+Boilerplate        ✅         ⚠️         ✅
+Re-render Control  ✅         ❌         ✅✅
+Ease of Use        ✅         ⚠️         ✅
+Bundle Size        N/A        N/A        2.3 kB
+Need Provider      ❌         ✅         ❌
+Learning Curve     Low        Medium     Low
+Persistence        No         No         ✅
+Dev Tools          No         No         ✅
+TypeScript         Good       Good       Excellent</code></pre>
+
+      <hr />
+
+      <h2>🚀 The Senior Developer's Rule of Thumb</h2>
+
+      <pre><code>Start with useState.
+
+If you need to pass state through 3+ levels → Context.
+If Context causes re-renders → Zustand.
+
+In practice:
+• 80% of projects use useState + Zustand (no Context needed)
+• Context for styling/config only
+• Zustand for everything else
+
+The anti-pattern: Using Context for business logic.
+That's where most developers go wrong.</code></pre>
+
+      <hr />
+
+      <h2>🎓 Summary: What to Remember</h2>
+
+      <pre><code>🏙️ Props are direct, Context is broadcast, Zustand is targeted
+⚡ Zustand only re-renders components that need the change
+📦 Zero Provider boilerplate
+🔑 It's like having smart keys instead of a receptionist
+💾 Persist to localStorage with middleware
+🧪 Dead simple to test
+✅ Use for: user, cart, auth, notifications, filters
+⚠️ Don't use for: theme, language (Context is simpler)
+🆓 It's free and tiny (2.3 kB)</code></pre>
+
+    </div>
+  </article>
+
+  <div class="resource-box">
+    <strong class="resource-box__title">📚 Want to go deeper?</strong>
+    <div class="resource-box__links">
+      <a href="https://www.jscamp.dev/estado-global-y-react-router/introduccion-a-zustand" target="_blank" class="resource-box__link" rel="noreferrer noopener">
+        📖 Introduction to Zustand on JSCamp →
+      </a>
+      <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/6a25e98e-cf6c-83eb-8fc9-368c83e4503f" target="_blank" class="resource-box__link" rel="noreferrer noopener">
+        💬 Ask Midu Frontend GPT about Zustand →
+      </a>
+    </div>
+  </div>
+
+</section>

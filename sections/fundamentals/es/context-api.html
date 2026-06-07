@@ -1,0 +1,664 @@
+<section class="box">
+  <h1>Context API y Redux: Entendiendo la Gestión de Estado</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="context-api">Context API</button>
+    <button class="tab-button" data-tab="detect-redux">Detectar Redux</button>
+    <button class="tab-button" data-tab="architecture-comparison">Comparación Arquitectura</button>
+  </div>
+
+  <!-- ===================== CONTEXT API ===================== -->
+  <article id="context-api" class="tab-content active">
+    <div class="description">
+
+      <h2>🍕 La Analogía de la Pizzería</h2>
+      <p>
+        Imaginate una pizzería. Para entender Context API, necesitamos tres componentes:
+      </p>
+
+      <pre><code>🍕 Pizzería (createContext)
+├─ El negocio existe y está listo para servir
+│
+📦 Mostrador con Porciones (Provider)
+├─ El lugar físico donde los clientes consiguen su pizza
+├─ Almacena el inventario (state)
+├─ Lo pone disponible para quien lo pida
+│
+👤 Cliente (useContext)
+├─ Llega al mostrador
+├─ Pide pizza
+├─ Recibe lo que necesita directamente</code></pre>
+
+      <hr />
+
+      <h2>🎯 ¿Qué es Context API?</h2>
+      <p>
+        <strong>Context API</strong> es la solución nativa de React para compartir estado en tu aplicación
+        sin pasar props por cada nivel (prop drilling). Tiene tres componentes clave:
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Concepto</th>
+            <th>Qué es</th>
+            <th>Paralelo Pizzería</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>createContext()</strong></td>
+            <td>Crea el objeto contexto</td>
+            <td>🍕 Registrar la pizzería como negocio</td>
+          </tr>
+          <tr>
+            <td><strong>Provider</strong></td>
+            <td>Componente que envuelve tu app y comparte el estado</td>
+            <td>📦 El mostrador donde se distribuye la pizza</td>
+          </tr>
+          <tr>
+            <td><strong>useContext()</strong></td>
+            <td>Hook que deja a los componentes leer el estado compartido</td>
+            <td>👤 Cliente pidiendo pizza</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <hr />
+
+      <h2>🧠 Paso a Paso: Construyendo un Sistema de Auth</h2>
+
+      <h3>Paso 1: Crear el Context</h3>
+      <pre><code class="language-jsx">// AuthContext.jsx
+import { createContext } from 'react'
+
+export const AuthContext = createContext()
+      </code></pre>
+
+      <p class="callout-info">
+        <strong>💡 Qué está pasando:</strong> Estamos creando una caja vacía (contexto) que va a tener nuestros datos de autenticación.
+      </p>
+
+      <hr />
+
+      <h3>Paso 2: Crear el Componente Provider</h3>
+      <pre><code class="language-jsx">// AuthProvider.jsx
+import { useState } from 'react'
+import { AuthContext } from './AuthContext'
+
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
+
+  const login = (email, password) => {
+    setIsLoading(true)
+    // Simular llamada a API
+    setTimeout(() => {
+      setUser({ email, role: 'user' })
+      setIsLoading(false)
+    }, 1000)
+  }
+
+  const logout = () => {
+    setUser(null)
+  }
+
+  const value = {
+    user,
+    isLoading,
+    login,
+    logout,
+    isAuthenticated: user !== null,
+  }
+
+  return (
+    &lt;AuthContext.Provider value={value}&gt;
+      {children}
+    &lt;/AuthContext.Provider&gt;
+  )
+}
+      </code></pre>
+
+      <p class="callout-info">
+        <strong>💡 Qué está pasando:</strong> El Provider envuelve tu app y pone el estado de auth disponible para todos los hijos.
+        Es como el mostrador de la pizzería guardando todas las pizzas (estado) y ofreciéndolas a los clientes.
+      </p>
+
+      <hr />
+
+      <h3>Paso 3: Envolver Tu App con el Provider</h3>
+      <pre><code class="language-jsx">// main.jsx
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import { AuthProvider } from './AuthProvider'
+import App from './App'
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  &lt;React.StrictMode&gt;
+    &lt;AuthProvider&gt;
+      &lt;App /&gt;
+    &lt;/AuthProvider&gt;
+  &lt;/React.StrictMode&gt;
+)
+      </code></pre>
+
+      <p class="callout-success">
+        <strong>✅ Resultado:</strong> Ahora cada componente dentro de &lt;App /&gt; puede acceder al contexto de auth.
+      </p>
+
+      <hr />
+
+      <h3>Paso 4: Usar useContext en Tus Componentes</h3>
+      <pre><code class="language-jsx">// Header.jsx
+import { useContext } from 'react'
+import { AuthContext } from './AuthContext'
+
+export function Header() {
+  const { user, logout, isAuthenticated } = useContext(AuthContext)
+
+  return (
+    &lt;header&gt;
+      {isAuthenticated ? (
+        &lt;&gt;
+          &lt;span&gt;Bienvenido, {user.email}&lt;/span&gt;
+          &lt;button onClick={logout}&gt;Logout&lt;/button&gt;
+        &lt;/&gt;
+      ) : (
+        &lt;span&gt;Por favor inicia sesión&lt;/span&gt;
+      )}
+    &lt;/header&gt;
+  )
+}
+
+// Dashboard.jsx
+export function Dashboard() {
+  const { user, isLoading } = useContext(AuthContext)
+
+  if (isLoading) return &lt;p&gt;Cargando...&lt;/p&gt;
+  if (!user) return &lt;p&gt;No autenticado&lt;/p&gt;
+
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Dashboard para {user.email}&lt;/h1&gt;
+      {/* Contenido protegido */}
+    &lt;/div&gt;
+  )
+}
+      </code></pre>
+
+      <p class="callout-success">
+        <strong>✅ Beneficios:</strong> Header y Dashboard obtienen el estado de auth directamente del contexto.
+        Sin prop drilling, aunque estén lejos en el árbol de componentes.
+      </p>
+
+      <hr />
+
+      <h2>📦 La Fórmula Mágica</h2>
+      <p>
+        Recordá este patrón:
+      </p>
+
+      <pre><code>1️⃣ createContext()      →  Crear el "negocio"
+2️⃣ Componente Provider  →  Manejar estado + envolver con &lt;Context.Provider&gt;
+3️⃣ Envolver tu app      →  &lt;MyProvider&gt;&lt;App /&gt;&lt;/MyProvider&gt;
+4️⃣ useContext(Context)  →  Leer estado en cualquier componente hijo
+
+Resultado: El estado es accesible SIN prop drilling</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== DETECT REDUX ===================== -->
+  <article id="detect-redux" class="tab-content">
+    <div class="description">
+
+      <h2>🔍 7 Formas de Detectar si una App de React Usa Redux</h2>
+      <p>
+        Estás mirando una app de React y necesitás saber si usa Redux. Acá hay 7 formas infalibles de detectarlo:
+      </p>
+
+      <hr />
+
+      <h2>1️⃣ Revisar package.json</h2>
+      <p>
+        La señal más obvia: busca paquetes relacionados a Redux en las dependencias.
+      </p>
+
+      <pre><code>{
+  "dependencies": {
+    "react": "^18.0.0",
+    "redux": "^4.2.0",              // ✅ Redux Clásico
+    "react-redux": "^8.1.0",        // ✅ Bindings para React
+    "@reduxjs/toolkit": "^1.9.0",   // ✅ Redux Toolkit (moderno)
+    "redux-thunk": "^2.4.0"         // ✅ Middleware para async
+  }
+}
+      </code></pre>
+
+      <p class="callout-success">
+        <strong>✅ Veredicto:</strong> Si ves <code>redux</code>, <code>react-redux</code>, o <code>@reduxjs/toolkit</code>,
+        la app definitivamente usa Redux.
+      </p>
+
+      <hr />
+
+      <h2>2️⃣ Buscar una Carpeta store/ o redux/</h2>
+      <p>
+        Las apps con Redux organizan el estado de una forma específica. Buscá:
+      </p>
+
+      <pre><code>src/
+├── store/
+│   ├── index.js              // Configuración del store
+│   ├── slices/               // Slices de Redux Toolkit
+│   │   ├── userSlice.js
+│   │   ├── authSlice.js
+│   │   └── notificationsSlice.js
+│   ├── reducers/             // Reducers de Redux clásico
+│   ├── actions/              // Actions de Redux clásico
+│   └── middleware/           // Middleware personalizado
+
+O
+
+src/
+├── redux/
+│   ├── store.js
+│   ├── actions.js
+│   ├── reducers.js
+      </code></pre>
+
+      <p class="callout-success">
+        <strong>✅ Veredicto:</strong> Si ves una carpeta <code>store</code> o <code>redux</code> con slices/reducers,
+        definitivamente usa Redux.
+      </p>
+
+      <hr />
+
+      <h2>3️⃣ Revisar main.jsx o index.jsx en busca de &lt;Provider&gt;</h2>
+      <p>
+        Las apps con Redux envuelven el componente raíz con <code>&lt;Provider&gt;</code> de <code>react-redux</code>.
+      </p>
+
+      <pre><code>// main.jsx o index.jsx
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import { Provider } from 'react-redux'  // ✅ Este es el Provider de Redux
+import { store } from './store'
+import App from './App'
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  &lt;Provider store={store}&gt;      {/* ✅ Redux está envolviendo la app */}
+    &lt;App /&gt;
+  &lt;/Provider&gt;
+)
+      </code></pre>
+
+      <p class="callout-danger">
+        <strong>⚠️ No confundas:</strong> Context API también usa <code>&lt;Provider&gt;</code>, pero importa
+        de <code>react</code>, no de <code>react-redux</code>. El Provider de Redux requiere una prop <code>store</code>.
+      </p>
+
+      <hr />
+
+      <h2>4️⃣ Buscar useSelector()</h2>
+      <p>
+        Este es el hook de Redux para leer estado. Si lo ves, Redux definitivamente se está usando.
+      </p>
+
+      <pre><code class="language-jsx">import { useSelector } from 'react-redux'
+
+function Header() {
+  const user = useSelector(state => state.auth.user)  // ✅ Redux
+  const isDarkMode = useSelector(state => state.ui.isDarkMode)
+
+  return &lt;h1&gt;Hola {user.name}&lt;/h1&gt;
+}
+      </code></pre>
+
+      <p class="callout-success">
+        <strong>✅ Búsqueda Rápida:</strong> Abre DevTools (Ctrl+Shift+F o Cmd+Shift+F) y buscá
+        <code>useSelector</code> en todo el código. Si lo encontrás, Redux se está usando.
+      </p>
+
+      <hr />
+
+      <h2>5️⃣ Buscar useDispatch()</h2>
+      <p>
+        Este es el hook de Redux para disparar acciones. Se usa casi siempre en apps con Redux.
+      </p>
+
+      <pre><code class="language-jsx">import { useDispatch } from 'react-redux'
+import { logout, updateUser } from './store/slices/authSlice'
+
+function Profile() {
+  const dispatch = useDispatch()  // ✅ Redux
+
+  const handleLogout = () => {
+    dispatch(logout())  // ✅ Disparando una acción
+  }
+
+  return &lt;button onClick={handleLogout}&gt;Logout&lt;/button&gt;
+}
+      </code></pre>
+
+      <p class="callout-success">
+        <strong>✅ Búsqueda Rápida:</strong> Buscá <code>useDispatch</code> en tu código.
+        Si lo encontrás, Redux se está usando.
+      </p>
+
+      <hr />
+
+      <h2>6️⃣ Buscar Llamadas a createSlice()</h2>
+      <p>
+        Redux Toolkit usa <code>createSlice</code> para definir reducers, actions y state en un solo lugar.
+      </p>
+
+      <pre><code class="language-jsx">// store/slices/userSlice.js
+import { createSlice } from '@reduxjs/toolkit'
+
+export const userSlice = createSlice({
+  name: 'user',
+  initialState: {
+    currentUser: null,
+    users: [],
+    loading: false,
+  },
+  reducers: {
+    setCurrentUser: (state, action) => {
+      state.currentUser = action.payload
+    },
+    addUser: (state, action) => {
+      state.users.push(action.payload)
+    },
+  },
+})
+
+export const { setCurrentUser, addUser } = userSlice.actions
+export default userSlice.reducer
+      </code></pre>
+
+      <p class="callout-success">
+        <strong>✅ Búsqueda Rápida:</strong> Buscá <code>createSlice</code> en el código.
+        Si lo encontrás, la app usa Redux Toolkit.
+      </p>
+
+      <hr />
+
+      <h2>7️⃣ Buscar configureStore()</h2>
+      <p>
+        Redux Toolkit usa <code>configureStore</code> para configurar el store de Redux con mejores prácticas incorporadas.
+      </p>
+
+      <pre><code class="language-jsx">// store/index.js
+import { configureStore } from '@reduxjs/toolkit'  // ✅ Redux Toolkit
+import userReducer from './slices/userSlice'
+import authReducer from './slices/authSlice'
+
+export const store = configureStore({
+  reducer: {
+    user: userReducer,
+    auth: authReducer,
+  },
+})
+      </code></pre>
+
+      <p class="callout-success">
+        <strong>✅ Veredicto:</strong> Si ves <code>configureStore</code>, la app usa Redux Toolkit
+        (la forma moderna de escribir Redux).
+      </p>
+
+      <hr />
+
+      <h2>🚀 Referencia Rápida: Truco para Entrevista</h2>
+      <p>
+        En una entrevista, si te preguntan "¿Cómo revisás si una app de React usa Redux?", usá este árbol de decisión:
+      </p>
+
+      <pre><code>1. Revisar package.json por "redux" o "@reduxjs/toolkit"
+   └─ ¿Lo encontraste? → Usa Redux
+
+2. Buscar "useSelector" o "useDispatch" en el código
+   └─ ¿Lo encontraste? → Usa Redux
+
+3. Buscar carpeta store/ o redux/ con estructura específica
+   └─ ¿La encontraste? → Usa Redux
+
+4. Revisar main.jsx por &lt;Provider store={store}&gt; de react-redux
+   └─ ¿Lo encontraste? → Usa Redux
+
+Si encontrás CUALQUIERA de estos, la app usa Redux. Si encontrás NINGUNO,
+probablemente usa Context API u otra solución de state management.
+      </code></pre>
+
+      <hr />
+
+      <h2>✅ Checklist para Confirmación 100%</h2>
+      <p>
+        Acá está cómo estar completamente seguro:
+      </p>
+
+      <pre><code>✓ package.json tiene "redux" o "@reduxjs/toolkit"
+✓ Podés encontrar useSelector() en al menos un componente
+✓ Podés encontrar useDispatch() en al menos un componente
+✓ Podés encontrar el archivo de configuración del store (generalmente store/index.js)
+✓ &lt;Provider store={store}&gt; envuelve el componente raíz
+
+Si 3+ de estos son verdaderos → La app definitivamente usa Redux</code></pre>
+
+    </div>
+  </article>
+
+  <!-- ===================== ARCHITECTURE COMPARISON ===================== -->
+  <article id="architecture-comparison" class="tab-content">
+    <div class="description">
+
+      <h2>📁 Estructura de Proyecto: Redux vs Context API</h2>
+      <p>
+        Acá está cómo se ven dos apps que usan diferentes soluciones de state management:
+      </p>
+
+      <hr />
+
+      <h2>Estructura de App con Redux</h2>
+      <pre><code>my-redux-app/
+├── src/
+│   ├── store/
+│   │   ├── index.js              // Setup del store con configureStore()
+│   │   ├── slices/
+│   │   │   ├── authSlice.js      // Contiene: state, reducers, actions
+│   │   │   ├── userSlice.js
+│   │   │   └── notificationsSlice.js
+│   │   └── middleware/
+│   │       └── logger.js
+│   ├── components/
+│   │   ├── Header.jsx            // Usa useSelector + useDispatch
+│   │   ├── Dashboard.jsx
+│   │   └── UserProfile.jsx
+│   ├── pages/
+│   │   ├── Home.jsx
+│   │   └── Settings.jsx
+│   ├── main.jsx                  // &lt;Provider store={store}&gt;
+│   └── App.jsx
+├── package.json                  // Tiene: redux, react-redux, @reduxjs/toolkit
+      </code></pre>
+
+      <hr />
+
+      <h2>Estructura de App con Context API</h2>
+      <pre><code>my-context-app/
+├── src/
+│   ├── context/
+│   │   ├── AuthContext.jsx       // createContext + AuthProvider
+│   │   ├── UserContext.jsx
+│   │   └── NotificationsContext.jsx
+│   ├── hooks/
+│   │   ├── useAuth.js            // Hook personalizado envolviendo useContext
+│   │   ├── useUser.js
+│   │   └── useNotifications.js
+│   ├── components/
+│   │   ├── Header.jsx            // Usa useAuth() hook personalizado
+│   │   ├── Dashboard.jsx
+│   │   └── UserProfile.jsx
+│   ├── providers/
+│   │   └── AppProviders.jsx      // Envuelve todos los context providers
+│   ├── main.jsx                  // &lt;AppProviders&gt;
+│   └── App.jsx
+├── package.json                  // Sin dependencias de Redux
+      </code></pre>
+
+      <hr />
+
+      <h2>🆚 Comparación de Flujo de Datos</h2>
+
+      <h3>Flujo de Datos en Redux</h3>
+      <pre><code>Componente
+    │
+    ├─ useDispatch() → dispatch(action)
+    │
+    ▼
+Redux Store (el reducer procesa la acción)
+    │
+    ├─ Nuevo estado creado
+    │
+    ▼
+Componente se suscribe con useSelector()
+    │
+    ├─ Re-render con el nuevo estado
+    │
+    ▼
+La UI se actualiza
+      </code></pre>
+
+      <h3>Flujo de Datos en Context API</h3>
+      <pre><code>Componente
+    │
+    ├─ useContext(MiContext)
+    │
+    ▼
+Provider (tiene el estado actual)
+    │
+    ├─ Retorna el valor del contexto
+    │
+    ▼
+Componente recibe estado + funciones
+    │
+    ├─ Llama a setState o función de acción
+    │
+    ▼
+Provider re-renderiza todos los consumidores
+    │
+    ├─ Los componentes usando ese contexto se re-renderizan
+    │
+    ▼
+La UI se actualiza
+      </code></pre>
+
+      <hr />
+
+      <h2>🆚 Tabla Comparativa de Características</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Característica</th>
+            <th>Redux</th>
+            <th>Context API</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Complejidad Setup</strong></td>
+            <td>Alta (store, slices, actions)</td>
+            <td>Baja (context + provider)</td>
+          </tr>
+          <tr>
+            <td><strong>Actualizar Estado</strong></td>
+            <td>dispatch(action) → reducer</td>
+            <td>setState() o callbacks</td>
+          </tr>
+          <tr>
+            <td><strong>DevTools</strong></td>
+            <td>Excelente (Redux DevTools time travel)</td>
+            <td>Limitado (solo browser DevTools)</td>
+          </tr>
+          <tr>
+            <td><strong>Soporte Middleware</strong></td>
+            <td>Sí (thunk, saga, etc.)</td>
+            <td>No incorporado</td>
+          </tr>
+          <tr>
+            <td><strong>Performance</strong></td>
+            <td>Optimizado (suscripciones granulares)</td>
+            <td>Bueno (puede causar re-renders innecesarios)</td>
+          </tr>
+          <tr>
+            <td><strong>Curva de Aprendizaje</strong></td>
+            <td>Empinada</td>
+            <td>Suave</td>
+          </tr>
+          <tr>
+            <td><strong>Mejor Para</strong></td>
+            <td>Apps grandes y complejas</td>
+            <td>Apps pequeñas a medianas</td>
+          </tr>
+          <tr>
+            <td><strong>Debugging</strong></td>
+            <td>Time travel, logs de acciones</td>
+            <td>Logging manual</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <hr />
+
+      <h2>💡 ¿Cuándo Usar Cada Uno?</h2>
+
+      <h3>Usa Redux si:</h3>
+      <pre><code>✅ Tu app tiene estado complejo y anidado
+✅ Múltiples componentes necesitan los mismos datos
+✅ Necesitás state management predecible y centralizado
+✅ Querés DevTools para debugging
+✅ Tu equipo conoce los patrones de Redux
+✅ Necesitás middleware para operaciones async
+      </code></pre>
+
+      <h3>Usa Context API si:</h3>
+      <pre><code>✅ Tu app es pequeña a mediana
+✅ El estado no cambia muy frecuentemente
+✅ Necesitás compartir estado local simple
+✅ Querés setup mínimo y pocas dependencias
+✅ Es perfecto para theme, lenguaje, auth (configuración global)
+      </code></pre>
+
+    </div>
+  </article>
+
+
+  <div class="resource-box">
+    <strong class="resource-box__title">📚 ¿Querés saber más?</strong>
+    <div class="resource-box__links">
+      <a href="https://react.dev/reference/react/useContext" target="_blank" class="resource-box__link" rel="noreferrer noopener">
+        🔗 Documentación de React useContext →
+      </a>
+      <a href="https://react.dev/reference/react/createContext" target="_blank" class="resource-box__link" rel="noreferrer noopener">
+        🔗 Documentación de React createContext →
+      </a>
+      <a href="https://redux.js.org/" target="_blank" class="resource-box__link" rel="noreferrer noopener">
+        🔗 Documentación Oficial de Redux →
+      </a>
+      <a href="https://redux-toolkit.js.org/" target="_blank" class="resource-box__link" rel="noreferrer noopener">
+        🔗 Guía de Redux Toolkit →
+      </a>
+      <a href="https://react.dev/learn/passing-data-deeply-with-context" target="_blank" class="resource-box__link" rel="noreferrer noopener">
+        🔗 Pasar Datos con Context (React Docs) →
+      </a>
+      <a href="https://www.jscamp.dev/estado-global-y-react-router/introduccion-a-zustand" target="_blank" class="resource-box__link" rel="noreferrer noopener">
+        🔗 JSCamp - Introducción a Zustand →
+      </a>
+      <a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/6a25e98e-cf6c-83eb-8fc9-368c83e4503f" target="_blank" class="resource-box__link" rel="noreferrer noopener">
+        🔗 MiduFrontend GPT - Discusión sobre State Management →
+      </a>
+    </div>
+  </div>
+
+</section>
