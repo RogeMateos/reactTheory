@@ -1,0 +1,518 @@
+<section class="box">
+  <h1>Zustand: Persistencia y Logout Limpio</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">
+      Conceptos
+    </button>
+    <button class="tab-button" data-tab="code-examples">
+      Código
+    </button>
+    <button class="tab-button" data-tab="practical">
+      Ejemplo Práctico
+    </button>
+  </div>
+
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+
+    <h2>📌 Resumen Rápido</h2>
+    <p>Este tutorial explica un problema muy común cuando usamos Zustand con persistencia:</p>
+
+    <p><strong>Cerrar sesión NO significa que el estado global desaparezca.</strong></p>
+
+    <p>Si no limpiamos la store, el siguiente usuario puede seguir viendo favoritos, carrito o preferencias del usuario anterior.</p>
+
+    <h2>✅ Bloque 1 — Limpiar Favoritos al Hacer Logout</h2>
+
+    <p>Esto funciona:</p>
+
+    <pre><code class="language-javascript">clearFavorites: () => set({ favorites: [] })
+
+// Al hacer logout:
+logout()
+clearFavorites()</code></pre>
+
+    <h3>⚠️ El Problema</h3>
+
+    <p>Mañana la store puede tener:</p>
+
+    <pre><code class="language-javascript">{
+  favorites,
+  filters,
+  selectedJob,
+  lastSearch,
+  viewedJobs
+}</code></pre>
+
+    <p>Y terminarás haciendo:</p>
+
+    <pre><code class="language-javascript">clearFavorites()
+clearFilters()
+clearViewedJobs()
+clearSelectedJob()
+// ...</code></pre>
+
+    <p>Empieza a ser difícil de mantener.</p>
+
+    <h3>✅ Versión mejorada: definir un estado inicial</h3>
+
+    <pre><code class="language-javascript">const initialState = {
+  favorites: []
+}
+
+export const useFavoritesStore = create((set) => ({
+  ...initialState,
+
+  addFavorite: () => {},
+
+  reset: () => set(initialState)
+}))</code></pre>
+
+    <p>Antes:</p>
+    <pre><code>
+Logout
+   │
+   ├── limpiar favorites
+   ├── limpiar filters
+   ├── limpiar cart
+   └── limpiar settings
+    </code></pre>
+
+    <p>Después:</p>
+    <pre><code>
+Logout
+   │
+   └── reset()
+            │
+            ▼
+      Estado inicial completo
+    </code></pre>
+
+    <p>Mucho más sencillo.</p>
+
+    <h2>✅ Bloque 2 — Guardar el Estado Inicial</h2>
+
+    <h3>⚠️ El Problema</h3>
+
+    <p>Muchos desarrolladores hacen esto:</p>
+
+    <pre><code class="language-javascript">reset: () =>
+  set({
+    favorites: []
+  })</code></pre>
+
+    <p>Meses después añaden campos nuevos pero olvidan actualizar el reset:</p>
+
+    <pre><code>
+favorites   ✅ limpio
+filters     ❌ sigue existiendo
+theme       ❌ sigue existiendo
+    </code></pre>
+
+    <h3>✅ Mejor versión: fuente única de verdad</h3>
+
+    <pre><code class="language-javascript">const initialState = {
+  favorites: [],
+  filters: {},
+  selectedJob: null
+}
+
+reset: () => set(initialState)</code></pre>
+
+    <p>Ahora <code>initialState</code> es el único lugar a actualizar cuando agregás nuevos campos.</p>
+
+    <h2>✅ Bloque 3 — Logout</h2>
+
+    <pre><code class="language-javascript">const handleLogout = () => {
+  logout()
+  resetFavorites()
+
+  window.location.reload()
+}</code></pre>
+
+    <h3>💡 ¿Por qué hacer reload?</h3>
+
+    <p>Sin reload:</p>
+    <pre><code>
+React
+ ├── UserStore
+ ├── FavoritesStore
+ ├── SearchStore
+ ├── Cache
+ └── Componentes montados
+
+Logout
+     │
+     ▼
+Todo sigue vivo en memoria
+    </code></pre>
+
+    <p>Con reload:</p>
+    <pre><code>
+Logout
+     │
+     ▼
+window.location.reload()
+     │
+     ▼
+Nueva aplicación
+
+React
+ ├── UserStore vacío
+ ├── Favorites vacío
+ ├── Cache limpia
+ └── Componentes reiniciados
+    </code></pre>
+
+    <p>Todo empieza desde cero.</p>
+
+    <h2>✅ Bloque 4 — ¿Es Buena Práctica Refrescar?</h2>
+
+    <p>Sí. Muchas aplicaciones grandes lo hacen. ¿Por qué?</p>
+
+    <pre><code>
+Usuario A
+    │
+Login
+    │
+Favoritos
+    │
+Logout
+    │
+Refresh
+    │
+Login Usuario B
+    │
+Estado completamente limpio
+    </code></pre>
+
+    <p>Es una solución muy robusta.</p>
+
+    <h2>✅ Bloque 5 — Si Tenés Varias Stores</h2>
+
+    <p>En lugar de esto:</p>
+
+    <pre><code class="language-javascript">logout()
+resetFavorites()
+resetCart()
+resetFilters()
+resetSettings()
+resetSearch()
+resetNotifications()</code></pre>
+
+    <p>Centralizá:</p>
+
+    <pre><code class="language-javascript">const resetAllStores = () => {
+  useFavoritesStore.getState().reset()
+  useCartStore.getState().reset()
+  useFiltersStore.getState().reset()
+}
+
+const handleLogout = () => {
+  logout()
+  resetAllStores()
+
+  window.location.reload()
+}</code></pre>
+
+    <h2>🎯 Buenas Prácticas Recomendadas</h2>
+
+    <p>✅ Mantené un <code>initialState</code> separado:</p>
+    <pre><code class="language-javascript">const initialState = {
+  favorites: []
+}</code></pre>
+
+    <p>✅ Cada store debería tener un método <code>reset()</code>:</p>
+    <pre><code class="language-javascript">reset: () => set(initialState)</code></pre>
+
+    <p>✅ El logout debería ser el único responsable de limpiar la aplicación:</p>
+    <pre><code>
+handleLogout()
+      │
+      ├── eliminar token
+      ├── reset stores
+      ├── limpiar persistencia
+      └── reload
+    </code></pre>
+
+    <h2>🚀 Conclusión</h2>
+
+    <p>La idea clave:</p>
+    <blockquote><strong>La autenticación y el estado global son responsabilidades distintas.</strong></blockquote>
+
+    <p>Cerrar sesión elimina la identidad del usuario, pero no elimina automáticamente el estado de la aplicación. Por eso, una implementación profesional de logout sigue este flujo:</p>
+
+    <pre><code>
+Usuario pulsa Logout
+          │
+          ▼
+Eliminar token/sesión
+          │
+          ▼
+Resetear todas las stores
+          │
+          ▼
+Eliminar estado persistido
+          │
+          ▼
+Recargar la aplicación
+          │
+          ▼
+React vuelve a montar todo desde un estado limpio
+    </code></pre>
+
+    <p>Este enfoque es simple, predecible, evita estados zombi y escala mucho mejor conforme la aplicación crece.</p>
+
+    <h2>📋 Resumen</h2>
+    <ul>
+      <li>✅ Definí <code>initialState</code> fuera de la store — fuente única de verdad</li>
+      <li>✅ Usá <code>reset: () => set(initialState)</code> en cada store</li>
+      <li>✅ Centralizá todos los resets en una función <code>resetAllStores()</code></li>
+      <li>✅ Llamá a <code>window.location.reload()</code> después del logout para un estado realmente limpio</li>
+      <li>✅ El logout es el único responsable de la limpieza — un lugar, una responsabilidad</li>
+    </ul>
+
+    </div>
+  </article>
+
+  <article id="code-examples" class="tab-content">
+    <div class="description">
+
+    <h2>❌ Anti-patrón: Limpieza manual campo por campo</h2>
+    <pre><code class="language-javascript">// Difícil de mantener — hay que recordar cada campo
+const handleLogout = () => {
+  logout()
+  clearFavorites()
+  clearFilters()
+  clearCart()
+  clearSettings()
+  // ¿Me olvidé alguno?
+}</code></pre>
+
+    <h2>✅ Patrón: initialState + reset()</h2>
+    <pre><code class="language-javascript">import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
+
+const initialState = {
+  favorites: [],
+  filters: {},
+  selectedJob: null,
+}
+
+export const useFavoritesStore = create(
+  persist(
+    (set) => ({
+      ...initialState,
+
+      addFavorite: (id) =>
+        set((state) => ({
+          favorites: [...state.favorites, id],
+        })),
+
+      removeFavorite: (id) =>
+        set((state) => ({
+          favorites: state.favorites.filter((f) => f !== id),
+        })),
+
+      // ✅ Un reset para dominarlos a todos
+      reset: () => set(initialState),
+    }),
+    { name: 'favorites-store' }
+  )
+)</code></pre>
+
+    <h2>✅ Patrón: resetAllStores centralizado</h2>
+    <pre><code class="language-javascript">// utils/resetStores.js
+import { useFavoritesStore } from '../stores/favoritesStore'
+import { useCartStore } from '../stores/cartStore'
+import { useFiltersStore } from '../stores/filtersStore'
+
+export const resetAllStores = () => {
+  useFavoritesStore.getState().reset()
+  useCartStore.getState().reset()
+  useFiltersStore.getState().reset()
+}</code></pre>
+
+    <h2>✅ Patrón: Handler de logout completo</h2>
+    <pre><code class="language-javascript">import { useAuthStore } from '../auth/authStore'
+import { resetAllStores } from '../utils/resetStores'
+
+export function useLogout() {
+  const logout = useAuthStore(state => state.logout)
+
+  const handleLogout = () => {
+    // 1. Limpiar auth (token, sesión)
+    logout()
+
+    // 2. Resetear todas las stores
+    resetAllStores()
+
+    // 3. Limpiar localStorage persistido (si usás persist middleware)
+    localStorage.removeItem('favorites-store')
+    localStorage.removeItem('cart-store')
+
+    // 4. Reload completo — estado garantizadamente limpio
+    window.location.reload()
+  }
+
+  return handleLogout
+}</code></pre>
+
+    <h2>✅ Patrón: Usar el hook de logout en un componente</h2>
+    <pre><code class="language-javascript">import { useLogout } from '../hooks/useLogout'
+
+export function Header() {
+  const handleLogout = useLogout()
+
+  return (
+    &lt;header&gt;
+      &lt;button onClick={handleLogout}&gt;Cerrar sesión&lt;/button&gt;
+    &lt;/header&gt;
+  )
+}</code></pre>
+
+    <h2>✅ Patrón: Auth store con initialState</h2>
+    <pre><code class="language-javascript">import { create } from 'zustand'
+
+const initialState = {
+  isLoggedIn: false,
+  user: null,
+  token: null,
+}
+
+export const useAuthStore = create((set) => ({
+  ...initialState,
+
+  login: (userData, token) =>
+    set({ isLoggedIn: true, user: userData, token }),
+
+  logout: () => set(initialState),
+}))</code></pre>
+
+    </div>
+  </article>
+
+  <article id="practical" class="tab-content">
+    <div class="description">
+
+    <h2>🎬 Escenario: Dos Usuarios en la Misma Sesión de Navegador</h2>
+
+    <h3>El Usuario A inicia sesión y agrega favoritos</h3>
+    <pre><code>
+Store (en memoria + localStorage):
+  isLoggedIn: true
+  user: { id: 1, name: 'Alice' }
+  favorites: [4, 7, 12]
+  filters: { salary: '> 100k' }
+    </code></pre>
+
+    <h3>❌ Logout incompleto (error común)</h3>
+    <pre><code class="language-javascript">// Solo se resetea la store de auth
+logout()
+// isLoggedIn = false
+
+// Pero la store de favoritos sigue teniendo:
+// favorites: [4, 7, 12]
+// filters: { salary: '> 100k' }
+// Y localStorage sigue con los datos antiguos
+    </code></pre>
+
+    <h3>El Usuario B inicia sesión</h3>
+    <pre><code>
+Store:
+  isLoggedIn: true
+  user: { id: 2, name: 'Bob' }
+  favorites: [4, 7, 12]         ← ¡Los favoritos de Alice! 🐛
+  filters: { salary: '> 100k' } ← ¡Los filtros de Alice! 🐛
+    </code></pre>
+
+    <p>Bob ve los datos de Alice. Eso es un bug — y potencialmente un problema de privacidad.</p>
+
+    <h3>✅ Flujo de logout correcto</h3>
+    <pre><code class="language-javascript">const handleLogout = () => {
+  logout()             // resetea la store de auth
+  resetAllStores()     // resetea todas las stores a initialState
+
+  // Limpiar entradas de localStorage persistidas
+  localStorage.removeItem('favorites-store')
+
+  window.location.reload()  // inicio limpio garantizado
+}
+    </code></pre>
+
+    <h3>El Usuario B inicia sesión — estado limpio</h3>
+    <pre><code>
+Store:
+  isLoggedIn: true
+  user: { id: 2, name: 'Bob' }
+  favorites: []    ✅
+  filters: {}      ✅
+    </code></pre>
+
+    <h2>🔁 Escenario: La Store Crece con el Tiempo</h2>
+
+    <h3>Versión 1 de la store</h3>
+    <pre><code class="language-javascript">const initialState = {
+  favorites: [],
+}
+// reset() funciona perfectamente
+    </code></pre>
+
+    <h3>Versión 2 — se agregan campos nuevos</h3>
+    <pre><code class="language-javascript">// ❌ Se olvidó actualizar el reset manualmente:
+reset: () => set({ favorites: [] })
+// ¡filters y selectedJob NO se resetean!
+
+// ✅ Con el patrón initialState:
+const initialState = {
+  favorites: [],
+  filters: {},        // ← agregado
+  selectedJob: null,  // ← agregado
+}
+// reset() incluye automáticamente los campos nuevos
+reset: () => set(initialState)
+    </code></pre>
+
+    <p>El patrón <code>initialState</code> escala con la store. Actualizás un objeto, reset se encarga de todo.</p>
+
+    <h2>🗂️ Estructura Recomendada</h2>
+
+    <pre><code>
+src/
+  stores/
+    favoritesStore.js   ← initialState + reset()
+    cartStore.js        ← initialState + reset()
+    filtersStore.js     ← initialState + reset()
+
+  utils/
+    resetStores.js      ← resetAllStores()
+
+  hooks/
+    useLogout.js        ← handleLogout() — dueño de la limpieza completa
+
+  auth/
+    authStore.js        ← initialState + logout()
+    </code></pre>
+
+    <h2>💡 Ideas Clave para Recordar</h2>
+    <ul>
+      <li><strong>El estado no desaparece al hacer logout</strong> — hay que limpiarlo explícitamente</li>
+      <li><strong>Patrón initialState:</strong> un objeto, un reset, siempre sincronizado</li>
+      <li><strong>resetAllStores:</strong> centralizá, no dispersés las llamadas de limpieza</li>
+      <li><strong>window.location.reload():</strong> la opción nuclear — estado limpio garantizado</li>
+      <li><strong>También localStorage:</strong> el middleware persist escribe en localStorage — limpialo al hacer logout</li>
+    </ul>
+
+    </div>
+  </article>
+
+  <footer>
+    <p>📚 Recursos:</p>
+    <ul>
+      <li><a href="https://www.jscamp.dev/estado-global-y-react-router/quitar-persistencia-favoritos" target="_blank">JSCamp — Quitar Persistencia de Favoritos</a></li>
+      <li><a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/6a2bfff4-6d64-83ed-b71d-e83dc6d9576a" target="_blank">MiduFrontend GPT — Zustand Persistencia y Logout</a></li>
+    </ul>
+  </footer>
+
+</section>

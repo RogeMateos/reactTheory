@@ -1,0 +1,526 @@
+<section class="box">
+  <h1>Protected Routes with React Router</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">
+      Concepts
+    </button>
+    <button class="tab-button" data-tab="code-examples">
+      Code Examples
+    </button>
+    <button class="tab-button" data-tab="practical">
+      Practical Example
+    </button>
+  </div>
+
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+
+    <h2>📌 Quick Summary</h2>
+    <p>This lesson explains how to protect routes in React Router using global state (Zustand, Context, or similar).</p>
+
+    <p>The core idea is the exact pattern used in real-world applications:</p>
+
+    <pre><code>
+User
+    │
+    ▼
+Tries to visit /profile
+    │
+    ▼
+ProtectedRoute
+    │
+ ┌──┴───────────┐
+ │              │
+Has session?   No
+ │              │
+Yes            ▼
+ │           /login
+ ▼
+ProfilePage
+    </code></pre>
+
+    <h2>✅ Block 1 — ProtectedRoute</h2>
+
+    <p>The implementation is simple and reusable:</p>
+
+    <pre><code class="language-javascript">export function ProtectedRoute({ children }) {
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn)
+
+  if (!isLoggedIn) {
+    return &lt;Navigate to="/login" replace /&gt;
+  }
+
+  return children
+}</code></pre>
+
+    <h3>Small improvement: direct return expression</h3>
+
+    <pre><code class="language-javascript">export function ProtectedRoute({ children }) {
+  const isLoggedIn = useAuthStore(state => state.isLoggedIn)
+
+  return isLoggedIn
+    ? children
+    : &lt;Navigate to="/login" replace /&gt;
+}</code></pre>
+
+    <p>It's just one expression:</p>
+
+    <pre><code>
+Is the user logged in?
+
+Yes              No
+ ↓               ↓
+children       Navigate
+    </code></pre>
+
+    <p>Fewer lines and much easier to read.</p>
+
+    <h2>✅ Block 2 — Subscribing to Global State Correctly</h2>
+
+    <pre><code class="language-javascript">const isLoggedIn = useAuthStore(state => state.isLoggedIn)</code></pre>
+
+    <p>Only subscribes to one property:</p>
+
+    <pre><code>
+Store
+{
+  user,
+  theme,
+  jobs,
+  favorites,
+  isLoggedIn   ◀──── ProtectedRoute listens to this only
+}
+    </code></pre>
+
+    <p>If <code>favorites</code> changes → ProtectedRoute does NOT re-render.</p>
+
+    <h3>❌ What NOT to do:</h3>
+
+    <pre><code class="language-javascript">const store = useAuthStore()
+// Subscribes to the ENTIRE store
+// Any change → re-render
+    </code></pre>
+
+    <h2>✅ Block 3 — Using Inside Routes</h2>
+
+    <pre><code class="language-javascript">&lt;Route
+  path="/profile"
+  element={
+    &lt;ProtectedRoute&gt;
+      &lt;ProfilePage /&gt;
+    &lt;/ProtectedRoute&gt;
+  }
+/&gt;</code></pre>
+
+    <p>Visually:</p>
+
+    <pre><code>
+Routes
+│
+├── /login
+│      │
+│      ▼
+│   LoginPage
+│
+└── /profile
+       │
+       ▼
+ProtectedRoute
+       │
+   ┌───┴────┐
+   │        │
+   ▼        ▼
+Profile   /login
+    </code></pre>
+
+    <h2>✅ Block 4 — Better UX: Remember Where the User Was</h2>
+
+    <p>Current behavior:</p>
+    <pre><code>
+User → /profile → not logged in → /login → logs in → goes to /profile? ❌
+    </code></pre>
+
+    <p>We want to remember where they came from so after login they return to the original destination.</p>
+
+    <pre><code class="language-javascript">import { Navigate, useLocation } from 'react-router-dom'
+
+export function ProtectedRoute({ children }) {
+  const isLoggedIn = useAuthStore(state => state.isLoggedIn)
+  const location = useLocation()
+
+  if (!isLoggedIn) {
+    return (
+      &lt;Navigate
+        to="/login"
+        replace
+        state={{ from: location }}
+      /&gt;
+    )
+  }
+
+  return children
+}</code></pre>
+
+    <p>Then in the login page, after successful login:</p>
+
+    <pre><code class="language-javascript">const location = useLocation()
+const from = location.state?.from?.pathname || '/profile'
+
+navigate(from)</code></pre>
+
+    <p>The flow:</p>
+    <pre><code>
+User
+    │
+/profile
+    │
+    ▼
+ProtectedRoute
+    │
+    ▼
+/login
+(state: "/profile")
+    │
+    ▼
+Login successful
+    │
+    ▼
+Returns automatically to /profile
+    </code></pre>
+
+    <p>A much more natural experience.</p>
+
+    <h2>✅ Block 5 — Automatic Logout Redirect</h2>
+
+    <p>If the user logs out while on <code>/profile</code>, they get redirected automatically — with no extra code needed.</p>
+
+    <pre><code>
+ProfilePage
+  │
+  │ uses
+  ▼
+ProtectedRoute
+  │
+  │ listens to
+  ▼
+isLoggedIn = true
+
+When logout() is called:
+isLoggedIn → false
+
+ProtectedRoute re-renders immediately
+
+isLoggedIn = false
+  ↓
+Navigate("/login")
+    </code></pre>
+
+    <p>This happens automatically thanks to React's reactivity and Zustand's subscription model.</p>
+
+    <h2>💡 Additional Best Practice: Centralize Auth Logic</h2>
+
+    <pre><code>
+src/
+  auth/
+    ProtectedRoute.jsx
+    authStore.js
+    useAuth.js
+
+  pages/
+    LoginPage.jsx
+    ProfilePage.jsx
+    </code></pre>
+
+    <p>Any future change — JWT, roles, permissions, real backend, refresh tokens — will be in one place.</p>
+
+    <h2>🎯 Conclusion</h2>
+
+    <p>The most important flow to remember:</p>
+
+    <pre><code>
+User
+    │
+    ▼
+React Router
+    │
+    ▼
+ProtectedRoute
+    │
+Is authenticated?
+    │
+ ┌──┴───────────┐
+ │              │
+Yes            No
+ │              │
+ ▼              ▼
+Protected    Navigate("/login")
+Page
+    </code></pre>
+
+    <p>And the most recommended improvement for real projects: save the original route (<code>state.from</code>), so after login the user returns exactly to the page they were trying to visit.</p>
+
+    <h2>📋 Summary</h2>
+    <ul>
+      <li>✅ <code>ProtectedRoute</code> reads <code>isLoggedIn</code> from the global store</li>
+      <li>✅ Subscribe selectively — only to <code>isLoggedIn</code>, not the entire store</li>
+      <li>✅ Wrap protected routes in <code>&lt;ProtectedRoute&gt;</code> inside your <code>&lt;Route&gt;</code></li>
+      <li>✅ Pass <code>state={{ from: location }}</code> on redirect to preserve navigation intent</li>
+      <li>✅ Logout redirect happens automatically — no extra code needed</li>
+      <li>✅ Centralize auth logic in a dedicated <code>auth/</code> folder</li>
+    </ul>
+
+    </div>
+  </article>
+
+  <article id="code-examples" class="tab-content">
+    <div class="description">
+
+    <h2>📁 auth/authStore.js</h2>
+    <pre><code class="language-javascript">import { create } from 'zustand'
+
+const initialState = {
+  isLoggedIn: false,
+  user: null,
+}
+
+export const useAuthStore = create((set) => ({
+  ...initialState,
+
+  login: (userData) =>
+    set({ isLoggedIn: true, user: userData }),
+
+  logout: () => set(initialState),
+}))</code></pre>
+
+    <h2>📁 auth/ProtectedRoute.jsx — Basic version</h2>
+    <pre><code class="language-javascript">import { Navigate } from 'react-router-dom'
+import { useAuthStore } from './authStore'
+
+export function ProtectedRoute({ children }) {
+  const isLoggedIn = useAuthStore(state => state.isLoggedIn)
+
+  return isLoggedIn
+    ? children
+    : &lt;Navigate to="/login" replace /&gt;
+}</code></pre>
+
+    <h2>📁 auth/ProtectedRoute.jsx — With state.from (recommended)</h2>
+    <pre><code class="language-javascript">import { Navigate, useLocation } from 'react-router-dom'
+import { useAuthStore } from './authStore'
+
+export function ProtectedRoute({ children }) {
+  const isLoggedIn = useAuthStore(state => state.isLoggedIn)
+  const location = useLocation()
+
+  if (!isLoggedIn) {
+    return (
+      &lt;Navigate
+        to="/login"
+        replace
+        state={{ from: location }}
+      /&gt;
+    )
+  }
+
+  return children
+}</code></pre>
+
+    <h2>📁 pages/LoginPage.jsx — With redirect back</h2>
+    <pre><code class="language-javascript">import { useNavigate, useLocation } from 'react-router-dom'
+import { useAuthStore } from '../auth/authStore'
+
+export function LoginPage() {
+  const login = useAuthStore(state => state.login)
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  const from = location.state?.from?.pathname || '/'
+
+  const handleLogin = () => {
+    // Your auth logic here (API call, etc.)
+    login({ name: 'Alice', id: 1 })
+    navigate(from, { replace: true })
+  }
+
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Login&lt;/h1&gt;
+      &lt;button onClick={handleLogin}&gt;Sign In&lt;/button&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+    <h2>📁 App.jsx — Route configuration</h2>
+    <pre><code class="language-javascript">import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { ProtectedRoute } from './auth/ProtectedRoute'
+import { LoginPage } from './pages/LoginPage'
+import { ProfilePage } from './pages/ProfilePage'
+import { Dashboard } from './pages/Dashboard'
+
+export function App() {
+  return (
+    &lt;BrowserRouter&gt;
+      &lt;Routes&gt;
+        &lt;Route path="/login" element={&lt;LoginPage /&gt;} /&gt;
+
+        &lt;Route
+          path="/profile"
+          element={
+            &lt;ProtectedRoute&gt;
+              &lt;ProfilePage /&gt;
+            &lt;/ProtectedRoute&gt;
+          }
+        /&gt;
+
+        &lt;Route
+          path="/dashboard"
+          element={
+            &lt;ProtectedRoute&gt;
+              &lt;Dashboard /&gt;
+            &lt;/ProtectedRoute&gt;
+          }
+        /&gt;
+      &lt;/Routes&gt;
+    &lt;/BrowserRouter&gt;
+  )
+}</code></pre>
+
+    <h2>📁 pages/ProfilePage.jsx — With logout</h2>
+    <pre><code class="language-javascript">import { useAuthStore } from '../auth/authStore'
+
+export function ProfilePage() {
+  const user = useAuthStore(state => state.user)
+  const logout = useAuthStore(state => state.logout)
+
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Profile: {user?.name}&lt;/h1&gt;
+      &lt;button onClick={logout}&gt;Logout&lt;/button&gt;
+      {/* After logout, ProtectedRoute auto-redirects to /login */}
+    &lt;/div&gt;
+  )
+}</code></pre>
+
+    </div>
+  </article>
+
+  <article id="practical" class="tab-content">
+    <div class="description">
+
+    <h2>🎬 Scenario: User Tries to Visit a Protected Page</h2>
+
+    <h3>Initial state</h3>
+    <pre><code>
+Store: { isLoggedIn: false, user: null }
+User navigates to: /profile
+    </code></pre>
+
+    <h3>Step 1: React Router renders ProtectedRoute</h3>
+    <pre><code class="language-javascript">// ProtectedRoute runs:
+const isLoggedIn = useAuthStore(state => state.isLoggedIn)
+// isLoggedIn = false
+
+// So it returns:
+return &lt;Navigate to="/login" replace state={{ from: location }} /&gt;
+// location.pathname = "/profile"
+    </code></pre>
+
+    <h3>Step 2: User is on /login — state.from is preserved</h3>
+    <pre><code>
+URL: /login
+location.state = { from: { pathname: "/profile" } }
+    </code></pre>
+
+    <h3>Step 3: User fills in credentials and clicks Sign In</h3>
+    <pre><code class="language-javascript">const from = location.state?.from?.pathname || '/'
+// from = "/profile"
+
+login({ name: 'Alice', id: 1 })
+navigate(from, { replace: true })
+// Navigates to "/profile"
+    </code></pre>
+
+    <h3>Step 4: Store updates, ProtectedRoute re-renders</h3>
+    <pre><code>
+Store: { isLoggedIn: true, user: { name: 'Alice' } }
+
+ProtectedRoute re-renders:
+  isLoggedIn = true → returns children → ProfilePage renders
+    </code></pre>
+
+    <h3>Final result</h3>
+    <pre><code>
+URL: /profile
+User sees: ProfilePage with Alice's data
+    </code></pre>
+
+    <h2>🔁 Scenario: Automatic Logout Redirect</h2>
+
+    <h3>User is on /profile, logged in</h3>
+    <pre><code>
+Store: { isLoggedIn: true }
+URL: /profile
+ProfilePage is rendering
+    </code></pre>
+
+    <h3>User clicks Logout</h3>
+    <pre><code class="language-javascript">// Inside ProfilePage:
+const logout = useAuthStore(state => state.logout)
+logout()
+// Store resets to initialState: { isLoggedIn: false, user: null }
+    </code></pre>
+
+    <h3>React reacts to the store change</h3>
+    <pre><code>
+ProtectedRoute was subscribed to isLoggedIn
+isLoggedIn changed: true → false
+
+ProtectedRoute re-renders:
+  isLoggedIn = false → returns Navigate("/login")
+
+URL changes to: /login
+    </code></pre>
+
+    <p>Zero extra code. The subscription model does all the work.</p>
+
+    <h2>🗂️ Recommended Folder Structure</h2>
+
+    <pre><code>
+src/
+  auth/
+    ProtectedRoute.jsx   ← route guard component
+    authStore.js         ← Zustand auth store
+    useAuth.js           ← optional custom hook
+
+  pages/
+    LoginPage.jsx        ← handles state.from redirect
+    ProfilePage.jsx      ← protected content
+    Dashboard.jsx        ← protected content
+
+  App.jsx                ← route definitions
+    </code></pre>
+
+    <p>All auth logic in one folder. Future changes (roles, refresh tokens, OAuth) stay contained.</p>
+
+    <h2>💡 Key Takeaways</h2>
+    <ul>
+      <li><strong>ProtectedRoute is just a component</strong> that reads auth state and decides what to render</li>
+      <li><strong>Selective subscription:</strong> listen to <code>isLoggedIn</code> only — not the whole store</li>
+      <li><strong>state.from:</strong> pass the original location so users return to their destination after login</li>
+      <li><strong>Automatic redirect on logout:</strong> no manual code — Zustand's reactivity handles it</li>
+      <li><strong>Centralize auth:</strong> one folder, all logic in one place</li>
+    </ul>
+
+    </div>
+  </article>
+
+  <footer>
+    <p>📚 Resources:</p>
+    <ul>
+      <li><a href="https://www.jscamp.dev/estado-global-y-react-router/rutas-protegidas" target="_blank">JSCamp — Protected Routes &amp; Global State</a></li>
+      <li><a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/6a2bfc60-e894-83eb-8b75-433f02ed3218" target="_blank">MiduFrontend GPT — Protected Routes</a></li>
+    </ul>
+  </footer>
+
+</section>

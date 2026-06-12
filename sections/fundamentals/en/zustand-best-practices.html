@@ -1,0 +1,438 @@
+<section class="box">
+  <h1>Zustand: Best Practices &amp; Efficient Subscriptions</h1>
+
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="concepts">
+      Concepts
+    </button>
+    <button class="tab-button" data-tab="code-examples">
+      Code Examples
+    </button>
+    <button class="tab-button" data-tab="practical">
+      Practical Example
+    </button>
+  </div>
+
+  <article id="concepts" class="tab-content active">
+    <div class="description">
+
+    <h2>🎯 Quick Summary</h2>
+    <p>This lesson explains how to use Zustand efficiently, avoiding unnecessary renders and keeping your application synchronized across different pages.</p>
+
+    <p>Three ideas to internalize:</p>
+    <ul>
+      <li>✅ Don't subscribe to the entire store if you don't need to.</li>
+      <li>✅ Always subscribe to the state that affects the UI.</li>
+      <li>✅ On logout, changing <code>isLogged</code> alone is not enough — you must also clean all related user state.</li>
+    </ul>
+
+    <h2>❌ Problem 1: Subscribing to the Entire Store</h2>
+
+    <pre><code class="language-javascript">const store = useStore()</code></pre>
+
+    <p>This makes the component listen to <strong>every single change</strong> in the store.</p>
+
+    <pre><code>
+Store
+│
+├── isLogged
+├── favorites
+├── theme
+├── user
+└── filters
+      │
+      ▼
+ Component
+
+⬅️ Any change causes a re-render
+    </code></pre>
+
+    <p>Even if you only use <code>store.isLogged</code>, React will re-render the component whenever <code>favorites</code>, <code>theme</code>, or any other property changes.</p>
+
+    <h2>✅ Solution: Subscribe Only to What You Need</h2>
+
+    <pre><code class="language-javascript">const isLogged = useStore((state) => state.isLogged)</code></pre>
+
+    <p>or:</p>
+
+    <pre><code class="language-javascript">const favorites = useStore((state) => state.favorites)</code></pre>
+
+    <p>Now the component only listens to one slice of state.</p>
+
+    <pre><code>
+Store
+│
+├── isLogged  ◀──── Component
+├── favorites
+├── theme
+└── user
+
+If theme changes → component doesn't react at all.
+    </code></pre>
+
+    <p>✔️ Fewer renders. ✔️ Better performance.</p>
+
+    <h2>✅ Extracting Only Actions</h2>
+
+    <pre><code class="language-javascript">const toggleFavorite = useStore(
+  (state) => state.toggleFavorite
+)</code></pre>
+
+    <p>Actions usually keep the same reference. So <code>toggleFavorite</code> always points to the same function — it does NOT cause unnecessary re-renders.</p>
+
+    <h2>⚠️ Problem 2: Subscribing Too Little</h2>
+
+    <p>This is probably the most important concept in this lesson.</p>
+
+    <h3>❌ Incorrect example:</h3>
+
+    <pre><code class="language-javascript">const toggleFavorite = useStore(
+  (state) => state.toggleFavorite
+)
+
+// And then somewhere else:
+const favorite = isFavorite(id)</code></pre>
+
+    <p>The component <strong>never listens</strong> to favorites changes.</p>
+
+    <pre><code>
+Store
+│
+├── favorites  ❌ not subscribed
+└── toggleFavorite ✅ subscribed
+
+User changes a favorite
+        │
+        ▼
+Component does NOT update
+    </code></pre>
+
+    <h3>✅ Correct version:</h3>
+
+    <pre><code class="language-javascript">const favorites = useStore((state) => state.favorites)
+const toggleFavorite = useStore((state) => state.toggleFavorite)
+
+// Now derive from the subscribed state:
+const isFavorite = favorites.includes(id)</code></pre>
+
+    <h2>🧠 The Golden Rule of Subscriptions</h2>
+
+    <p>Don't think:</p>
+    <blockquote>"I want to subscribe to as little as possible."</blockquote>
+
+    <p>Think:</p>
+    <blockquote>"I want to subscribe to everything that can change what the user sees."</blockquote>
+
+    <p>That approach keeps the app synchronized, avoids unnecessary renders, and makes global state predictable and easy to maintain.</p>
+
+    <h2>🌐 Shared State Across Pages</h2>
+
+    <p>Zustand's biggest strength is sharing state between pages or unrelated components without prop drilling.</p>
+
+    <pre><code>
+          Zustand Store
+        ┌─────────────────┐
+        │                 │
+        │ favorites       │
+        │ isLogged        │
+        │ user            │
+        └─────────────────┘
+           ▲           ▲
+           │           │
+     JobList      JobDetail
+           ▲           ▲
+           └─────┬─────┘
+                 │
+            FavoriteButton
+    </code></pre>
+
+    <p>When a favorite changes:</p>
+    <pre><code>
+JobList
+   │
+toggleFavorite()
+   │
+   ▼
+Store updates favorites
+   │
+   ▼
+All subscribed components receive the change
+    </code></pre>
+
+    <p>No need to pass props between pages.</p>
+
+    <h2>🚪 Problem 3: Incomplete Logout</h2>
+
+    <p>A common mistake when logging out:</p>
+
+    <pre><code class="language-javascript">logout()
+// isLogged = false ... but:
+
+// favorites = [1, 4, 7]  ← still in memory
+// cart = [...]            ← still in memory
+// user = {...}            ← still in memory
+    </code></pre>
+
+    <p>When the next user logs in, they may find leftover data from the previous session.</p>
+
+    <h3>✅ Clean logout:</h3>
+
+    <pre><code class="language-javascript">logout: () =>
+  set({
+    isLogged: false,
+    user: null,
+    favorites: [],
+  })</code></pre>
+
+    <p>Or even better, use an initial state object:</p>
+
+    <pre><code class="language-javascript">const initialState = {
+  isLogged: false,
+  user: null,
+  favorites: [],
+}
+
+logout: () => set(initialState)</code></pre>
+
+    <pre><code>
+Before (incomplete):
+logout → only changes isLogged
+❌ "Zombie" state persists
+
+After (clean):
+logout → resets all related state
+✅ Clean state
+✅ Consistent UI
+✅ No stale data
+    </code></pre>
+
+    <h2>📋 Summary</h2>
+    <ul>
+      <li>✅ Use selectors: <code>useStore((state) => state.x)</code></li>
+      <li>✅ Subscribe to all state that drives what the user sees</li>
+      <li>✅ Extract actions separately — they don't cause renders</li>
+      <li>✅ Derive computed values from subscribed state</li>
+      <li>✅ On logout, reset ALL user-related state, not just <code>isLogged</code></li>
+      <li>✅ Use <code>initialState</code> objects for safe, predictable resets</li>
+    </ul>
+
+    </div>
+  </article>
+
+  <article id="code-examples" class="tab-content">
+    <div class="description">
+
+    <h2>❌ Anti-pattern: Full Store Subscription</h2>
+    <pre><code class="language-javascript">// ❌ This re-renders on ANY store change
+function JobCard({ job }) {
+  const store = useStore()
+
+  return (
+    &lt;button onClick={() => store.toggleFavorite(job.id)}&gt;
+      {store.isFavorite(job.id) ? '⭐' : '☆'}
+    &lt;/button&gt;
+  )
+}</code></pre>
+
+    <h2>✅ Pattern: Selective Subscriptions</h2>
+    <pre><code class="language-javascript">// ✅ Re-renders only when favorites or toggleFavorite change
+function JobCard({ job }) {
+  const favorites = useStore((state) => state.favorites)
+  const toggleFavorite = useStore((state) => state.toggleFavorite)
+
+  const isFav = favorites.includes(job.id)
+
+  return (
+    &lt;button onClick={() => toggleFavorite(job.id)}&gt;
+      {isFav ? '⭐' : '☆'}
+    &lt;/button&gt;
+  )
+}</code></pre>
+
+    <h2>✅ Pattern: Subscribing to Multiple Related Properties</h2>
+    <pre><code class="language-javascript">// When properties are always used together, you can group them
+const { isLogged, user } = useAuthStore((state) => ({
+  isLogged: state.isLogged,
+  user: state.user,
+}))</code></pre>
+
+    <p>Use this when properties always appear together and are logically related. Avoid it if it creates a new object on every render with unrelated fields.</p>
+
+    <h2>✅ Pattern: Clean Auth Store with Logout</h2>
+    <pre><code class="language-javascript">import { create } from 'zustand'
+
+const initialState = {
+  isLogged: false,
+  user: null,
+  favorites: [],
+}
+
+export const useAuthStore = create((set) => ({
+  ...initialState,
+
+  login: (userData) =>
+    set({
+      isLogged: true,
+      user: userData,
+    }),
+
+  // ✅ Full reset — no zombie state
+  logout: () => set(initialState),
+}))</code></pre>
+
+    <h2>✅ Pattern: Deriving Values from Subscribed State</h2>
+    <pre><code class="language-javascript">function FavoriteButton({ jobId }) {
+  // ✅ Subscribe to the array, then derive the boolean
+  const favorites = useStore((state) => state.favorites)
+  const toggleFavorite = useStore((state) => state.toggleFavorite)
+
+  const isFav = favorites.includes(jobId)
+
+  return (
+    &lt;button
+      className={isFav ? 'btn-active' : 'btn'}
+      onClick={() => toggleFavorite(jobId)}
+    &gt;
+      {isFav ? '⭐ Remove' : '☆ Add to Favorites'}
+    &lt;/button&gt;
+  )
+}</code></pre>
+
+    <h2>✅ Pattern: Header Component Using Auth</h2>
+    <pre><code class="language-javascript">function Header() {
+  // Only re-renders when isLogged or user changes
+  const isLogged = useAuthStore((state) => state.isLogged)
+  const user = useAuthStore((state) => state.user)
+  const logout = useAuthStore((state) => state.logout)
+
+  return (
+    &lt;header&gt;
+      {isLogged ? (
+        &lt;&gt;
+          &lt;span&gt;Welcome, {user.name}&lt;/span&gt;
+          &lt;button onClick={logout}&gt;Logout&lt;/button&gt;
+        &lt;/&gt;
+      ) : (
+        &lt;a href="/login"&gt;Login&lt;/a&gt;
+      )}
+    &lt;/header&gt;
+  )
+}</code></pre>
+
+    </div>
+  </article>
+
+  <article id="practical" class="tab-content">
+    <div class="description">
+
+    <h2>🎬 Scenario: Multi-User App with Favorites</h2>
+
+    <h3>User A logs in and favorites some jobs</h3>
+    <pre><code>
+State after User A session:
+  isLogged: true
+  user: { id: 1, name: 'Alice' }
+  favorites: [4, 7, 12]
+    </code></pre>
+
+    <h3>❌ Incomplete logout (common mistake)</h3>
+    <pre><code class="language-javascript">// ❌ Only flipping isLogged
+logout: () => set({ isLogged: false })
+    </code></pre>
+
+    <pre><code>
+State after this logout:
+  isLogged: false       ← changed
+  user: { id: 1, name: 'Alice' }  ← STILL THERE
+  favorites: [4, 7, 12]           ← STILL THERE
+    </code></pre>
+
+    <p>User B logs in. They see Alice's favorites and user data. That is a bug — and a potential privacy issue.</p>
+
+    <h3>✅ Clean logout</h3>
+    <pre><code class="language-javascript">const initialState = {
+  isLogged: false,
+  user: null,
+  favorites: [],
+}
+
+logout: () => set(initialState)
+    </code></pre>
+
+    <pre><code>
+State after clean logout:
+  isLogged: false   ✅
+  user: null        ✅
+  favorites: []     ✅
+    </code></pre>
+
+    <p>User B logs in to a completely fresh state.</p>
+
+    <h2>🔁 Scenario: FavoriteButton Across Two Pages</h2>
+
+    <p>JobList page and JobDetail page both show a FavoriteButton for the same job.</p>
+
+    <h3>❌ Without subscribing to favorites:</h3>
+    <pre><code class="language-javascript">function FavoriteButton({ jobId }) {
+  const toggleFavorite = useStore((state) => state.toggleFavorite)
+
+  // isFavorite is called but the component never re-renders when it changes
+  const isFav = useStore.getState().isFavorite(jobId)
+
+  return &lt;button onClick={() => toggleFavorite(jobId)}&gt;{isFav ? '⭐' : '☆'}&lt;/button&gt;
+}</code></pre>
+
+    <pre><code>
+User favorites job #5 on JobList
+        │
+        ▼
+Store updates favorites: [5]
+        │
+        ▼
+JobDetail's FavoriteButton → still shows ☆ (no re-render)
+    </code></pre>
+
+    <h3>✅ With proper subscription:</h3>
+    <pre><code class="language-javascript">function FavoriteButton({ jobId }) {
+  const favorites = useStore((state) => state.favorites)
+  const toggleFavorite = useStore((state) => state.toggleFavorite)
+
+  const isFav = favorites.includes(jobId)
+
+  return &lt;button onClick={() => toggleFavorite(jobId)}&gt;{isFav ? '⭐' : '☆'}&lt;/button&gt;
+}</code></pre>
+
+    <pre><code>
+User favorites job #5 on JobList
+        │
+        ▼
+Store updates favorites: [5]
+        │
+        ▼
+JobDetail's FavoriteButton → re-renders → shows ⭐
+    </code></pre>
+
+    <p>Same component, same store. State is shared automatically. No prop passing, no synchronization bugs.</p>
+
+    <h2>💡 Key Takeaways</h2>
+    <ul>
+      <li><strong>Selector = subscription:</strong> <code>(state) => state.x</code> means "re-render when x changes"</li>
+      <li><strong>No selector = subscribed to everything:</strong> never do this in real apps</li>
+      <li><strong>Actions are stable:</strong> extracting functions doesn't cause extra renders</li>
+      <li><strong>Derive, don't duplicate:</strong> compute booleans from the subscribed array</li>
+      <li><strong>Logout = full reset:</strong> use an <code>initialState</code> object and reset it all</li>
+      <li><strong>Shared state is free:</strong> any component on any page can subscribe to the same store</li>
+    </ul>
+
+    </div>
+  </article>
+
+  <footer>
+    <p>📚 Resources:</p>
+    <ul>
+      <li><a href="https://www.jscamp.dev/estado-global-y-react-router/rutas-protegidas" target="_blank">JSCamp — Protected Routes &amp; Global State</a></li>
+      <li><a href="https://chatgpt.com/g/g-p-69c5eab407e88191835fc3297bc4c633-midufrontend/c/6a2bfb11-c040-83ed-89d7-410430965971" target="_blank">MiduFrontend GPT — Zustand Best Practices</a></li>
+    </ul>
+  </footer>
+
+</section>

@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
     content.innerHTML = '<div class="loading-state">Loading...</div>';
     const lang = currentLanguage === "es" ? "es" : "en";
     const hooks = ["useState", "useEffect", "useEffect2midu", "useEffect3midu", "useContext", "useRef", "useReducer", "globalSwitch", "useId", "custom-hooks", "customHooks", "customHooks2", "use"];
-    const fundamentals = ["componentes", "componentesVsFunciones", "jobCard", "props", "modulos", "paginacion", "callbacks", "listas", "paginacion-final", "css-modules", "eventos", "renderizado", "spa", "vite-bundlers", "vite-install", "fast-refresh", "document-title", "bareBonesMethod", "lifeCicle", "formularios", "filtros-routing", "formulario-navegacion", "componente-route", "llamada-api", "filtros-api", "paginacion-api", "arreglando-paginacion", "sincronizacion-url", "estado-global", "context-api", "zustand", "zustand-favoritos"];
+    const fundamentals = ["componentes", "componentesVsFunciones", "jobCard", "props", "modulos", "paginacion", "callbacks", "listas", "paginacion-final", "css-modules", "eventos", "renderizado", "spa", "vite-bundlers", "vite-install", "fast-refresh", "document-title", "bareBonesMethod", "lifeCicle", "formularios", "filtros-routing", "formulario-navegacion", "componente-route", "llamada-api", "filtros-api", "paginacion-api", "arreglando-paginacion", "sincronizacion-url", "estado-global", "context-api", "zustand", "zustand-favoritos", "zustand-best-practices", "rutas-protegidas", "zustand-persistencia"];
     const globalStateAndRouter = ["routerBrowser", "react-router", "crear-rutas", "link-hooks-router", "useParams", "trabajando-estilos", "navegacion-detalle", "terminar-estilar", "useSearchParams", "lazy-load", "estilos-navlink", "refuerzo-ejercicios", "autenticacion", "react-context"];
     const interview = ["interviewQuestions", "react-hooks-rules-and-order", "react-hooks-masterclass"];
 
@@ -181,6 +181,9 @@ document.addEventListener("DOMContentLoaded", () => {
       "context-api": { en: "Context API & Redux Detection", es: "Context API & Detectar Redux" },
       "zustand": { en: "Zustand: Global State Made Simple", es: "Zustand: Estado Global Hecho Simple" },
       "zustand-favoritos": { en: "Zustand: Favorites Store Example", es: "Zustand: Ejemplo de Store de Favoritos" },
+      "zustand-best-practices": { en: "Zustand: Best Practices & Efficient Subscriptions", es: "Zustand: Buenas Prácticas y Suscripciones Eficientes" },
+      "rutas-protegidas": { en: "Protected Routes with React Router", es: "Rutas Protegidas con React Router" },
+      "zustand-persistencia": { en: "Zustand: Persistence & Clean Logout", es: "Zustand: Persistencia y Logout Limpio" },
       "crear-rutas": { en: "How to Create Routes", es: "Cómo Crear Rutas" },
       "link-hooks-router": { en: "Link & Router Hooks", es: "Link y Hooks del Router" },
       hooks: { en: "Hooks", es: "Hooks" },
